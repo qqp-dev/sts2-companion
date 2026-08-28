@@ -28,15 +28,30 @@ function scaleToken(token, factor) {
   return String(token).split("-").map((part) => String(Math.floor(Number(part) * factor))).join("–");
 }
 
+// HP and general-buff magnitudes (Reattach, Hardened Shell, Curl Up, Plating, …).
+// Durations (Asleep, Slumber) and non-buff counts (Artifact, Thievery) stay stored.
+const GENERAL_BUFF = "Vital Spark|Hardened Shell|Personal Hive|Steam Eruption|Curl Up|Reattach|Plating|Shriek|Enrage|Strength|Ritual|Intangible|Thorns|Vigor|Dexterity|Plow";
+
+function scaleNamedBuffs(text, factor) {
+  return String(text).replace(
+    new RegExp(String.raw`\b(${GENERAL_BUFF})\s+(\d+(?:-\d+)?)\b`, "gi"),
+    (_, power, value) => `${power} ${scaleToken(value, factor)}`,
+  );
+}
+
 /**
  * Convert the source A9 mechanics sentence into its multiplayer rendering.
  * Attack clauses and applied debuff durations remain unchanged. Enemy block
  * scales only by players; gained powers and revive HP use players × actScale.
+ * HP-threshold powers written as "Gains PowerName N" (Plow, Vital Spark) scale too.
  */
 export function scaleMechanicsText(text, options = {}) {
   const players = Number(options.players ?? 2);
   const general = players * actScale(options);
-  const numericPower = /\b(\d+(?:-\d+)?)(\s*(?:\+\s*X\s*)?)\s+(Block|Strength|Ritual|Personal Hive|Intangible|Thorns|Vigor|Steam Eruption|Dexterity)\b/gi;
+  const numericPower = new RegExp(
+    String.raw`\b(\d+(?:-\d+)?)(\s*(?:\+\s*X\s*)?)\s+(Block|${GENERAL_BUFF})\b`,
+    "gi",
+  );
   let rendered = String(text ?? "").split(/(?<=\.)\s+/).map((sentence) => {
     const gainAt = sentence.search(/\b(?:gains?|gives?)\b/i);
     if (gainAt < 0) return sentence;
@@ -45,8 +60,7 @@ export function scaleMechanicsText(text, options = {}) {
       const factor = power.toLowerCase() === "block" ? players : general;
       return `${scaleToken(value, factor)}${addition} ${power}`;
     });
-    gains = gains.replace(/\b(Vital Spark)\s+(\d+(?:-\d+)?)\b/gi,
-      (_, power, value) => `${power} ${scaleToken(value, general)}`);
+    gains = scaleNamedBuffs(gains, general);
     return prefix + gains;
   }).join(" ");
 
@@ -58,9 +72,8 @@ export function scaleMechanicsText(text, options = {}) {
 
 function scaledStartsWith(text, options) {
   if (!text) return null;
-  const players = Number(options.players ?? 2);
-  const general = players * actScale(options);
-  return String(text).replace(/\d+(?:-\d+)?/g, (value) => scaleToken(value, general));
+  const general = Number(options.players ?? 2) * actScale(options);
+  return scaleNamedBuffs(text, general);
 }
 
 export function scaledEncounter(encounter, options = {}) {

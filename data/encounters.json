@@ -756,6 +756,48 @@
       "rules": [],
       "timing": []
     },
+    "DOORMAKER_BOSS": {
+      "act": "Glory",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "Doormaker",
+          "type": "Boss",
+          "hpA8": [
+            512
+          ],
+          "moves": [
+            {
+              "name": "Dramatic Open",
+              "textA9": "Transforms into the Doormaker. Sets current buff to Hunger."
+            },
+            {
+              "name": "Hunger",
+              "textA9": "Deals 35 damage. Swaps current buff to Scrutiny."
+            },
+            {
+              "name": "Scrutiny",
+              "textA9": "Deals 26 damage. Swaps current buff to Grasp."
+            },
+            {
+              "name": "Grasp",
+              "textA9": "Deals 11x2 damage. Gains 3 Strength. Swaps current buff to Hunger."
+            }
+          ],
+          "monsterId": "DOORMAKER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Doormaker",
+      "rules": [
+        "Door spawns first, Doormaker appears when Door dies."
+      ],
+      "timing": []
+    },
     "ENTOMANCER_ELITE": {
       "act": "Hive",
       "kind": "elite",

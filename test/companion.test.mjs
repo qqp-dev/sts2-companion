@@ -86,6 +86,56 @@ test("attacks do not MP-scale while block and general buffs use their categories
   assert.ok(encounterIds.length >= 80);
 });
 
+test("startsWith scales HP and general buffs but not durations or counts", () => {
+  const lag = scaledEncounter(encounterFor("LAGAVULIN_MATRIARCH_BOSS"));
+  assert.equal(lag.lineup[0].startsWithA9, "Plating 12; Asleep 3");
+  assert.equal(lag.lineup[0].startsWith, "Plating 26; Asleep 3");
+
+  const beetle = scaledEncounter(encounterFor("SLUMBERING_BEETLE_NORMAL"));
+  assert.equal(beetle.lineup[0].startsWithA9, "Plating 18; Slumber 3");
+  assert.equal(beetle.lineup[0].startsWith, "Plating 43; Slumber 3");
+
+  const gremlin = scaledEncounter(encounterFor("GREMLIN_MERC_NORMAL"));
+  assert.equal(gremlin.lineup[0].startsWithA9, "Surprise 1; Thievery 20");
+  assert.equal(gremlin.lineup[0].startsWith, "Surprise 1; Thievery 20");
+
+  const aeon = scaledEncounter(encounterFor("AEONGLASS_BOSS"));
+  assert.equal(aeon.lineup[0].startsWithA9, "Withering Presence; Artifact 3");
+  assert.equal(aeon.lineup[0].startsWith, "Withering Presence; Artifact 3");
+
+  const deci = scaledEncounter(encounterFor("DECIMILLIPEDE_ELITE"));
+  assert.equal(deci.lineup[0].startsWith, "Reattach 60");
+});
+
+test("Gains PowerName N HP thresholds scale like Vital Spark", () => {
+  const beast = scaledEncounter(encounterFor("CEREMONIAL_BEAST_BOSS"));
+  assert.deepEqual(beast.lineup[0].hp, [576]);
+  assert.equal(
+    beast.lineup[0].moves[0].sourceA9,
+    "Gains Plow 160. When its HP drops to that amount, it becomes Stunned and loses all Strength.",
+  );
+  assert.equal(
+    beast.lineup[0].moves[0].text,
+    "Gains Plow 352. When its HP drops to that amount, it becomes Stunned and loses all Strength.",
+  );
+  assert.equal(
+    scaleMechanicsText("Gains Plow 160. When its HP drops to that amount.", { players: 2, act: 1, kind: "boss" }),
+    "Gains Plow 352. When its HP drops to that amount.",
+  );
+});
+
+test("Glory Doormaker is a known A10 2P book encounter", () => {
+  const door = encounterFor("DOORMAKER_BOSS");
+  assert.equal(door.act, "Glory");
+  assert.equal(door.kind, "boss");
+  assert.equal(door.lineup[0].displayName, "Doormaker");
+  assert.deepEqual(door.lineup[0].hpA8, [512]);
+  const scaled = scaledEncounter(door);
+  assert.equal(scaled.known, true);
+  assert.deepEqual(scaled.lineup[0].hp, [1331]);
+  assert.ok(scaled.rules.some((rule) => /Door spawns first/i.test(rule)));
+});
+
 test("newest rotated godot log wins when godot.log is stale", () => {
   const root = mkdtempSync(join(tmpdir(), "sts2-rotate-"));
   try {

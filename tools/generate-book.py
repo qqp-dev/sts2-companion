@@ -157,7 +157,7 @@ add("Glory", "elite", {"KNIGHTS_ELITE":[L("Flail Knight"),L("Spectral Knight"),L
 add("Overgrowth", "boss", {"CEREMONIAL_BEAST_BOSS":[L("Ceremonial Beast")], "THE_KIN_BOSS":[L("Kin Priest"),L("Kin Follower",2)], "VANTOM_BOSS":[L("Vantom")]})
 add("Underdocks", "boss", {"LAGAVULIN_MATRIARCH_BOSS":[L("Lagavulin Matriarch")], "SOUL_FYSH_BOSS":[L("Soul Fysh")], "WATERFALL_GIANT_BOSS":[L("Waterfall Giant")]})
 add("Hive", "boss", {"THE_INSATIABLE_BOSS":[L("The Insatiable")], "KNOWLEDGE_DEMON_BOSS":[L("Knowledge Demon")], "KAISER_CRAB_BOSS":[L("Crusher"),L("Rocket")]})
-add("Glory", "boss", {"QUEEN_BOSS":[L("Queen"),L("Torch Head Amalgam")], "TEST_SUBJECT_BOSS":[L("Test Subject", role="phase 1"),L("Test Subject (Phase 2)", role="phase 2"),L("Test Subject (Phase 3)", role="phase 3")], "AEONGLASS_BOSS":[L("Aeonglass")]})
+add("Glory", "boss", {"QUEEN_BOSS":[L("Queen"),L("Torch Head Amalgam")], "TEST_SUBJECT_BOSS":[L("Test Subject", role="phase 1"),L("Test Subject (Phase 2)", role="phase 2"),L("Test Subject (Phase 3)", role="phase 3")], "AEONGLASS_BOSS":[L("Aeonglass")], "DOORMAKER_BOSS":[L("Doormaker")]})
 
 OVERRIDES = {
  "DECIMILLIPEDE_ELITE": {
@@ -194,6 +194,7 @@ OVERRIDES = {
  "FABRICATOR_NORMAL":{"rules":["Summons defensive and aggressive bot minions."]},
  "KNIGHTS_ELITE":{"rules":["While Magi Knight is alive, Dampen Downgrades all player cards."]},
  "QUEEN_BOSS":{"rules":["Torch Head Amalgam is a Minion and fights alongside Queen."]},
+ "DOORMAKER_BOSS":{"rules":["Door spawns first, Doormaker appears when Door dies."]},
 }
 
 bodies = {}
