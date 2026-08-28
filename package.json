@@ -1,7 +1,29 @@
 {
   "name": "@hypermemetic-ai/sts2-companion",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Phone-first STS2 encounter HUD as a qq plugin. Design is not in this stub."
+  "description": "Phone-first A10 two-player Slay the Spire 2 encounter book for qq.",
+  "main": "src/plugin.mjs",
+  "exports": {
+    ".": "./src/plugin.mjs",
+    "./book": "./src/book.mjs",
+    "./state": "./src/state.mjs",
+    "./http": "./src/http.mjs",
+    "./cordis.patch.yml": "./cordis.patch.yml"
+  },
+  "files": [
+    "src/",
+    "data/",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
 }

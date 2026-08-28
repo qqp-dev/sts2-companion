@@ -1,0 +1,4174 @@
+{
+  "meta": {
+    "source": "Slay the Spire Wiki (wiki.gg), StS2 enemy pages and Module:Enemies/StS2 data/*",
+    "ascension": "A8 HP; A9 move/block/buff values",
+    "players": 2
+  },
+  "encounters": {
+    "AEONGLASS_BOSS": {
+      "act": "Glory",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "Aeonglass",
+          "type": "Boss",
+          "hpA8": [
+            535
+          ],
+          "startsWithA9": "Withering Presence; Artifact 3",
+          "moves": [
+            {
+              "name": "Ebb",
+              "textA9": "Deals 26 damage. Gains 33 Block."
+            },
+            {
+              "name": "Eye Lasers",
+              "textA9": "Deals 12 damage x2."
+            },
+            {
+              "name": "Increasing Intensity",
+              "textA9": "Shuffles 2 Wither+X into your discard pile. Gains 3 + X Strength. Upgrade all Withers. Withering Presence effect now creates Withers + X."
+            }
+          ],
+          "monsterId": "AEONGLASS",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Aeonglass",
+      "rules": [],
+      "timing": []
+    },
+    "AXEBOTS_NORMAL": {
+      "act": "Glory",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Axebot",
+          "type": "Normal",
+          "hpA8": [
+            78,
+            86
+          ],
+          "startsWithA9": "Stock 2",
+          "moves": [
+            {
+              "name": "Boot Up",
+              "textA9": "Gains 15 Block and 8 Strength."
+            },
+            {
+              "name": "The One-Two",
+              "textA9": "Deals 10 damage 2 times."
+            },
+            {
+              "name": "Hammer Uppercut",
+              "textA9": "Deals 14 damage. Applies 2 Weak and 2 Frail."
+            }
+          ],
+          "monsterId": "AXEBOT",
+          "count": 2,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Axebots",
+      "rules": [],
+      "timing": []
+    },
+    "BOWLBUGS_NORMAL": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Bowlbug (Rock)",
+          "type": "Normal",
+          "hpA8": [
+            46,
+            49
+          ],
+          "startsWithA9": "Imbalanced",
+          "moves": [
+            {
+              "name": "Headbutt",
+              "textA9": "Deals 16 damage."
+            },
+            {
+              "name": "Dizzy",
+              "textA9": "Stunned. Does nothing."
+            }
+          ],
+          "monsterId": "BOWLBUG_ROCK",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Bowlbug (Silk)",
+          "type": "Normal",
+          "hpA8": [
+            41,
+            44
+          ],
+          "moves": [
+            {
+              "name": "Thrash",
+              "textA9": "Deals 5 damage x2."
+            },
+            {
+              "name": "Spin Web",
+              "textA9": "Applies 1 Weak."
+            }
+          ],
+          "monsterId": "BOWLBUG_SILK",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Bowlbug (Nectar)",
+          "type": "Normal",
+          "hpA8": [
+            36,
+            39
+          ],
+          "moves": [
+            {
+              "name": "Thrash",
+              "textA9": "Deals 3 damage."
+            },
+            {
+              "name": "Buff",
+              "textA9": "Gains 16 Strength."
+            }
+          ],
+          "monsterId": "BOWLBUG_NECTAR",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Bowlbugs",
+      "rules": [],
+      "timing": []
+    },
+    "BOWLBUGS_WEAK": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Bowlbug (Rock)",
+          "type": "Normal",
+          "hpA8": [
+            46,
+            49
+          ],
+          "startsWithA9": "Imbalanced",
+          "moves": [
+            {
+              "name": "Headbutt",
+              "textA9": "Deals 16 damage."
+            },
+            {
+              "name": "Dizzy",
+              "textA9": "Stunned. Does nothing."
+            }
+          ],
+          "monsterId": "BOWLBUG_ROCK",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Bowlbug (Egg)",
+          "type": "Normal",
+          "hpA8": [
+            23,
+            24
+          ],
+          "moves": [
+            {
+              "name": "Bite",
+              "textA9": "Deals 8 damage. Gains 8 Block."
+            }
+          ],
+          "monsterId": "BOWLBUG_EGG",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Bowlbugs",
+      "rules": [],
+      "timing": []
+    },
+    "BYGONE_EFFIGY_ELITE": {
+      "act": "Overgrowth",
+      "kind": "elite",
+      "lineup": [
+        {
+          "displayName": "Bygone Effigy",
+          "type": "Elite",
+          "hpA8": [
+            132
+          ],
+          "startsWithA9": "Slow",
+          "moves": [
+            {
+              "name": "Sleep",
+              "textA9": "Does nothing. Asleep."
+            },
+            {
+              "name": "Wake",
+              "textA9": "Gains 10 Strength."
+            },
+            {
+              "name": "Slashes",
+              "textA9": "Deals 15 damage."
+            }
+          ],
+          "monsterId": "BYGONE_EFFIGY",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Bygone Effigy",
+      "rules": [],
+      "timing": []
+    },
+    "BYRDONIS_ELITE": {
+      "act": "Overgrowth",
+      "kind": "elite",
+      "lineup": [
+        {
+          "displayName": "Byrdonis",
+          "type": "Elite",
+          "hpA8": [
+            90
+          ],
+          "startsWithA9": "Territorial 1",
+          "moves": [
+            {
+              "name": "Swoop",
+              "textA9": "Deals 19 damage."
+            },
+            {
+              "name": "Peck",
+              "textA9": "Deals 4x3 damage."
+            }
+          ],
+          "monsterId": "BYRDONIS",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Byrdonis",
+      "rules": [],
+      "timing": []
+    },
+    "CEREMONIAL_BEAST_BOSS": {
+      "act": "Overgrowth",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "Ceremonial Beast",
+          "type": "Boss",
+          "hpA8": [
+            262
+          ],
+          "moves": [
+            {
+              "name": "Stamp",
+              "textA9": "Gains Plow 160. When its HP drops to that amount, it becomes Stunned and loses all Strength."
+            },
+            {
+              "name": "Plow",
+              "textA9": "Deals 20 damage. Gains 2 Strength."
+            },
+            {
+              "name": "Stun",
+              "textA9": "Stunned. Does nothing."
+            },
+            {
+              "name": "Beast Cry",
+              "textA9": "Applies 1 Ringing."
+            },
+            {
+              "name": "Stomp",
+              "textA9": "Deals 17 damage."
+            },
+            {
+              "name": "Crush",
+              "textA9": "Deals 19 damage. Gains 4 Strength."
+            }
+          ],
+          "monsterId": "CEREMONIAL_BEAST",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Ceremonial Beast",
+      "rules": [],
+      "timing": []
+    },
+    "CHOMPERS_NORMAL": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Chomper",
+          "type": "Normal",
+          "hpA8": [
+            63,
+            67
+          ],
+          "startsWithA9": "Artifact 2",
+          "moves": [
+            {
+              "name": "Clamp",
+              "textA9": "Deals 9 damage ×2."
+            },
+            {
+              "name": "Screech",
+              "textA9": "Shuffles 3 Dazed into your discard pile."
+            }
+          ],
+          "monsterId": "CHOMPER",
+          "count": 2,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Chompers",
+      "rules": [],
+      "timing": []
+    },
+    "CONSTRUCT_MENAGERIE_NORMAL": {
+      "act": "Glory",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Punch Construct",
+          "type": "Normal",
+          "hpA8": [
+            60
+          ],
+          "startsWithA9": "Artifact 1",
+          "moves": [
+            {
+              "name": "READY",
+              "textA9": "Gains 10 Block."
+            },
+            {
+              "name": "Fast Punch",
+              "textA9": "Deals 6 damage ×2. Applies 1 Frail."
+            },
+            {
+              "name": "Strong Punch",
+              "textA9": "Deals 16 damage."
+            }
+          ],
+          "partyNote": "Underdocks; Appears as a solo normal encounter.; Glory; * Cubex Construct ×2",
+          "monsterId": "PUNCH_CONSTRUCT",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Cubex Construct",
+          "type": "Normal",
+          "hpA8": [
+            70
+          ],
+          "startsWithA9": "Artifact 1",
+          "moves": [
+            {
+              "name": "Charge Up",
+              "textA9": "Gains 2 Strength."
+            },
+            {
+              "name": "Repeater Blast",
+              "textA9": "Deals 8 damage. Gains 2 Strength."
+            },
+            {
+              "name": "Expel Blast",
+              "textA9": "Deals 6 damage ×2."
+            }
+          ],
+          "partyNote": "Overgrowth; Appears as a solo normal encounter.; Glory; * Construct Menagerie: Punch Construct + Cubex Construct ×2",
+          "monsterId": "CUBEX_CONSTRUCT",
+          "count": 2,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Construct Menagerie",
+      "rules": [],
+      "timing": []
+    },
+    "CORPSE_SLUGS_NORMAL": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Corpse Slug",
+          "type": "Normal",
+          "hpA8": [
+            27,
+            29
+          ],
+          "startsWithA9": "Ravenous 5",
+          "moves": [
+            {
+              "name": "Whip Slap",
+              "textA9": "Deals 3 damage ×2."
+            },
+            {
+              "name": "Glomp",
+              "textA9": "Deals 9 damage."
+            },
+            {
+              "name": "Goop",
+              "textA9": "Applies 2 Frail."
+            }
+          ],
+          "partyNote": "Underdocks; * Corpse Slugs (Weak): 2× Corpse Slug; * Corpse Slugs (Normal): 3× Corpse Slug",
+          "monsterId": "CORPSE_SLUG",
+          "count": 3,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Corpse Slugs",
+      "rules": [],
+      "timing": []
+    },
+    "CORPSE_SLUGS_WEAK": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Corpse Slug",
+          "type": "Normal",
+          "hpA8": [
+            27,
+            29
+          ],
+          "startsWithA9": "Ravenous 5",
+          "moves": [
+            {
+              "name": "Whip Slap",
+              "textA9": "Deals 3 damage ×2."
+            },
+            {
+              "name": "Glomp",
+              "textA9": "Deals 9 damage."
+            },
+            {
+              "name": "Goop",
+              "textA9": "Applies 2 Frail."
+            }
+          ],
+          "partyNote": "Underdocks; * Corpse Slugs (Weak): 2× Corpse Slug; * Corpse Slugs (Normal): 3× Corpse Slug",
+          "monsterId": "CORPSE_SLUG",
+          "count": 2,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Corpse Slugs",
+      "rules": [],
+      "timing": []
+    },
+    "CUBEX_CONSTRUCT_NORMAL": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Cubex Construct",
+          "type": "Normal",
+          "hpA8": [
+            70
+          ],
+          "startsWithA9": "Artifact 1",
+          "moves": [
+            {
+              "name": "Charge Up",
+              "textA9": "Gains 2 Strength."
+            },
+            {
+              "name": "Repeater Blast",
+              "textA9": "Deals 8 damage. Gains 2 Strength."
+            },
+            {
+              "name": "Expel Blast",
+              "textA9": "Deals 6 damage ×2."
+            }
+          ],
+          "partyNote": "Overgrowth; Appears as a solo normal encounter.; Glory; * Construct Menagerie: Punch Construct + Cubex Construct ×2",
+          "monsterId": "CUBEX_CONSTRUCT",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Cubex Construct",
+      "rules": [],
+      "timing": []
+    },
+    "CULTISTS_NORMAL": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Calcified Cultist",
+          "type": "Normal",
+          "hpA8": [
+            39,
+            42
+          ],
+          "moves": [
+            {
+              "name": "Incantation",
+              "textA9": "Gains 2 Ritual."
+            },
+            {
+              "name": "Dark Strike",
+              "textA9": "Deals 11 damage."
+            }
+          ],
+          "partyNote": "Underdocks; * Damp Cultist (Cultists encounter); * Seapunk (Seapunk Normal encounter)",
+          "monsterId": "CALCIFIED_CULTIST",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Damp Cultist",
+          "type": "Normal",
+          "hpA8": [
+            52,
+            54
+          ],
+          "moves": [
+            {
+              "name": "Incantation",
+              "textA9": "Gains 6 Ritual."
+            },
+            {
+              "name": "Dark Strike",
+              "textA9": "Deals 3 damage."
+            }
+          ],
+          "partyNote": "Underdocks; * Calcified Cultist (Cultists encounter)",
+          "monsterId": "DAMP_CULTIST",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Cultists",
+      "rules": [],
+      "timing": []
+    },
+    "DECIMILLIPEDE_ELITE": {
+      "act": "Hive",
+      "kind": "elite",
+      "lineup": [
+        {
+          "displayName": "Decimillipede",
+          "type": "Elite",
+          "hpA8": [
+            46,
+            52
+          ],
+          "startsWithA9": "Reattach 25",
+          "moves": [
+            {
+              "name": "Bulk",
+              "textA9": "Deals 7 damage. Gains 2 Strength."
+            },
+            {
+              "name": "Writhe",
+              "textA9": "Deals 6x2 damage."
+            },
+            {
+              "name": "Outgas",
+              "textA9": "Deals 9 damage. Applies 1 Weak."
+            },
+            {
+              "name": "Reattach",
+              "textA9": "Revives with 25 HP (if other segments are alive)."
+            }
+          ],
+          "monsterId": "DECIMILLIPEDE_FRONT",
+          "count": 1,
+          "pattern": {
+            "type": "cycle",
+            "text": "Front: Bulk → Writhe → Outgas; after Reattach, resumes at a random move."
+          }
+        },
+        {
+          "displayName": "Decimillipede",
+          "type": "Elite",
+          "hpA8": [
+            46,
+            52
+          ],
+          "startsWithA9": "Reattach 25",
+          "moves": [
+            {
+              "name": "Bulk",
+              "textA9": "Deals 7 damage. Gains 2 Strength."
+            },
+            {
+              "name": "Writhe",
+              "textA9": "Deals 6x2 damage."
+            },
+            {
+              "name": "Outgas",
+              "textA9": "Deals 9 damage. Applies 1 Weak."
+            },
+            {
+              "name": "Reattach",
+              "textA9": "Revives with 25 HP (if other segments are alive)."
+            }
+          ],
+          "monsterId": "DECIMILLIPEDE_MIDDLE",
+          "count": 1,
+          "pattern": {
+            "type": "cycle",
+            "text": "Middle: Writhe → Outgas → Bulk; after Reattach, resumes at a random move."
+          }
+        },
+        {
+          "displayName": "Decimillipede",
+          "type": "Elite",
+          "hpA8": [
+            46,
+            52
+          ],
+          "startsWithA9": "Reattach 25",
+          "moves": [
+            {
+              "name": "Bulk",
+              "textA9": "Deals 7 damage. Gains 2 Strength."
+            },
+            {
+              "name": "Writhe",
+              "textA9": "Deals 6x2 damage."
+            },
+            {
+              "name": "Outgas",
+              "textA9": "Deals 9 damage. Applies 1 Weak."
+            },
+            {
+              "name": "Reattach",
+              "textA9": "Revives with 25 HP (if other segments are alive)."
+            }
+          ],
+          "monsterId": "DECIMILLIPEDE_BACK",
+          "count": 1,
+          "pattern": {
+            "type": "cycle",
+            "text": "Back: Outgas → Bulk → Writhe; after Reattach, resumes at a random move."
+          }
+        }
+      ],
+      "name": "Decimillipede",
+      "rules": [
+        "Each dead segment Revives with 25 HP after 2 turns if any other segment is alive; it then resumes randomly.",
+        "Kill all remaining segments before a Reattach resolves."
+      ],
+      "timing": [
+        "Poison resolves before enemy moves.",
+        "Doom resolves after Reattach, so the revived segment can be targeted; Doom can miss."
+      ]
+    },
+    "DEVOTED_SCULPTOR_WEAK": {
+      "act": "Glory",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Devoted Sculptor",
+          "type": "Normal",
+          "hpA8": [
+            172
+          ],
+          "moves": [
+            {
+              "name": "Forbidden Incantation",
+              "textA9": "Gains 9 Ritual."
+            },
+            {
+              "name": "Savage",
+              "textA9": "Deals 15 damage."
+            }
+          ],
+          "monsterId": "DEVOTED_SCULPTOR",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Devoted Sculptor",
+      "rules": [],
+      "timing": []
+    },
+    "DOORMAKER_BOSS": {
+      "act": "Glory",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "Doormaker",
+          "type": "Boss",
+          "hpA8": [
+            512
+          ],
+          "moves": [
+            {
+              "name": "Dramatic Open",
+              "textA9": "Transforms into the Doormaker. Sets current buff to Hunger."
+            },
+            {
+              "name": "Hunger",
+              "textA9": "Deals 35 damage. Swaps current buff to Scrutiny."
+            },
+            {
+              "name": "Scrutiny",
+              "textA9": "Deals 26 damage. Swaps current buff to Grasp."
+            },
+            {
+              "name": "Grasp",
+              "textA9": "Deals 11x2 damage. Gains 3 Strength. Swaps current buff to Hunger."
+            }
+          ],
+          "monsterId": "DOORMAKER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Doormaker",
+      "rules": [
+        "Door spawns first, Doormaker appears when Door dies."
+      ],
+      "timing": []
+    },
+    "ENTOMANCER_ELITE": {
+      "act": "Hive",
+      "kind": "elite",
+      "lineup": [
+        {
+          "displayName": "Entomancer",
+          "type": "Elite",
+          "hpA8": [
+            155
+          ],
+          "startsWithA9": "Personal Hive 1",
+          "moves": [
+            {
+              "name": "Beeeees!",
+              "textA9": "Deals 3 damage ×8."
+            },
+            {
+              "name": "Spear!",
+              "textA9": "Deals 20 damage."
+            },
+            {
+              "name": "Pheromone Spit",
+              "textA9": "Gains 1 Personal Hive and 1 Strength. If Personal Hive is already at 3, gains 2 Strength instead."
+            }
+          ],
+          "monsterId": "ENTOMANCER",
+          "count": 1,
+          "pattern": {
+            "type": "cycle",
+            "text": "Beeeees! → Spear! → Pheromone Spit → repeat."
+          }
+        }
+      ],
+      "name": "Entomancer",
+      "rules": [],
+      "timing": []
+    },
+    "EXOSKELETONS_NORMAL": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Exoskeleton",
+          "type": "Normal",
+          "hpA8": [
+            25,
+            29
+          ],
+          "startsWithA9": "Hard to Kill 9",
+          "moves": [
+            {
+              "name": "Skitter",
+              "textA9": "Deals 1 damage ×4."
+            },
+            {
+              "name": "Mandibles",
+              "textA9": "Deals 9 damage."
+            },
+            {
+              "name": "Enrage",
+              "textA9": "Gains 2 Strength."
+            }
+          ],
+          "monsterId": "EXOSKELETON",
+          "count": 2,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Exoskeletons",
+      "rules": [],
+      "timing": []
+    },
+    "EXOSKELETONS_WEAK": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Exoskeleton",
+          "type": "Normal",
+          "hpA8": [
+            25,
+            29
+          ],
+          "startsWithA9": "Hard to Kill 9",
+          "moves": [
+            {
+              "name": "Skitter",
+              "textA9": "Deals 1 damage ×4."
+            },
+            {
+              "name": "Mandibles",
+              "textA9": "Deals 9 damage."
+            },
+            {
+              "name": "Enrage",
+              "textA9": "Gains 2 Strength."
+            }
+          ],
+          "monsterId": "EXOSKELETON",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Exoskeletons",
+      "rules": [],
+      "timing": []
+    },
+    "FABRICATOR_NORMAL": {
+      "act": "Glory",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Fabricator",
+          "type": "Normal",
+          "hpA8": [
+            155
+          ],
+          "moves": [
+            {
+              "name": "Fabricate",
+              "textA9": "Summons 1 defensive bot (Guardbot or Noisebot) and 1 aggressive bot (Zapbot or Stabbot)."
+            },
+            {
+              "name": "Fabricating Strike",
+              "textA9": "Deals 21 damage. Summons 1 aggressive bot (Zapbot or Stabbot)."
+            },
+            {
+              "name": "Disintegrate",
+              "textA9": "Deals 13 damage."
+            }
+          ],
+          "monsterId": "FABRICATOR",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Guardbot",
+          "type": "Minion",
+          "hpA8": [
+            17,
+            21
+          ],
+          "moves": [
+            {
+              "name": "Guard",
+              "textA9": "Gives the Fabricator 15 Block."
+            }
+          ],
+          "monsterId": "GUARDBOT",
+          "count": 1,
+          "role": "summoned option",
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Zapbot",
+          "type": "Minion",
+          "hpA8": [
+            19,
+            24
+          ],
+          "startsWithA9": "High Voltage 2",
+          "moves": [
+            {
+              "name": "Zap",
+              "textA9": "Deals 15 damage."
+            }
+          ],
+          "monsterId": "ZAPBOT",
+          "count": 1,
+          "role": "summoned option",
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Fabricator",
+      "rules": [
+        "Summons defensive and aggressive bot minions."
+      ],
+      "timing": []
+    },
+    "FLYCONID_NORMAL": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Flyconid",
+          "type": "Normal",
+          "hpA8": [
+            51,
+            53
+          ],
+          "moves": [
+            {
+              "name": "Weakening Spores",
+              "textA9": "Applies 2 Vulnerable."
+            },
+            {
+              "name": "Frail Spores",
+              "textA9": "Deals 9 damage. Applies 2 Frail."
+            },
+            {
+              "name": "Smash",
+              "textA9": "Deals 12 damage."
+            }
+          ],
+          "partyNote": "Overgrowth; * Flyconid encounter: Flyconid + 1 random from Leaf Slime (M) or Twig Slime (M); * Snapping Jaxfruit encounter: Snapping Jaxfruit + Flyconid",
+          "monsterId": "FLYCONID",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Leaf Slime (M)",
+          "type": "Normal",
+          "hpA8": [
+            33,
+            36
+          ],
+          "moves": [
+            {
+              "name": "Clump Shot",
+              "textA9": "Deals 9 damage."
+            },
+            {
+              "name": "Sticky Shot",
+              "textA9": "Shuffles 2 Slimed into your discard pile."
+            }
+          ],
+          "partyNote": "Overgrowth; * Slimes (Weak): Leaf Slime (S), Twig Slime (S), and randomly chosen as the medium slime; * Slimes (Normal): Leaf Slime (S), Twig Slime (S), Twig Slime (M); * Flyconid: randomly chosen companion with Flyconid; * Slithering Strangler: possible companion with Slithering Strangler (medium slime variant)",
+          "monsterId": "LEAF_SLIME_M",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Flyconid",
+      "rules": [],
+      "timing": []
+    },
+    "FOGMOG_NORMAL": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Fogmog",
+          "type": "Normal",
+          "hpA8": [
+            78
+          ],
+          "moves": [
+            {
+              "name": "Illusory Spores",
+              "textA9": "Summons an Eye With Teeth."
+            },
+            {
+              "name": "Thwack",
+              "textA9": "Deals 9 damage. Gains 1 Strength."
+            },
+            {
+              "name": "Headbutt",
+              "textA9": "Deals 16 damage."
+            }
+          ],
+          "partyNote": "Overgrowth; Appears as a solo normal encounter.; Summons Eye With Teeth mid-fight.",
+          "monsterId": "FOGMOG",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Eye With Teeth",
+          "type": "Minion",
+          "startsWithA9": "Illusion",
+          "moves": [
+            {
+              "name": "Distract",
+              "textA9": "Shuffles 3 Dazed into your discard pile."
+            }
+          ],
+          "partyNote": "Summoned by Fogmog.",
+          "monsterId": "EYE_WITH_TEETH",
+          "count": 1,
+          "role": "summoned",
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Fogmog",
+      "rules": [
+        "Summons an Eye With Teeth mid-fight."
+      ],
+      "timing": []
+    },
+    "FOSSIL_STALKER_NORMAL": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Fossil Stalker",
+          "type": "Normal",
+          "hpA8": [
+            54,
+            56
+          ],
+          "startsWithA9": "Suck 3",
+          "moves": [
+            {
+              "name": "Latch",
+              "textA9": "Deals 14 damage."
+            },
+            {
+              "name": "Tackle",
+              "textA9": "Deals 11 damage. Applies 1 Frail."
+            },
+            {
+              "name": "Lash",
+              "textA9": "Deals 4 damage ×2."
+            }
+          ],
+          "monsterId": "FOSSIL_STALKER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Fossil Stalker",
+      "rules": [],
+      "timing": []
+    },
+    "FROG_KNIGHT_NORMAL": {
+      "act": "Glory",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Frog Knight",
+          "type": "Normal",
+          "hpA8": [
+            199
+          ],
+          "startsWithA9": "Plating 19",
+          "moves": [
+            {
+              "name": "Tongue Lash",
+              "textA9": "Deals 14 damage. Applies 2 Frail."
+            },
+            {
+              "name": "Strike Down Evil",
+              "textA9": "Deals 23 damage."
+            },
+            {
+              "name": "For the Queen",
+              "textA9": "Gains 5 Strength."
+            },
+            {
+              "name": "Beetle Charge",
+              "textA9": "Deals 40 damage."
+            }
+          ],
+          "monsterId": "FROG_KNIGHT",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Frog Knight",
+      "rules": [],
+      "timing": []
+    },
+    "FUZZY_WURM_CRAWLER_WEAK": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Fuzzy Wurm Crawler",
+          "type": "Normal",
+          "hpA8": [
+            58,
+            59
+          ],
+          "moves": [
+            {
+              "name": "Acid Goop",
+              "textA9": "Deals 6 damage."
+            },
+            {
+              "name": "Inhale",
+              "textA9": "Gains 7 Strength."
+            }
+          ],
+          "partyNote": "Overgrowth; Appears as a solo weak encounter.; Also appears in a strong encounter with Shrinker Beetle.",
+          "monsterId": "FUZZY_WURM_CRAWLER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Fuzzy Wurm Crawler",
+      "rules": [],
+      "timing": []
+    },
+    "GLOBE_HEAD_NORMAL": {
+      "act": "Glory",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Globe Head",
+          "type": "Normal",
+          "hpA8": [
+            158
+          ],
+          "startsWithA9": "Galvanic 6",
+          "moves": [
+            {
+              "name": "Shocking Slap",
+              "textA9": "Deals 14 damage. Applies 2 Frail."
+            },
+            {
+              "name": "Thunder Strike",
+              "textA9": "Deals 7 damage 3 times."
+            },
+            {
+              "name": "Galvanic Burst",
+              "textA9": "Deals 17 damage. Gains 2 Strength."
+            }
+          ],
+          "monsterId": "GLOBE_HEAD",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Globe Head",
+      "rules": [],
+      "timing": []
+    },
+    "GREMLIN_MERC_NORMAL": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Gremlin Merc",
+          "type": "Normal",
+          "hpA8": [
+            51,
+            53
+          ],
+          "startsWithA9": "Surprise 1; Thievery 20",
+          "moves": [
+            {
+              "name": "Gimme",
+              "textA9": "Deals 8x2 damage."
+            },
+            {
+              "name": "Double Smash",
+              "textA9": "Deals 7x2 damage. Applies 2 Weak."
+            },
+            {
+              "name": "Hehe",
+              "textA9": "Deals 9 damage. Gains 2 Strength."
+            }
+          ],
+          "partyNote": "Underdocks; Appears as a solo normal encounter.; Summons Fat Gremlin and Sneaky Gremlin on death.",
+          "monsterId": "GREMLIN_MERC",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Fat Gremlin",
+          "type": "Minion",
+          "hpA8": [
+            14,
+            18
+          ],
+          "moves": [
+            {
+              "name": "Spawned",
+              "textA9": "Wakes up. Does nothing."
+            },
+            {
+              "name": "Flee",
+              "textA9": "Flees from combat with any stolen gold."
+            }
+          ],
+          "partyNote": "Summoned by Gremlin Merc on death.",
+          "monsterId": "FAT_GREMLIN",
+          "count": 1,
+          "role": "summoned on death",
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Sneaky Gremlin",
+          "type": "Minion",
+          "hpA8": [
+            11,
+            15
+          ],
+          "moves": [
+            {
+              "name": "Spawned",
+              "textA9": "Wakes up. Does nothing."
+            },
+            {
+              "name": "Tackle",
+              "textA9": "Deals 10 damage."
+            }
+          ],
+          "partyNote": "Summoned by Gremlin Merc on death.",
+          "monsterId": "SNEAKY_GREMLIN",
+          "count": 1,
+          "role": "summoned on death",
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Gremlin Merc",
+      "rules": [
+        "On death, summons Fat Gremlin and Sneaky Gremlin minions."
+      ],
+      "timing": []
+    },
+    "HAUNTED_SHIP_NORMAL": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Haunted Ship",
+          "type": "Normal",
+          "hpA8": [
+            67
+          ],
+          "moves": [
+            {
+              "name": "Haunt",
+              "textA9": "Shuffles 5 Dazed into your discard pile. Applies 3 Weak."
+            },
+            {
+              "name": "Swipe",
+              "textA9": "Deals 14 damage."
+            },
+            {
+              "name": "Stomp",
+              "textA9": "Deals 5 damage ×3."
+            }
+          ],
+          "monsterId": "HAUNTED_SHIP",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Haunted Ship",
+      "rules": [],
+      "timing": []
+    },
+    "HUNTER_KILLER_NORMAL": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Hunter Killer",
+          "type": "Normal",
+          "hpA8": [
+            126
+          ],
+          "moves": [
+            {
+              "name": "Tenderizing Goop",
+              "textA9": "Applies 1 Tender."
+            },
+            {
+              "name": "Bite",
+              "textA9": "Deals 19 damage."
+            },
+            {
+              "name": "Puncture",
+              "textA9": "Deals 8 damage ×3."
+            }
+          ],
+          "monsterId": "HUNTER_KILLER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Hunter Killer",
+      "rules": [],
+      "timing": []
+    },
+    "INFESTED_PRISMS_ELITE": {
+      "act": "Hive",
+      "kind": "elite",
+      "lineup": [
+        {
+          "displayName": "Infested Prism",
+          "type": "Elite",
+          "hpA8": [
+            171
+          ],
+          "startsWithA9": "Vital Spark 3",
+          "moves": [
+            {
+              "name": "Jab",
+              "textA9": "Deals 17 damage."
+            },
+            {
+              "name": "Radiate",
+              "textA9": "Deals 13 damage. Gains 18 Block."
+            },
+            {
+              "name": "Whirlwind",
+              "textA9": "Deals 6 damage ×3."
+            },
+            {
+              "name": "Pulsate",
+              "textA9": "Deal 10 damage. Gains 22 Block and Vital Spark 3."
+            }
+          ],
+          "monsterId": "INFESTED_PRISM",
+          "count": 1,
+          "pattern": {
+            "type": "cycle",
+            "text": "Jab → Radiate → Whirlwind → Pulsate → repeat."
+          }
+        }
+      ],
+      "name": "Infested Prisms",
+      "rules": [],
+      "timing": []
+    },
+    "INKLETS_NORMAL": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Inklet",
+          "type": "Normal",
+          "hpA8": [
+            12,
+            18
+          ],
+          "startsWithA9": "Slippery 1",
+          "moves": [
+            {
+              "name": "Jab",
+              "textA9": "Deals 4 damage."
+            },
+            {
+              "name": "Windup Punch",
+              "textA9": "Deals 3 damage ×3."
+            },
+            {
+              "name": "Piercing Gaze",
+              "textA9": "Deals 11 damage."
+            }
+          ],
+          "partyNote": "Overgrowth; * Inklets: Inklet x3",
+          "monsterId": "INKLET",
+          "count": 3,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Inklets",
+      "rules": [],
+      "timing": []
+    },
+    "KAISER_CRAB_BOSS": {
+      "act": "Hive",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "Crusher",
+          "type": "Boss",
+          "hpA8": [
+            219
+          ],
+          "startsWithA9": "Back Attack; Crab Rage",
+          "moves": [
+            {
+              "name": "Thrash",
+              "textA9": "Deals 14 damage."
+            },
+            {
+              "name": "Enlarging Strike",
+              "textA9": "Deals 4 damage."
+            },
+            {
+              "name": "Bug Sting",
+              "textA9": "Deals 7x2 damage. Applies 2 Weak and 2 Frail."
+            },
+            {
+              "name": "Adapt",
+              "textA9": "Gains 3 Strength."
+            },
+            {
+              "name": "Guarded Strike",
+              "textA9": "Deals 14 damage. Gains 18 Block."
+            }
+          ],
+          "monsterId": "CRUSHER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Rocket",
+          "type": "Boss",
+          "hpA8": [
+            209
+          ],
+          "startsWithA9": "Back Attack; Crab Rage",
+          "moves": [
+            {
+              "name": "Targeting Reticle",
+              "textA9": "Deals 4 damage."
+            },
+            {
+              "name": "Precision Beam",
+              "textA9": "Deals 20 damage."
+            },
+            {
+              "name": "Charge Up",
+              "textA9": "Gains 3 Strength."
+            },
+            {
+              "name": "Laser",
+              "textA9": "Deals 35 damage."
+            },
+            {
+              "name": "Recharge",
+              "textA9": "Does nothing."
+            }
+          ],
+          "monsterId": "ROCKET",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Kaiser Crab",
+      "rules": [],
+      "timing": []
+    },
+    "KNIGHTS_ELITE": {
+      "act": "Glory",
+      "kind": "elite",
+      "lineup": [
+        {
+          "displayName": "Flail Knight",
+          "type": "Elite",
+          "hpA8": [
+            108
+          ],
+          "moves": [
+            {
+              "name": "Breaker",
+              "textA9": "Gains 3 Strength."
+            },
+            {
+              "name": "Flail",
+              "textA9": "Deals 10 damage ×2."
+            },
+            {
+              "name": "Ram",
+              "textA9": "Deals 17 damage."
+            }
+          ],
+          "partyNote": "Glory; * Spectral Knight + Magi Knight",
+          "monsterId": "FLAIL_KNIGHT",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Spectral Knight",
+          "type": "Elite",
+          "hpA8": [
+            97
+          ],
+          "moves": [
+            {
+              "name": "Hex",
+              "textA9": "Applies Hex."
+            },
+            {
+              "name": "Soul Slash",
+              "textA9": "Deals 17 damage."
+            },
+            {
+              "name": "Soul Flame",
+              "textA9": "Deals 4 damage ×3."
+            }
+          ],
+          "partyNote": "Glory; * Flail Knight + Magi Knight",
+          "monsterId": "SPECTRAL_KNIGHT",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Magi Knight",
+          "type": "Elite",
+          "hpA8": [
+            89
+          ],
+          "moves": [
+            {
+              "name": "Power Shield",
+              "textA9": "Deals 7 damage. Gains 9 Block."
+            },
+            {
+              "name": "Dampen",
+              "textA9": "Applies Dampen. While Magi Knight is alive, all your cards are Downgraded."
+            },
+            {
+              "name": "Ram",
+              "textA9": "Deals 11 damage."
+            },
+            {
+              "name": "Prep",
+              "textA9": "Gains 9 Block."
+            },
+            {
+              "name": "Magic Bomb",
+              "textA9": "Deals 40 damage."
+            }
+          ],
+          "partyNote": "Glory; * Flail Knight + Spectral Knight",
+          "monsterId": "MAGI_KNIGHT",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Knights",
+      "rules": [
+        "While Magi Knight is alive, Dampen Downgrades all player cards."
+      ],
+      "timing": []
+    },
+    "KNOWLEDGE_DEMON_BOSS": {
+      "act": "Hive",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "Knowledge Demon",
+          "type": "Boss",
+          "hpA8": [
+            399
+          ],
+          "moves": [
+            {
+              "name": "Curse of Knowledge",
+              "textA9": "Each player chooses one of two debuffs to receive. The options change each time this move is used."
+            },
+            {
+              "name": "Slap",
+              "textA9": "Deals 18 damage."
+            },
+            {
+              "name": "Knowledge Overwhelming",
+              "textA9": "Deals 9 damage ×3."
+            },
+            {
+              "name": "Ponder",
+              "textA9": "Deals 13 damage. Heals 30 HP per player. Gains 3 Strength."
+            }
+          ],
+          "monsterId": "KNOWLEDGE_DEMON",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Knowledge Demon",
+      "rules": [],
+      "timing": []
+    },
+    "LAGAVULIN_MATRIARCH_BOSS": {
+      "act": "Underdocks",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "Lagavulin Matriarch",
+          "type": "Boss",
+          "hpA8": [
+            233
+          ],
+          "startsWithA9": "Plating 12; Asleep 3",
+          "moves": [
+            {
+              "name": "Sleep",
+              "textA9": "Asleep. Does nothing."
+            },
+            {
+              "name": "Slash",
+              "textA9": "Deals 21 damage."
+            },
+            {
+              "name": "Disembowel",
+              "textA9": "Deals 10 damage x2."
+            },
+            {
+              "name": "Slash2",
+              "textA9": "Deals 14 damage. Gains 14 Block."
+            },
+            {
+              "name": "Soul Siphon",
+              "textA9": "Removes 2 Strength and 2 Dexterity from the player. Gains 2 Strength."
+            }
+          ],
+          "monsterId": "LAGAVULIN_MATRIARCH",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Lagavulin Matriarch",
+      "rules": [],
+      "timing": []
+    },
+    "LIVING_FOG_NORMAL": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Living Fog",
+          "type": "Normal",
+          "hpA8": [
+            82
+          ],
+          "moves": [
+            {
+              "name": "Advanced Gas",
+              "textA9": "Deals 9 damage. Applies 1 Smoggy."
+            },
+            {
+              "name": "Bloat",
+              "textA9": "Deals 6 damage. Summons 1 Gas Bomb."
+            },
+            {
+              "name": "Super Gas Blast",
+              "textA9": "Deals 9 damage."
+            }
+          ],
+          "partyNote": "Underdocks; Appears as a solo normal encounter.; Summons Gas Bombs mid-fight.",
+          "monsterId": "LIVING_FOG",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Gas Bomb",
+          "type": "Minion",
+          "hpA8": [
+            8
+          ],
+          "startsWithA9": "Minion",
+          "moves": [
+            {
+              "name": "Explode",
+              "textA9": "Deals 9 damage. Dies."
+            }
+          ],
+          "partyNote": "Summoned by Living Fog.",
+          "monsterId": "GAS_BOMB",
+          "count": 1,
+          "role": "summoned",
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Living Fog",
+      "rules": [
+        "Summons Gas Bomb minions; their intent is Death Blow."
+      ],
+      "timing": []
+    },
+    "LOUSE_PROGENITOR_NORMAL": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Louse Progenitor",
+          "type": "Normal",
+          "hpA8": [
+            138,
+            141
+          ],
+          "startsWithA9": "Curl Up 18",
+          "moves": [
+            {
+              "name": "Web Cannon",
+              "textA9": "Deals 10 damage. Applies 2 Frail."
+            },
+            {
+              "name": "Curl and Grow",
+              "textA9": "Gains 18 Block. Gains 5 Strength."
+            },
+            {
+              "name": "Pounce",
+              "textA9": "Deals 16 damage."
+            }
+          ],
+          "monsterId": "LOUSE_PROGENITOR",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Louse Progenitor",
+      "rules": [],
+      "timing": []
+    },
+    "MAWLER_NORMAL": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Mawler",
+          "type": "Normal",
+          "hpA8": [
+            76
+          ],
+          "moves": [
+            {
+              "name": "Rip and Tear",
+              "textA9": "Deals 16 damage."
+            },
+            {
+              "name": "Roar",
+              "textA9": "Applies 3 Vulnerable."
+            },
+            {
+              "name": "Claw",
+              "textA9": "Deals 5 damage ×2."
+            }
+          ],
+          "monsterId": "MAWLER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Mawler",
+      "rules": [],
+      "timing": []
+    },
+    "MECHA_KNIGHT_ELITE": {
+      "act": "Glory",
+      "kind": "elite",
+      "lineup": [
+        {
+          "displayName": "Mecha Knight",
+          "type": "Elite",
+          "hpA8": [
+            320
+          ],
+          "startsWithA9": "Artifact 3",
+          "moves": [
+            {
+              "name": "Charge",
+              "textA9": "Deals 30 damage."
+            },
+            {
+              "name": "Flamethrower",
+              "textA9": "Shuffles 4 Burn into your hand."
+            },
+            {
+              "name": "Windup",
+              "textA9": "Gains 15 Block and 5 Strength."
+            },
+            {
+              "name": "Heavy Cleave",
+              "textA9": "Deals 40 damage."
+            }
+          ],
+          "monsterId": "MECHA_KNIGHT",
+          "count": 1,
+          "pattern": {
+            "type": "opener",
+            "text": "Charge once, then Flamethrower → Windup → Heavy Cleave → repeat."
+          }
+        }
+      ],
+      "name": "Mecha Knight",
+      "rules": [],
+      "timing": []
+    },
+    "MYTES_NORMAL": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Myte",
+          "type": "Normal",
+          "hpA8": [
+            64,
+            69
+          ],
+          "moves": [
+            {
+              "name": "Toxic Cornucopia",
+              "textA9": "Adds 2 Toxic to your hand."
+            },
+            {
+              "name": "Bite",
+              "textA9": "Deals 15 damage."
+            },
+            {
+              "name": "Suck",
+              "textA9": "Deals 6 damage. Gains 3 Strength."
+            }
+          ],
+          "monsterId": "MYTE",
+          "count": 2,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Mytes",
+      "rules": [],
+      "timing": []
+    },
+    "NIBBITS_NORMAL": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Nibbit",
+          "type": "Normal",
+          "hpA8": [
+            44,
+            48
+          ],
+          "moves": [
+            {
+              "name": "Butt",
+              "textA9": "Deals 13 damage."
+            },
+            {
+              "name": "Hesitant Slice",
+              "textA9": "Deals 7 damage. Gains 6 Block."
+            },
+            {
+              "name": "Hiss",
+              "textA9": "Gains 3 Strength."
+            }
+          ],
+          "partyNote": "Overgrowth; * Nibbits (Weak): appears alone; * Nibbits (Normal): Nibbit x2",
+          "monsterId": "NIBBIT",
+          "count": 2,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Nibbits",
+      "rules": [],
+      "timing": []
+    },
+    "NIBBITS_WEAK": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Nibbit",
+          "type": "Normal",
+          "hpA8": [
+            44,
+            48
+          ],
+          "moves": [
+            {
+              "name": "Butt",
+              "textA9": "Deals 13 damage."
+            },
+            {
+              "name": "Hesitant Slice",
+              "textA9": "Deals 7 damage. Gains 6 Block."
+            },
+            {
+              "name": "Hiss",
+              "textA9": "Gains 3 Strength."
+            }
+          ],
+          "partyNote": "Overgrowth; * Nibbits (Weak): appears alone; * Nibbits (Normal): Nibbit x2",
+          "monsterId": "NIBBIT",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Nibbits",
+      "rules": [],
+      "timing": []
+    },
+    "OVERGROWTH_CRAWLERS": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Fuzzy Wurm Crawler",
+          "type": "Normal",
+          "hpA8": [
+            58,
+            59
+          ],
+          "moves": [
+            {
+              "name": "Acid Goop",
+              "textA9": "Deals 6 damage."
+            },
+            {
+              "name": "Inhale",
+              "textA9": "Gains 7 Strength."
+            }
+          ],
+          "partyNote": "Overgrowth; Appears as a solo weak encounter.; Also appears in a strong encounter with Shrinker Beetle.",
+          "monsterId": "FUZZY_WURM_CRAWLER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Shrinker Beetle",
+          "type": "Normal",
+          "hpA8": [
+            40,
+            42
+          ],
+          "moves": [
+            {
+              "name": "Shrinker",
+              "textA9": "Applies Shrink."
+            },
+            {
+              "name": "Chomp",
+              "textA9": "Deals 8 damage."
+            },
+            {
+              "name": "Stomp",
+              "textA9": "Deals 14 damage."
+            }
+          ],
+          "partyNote": "Overgrowth; Appears as a solo weak encounter.; Also appears in a strong encounter with Fuzzy Wurm Crawler.",
+          "monsterId": "SHRINKER_BEETLE",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Overgrowth Crawlers",
+      "rules": [],
+      "timing": []
+    },
+    "OVICOPTER_NORMAL": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Ovicopter",
+          "type": "Normal",
+          "hpA8": [
+            126,
+            132
+          ],
+          "moves": [
+            {
+              "name": "Lay Eggs",
+              "textA9": "Summons 3 Tough Eggs."
+            },
+            {
+              "name": "Smash",
+              "textA9": "Deals 17 damage."
+            },
+            {
+              "name": "Tenderizer",
+              "textA9": "Deals 8 damage. Applies 2 Vulnerable."
+            },
+            {
+              "name": "Nutritional Paste",
+              "textA9": "Gains 4 Strength."
+            }
+          ],
+          "monsterId": "OVICOPTER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Tough Egg",
+          "type": "Minion",
+          "hpA8": [
+            15,
+            19
+          ],
+          "startsWithA9": "Hatch",
+          "moves": [
+            {
+              "name": "Hatch",
+              "textA9": "Hatches into a Hatchling with 20-23 HP. Removes all powers except Minion."
+            },
+            {
+              "name": "Nibble",
+              "textA9": "Deals 5 damage."
+            }
+          ],
+          "monsterId": "TOUGH_EGG",
+          "count": 3,
+          "role": "summoned",
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Ovicopter",
+      "rules": [
+        "Summons 3 Tough Egg minions; eggs hatch into attackers."
+      ],
+      "timing": []
+    },
+    "OWL_MAGISTRATE_NORMAL": {
+      "act": "Glory",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Owl Magistrate",
+          "type": "Normal",
+          "hpA8": [
+            243
+          ],
+          "moves": [
+            {
+              "name": "Magistrate Scrutiny",
+              "textA9": "Deals 17 damage."
+            },
+            {
+              "name": "Peck Assault",
+              "textA9": "Deals 4 damage x6."
+            },
+            {
+              "name": "Judicial Flight",
+              "textA9": "Gains Soar."
+            },
+            {
+              "name": "Verdict",
+              "textA9": "Deals 36 damage. Applies 4 Vulnerable. Removes Soar."
+            }
+          ],
+          "monsterId": "OWL_MAGISTRATE",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Owl Magistrate",
+      "rules": [],
+      "timing": []
+    },
+    "PHANTASMAL_GARDENERS_ELITE": {
+      "act": "Underdocks",
+      "kind": "elite",
+      "lineup": [
+        {
+          "displayName": "Phantasmal Gardener",
+          "type": "Elite",
+          "hpA8": [
+            27,
+            32
+          ],
+          "startsWithA9": "Skittish 7",
+          "moves": [
+            {
+              "name": "Bite",
+              "textA9": "Deals 5 damage."
+            },
+            {
+              "name": "Lash",
+              "textA9": "Deals 7 damage."
+            },
+            {
+              "name": "Flail",
+              "textA9": "Deals 1 damage ×3."
+            },
+            {
+              "name": "Enlarge",
+              "textA9": "Gains 3 Strength."
+            }
+          ],
+          "partyNote": "Underdocks; * Phantasmal Gardener ×4",
+          "monsterId": "PHANTASMAL_GARDENER",
+          "count": 4,
+          "pattern": {
+            "type": "cycle",
+            "text": "Bite → Lash → Flail → Enlarge; all 4 Gardeners start at different offsets."
+          }
+        }
+      ],
+      "name": "Phantasmal Gardeners",
+      "rules": [],
+      "timing": []
+    },
+    "PHROG_PARASITE_ELITE": {
+      "act": "Overgrowth",
+      "kind": "elite",
+      "lineup": [
+        {
+          "displayName": "Phrog Parasite",
+          "type": "Elite",
+          "hpA8": [
+            66,
+            68
+          ],
+          "startsWithA9": "Infested",
+          "moves": [
+            {
+              "name": "Infect",
+              "textA9": "Shuffles 3 Infection into your discard pile."
+            },
+            {
+              "name": "Lash",
+              "textA9": "Deals 5 damage ×4."
+            }
+          ],
+          "partyNote": "Overgrowth; Appears as a solo elite encounter.; Summons Wriggler ×4 upon death (via Infested).",
+          "monsterId": "PHROG_PARASITE",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Wriggler",
+          "type": "Normal",
+          "hpA8": [
+            18,
+            22
+          ],
+          "moves": [
+            {
+              "name": "Nasty Bite",
+              "textA9": "Deals 7 damage."
+            },
+            {
+              "name": "Wriggle",
+              "textA9": "Shuffles 1 Infection into your discard pile. Gains 2 Strength."
+            }
+          ],
+          "partyNote": "Overgrowth; * Appears in the Dense Vegetation event (×4); * Summoned by Phrog Parasite upon death (×4, via Infested)",
+          "monsterId": "WRIGGLER",
+          "count": 4,
+          "role": "summoned on death",
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Phrog Parasite",
+      "rules": [
+        "On death, Infested summons 4 Wrigglers."
+      ],
+      "timing": []
+    },
+    "PUNCH_CONSTRUCT_NORMAL": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Punch Construct",
+          "type": "Normal",
+          "hpA8": [
+            60
+          ],
+          "startsWithA9": "Artifact 1",
+          "moves": [
+            {
+              "name": "READY",
+              "textA9": "Gains 10 Block."
+            },
+            {
+              "name": "Fast Punch",
+              "textA9": "Deals 6 damage ×2. Applies 1 Frail."
+            },
+            {
+              "name": "Strong Punch",
+              "textA9": "Deals 16 damage."
+            }
+          ],
+          "partyNote": "Underdocks; Appears as a solo normal encounter.; Glory; * Cubex Construct ×2",
+          "monsterId": "PUNCH_CONSTRUCT",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Punch Construct",
+      "rules": [],
+      "timing": []
+    },
+    "QUEEN_BOSS": {
+      "act": "Glory",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "Queen",
+          "type": "Boss",
+          "hpA8": [
+            419
+          ],
+          "moves": [
+            {
+              "name": "Puppet Strings",
+              "textA9": "Applies 3 Chains of Binding to all players."
+            },
+            {
+              "name": "You're Mine",
+              "textA9": "Applies 99 Frail, 99 Weak, and 99 Vulnerable to all players."
+            },
+            {
+              "name": "Burn Bright for Me",
+              "textA9": "Gives 1 Strength to Torch Head Amalgam. Gains 20 Block."
+            },
+            {
+              "name": "Off with Your Head",
+              "textA9": "Deals 4 damage x5."
+            },
+            {
+              "name": "Execution",
+              "textA9": "Deals 18 damage."
+            },
+            {
+              "name": "Enrage",
+              "textA9": "Gains 2 Strength."
+            }
+          ],
+          "partyNote": "Glory; * Torch Head Amalgam",
+          "monsterId": "QUEEN",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Torch Head Amalgam",
+          "type": "Minion",
+          "hpA8": [
+            211
+          ],
+          "startsWithA9": "Minion",
+          "moves": [
+            {
+              "name": "Strong Tackle",
+              "textA9": "Deals 32 damage."
+            },
+            {
+              "name": "Tackle",
+              "textA9": "Deals 22 damage."
+            },
+            {
+              "name": "Beam",
+              "textA9": "Deals 8 damage x3."
+            },
+            {
+              "name": "Weak Tackle",
+              "textA9": "Deals 16 damage."
+            }
+          ],
+          "partyNote": "Glory; * Queen",
+          "monsterId": "TORCH_HEAD_AMALGAM",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Queen",
+      "rules": [
+        "Torch Head Amalgam is a Minion and fights alongside Queen."
+      ],
+      "timing": []
+    },
+    "RUBY_RAIDERS_NORMAL": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Assassin Raider",
+          "type": "Normal",
+          "hpA8": [
+            19,
+            24
+          ],
+          "moves": [
+            {
+              "name": "Killshot",
+              "textA9": "Deals 11 damage."
+            }
+          ],
+          "partyNote": "Overgrowth; * 2 others randomly chosen from Axe Raider, Brute Raider, Crossbow Raider, Tracker Raider",
+          "monsterId": "ASSASSIN_RAIDER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Axe Raider",
+          "type": "Normal",
+          "hpA8": [
+            21,
+            23
+          ],
+          "moves": [
+            {
+              "name": "Swing",
+              "textA9": "Deals 6 damage. Gains 6 Block."
+            },
+            {
+              "name": "Big Swing",
+              "textA9": "Deals 13 damage."
+            }
+          ],
+          "partyNote": "Overgrowth; * 2 others randomly chosen from Assassin Raider, Brute Raider, Crossbow Raider, Tracker Raider",
+          "monsterId": "AXE_RAIDER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Crossbow Raider",
+          "type": "Normal",
+          "hpA8": [
+            19,
+            22
+          ],
+          "moves": [
+            {
+              "name": "Reload",
+              "textA9": "Gains 3 Block."
+            },
+            {
+              "name": "Fire!",
+              "textA9": "Deals 16 damage."
+            }
+          ],
+          "partyNote": "Overgrowth; * 2 others randomly chosen from Axe Raider, Assassin Raider, Brute Raider, Tracker Raider",
+          "monsterId": "CROSSBOW_RAIDER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Ruby Raiders",
+      "rules": [],
+      "timing": []
+    },
+    "SCROLLS_OF_BITING_NORMAL": {
+      "act": "Glory",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Scroll of Biting",
+          "type": "Normal",
+          "hpA8": [
+            32,
+            39
+          ],
+          "startsWithA9": "Paper Cuts 2",
+          "moves": [
+            {
+              "name": "Chomp",
+              "textA9": "Deals 16 damage."
+            },
+            {
+              "name": "More Teeth",
+              "textA9": "Gains 2 Strength."
+            },
+            {
+              "name": "Chew",
+              "textA9": "Deals 6 damage 2 times."
+            }
+          ],
+          "monsterId": "SCROLL_OF_BITING",
+          "count": 4,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Scrolls Of Biting",
+      "rules": [],
+      "timing": []
+    },
+    "SCROLLS_OF_BITING_WEAK": {
+      "act": "Glory",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Scroll of Biting",
+          "type": "Normal",
+          "hpA8": [
+            32,
+            39
+          ],
+          "startsWithA9": "Paper Cuts 2",
+          "moves": [
+            {
+              "name": "Chomp",
+              "textA9": "Deals 16 damage."
+            },
+            {
+              "name": "More Teeth",
+              "textA9": "Gains 2 Strength."
+            },
+            {
+              "name": "Chew",
+              "textA9": "Deals 6 damage 2 times."
+            }
+          ],
+          "monsterId": "SCROLL_OF_BITING",
+          "count": 3,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Scrolls Of Biting",
+      "rules": [],
+      "timing": []
+    },
+    "SEAPUNK_NORMAL": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Seapunk",
+          "type": "Normal",
+          "hpA8": [
+            47,
+            49
+          ],
+          "moves": [
+            {
+              "name": "Sea Kick",
+              "textA9": "Deals 13 damage."
+            },
+            {
+              "name": "Spinning Kick",
+              "textA9": "Deals 2 damage ×4."
+            },
+            {
+              "name": "Bubble Burp",
+              "textA9": "Gains 8 Block and 2 Strength."
+            }
+          ],
+          "partyNote": "Underdocks; * Calcified Cultist (Seapunk encounter)",
+          "monsterId": "SEAPUNK",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Calcified Cultist",
+          "type": "Normal",
+          "hpA8": [
+            39,
+            42
+          ],
+          "moves": [
+            {
+              "name": "Incantation",
+              "textA9": "Gains 2 Ritual."
+            },
+            {
+              "name": "Dark Strike",
+              "textA9": "Deals 11 damage."
+            }
+          ],
+          "partyNote": "Underdocks; * Damp Cultist (Cultists encounter); * Seapunk (Seapunk Normal encounter)",
+          "monsterId": "CALCIFIED_CULTIST",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Seapunk",
+      "rules": [],
+      "timing": []
+    },
+    "SEAPUNK_WEAK": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Seapunk",
+          "type": "Normal",
+          "hpA8": [
+            47,
+            49
+          ],
+          "moves": [
+            {
+              "name": "Sea Kick",
+              "textA9": "Deals 13 damage."
+            },
+            {
+              "name": "Spinning Kick",
+              "textA9": "Deals 2 damage ×4."
+            },
+            {
+              "name": "Bubble Burp",
+              "textA9": "Gains 8 Block and 2 Strength."
+            }
+          ],
+          "partyNote": "Underdocks; * Calcified Cultist (Seapunk encounter)",
+          "monsterId": "SEAPUNK",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Seapunk",
+      "rules": [],
+      "timing": []
+    },
+    "SEWER_CLAM_NORMAL": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Sewer Clam",
+          "type": "Normal",
+          "hpA8": [
+            58
+          ],
+          "startsWithA9": "Plating 9",
+          "moves": [
+            {
+              "name": "Jet",
+              "textA9": "Deals 11 damage."
+            },
+            {
+              "name": "Pressurize",
+              "textA9": "Gains 4 Strength."
+            }
+          ],
+          "monsterId": "SEWER_CLAM",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Sewer Clam",
+      "rules": [],
+      "timing": []
+    },
+    "SHRINKER_BEETLE_WEAK": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Shrinker Beetle",
+          "type": "Normal",
+          "hpA8": [
+            40,
+            42
+          ],
+          "moves": [
+            {
+              "name": "Shrinker",
+              "textA9": "Applies Shrink."
+            },
+            {
+              "name": "Chomp",
+              "textA9": "Deals 8 damage."
+            },
+            {
+              "name": "Stomp",
+              "textA9": "Deals 14 damage."
+            }
+          ],
+          "partyNote": "Overgrowth; Appears as a solo weak encounter.; Also appears in a strong encounter with Fuzzy Wurm Crawler.",
+          "monsterId": "SHRINKER_BEETLE",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Shrinker Beetle",
+      "rules": [],
+      "timing": []
+    },
+    "SKULKING_COLONY_ELITE": {
+      "act": "Underdocks",
+      "kind": "elite",
+      "lineup": [
+        {
+          "displayName": "Skulking Colony",
+          "type": "Elite",
+          "hpA8": [
+            80
+          ],
+          "startsWithA9": "Hardened Shell 20",
+          "moves": [
+            {
+              "name": "Zoom",
+              "textA9": "Deals 16 damage."
+            },
+            {
+              "name": "Inertia",
+              "textA9": "Deals 11 damage and gains 4 Strength."
+            },
+            {
+              "name": "Piercing Stabs",
+              "textA9": "Deals 8x2 damage."
+            }
+          ],
+          "monsterId": "SKULKING_COLONY",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Skulking Colony",
+      "rules": [],
+      "timing": []
+    },
+    "SLIMED_BERSERKER_NORMAL": {
+      "act": "Glory",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Slimed Berserker",
+          "type": "Normal",
+          "hpA8": [
+            276
+          ],
+          "moves": [
+            {
+              "name": "Vomit Ichor",
+              "textA9": "Shuffles 10 Slimed into the discard pile."
+            },
+            {
+              "name": "Furious Pummeling",
+              "textA9": "Deals 5 damage x4."
+            },
+            {
+              "name": "Leeching Hug",
+              "textA9": "Applies 3 Weak. Gains 3 Strength."
+            },
+            {
+              "name": "Smother",
+              "textA9": "Deals 33 damage."
+            }
+          ],
+          "monsterId": "SLIMED_BERSERKER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Slimed Berserker",
+      "rules": [],
+      "timing": []
+    },
+    "SLIMES_NORMAL": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Twig Slime (M)",
+          "type": "Normal",
+          "hpA8": [
+            27,
+            29
+          ],
+          "moves": [
+            {
+              "name": "Chomp",
+              "textA9": "Deals 12 damage."
+            },
+            {
+              "name": "Sticky Shot",
+              "textA9": "Shuffles 1 Slimed into your discard pile."
+            }
+          ],
+          "partyNote": "Overgrowth; * Slimes (Weak): Leaf Slime (S), Twig Slime (S), and randomly chosen as the medium slime; * Slimes (Normal): Leaf Slime (S), Leaf Slime (M), Twig Slime (S); * Flyconid: randomly chosen companion with Flyconid; * Slithering Strangler: possible companion with Slithering Strangler (medium slime variant)",
+          "monsterId": "TWIG_SLIME_M",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Leaf Slime (M)",
+          "type": "Normal",
+          "hpA8": [
+            33,
+            36
+          ],
+          "moves": [
+            {
+              "name": "Clump Shot",
+              "textA9": "Deals 9 damage."
+            },
+            {
+              "name": "Sticky Shot",
+              "textA9": "Shuffles 2 Slimed into your discard pile."
+            }
+          ],
+          "partyNote": "Overgrowth; * Slimes (Weak): Leaf Slime (S), Twig Slime (S), and randomly chosen as the medium slime; * Slimes (Normal): Leaf Slime (S), Twig Slime (S), Twig Slime (M); * Flyconid: randomly chosen companion with Flyconid; * Slithering Strangler: possible companion with Slithering Strangler (medium slime variant)",
+          "monsterId": "LEAF_SLIME_M",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Twig Slime (S)",
+          "type": "Normal",
+          "hpA8": [
+            8,
+            12
+          ],
+          "moves": [
+            {
+              "name": "Tackle",
+              "textA9": "Deals 5 damage."
+            }
+          ],
+          "partyNote": "Overgrowth; * Slimes (Weak): Leaf Slime (S) + 1 random from Leaf Slime (M) or Twig Slime (M); * Slimes (Normal): Leaf Slime (S), Leaf Slime (M), Twig Slime (M); * Slithering Strangler: possible companion with Slithering Strangler (2 small slimes variant)",
+          "monsterId": "TWIG_SLIME_S",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Leaf Slime (S)",
+          "type": "Normal",
+          "hpA8": [
+            12,
+            16
+          ],
+          "moves": [
+            {
+              "name": "Tackle",
+              "textA9": "Deals 4 damage."
+            },
+            {
+              "name": "Goop",
+              "textA9": "Shuffles 1 Slimed into your discard pile."
+            }
+          ],
+          "partyNote": "Overgrowth; * Slimes (Weak): Twig Slime (S) + 1 random from Leaf Slime (M) or Twig Slime (M); * Slimes (Normal): Leaf Slime (M), Twig Slime (S), Twig Slime (M); * Slithering Strangler: possible companion with Slithering Strangler (2 small slimes variant)",
+          "monsterId": "LEAF_SLIME_S",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Slimes",
+      "rules": [],
+      "timing": []
+    },
+    "SLIMES_WEAK": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Twig Slime (M)",
+          "type": "Normal",
+          "hpA8": [
+            27,
+            29
+          ],
+          "moves": [
+            {
+              "name": "Chomp",
+              "textA9": "Deals 12 damage."
+            },
+            {
+              "name": "Sticky Shot",
+              "textA9": "Shuffles 1 Slimed into your discard pile."
+            }
+          ],
+          "partyNote": "Overgrowth; * Slimes (Weak): Leaf Slime (S), Twig Slime (S), and randomly chosen as the medium slime; * Slimes (Normal): Leaf Slime (S), Leaf Slime (M), Twig Slime (S); * Flyconid: randomly chosen companion with Flyconid; * Slithering Strangler: possible companion with Slithering Strangler (medium slime variant)",
+          "monsterId": "TWIG_SLIME_M",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Twig Slime (S)",
+          "type": "Normal",
+          "hpA8": [
+            8,
+            12
+          ],
+          "moves": [
+            {
+              "name": "Tackle",
+              "textA9": "Deals 5 damage."
+            }
+          ],
+          "partyNote": "Overgrowth; * Slimes (Weak): Leaf Slime (S) + 1 random from Leaf Slime (M) or Twig Slime (M); * Slimes (Normal): Leaf Slime (S), Leaf Slime (M), Twig Slime (M); * Slithering Strangler: possible companion with Slithering Strangler (2 small slimes variant)",
+          "monsterId": "TWIG_SLIME_S",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Leaf Slime (S)",
+          "type": "Normal",
+          "hpA8": [
+            12,
+            16
+          ],
+          "moves": [
+            {
+              "name": "Tackle",
+              "textA9": "Deals 4 damage."
+            },
+            {
+              "name": "Goop",
+              "textA9": "Shuffles 1 Slimed into your discard pile."
+            }
+          ],
+          "partyNote": "Overgrowth; * Slimes (Weak): Twig Slime (S) + 1 random from Leaf Slime (M) or Twig Slime (M); * Slimes (Normal): Leaf Slime (M), Twig Slime (S), Twig Slime (M); * Slithering Strangler: possible companion with Slithering Strangler (2 small slimes variant)",
+          "monsterId": "LEAF_SLIME_S",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Slimes",
+      "rules": [],
+      "timing": []
+    },
+    "SLITHERING_STRANGLER_NORMAL": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Slithering Strangler",
+          "type": "Normal",
+          "hpA8": [
+            54,
+            56
+          ],
+          "moves": [
+            {
+              "name": "Constrict",
+              "textA9": "Applies 3 Constrict."
+            },
+            {
+              "name": "Thwack",
+              "textA9": "Deals 8 damage. Gains 5 Block."
+            },
+            {
+              "name": "Lash",
+              "textA9": "Deals 13 damage."
+            }
+          ],
+          "partyNote": "Overgrowth; * Slithering Strangler + 1 random secondary: Snapping Jaxfruit, or 1 medium slime (Leaf Slime (M) or Twig Slime (M)), or 2 small slimes (Leaf Slime (S) + Twig Slime (S))",
+          "monsterId": "SLITHERING_STRANGLER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Leaf Slime (S)",
+          "type": "Normal",
+          "hpA8": [
+            12,
+            16
+          ],
+          "moves": [
+            {
+              "name": "Tackle",
+              "textA9": "Deals 4 damage."
+            },
+            {
+              "name": "Goop",
+              "textA9": "Shuffles 1 Slimed into your discard pile."
+            }
+          ],
+          "partyNote": "Overgrowth; * Slimes (Weak): Twig Slime (S) + 1 random from Leaf Slime (M) or Twig Slime (M); * Slimes (Normal): Leaf Slime (M), Twig Slime (S), Twig Slime (M); * Slithering Strangler: possible companion with Slithering Strangler (2 small slimes variant)",
+          "monsterId": "LEAF_SLIME_S",
+          "count": 2,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Slithering Strangler",
+      "rules": [],
+      "timing": []
+    },
+    "SLUDGE_SPINNER_WEAK": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Sludge Spinner",
+          "type": "Normal",
+          "hpA8": [
+            41,
+            42
+          ],
+          "moves": [
+            {
+              "name": "Oil Spray",
+              "textA9": "Deals 9 damage. Applies 1 Weak."
+            },
+            {
+              "name": "Slam",
+              "textA9": "Deals 12 damage."
+            },
+            {
+              "name": "Rage",
+              "textA9": "Deals 7 damage. Gains 3 Strength."
+            }
+          ],
+          "monsterId": "SLUDGE_SPINNER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Sludge Spinner",
+      "rules": [],
+      "timing": []
+    },
+    "SLUMBERING_BEETLE_NORMAL": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Slumbering Beetle",
+          "type": "Normal",
+          "hpA8": [
+            89
+          ],
+          "startsWithA9": "Plating 18; Slumber 3",
+          "moves": [
+            {
+              "name": "Snore",
+              "textA9": "Does nothing. Asleep."
+            },
+            {
+              "name": "Roll Out",
+              "textA9": "Deals 18 damage. Gains 2 Strength."
+            }
+          ],
+          "monsterId": "SLUMBERING_BEETLE",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Bowlbug (Rock)",
+          "type": "Normal",
+          "hpA8": [
+            46,
+            49
+          ],
+          "startsWithA9": "Imbalanced",
+          "moves": [
+            {
+              "name": "Headbutt",
+              "textA9": "Deals 16 damage."
+            },
+            {
+              "name": "Dizzy",
+              "textA9": "Stunned. Does nothing."
+            }
+          ],
+          "monsterId": "BOWLBUG_ROCK",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Bowlbug (Silk)",
+          "type": "Normal",
+          "hpA8": [
+            41,
+            44
+          ],
+          "moves": [
+            {
+              "name": "Thrash",
+              "textA9": "Deals 5 damage x2."
+            },
+            {
+              "name": "Spin Web",
+              "textA9": "Applies 1 Weak."
+            }
+          ],
+          "monsterId": "BOWLBUG_SILK",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Slumbering Beetle",
+      "rules": [],
+      "timing": []
+    },
+    "SNAPPING_JAXFRUIT_NORMAL": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Snapping Jaxfruit",
+          "type": "Normal",
+          "hpA8": [
+            34,
+            36
+          ],
+          "moves": [
+            {
+              "name": "Energy Orb",
+              "textA9": "Deals 4 damage. Gains 2 Strength."
+            }
+          ],
+          "partyNote": "Overgrowth; * Snapping Jaxfruit encounter: Snapping Jaxfruit + Flyconid; * Slithering Strangler encounter: Slithering Strangler + 1 random companion (Snapping Jaxfruit or 1 medium slime or 2 small slimes)",
+          "monsterId": "SNAPPING_JAXFRUIT",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Flyconid",
+          "type": "Normal",
+          "hpA8": [
+            51,
+            53
+          ],
+          "moves": [
+            {
+              "name": "Weakening Spores",
+              "textA9": "Applies 2 Vulnerable."
+            },
+            {
+              "name": "Frail Spores",
+              "textA9": "Deals 9 damage. Applies 2 Frail."
+            },
+            {
+              "name": "Smash",
+              "textA9": "Deals 12 damage."
+            }
+          ],
+          "partyNote": "Overgrowth; * Flyconid encounter: Flyconid + 1 random from Leaf Slime (M) or Twig Slime (M); * Snapping Jaxfruit encounter: Snapping Jaxfruit + Flyconid",
+          "monsterId": "FLYCONID",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Snapping Jaxfruit",
+      "rules": [],
+      "timing": []
+    },
+    "SOUL_FYSH_BOSS": {
+      "act": "Underdocks",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "Soul Fysh",
+          "type": "Boss",
+          "hpA8": [
+            221
+          ],
+          "moves": [
+            {
+              "name": "Beckon",
+              "textA9": "Shuffles 2 Beckon into your deck (1 into draw pile, 1 into discard pile)."
+            },
+            {
+              "name": "De-Gas",
+              "textA9": "Deals 17 damage."
+            },
+            {
+              "name": "Gaze",
+              "textA9": "Deals 8 damage. Shuffles 1 Beckon into your discard pile."
+            },
+            {
+              "name": "Fade",
+              "textA9": "Gains 2 Intangible."
+            },
+            {
+              "name": "Scream",
+              "textA9": "Deals 15 damage. Applies 3 Vulnerable."
+            }
+          ],
+          "monsterId": "SOUL_FYSH",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Soul Fysh",
+      "rules": [],
+      "timing": []
+    },
+    "SOUL_NEXUS_ELITE": {
+      "act": "Glory",
+      "kind": "elite",
+      "lineup": [
+        {
+          "displayName": "Soul Nexus",
+          "type": "Elite",
+          "hpA8": [
+            254
+          ],
+          "moves": [
+            {
+              "name": "Soul Burn",
+              "textA9": "Deals 31 damage."
+            },
+            {
+              "name": "Maelstrom",
+              "textA9": "Deals 7 damage ×4."
+            },
+            {
+              "name": "Drain Life",
+              "textA9": "Deals 19 damage. Applies 2 Vulnerable and 2 Weak."
+            }
+          ],
+          "monsterId": "SOUL_NEXUS",
+          "count": 1,
+          "pattern": {
+            "type": "opener",
+            "text": "Soul Burn opener; then Soul Burn / Maelstrom / Drain Life equally at random, never the same move twice."
+          }
+        }
+      ],
+      "name": "Soul Nexus",
+      "rules": [],
+      "timing": []
+    },
+    "SPINY_TOAD_NORMAL": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Spiny Toad",
+          "type": "Normal",
+          "hpA8": [
+            121,
+            124
+          ],
+          "moves": [
+            {
+              "name": "Protruding Spikes",
+              "textA9": "Gains 5 Thorns."
+            },
+            {
+              "name": "Spike Explosion",
+              "textA9": "Deals 25 damage. Loses 5 Thorns."
+            },
+            {
+              "name": "Tongue Lash",
+              "textA9": "Deals 19 damage."
+            }
+          ],
+          "monsterId": "SPINY_TOAD",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Spiny Toad",
+      "rules": [],
+      "timing": []
+    },
+    "TERROR_EEL_ELITE": {
+      "act": "Underdocks",
+      "kind": "elite",
+      "lineup": [
+        {
+          "displayName": "Terror Eel",
+          "type": "Elite",
+          "hpA8": [
+            150
+          ],
+          "startsWithA9": "Shriek 75",
+          "moves": [
+            {
+              "name": "Crash",
+              "textA9": "Deals 18 damage."
+            },
+            {
+              "name": "Thrash",
+              "textA9": "Deals 4x3 damage. Gains 6 Vigor."
+            },
+            {
+              "name": "Stun",
+              "textA9": "Stunned. Does nothing."
+            },
+            {
+              "name": "Terror",
+              "textA9": "Applies 99 Vulnerable."
+            }
+          ],
+          "monsterId": "TERROR_EEL",
+          "count": 1,
+          "pattern": {
+            "type": "opener",
+            "text": "Crash opener, then alternates Crash ↔ Thrash. At the Shriek threshold: Stun → Terror, then resume."
+          }
+        }
+      ],
+      "name": "Terror Eel",
+      "rules": [],
+      "timing": []
+    },
+    "TEST_SUBJECT_BOSS": {
+      "act": "Glory",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "Test Subject",
+          "type": "Boss",
+          "hpA8": [
+            111
+          ],
+          "startsWithA9": "Adaptable, Enrage 3",
+          "moves": [
+            {
+              "name": "Bite",
+              "textA9": "Deals 22 damage."
+            },
+            {
+              "name": "Skull Bash",
+              "textA9": "Deals 16 damage. Applies 1 Vulnerable."
+            }
+          ],
+          "monsterId": "TEST_SUBJECT",
+          "count": 1,
+          "role": "phase 1",
+          "pattern": {
+            "type": "cycle",
+            "text": "Phase 1 alternates Bite ↔ Skull Bash."
+          }
+        },
+        {
+          "displayName": "Test Subject (Phase 2)",
+          "type": "Boss",
+          "hpA8": [
+            212
+          ],
+          "startsWithA9": "Adaptable, Painful Stabs",
+          "moves": [
+            {
+              "name": "Multi-Claw",
+              "textA9": "Deals 11 damage x3 (increases by 1 hit each use)."
+            }
+          ],
+          "monsterId": "TEST_SUBJECT_PHASE_2",
+          "count": 1,
+          "role": "phase 2",
+          "pattern": {
+            "type": "cycle",
+            "text": "Phase 2 repeats Multi-Claw every turn, starting at 3 hits and adding 1 hit each use."
+          }
+        },
+        {
+          "displayName": "Test Subject (Phase 3)",
+          "type": "Boss",
+          "hpA8": [
+            313
+          ],
+          "startsWithA9": "Nemesis",
+          "moves": [
+            {
+              "name": "Lacerate",
+              "textA9": "Deals 11 damage x3."
+            },
+            {
+              "name": "Big Pounce",
+              "textA9": "Deals 45 damage."
+            },
+            {
+              "name": "Burning Growl",
+              "textA9": "Shuffles 5 Burn into discard pile. Gains 3 Strength."
+            }
+          ],
+          "monsterId": "TEST_SUBJECT_PHASE_3",
+          "count": 1,
+          "role": "phase 3",
+          "pattern": {
+            "type": "cycle",
+            "text": "Phase 3: Lacerate → Big Pounce → Burning Growl → repeat."
+          }
+        }
+      ],
+      "name": "Test Subject",
+      "rules": [
+        "These 3 bodies are sequential phases, not simultaneous enemies: Adaptable revives Phase 1 as Phase 2, then Phase 2 as Phase 3.",
+        "Each transition removes all status effects; the body cannot be targeted until it revives."
+      ],
+      "timing": [
+        "On-kill and Fatal effects trigger on each phase transition."
+      ]
+    },
+    "THE_INSATIABLE_BOSS": {
+      "act": "Hive",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "The Insatiable",
+          "type": "Boss",
+          "hpA8": [
+            341
+          ],
+          "moves": [
+            {
+              "name": "Liquify Ground",
+              "textA9": "Gains 4 Sandpit (counted separately for each player). Shuffles 6 Frantic Escape into each player's deck (3 into draw pile, 3 into discard pile)."
+            },
+            {
+              "name": "Thrash",
+              "textA9": "Deals 9 damage ×2."
+            },
+            {
+              "name": "Lunging Bite",
+              "textA9": "Deals 31 damage."
+            },
+            {
+              "name": "Salivate",
+              "textA9": "Gains 3 Strength."
+            }
+          ],
+          "monsterId": "THE_INSATIABLE",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "The Insatiable",
+      "rules": [],
+      "timing": []
+    },
+    "THE_KIN_BOSS": {
+      "act": "Overgrowth",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "Kin Priest",
+          "type": "Boss",
+          "hpA8": [
+            199
+          ],
+          "moves": [
+            {
+              "name": "Orb of Frailty",
+              "textA9": "Deals 9 damage. Applies 1 Frail."
+            },
+            {
+              "name": "Orb of Weakness",
+              "textA9": "Deals 9 damage. Applies 1 Weak."
+            },
+            {
+              "name": "Soul Beam",
+              "textA9": "Deals 3 damage ×3."
+            },
+            {
+              "name": "Dark Ritual",
+              "textA9": "Gains 3 Strength."
+            }
+          ],
+          "partyNote": "Overgrowth; * Kin Follower ×2; * Kin Priest",
+          "monsterId": "KIN_PRIEST",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Kin Follower",
+          "type": "Boss",
+          "hpA8": [
+            62,
+            63
+          ],
+          "startsWithA9": "Minion",
+          "moves": [
+            {
+              "name": "Quick Slash",
+              "textA9": "Deals 5 damage."
+            },
+            {
+              "name": "Boomerang",
+              "textA9": "Deals 2 damage ×2."
+            },
+            {
+              "name": "Power Dance",
+              "textA9": "Gains 3 Strength."
+            }
+          ],
+          "partyNote": "Overgrowth; * Kin Follower ×2; * Kin Priest",
+          "monsterId": "KIN_FOLLOWER",
+          "count": 2,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "The Kin",
+      "rules": [],
+      "timing": []
+    },
+    "THE_LOST_AND_FORGOTTEN_NORMAL": {
+      "act": "Glory",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "The Lost",
+          "type": "Normal",
+          "hpA8": [
+            99
+          ],
+          "startsWithA9": "Possess Strength",
+          "moves": [
+            {
+              "name": "Debilitating Smog",
+              "textA9": "Removes 2 Strength from the player and gains 2 Strength."
+            },
+            {
+              "name": "Eye Lasers",
+              "textA9": "Deals 5 damage x2."
+            }
+          ],
+          "monsterId": "THE_LOST",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "The Forgotten",
+          "type": "Normal",
+          "hpA8": [
+            111
+          ],
+          "startsWithA9": "Possess Speed",
+          "moves": [
+            {
+              "name": "Miasma",
+              "textA9": "Removes 2 Dexterity from the player. Gains 8 Block and 2 Dexterity."
+            },
+            {
+              "name": "Dread",
+              "textA9": "Deals 15 damage plus the amount of Dexterity the Forgotten has."
+            }
+          ],
+          "monsterId": "THE_FORGOTTEN",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "The Lost And Forgotten",
+      "rules": [],
+      "timing": []
+    },
+    "THE_OBSCURA_NORMAL": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "The Obscura",
+          "type": "Normal",
+          "hpA8": [
+            129
+          ],
+          "moves": [
+            {
+              "name": "Illusion",
+              "textA9": "Summons a Parafright."
+            },
+            {
+              "name": "Piercing Gaze",
+              "textA9": "Deals 11 damage."
+            },
+            {
+              "name": "Wail",
+              "textA9": "All enemies gain 3 Strength."
+            },
+            {
+              "name": "Hardening Strike",
+              "textA9": "Deals 7 damage. Gains 7 Block."
+            }
+          ],
+          "monsterId": "THE_OBSCURA",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Parafright",
+          "type": "Minion",
+          "startsWithA9": "Illusion",
+          "moves": [
+            {
+              "name": "Slam",
+              "textA9": "Deals 17 damage."
+            }
+          ],
+          "monsterId": "PARAFRIGHT",
+          "count": 1,
+          "role": "summoned",
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "The Obscura",
+      "rules": [
+        "Summons a Parafright minion."
+      ],
+      "timing": []
+    },
+    "THIEVING_HOPPER_WEAK": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Thieving Hopper",
+          "type": "Normal",
+          "hpA8": [
+            84
+          ],
+          "startsWithA9": "Escape Artist 5",
+          "moves": [
+            {
+              "name": "Thievery",
+              "textA9": "Deals 19 damage. Steals a card from your deck."
+            },
+            {
+              "name": "Flutter",
+              "textA9": "Gains Flutter (takes 50% less Attack damage; must be hit 5 times to Stun it)."
+            },
+            {
+              "name": "Hat Trick",
+              "textA9": "Deals 23 damage."
+            },
+            {
+              "name": "Nab",
+              "textA9": "Deals 16 damage."
+            },
+            {
+              "name": "Escape",
+              "textA9": "Flees the combat, taking any stolen cards with it."
+            }
+          ],
+          "monsterId": "THIEVING_HOPPER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Thieving Hopper",
+      "rules": [],
+      "timing": []
+    },
+    "TOADPOLES_WEAK": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Toadpole",
+          "type": "Normal",
+          "hpA8": [
+            22,
+            26
+          ],
+          "moves": [
+            {
+              "name": "Spike Spit",
+              "textA9": "Deals 4 damage ×3. Removes 2 Thorns from self."
+            },
+            {
+              "name": "Whirl",
+              "textA9": "Deals 8 damage."
+            },
+            {
+              "name": "Spiken",
+              "textA9": "Gains 2 Thorns."
+            }
+          ],
+          "partyNote": "Underdocks; * Toadpoles (Weak): Toadpole ×2",
+          "monsterId": "TOADPOLE",
+          "count": 2,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Toadpoles",
+      "rules": [],
+      "timing": []
+    },
+    "TUNNELER_NORMAL": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Tunneler",
+          "type": "Normal",
+          "hpA8": [
+            92
+          ],
+          "moves": [
+            {
+              "name": "Bite",
+              "textA9": "Deals 15 damage."
+            },
+            {
+              "name": "Burrow",
+              "textA9": "Gains Burrowed and 37 Block."
+            },
+            {
+              "name": "Attack from Below",
+              "textA9": "Deals 26 damage."
+            },
+            {
+              "name": "Emerging Strike",
+              "textA9": "Stunned. Does nothing this turn."
+            }
+          ],
+          "monsterId": "TUNNELER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Tunneler",
+      "rules": [],
+      "timing": []
+    },
+    "TUNNELER_WEAK": {
+      "act": "Hive",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Tunneler",
+          "type": "Normal",
+          "hpA8": [
+            92
+          ],
+          "moves": [
+            {
+              "name": "Bite",
+              "textA9": "Deals 15 damage."
+            },
+            {
+              "name": "Burrow",
+              "textA9": "Gains Burrowed and 37 Block."
+            },
+            {
+              "name": "Attack from Below",
+              "textA9": "Deals 26 damage."
+            },
+            {
+              "name": "Emerging Strike",
+              "textA9": "Stunned. Does nothing this turn."
+            }
+          ],
+          "monsterId": "TUNNELER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Tunneler",
+      "rules": [],
+      "timing": []
+    },
+    "TURRET_OPERATOR_WEAK": {
+      "act": "Glory",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Living Shield",
+          "type": "Normal",
+          "hpA8": [
+            65
+          ],
+          "startsWithA9": "Rampart 25",
+          "moves": [
+            {
+              "name": "Shield Slam",
+              "textA9": "Deals 6 damage."
+            },
+            {
+              "name": "Smash",
+              "textA9": "Deals 18 damage. Gains 3 Strength."
+            }
+          ],
+          "monsterId": "LIVING_SHIELD",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        },
+        {
+          "displayName": "Turret Operator",
+          "type": "Normal",
+          "hpA8": [
+            51
+          ],
+          "moves": [
+            {
+              "name": "Unload!",
+              "textA9": "Deals 4 damage x5."
+            },
+            {
+              "name": "Loading",
+              "textA9": "Gains 1 Strength."
+            }
+          ],
+          "monsterId": "TURRET_OPERATOR",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Turret Operator",
+      "rules": [],
+      "timing": []
+    },
+    "TWO_TAILED_RATS_NORMAL": {
+      "act": "Underdocks",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Two-Tailed Rat",
+          "type": "Normal",
+          "hpA8": [
+            18,
+            22
+          ],
+          "moves": [
+            {
+              "name": "Scratch",
+              "textA9": "Deals 9 damage."
+            },
+            {
+              "name": "Disease Bite",
+              "textA9": "Deals 7 damage."
+            },
+            {
+              "name": "Screech",
+              "textA9": "Applies 1 Frail."
+            },
+            {
+              "name": "Call for Backup",
+              "textA9": "Summons a new Two-Tailed Rat."
+            }
+          ],
+          "partyNote": "Underdocks; * Two-Tailed Rat ×3",
+          "monsterId": "TWO_TAILED_RAT",
+          "count": 3,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Two Tailed Rats",
+      "rules": [
+        "Two-Tailed Rat — Summons a new Two-Tailed Rat."
+      ],
+      "timing": []
+    },
+    "VANTOM_BOSS": {
+      "act": "Overgrowth",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "Vantom",
+          "type": "Boss",
+          "hpA8": [
+            183
+          ],
+          "startsWithA9": "Slippery 9",
+          "moves": [
+            {
+              "name": "Ink Blot",
+              "textA9": "Deals 8 damage."
+            },
+            {
+              "name": "Inky Lance",
+              "textA9": "Deals 7 damage ×2."
+            },
+            {
+              "name": "Dismember",
+              "textA9": "Deals 30 damage. Shuffles 3 Wound into your discard pile."
+            },
+            {
+              "name": "Prepare",
+              "textA9": "Gains 2 Strength."
+            }
+          ],
+          "monsterId": "VANTOM",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Vantom",
+      "rules": [],
+      "timing": []
+    },
+    "VINE_SHAMBLER_NORMAL": {
+      "act": "Overgrowth",
+      "kind": "hallway",
+      "lineup": [
+        {
+          "displayName": "Vine Shambler",
+          "type": "Normal",
+          "hpA8": [
+            64
+          ],
+          "moves": [
+            {
+              "name": "Swipe",
+              "textA9": "Deals 7 damage ×2."
+            },
+            {
+              "name": "Grasping Vines",
+              "textA9": "Deals 9 damage. Applies 1 Tangled."
+            },
+            {
+              "name": "Chomp",
+              "textA9": "Deals 18 damage."
+            }
+          ],
+          "monsterId": "VINE_SHAMBLER",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Vine Shambler",
+      "rules": [],
+      "timing": []
+    },
+    "WATERFALL_GIANT_BOSS": {
+      "act": "Underdocks",
+      "kind": "boss",
+      "lineup": [
+        {
+          "displayName": "Waterfall Giant",
+          "type": "Boss",
+          "hpA8": [
+            250
+          ],
+          "moves": [
+            {
+              "name": "Pressurize",
+              "textA9": "Gains 20 Steam Eruption."
+            },
+            {
+              "name": "Stomp",
+              "textA9": "Deals 16 damage. Applies 1 Weak. Gains 3 Steam Eruption."
+            },
+            {
+              "name": "Ram",
+              "textA9": "Deals 11 damage. Gains 3 Steam Eruption."
+            },
+            {
+              "name": "Siphon",
+              "textA9": "Heals 15 HP per player. Gains 3 Steam Eruption."
+            },
+            {
+              "name": "Pressure Gun",
+              "textA9": "Deals 23 damage (increases by 5 each use). Gains 3 Steam Eruption."
+            },
+            {
+              "name": "Pressure Up",
+              "textA9": "Deals 14 damage. Gains 3 Steam Eruption."
+            },
+            {
+              "name": "About To Blow",
+              "textA9": "Becomes invulnerable. Removes Steam Eruption and prepares to explode."
+            },
+            {
+              "name": "Explode",
+              "textA9": "Deals damage equal to its stored Steam Eruption amount, then dies."
+            }
+          ],
+          "monsterId": "WATERFALL_GIANT",
+          "count": 1,
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Uses the listed moves; exact opener and repeat constraints vary."
+          }
+        }
+      ],
+      "name": "Waterfall Giant",
+      "rules": [
+        "Waterfall Giant — Deals damage equal to its stored Steam Eruption amount, then dies."
+      ],
+      "timing": []
+    }
+  }
+}

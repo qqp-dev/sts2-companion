@@ -1,0 +1,3 @@
+[INFO] Creating NCombatRoom with mode=ActiveCombat encounter=DECIMILLIPEDE_ELITE.
+[INFO] CHARACTER.NECROBINDER has won against encounter ENCOUNTER.DECIMILLIPEDE_ELITE. That's 1 wins
+[DEBUG] [ActionQueueSynchronizer] Combat state becomes NotInCombat. Cancelling deferred actions
