@@ -1,6 +1,455 @@
 {
   "meta": {
-    "source": "Slay the Spire Wiki (wiki.gg), StS2 enemy pages and Module:Enemies/StS2 data/*",
+    "source": "wiki.gg StS2 enemy/elite/boss article pages; Module:Enemies snapshots only as fallback",
+    "wikiPages": [
+      {
+        "title": "Slay the Spire 2:Aeonglass",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Aeonglass",
+        "revisionId": 50145,
+        "revisionTimestamp": "2026-08-27T17:58:28Z"
+      },
+      {
+        "title": "Slay the Spire 2:Axebot",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Axebot",
+        "revisionId": 50911,
+        "revisionTimestamp": "2026-08-28T18:29:42Z"
+      },
+      {
+        "title": "Slay the Spire 2:Bowlbugs",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
+        "revisionId": 51089,
+        "revisionTimestamp": "2026-08-28T20:29:43Z"
+      },
+      {
+        "title": "Slay the Spire 2:Bygone Effigy",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bygone_Effigy",
+        "revisionId": 50161,
+        "revisionTimestamp": "2026-08-27T18:12:51Z"
+      },
+      {
+        "title": "Slay the Spire 2:Byrdonis",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Byrdonis",
+        "revisionId": 50176,
+        "revisionTimestamp": "2026-08-27T18:21:56Z"
+      },
+      {
+        "title": "Slay the Spire 2:Ceremonial Beast",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ceremonial_Beast",
+        "revisionId": 50182,
+        "revisionTimestamp": "2026-08-27T18:22:33Z"
+      },
+      {
+        "title": "Slay the Spire 2:Chomper",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Chomper",
+        "revisionId": 51004,
+        "revisionTimestamp": "2026-08-28T18:56:35Z"
+      },
+      {
+        "title": "Slay the Spire 2:Corpse Slug",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Corpse_Slug",
+        "revisionId": 51066,
+        "revisionTimestamp": "2026-08-28T20:00:27Z"
+      },
+      {
+        "title": "Slay the Spire 2:Cubex Construct",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Cubex_Construct",
+        "revisionId": 51061,
+        "revisionTimestamp": "2026-08-28T19:51:26Z"
+      },
+      {
+        "title": "Slay the Spire 2:Cultists",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Cultists",
+        "revisionId": 51065,
+        "revisionTimestamp": "2026-08-28T19:55:21Z"
+      },
+      {
+        "title": "Slay the Spire 2:Decimillipede",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Decimillipede",
+        "revisionId": 49939,
+        "revisionTimestamp": "2026-08-27T17:39:31Z"
+      },
+      {
+        "title": "Slay the Spire 2:Devoted Sculptor",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Devoted_Sculptor",
+        "revisionId": 50912,
+        "revisionTimestamp": "2026-08-28T18:30:32Z"
+      },
+      {
+        "title": "Slay the Spire 2:Doormaker",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Doormaker",
+        "revisionId": 49947,
+        "revisionTimestamp": "2026-08-27T17:40:54Z"
+      },
+      {
+        "title": "Slay the Spire 2:Entomancer",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Entomancer",
+        "revisionId": 50193,
+        "revisionTimestamp": "2026-08-27T18:23:21Z"
+      },
+      {
+        "title": "Slay the Spire 2:Exoskeleton",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Exoskeleton",
+        "revisionId": 50998,
+        "revisionTimestamp": "2026-08-28T18:55:12Z"
+      },
+      {
+        "title": "Slay the Spire 2:Fabricator",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fabricator",
+        "revisionId": 51091,
+        "revisionTimestamp": "2026-08-28T20:31:39Z"
+      },
+      {
+        "title": "Slay the Spire 2:Flyconid",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Flyconid",
+        "revisionId": 51060,
+        "revisionTimestamp": "2026-08-28T19:50:52Z"
+      },
+      {
+        "title": "Slay the Spire 2:Fogmog",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fogmog",
+        "revisionId": 51059,
+        "revisionTimestamp": "2026-08-28T19:50:19Z"
+      },
+      {
+        "title": "Slay the Spire 2:Fossil Stalker",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fossil_Stalker",
+        "revisionId": 51074,
+        "revisionTimestamp": "2026-08-28T20:07:03Z"
+      },
+      {
+        "title": "Slay the Spire 2:Frog Knight",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Frog_Knight",
+        "revisionId": 50979,
+        "revisionTimestamp": "2026-08-28T18:49:01Z"
+      },
+      {
+        "title": "Slay the Spire 2:Fuzzy Wurm Crawler",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fuzzy_Wurm_Crawler",
+        "revisionId": 51049,
+        "revisionTimestamp": "2026-08-28T19:34:14Z"
+      },
+      {
+        "title": "Slay the Spire 2:Globe Head",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Globe_Head",
+        "revisionId": 50948,
+        "revisionTimestamp": "2026-08-28T18:42:03Z"
+      },
+      {
+        "title": "Slay the Spire 2:Gremlin Merc",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Gremlin_Merc",
+        "revisionId": 51076,
+        "revisionTimestamp": "2026-08-28T20:08:33Z"
+      },
+      {
+        "title": "Slay the Spire 2:Haunted Ship",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Haunted_Ship",
+        "revisionId": 51068,
+        "revisionTimestamp": "2026-08-28T20:01:16Z"
+      },
+      {
+        "title": "Slay the Spire 2:Hunter Killer",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Hunter_Killer",
+        "revisionId": 51005,
+        "revisionTimestamp": "2026-08-28T18:56:56Z"
+      },
+      {
+        "title": "Slay the Spire 2:Infested Prism",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Infested_Prism",
+        "revisionId": 50221,
+        "revisionTimestamp": "2026-08-27T18:26:29Z"
+      },
+      {
+        "title": "Slay the Spire 2:Inklet",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Inklet",
+        "revisionId": 51058,
+        "revisionTimestamp": "2026-08-28T19:50:13Z"
+      },
+      {
+        "title": "Slay the Spire 2:Kaiser Crab",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Kaiser_Crab",
+        "revisionId": 50008,
+        "revisionTimestamp": "2026-08-27T17:45:41Z"
+      },
+      {
+        "title": "Slay the Spire 2:Knight Gang",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Knight_Gang",
+        "revisionId": 50251,
+        "revisionTimestamp": "2026-08-27T18:32:26Z"
+      },
+      {
+        "title": "Slay the Spire 2:Knowledge Demon",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Knowledge_Demon",
+        "revisionId": 49847,
+        "revisionTimestamp": "2026-08-27T15:29:01Z"
+      },
+      {
+        "title": "Slay the Spire 2:Lagavulin Matriarch",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Lagavulin_Matriarch",
+        "revisionId": 49844,
+        "revisionTimestamp": "2026-08-27T15:26:51Z"
+      },
+      {
+        "title": "Slay the Spire 2:Living Fog",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Living_Fog",
+        "revisionId": 51073,
+        "revisionTimestamp": "2026-08-28T20:05:56Z"
+      },
+      {
+        "title": "Slay the Spire 2:Louse Progenitor",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Louse_Progenitor",
+        "revisionId": 51013,
+        "revisionTimestamp": "2026-08-28T18:59:07Z"
+      },
+      {
+        "title": "Slay the Spire 2:Mawler",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Mawler",
+        "revisionId": 51057,
+        "revisionTimestamp": "2026-08-28T19:49:34Z"
+      },
+      {
+        "title": "Slay the Spire 2:Mecha Knight",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Mecha_Knight",
+        "revisionId": 50225,
+        "revisionTimestamp": "2026-08-27T18:27:46Z"
+      },
+      {
+        "title": "Slay the Spire 2:Myte",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Myte",
+        "revisionId": 51014,
+        "revisionTimestamp": "2026-08-28T18:59:26Z"
+      },
+      {
+        "title": "Slay the Spire 2:Nibbit",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Nibbit",
+        "revisionId": 51045,
+        "revisionTimestamp": "2026-08-28T19:32:57Z"
+      },
+      {
+        "title": "Slay the Spire 2:Ovicopter",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ovicopter",
+        "revisionId": 51090,
+        "revisionTimestamp": "2026-08-28T20:30:46Z"
+      },
+      {
+        "title": "Slay the Spire 2:Owl Magistrate",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Owl_Magistrate",
+        "revisionId": 50963,
+        "revisionTimestamp": "2026-08-28T18:45:16Z"
+      },
+      {
+        "title": "Slay the Spire 2:Phantasmal Gardener",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Phantasmal_Gardener",
+        "revisionId": 50242,
+        "revisionTimestamp": "2026-08-27T18:30:19Z"
+      },
+      {
+        "title": "Slay the Spire 2:Phrog Parasite",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Phrog_Parasite",
+        "revisionId": 50164,
+        "revisionTimestamp": "2026-08-27T18:15:04Z"
+      },
+      {
+        "title": "Slay the Spire 2:Punch Construct",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Punch_Construct",
+        "revisionId": 51069,
+        "revisionTimestamp": "2026-08-28T20:01:41Z"
+      },
+      {
+        "title": "Slay the Spire 2:Queen",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Queen",
+        "revisionId": 49848,
+        "revisionTimestamp": "2026-08-27T15:31:34Z"
+      },
+      {
+        "title": "Slay the Spire 2:Ruby Raiders",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ruby_Raiders",
+        "revisionId": 51087,
+        "revisionTimestamp": "2026-08-28T20:27:34Z"
+      },
+      {
+        "title": "Slay the Spire 2:Scroll of Biting",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Scroll_of_Biting",
+        "revisionId": 50967,
+        "revisionTimestamp": "2026-08-28T18:46:11Z"
+      },
+      {
+        "title": "Slay the Spire 2:Seapunk",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Seapunk",
+        "revisionId": 51067,
+        "revisionTimestamp": "2026-08-28T20:00:52Z"
+      },
+      {
+        "title": "Slay the Spire 2:Sewer Clam",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Sewer_Clam",
+        "revisionId": 51070,
+        "revisionTimestamp": "2026-08-28T20:04:08Z"
+      },
+      {
+        "title": "Slay the Spire 2:Shrinker Beetle",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Shrinker_Beetle",
+        "revisionId": 51048,
+        "revisionTimestamp": "2026-08-28T19:33:45Z"
+      },
+      {
+        "title": "Slay the Spire 2:Skulking Colony",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Skulking_Colony",
+        "revisionId": 50258,
+        "revisionTimestamp": "2026-08-27T18:33:48Z"
+      },
+      {
+        "title": "Slay the Spire 2:Slimed Berserker",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimed_Berserker",
+        "revisionId": 50973,
+        "revisionTimestamp": "2026-08-28T18:47:50Z"
+      },
+      {
+        "title": "Slay the Spire 2:Slimes",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimes",
+        "revisionId": 51086,
+        "revisionTimestamp": "2026-08-28T20:26:32Z"
+      },
+      {
+        "title": "Slay the Spire 2:Slithering Strangler",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slithering_Strangler",
+        "revisionId": 51056,
+        "revisionTimestamp": "2026-08-28T19:49:02Z"
+      },
+      {
+        "title": "Slay the Spire 2:Sludge Spinner",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Sludge_Spinner",
+        "revisionId": 51071,
+        "revisionTimestamp": "2026-08-28T20:04:31Z"
+      },
+      {
+        "title": "Slay the Spire 2:Slumbering Beetle",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slumbering_Beetle",
+        "revisionId": 51018,
+        "revisionTimestamp": "2026-08-28T19:00:09Z"
+      },
+      {
+        "title": "Slay the Spire 2:Snapping Jaxfruit",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Snapping_Jaxfruit",
+        "revisionId": 51055,
+        "revisionTimestamp": "2026-08-28T19:47:44Z"
+      },
+      {
+        "title": "Slay the Spire 2:Soul Fysh",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Soul_Fysh",
+        "revisionId": 49845,
+        "revisionTimestamp": "2026-08-27T15:27:57Z"
+      },
+      {
+        "title": "Slay the Spire 2:Soul Nexus",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Soul_Nexus",
+        "revisionId": 50245,
+        "revisionTimestamp": "2026-08-27T18:30:50Z"
+      },
+      {
+        "title": "Slay the Spire 2:Spiny Toad",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Spiny_Toad",
+        "revisionId": 51021,
+        "revisionTimestamp": "2026-08-28T19:00:41Z"
+      },
+      {
+        "title": "Slay the Spire 2:Terror Eel",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Terror_Eel",
+        "revisionId": 50276,
+        "revisionTimestamp": "2026-08-27T18:35:58Z"
+      },
+      {
+        "title": "Slay the Spire 2:Test Subject",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Test_Subject",
+        "revisionId": 50126,
+        "revisionTimestamp": "2026-08-27T17:55:09Z"
+      },
+      {
+        "title": "Slay the Spire 2:The Insatiable",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Insatiable",
+        "revisionId": 49846,
+        "revisionTimestamp": "2026-08-27T15:28:28Z"
+      },
+      {
+        "title": "Slay the Spire 2:The Kin",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Kin",
+        "revisionId": 49858,
+        "revisionTimestamp": "2026-08-27T15:52:31Z"
+      },
+      {
+        "title": "Slay the Spire 2:The Lost and Forgotten",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Lost_and_Forgotten",
+        "revisionId": 50977,
+        "revisionTimestamp": "2026-08-28T18:48:50Z"
+      },
+      {
+        "title": "Slay the Spire 2:The Obscura",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Obscura",
+        "revisionId": 51031,
+        "revisionTimestamp": "2026-08-28T19:05:48Z"
+      },
+      {
+        "title": "Slay the Spire 2:Thieving Hopper",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Thieving_Hopper",
+        "revisionId": 51030,
+        "revisionTimestamp": "2026-08-28T19:02:50Z"
+      },
+      {
+        "title": "Slay the Spire 2:Toadpole",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Toadpole",
+        "revisionId": 51072,
+        "revisionTimestamp": "2026-08-28T20:04:56Z"
+      },
+      {
+        "title": "Slay the Spire 2:Tunneler",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Tunneler",
+        "revisionId": 51036,
+        "revisionTimestamp": "2026-08-28T19:15:31Z"
+      },
+      {
+        "title": "Slay the Spire 2:Turret Operator",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Turret_Operator",
+        "revisionId": 50954,
+        "revisionTimestamp": "2026-08-28T18:43:41Z"
+      },
+      {
+        "title": "Slay the Spire 2:Two-Tailed Rat",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Two-Tailed_Rat",
+        "revisionId": 51064,
+        "revisionTimestamp": "2026-08-28T19:54:18Z"
+      },
+      {
+        "title": "Slay the Spire 2:Vantom",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Vantom",
+        "revisionId": 49840,
+        "revisionTimestamp": "2026-08-27T15:23:14Z"
+      },
+      {
+        "title": "Slay the Spire 2:Vine Shambler",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Vine_Shambler",
+        "revisionId": 51054,
+        "revisionTimestamp": "2026-08-28T19:47:15Z"
+      },
+      {
+        "title": "Slay the Spire 2:Waterfall Giant",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Waterfall_Giant",
+        "revisionId": 49842,
+        "revisionTimestamp": "2026-08-27T15:24:20Z"
+      },
+      {
+        "title": "Slay the Spire 2:Wriggler",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Wriggler",
+        "revisionId": 51053,
+        "revisionTimestamp": "2026-08-28T19:45:24Z"
+      }
+    ],
+    "patchPage": {
+      "title": "Slay the Spire 2:V0.111.0 - Beta Patch",
+      "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:V0.111.0_-_Beta_Patch",
+      "revisionId": 49155,
+      "revisionTimestamp": "2026-08-20T22:46:43Z"
+    },
+    "harvestedAt": "2026-08-28T21:08:13Z",
+    "targetVersion": "v0.111.0",
+    "targetBranch": "public-beta",
     "ascension": "A8 HP; A9 move/block/buff values",
     "players": 2
   },
@@ -23,19 +472,20 @@
             },
             {
               "name": "Eye Lasers",
-              "textA9": "Deals 12 damage x2."
+              "textA9": "Deals 12×2 damage."
             },
             {
               "name": "Increasing Intensity",
               "textA9": "Shuffles 2 Wither+X into your discard pile. Gains 3 + X Strength. Upgrade all Withers. Withering Presence effect now creates Withers + X."
             }
           ],
-          "monsterId": "AEONGLASS",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Aeonglass follows a repeating cycle: • Ebb • Eye Lasers • Increasing Intensity X equals the amount of times Increasing Intensity has been used."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Aeonglass",
+          "monsterId": "AEONGLASS",
+          "count": 1
         }
       ],
       "name": "Aeonglass",
@@ -57,28 +507,42 @@
           "moves": [
             {
               "name": "Boot Up",
-              "textA9": "Gains 15 Block and 8 Strength."
+              "textA9": "Gains 15 Block and 4/8 Strength."
             },
             {
               "name": "The One-Two",
-              "textA9": "Deals 10 damage 2 times."
+              "textA9": "Deals 11×2 damage."
             },
             {
               "name": "Hammer Uppercut",
-              "textA9": "Deals 14 damage. Applies 2 Weak and 2 Frail."
+              "textA9": "Deals 18 damage. Applies 2 Weak and 2 Frail."
             }
           ],
-          "monsterId": "AXEBOT",
-          "count": 2,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Axebot always cycles Hammer Uppercut thenThe One-Two then repeat. The Axebots spawned mid-fight via Stock opens with Boot Up before entering the cycle. The second spawned Axebot uses the improved version of Boot Up. Every time a new Axebot is spawned it gains +10 Max HP more than the last one (So the first respawn has 10 HP more, the second 20 HP more etc.)."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Axebot",
+          "patchChecked": "v0.111.0 Enemies",
+          "monsterId": "AXEBOT",
+          "count": 2
         }
       ],
       "name": "Axebots",
-      "rules": [],
-      "timing": []
+      "rules": [
+        "The Axebots spawned mid-fight via Stock opens with Boot Up before entering the cycle. The second spawned Axebot uses the improved version of Boot Up. Every time a new Axebot is spawned it gains +10 Max HP more than the last one (So the first respawn has 10 HP more, the second 20 HP more etc.).",
+        "Stock provides successive opportunities to activate Fatal triggers with Hand of Greed.",
+        "If a multi-hit Attack that doesn't target a single enemy (such as Sword Boomerang or Dagger Spray) kills an Axebot with Stock partway through the attack, the new Axebot will be summoned in the middle of the attack, and it can be hit by that same Attack.",
+        "If an Attack that hits all enemies and applies a debuff (such as Thunderclap or High Five) kills an Axebot with Stock, the new Axebot will be summoned in the middle of the attack, before the debuff is applied. The new Axebot will then be inflicted with the debuff.",
+        "When an Axebot with Stock dies during the enemy turn, such as by Poison or Thorns, the summoned Axebot will not do anything that turn, and it will use Boot Up on the following turn.",
+        "Stock respawns gain +10 Max HP cumulatively each time."
+      ],
+      "timing": [
+        "The Axebots spawned mid-fight via Stock opens with Boot Up before entering the cycle. The second spawned Axebot uses the improved version of Boot Up. Every time a new Axebot is spawned it gains +10 Max HP more than the last one (So the first respawn has 10 HP more, the second 20 HP more etc.).",
+        "Stock provides successive opportunities to activate Fatal triggers with Hand of Greed.",
+        "If an Attack that hits all enemies and applies a debuff (such as Thunderclap or High Five) kills an Axebot with Stock, the new Axebot will be summoned in the middle of the attack, before the debuff is applied. The new Axebot will then be inflicted with the debuff.",
+        "When an Axebot with Stock dies during the enemy turn, such as by Poison or Thorns, the summoned Axebot will not do anything that turn, and it will use Boot Up on the following turn."
+      ]
     },
     "BOWLBUGS_NORMAL": {
       "act": "Hive",
@@ -102,12 +566,13 @@
               "textA9": "Stunned. Does nothing."
             }
           ],
-          "monsterId": "BOWLBUG_ROCK",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Uses Headbutt every turn. However, if Headbutt's damage is fully prevented by a player, the Bowlbug (Rock) becomes Stunned and uses Dizzy on its next turn, then resumes Headbutt."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
+          "monsterId": "BOWLBUG_ROCK",
+          "count": 1
         },
         {
           "displayName": "Bowlbug (Silk)",
@@ -119,19 +584,20 @@
           "moves": [
             {
               "name": "Thrash",
-              "textA9": "Deals 5 damage x2."
+              "textA9": "Deals 5×2 damage."
             },
             {
               "name": "Spin Web",
               "textA9": "Applies 1 Weak."
             }
           ],
-          "monsterId": "BOWLBUG_SILK",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Alternates between Spin Web and Thrash."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
+          "monsterId": "BOWLBUG_SILK",
+          "count": 1
         },
         {
           "displayName": "Bowlbug (Nectar)",
@@ -150,12 +616,13 @@
               "textA9": "Gains 16 Strength."
             }
           ],
-          "monsterId": "BOWLBUG_NECTAR",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Opens with Thrash, then uses Buff once, then uses Thrash every turn after. Enemy2Nav Category:Monsters Category:Slay the Spire 2 Content"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
+          "monsterId": "BOWLBUG_NECTAR",
+          "count": 1
         }
       ],
       "name": "Bowlbugs",
@@ -184,12 +651,13 @@
               "textA9": "Stunned. Does nothing."
             }
           ],
-          "monsterId": "BOWLBUG_ROCK",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Uses Headbutt every turn. However, if Headbutt's damage is fully prevented by a player, the Bowlbug (Rock) becomes Stunned and uses Dizzy on its next turn, then resumes Headbutt."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
+          "monsterId": "BOWLBUG_ROCK",
+          "count": 1
         },
         {
           "displayName": "Bowlbug (Egg)",
@@ -204,12 +672,13 @@
               "textA9": "Deals 8 damage. Gains 8 Block."
             }
           ],
-          "monsterId": "BOWLBUG_EGG",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Uses Bite every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
+          "monsterId": "BOWLBUG_EGG",
+          "count": 1
         }
       ],
       "name": "Bowlbugs",
@@ -241,12 +710,13 @@
               "textA9": "Deals 15 damage."
             }
           ],
-          "monsterId": "BYGONE_EFFIGY",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Bygone Effigy starts asleep and follows this sequence: • Sleep — does nothing on its first turn. • Wake — wakes up and gains 10 Strength. • Slashes every turn after."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bygone_Effigy",
+          "monsterId": "BYGONE_EFFIGY",
+          "count": 1
         }
       ],
       "name": "Bygone Effigy",
@@ -271,15 +741,16 @@
             },
             {
               "name": "Peck",
-              "textA9": "Deals 4x3 damage."
+              "textA9": "Deals 4×3 damage."
             }
           ],
-          "monsterId": "BYRDONIS",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Byrdonis alternates between its two moves in a fixed pattern: • Swoop. • Peck. • Back to Swoop, and so on."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Byrdonis",
+          "monsterId": "BYRDONIS",
+          "count": 1
         }
       ],
       "name": "Byrdonis",
@@ -322,12 +793,13 @@
               "textA9": "Deals 19 damage. Gains 4 Strength."
             }
           ],
-          "monsterId": "CEREMONIAL_BEAST",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Ceremonial Beast has two distinct phases. Phase 1: • Uses Stamp on the first turn, gaining Plow. • Then uses Plow every turn. When its HP drops to the Plow threshold (150, or 160), it immediately becomes Stunned and loses all Strength. Phase 2: After being stunned, repeats this three-move cycle: • Beast Cry • Stomp • Crush"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ceremonial_Beast",
+          "monsterId": "CEREMONIAL_BEAST",
+          "count": 1
         }
       ],
       "name": "Ceremonial Beast",
@@ -349,19 +821,20 @@
           "moves": [
             {
               "name": "Clamp",
-              "textA9": "Deals 9 damage ×2."
+              "textA9": "Deals 9×2 damage."
             },
             {
               "name": "Screech",
               "textA9": "Shuffles 3 Dazed into your discard pile."
             }
           ],
-          "monsterId": "CHOMPER",
-          "count": 2,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Chompers always appear in pairs. One opens with Clamp and the other opens with Screech. After that, each one alternates between Clamp and Screech every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Chomper",
+          "monsterId": "CHOMPER",
+          "count": 2
         }
       ],
       "name": "Chompers",
@@ -386,20 +859,20 @@
             },
             {
               "name": "Fast Punch",
-              "textA9": "Deals 6 damage ×2. Applies 1 Frail."
+              "textA9": "Deals 6×2 damage. Applies 1 Frail."
             },
             {
               "name": "Strong Punch",
               "textA9": "Deals 16 damage."
             }
           ],
-          "partyNote": "Underdocks; Appears as a solo normal encounter.; Glory; * Cubex Construct ×2",
-          "monsterId": "PUNCH_CONSTRUCT",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Cycles through its moves in a fixed order: • READY • Fast Punch • Strong Punch"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Punch_Construct",
+          "monsterId": "PUNCH_CONSTRUCT",
+          "count": 1
         },
         {
           "displayName": "Cubex Construct",
@@ -419,16 +892,16 @@
             },
             {
               "name": "Expel Blast",
-              "textA9": "Deals 6 damage ×2."
+              "textA9": "Deals 6×2 damage."
             }
           ],
-          "partyNote": "Overgrowth; Appears as a solo normal encounter.; Glory; * Construct Menagerie: Punch Construct + Cubex Construct ×2",
-          "monsterId": "CUBEX_CONSTRUCT",
-          "count": 2,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "After it Charges Up it repeats this pattern for the remainder of fight: • Repeater Blast • Repeater Blast • Expel Blast"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Cubex_Construct",
+          "monsterId": "CUBEX_CONSTRUCT",
+          "count": 2
         }
       ],
       "name": "Construct Menagerie",
@@ -450,7 +923,7 @@
           "moves": [
             {
               "name": "Whip Slap",
-              "textA9": "Deals 3 damage ×2."
+              "textA9": "Deals 3×2 damage."
             },
             {
               "name": "Glomp",
@@ -461,13 +934,13 @@
               "textA9": "Applies 2 Frail."
             }
           ],
-          "partyNote": "Underdocks; * Corpse Slugs (Weak): 2× Corpse Slug; * Corpse Slugs (Normal): 3× Corpse Slug",
-          "monsterId": "CORPSE_SLUG",
-          "count": 3,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Cycles through its moves in a fixed order: • Whip Slap • Glomp • Goop • Back to Whip Slap Each Corpse Slug in the encounter starts on a different move in the cycle, so they are staggered."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Corpse_Slug",
+          "monsterId": "CORPSE_SLUG",
+          "count": 3
         }
       ],
       "name": "Corpse Slugs",
@@ -489,7 +962,7 @@
           "moves": [
             {
               "name": "Whip Slap",
-              "textA9": "Deals 3 damage ×2."
+              "textA9": "Deals 3×2 damage."
             },
             {
               "name": "Glomp",
@@ -500,13 +973,13 @@
               "textA9": "Applies 2 Frail."
             }
           ],
-          "partyNote": "Underdocks; * Corpse Slugs (Weak): 2× Corpse Slug; * Corpse Slugs (Normal): 3× Corpse Slug",
-          "monsterId": "CORPSE_SLUG",
-          "count": 2,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Cycles through its moves in a fixed order: • Whip Slap • Glomp • Goop • Back to Whip Slap Each Corpse Slug in the encounter starts on a different move in the cycle, so they are staggered."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Corpse_Slug",
+          "monsterId": "CORPSE_SLUG",
+          "count": 2
         }
       ],
       "name": "Corpse Slugs",
@@ -535,16 +1008,16 @@
             },
             {
               "name": "Expel Blast",
-              "textA9": "Deals 6 damage ×2."
+              "textA9": "Deals 6×2 damage."
             }
           ],
-          "partyNote": "Overgrowth; Appears as a solo normal encounter.; Glory; * Construct Menagerie: Punch Construct + Cubex Construct ×2",
-          "monsterId": "CUBEX_CONSTRUCT",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "After it Charges Up it repeats this pattern for the remainder of fight: • Repeater Blast • Repeater Blast • Expel Blast"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Cubex_Construct",
+          "monsterId": "CUBEX_CONSTRUCT",
+          "count": 1
         }
       ],
       "name": "Cubex Construct",
@@ -572,13 +1045,13 @@
               "textA9": "Deals 11 damage."
             }
           ],
-          "partyNote": "Underdocks; * Damp Cultist (Cultists encounter); * Seapunk (Seapunk Normal encounter)",
-          "monsterId": "CALCIFIED_CULTIST",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Always uses Incantation first, then Dark Strike every turn after."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Cultists",
+          "monsterId": "CALCIFIED_CULTIST",
+          "count": 1
         },
         {
           "displayName": "Damp Cultist",
@@ -597,13 +1070,13 @@
               "textA9": "Deals 3 damage."
             }
           ],
-          "partyNote": "Underdocks; * Calcified Cultist (Cultists encounter)",
-          "monsterId": "DAMP_CULTIST",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Always uses Incantation first, then Dark Strike every turn after."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Cultists",
+          "monsterId": "DAMP_CULTIST",
+          "count": 1
         }
       ],
       "name": "Cultists",
@@ -629,7 +1102,7 @@
             },
             {
               "name": "Writhe",
-              "textA9": "Deals 6x2 damage."
+              "textA9": "Deals 6×2 damage."
             },
             {
               "name": "Outgas",
@@ -640,12 +1113,13 @@
               "textA9": "Revives with 25 HP (if other segments are alive)."
             }
           ],
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Each segment cycles through the following pattern: • Bulk • Writhe • Outgas Each segment starts on a different move, which will remain the case until one or more of them is killed. • When a segment is killed, it uses Reattach to revive with 25 HP provided at least one other segment is still alive. After reviving, it resumes with a random move. which may disrupt their prior synchrony."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Decimillipede",
           "monsterId": "DECIMILLIPEDE_FRONT",
-          "count": 1,
-          "pattern": {
-            "type": "cycle",
-            "text": "Front: Bulk → Writhe → Outgas; after Reattach, resumes at a random move."
-          }
+          "count": 1
         },
         {
           "displayName": "Decimillipede",
@@ -662,7 +1136,7 @@
             },
             {
               "name": "Writhe",
-              "textA9": "Deals 6x2 damage."
+              "textA9": "Deals 6×2 damage."
             },
             {
               "name": "Outgas",
@@ -673,12 +1147,13 @@
               "textA9": "Revives with 25 HP (if other segments are alive)."
             }
           ],
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Each segment cycles through the following pattern: • Bulk • Writhe • Outgas Each segment starts on a different move, which will remain the case until one or more of them is killed. • When a segment is killed, it uses Reattach to revive with 25 HP provided at least one other segment is still alive. After reviving, it resumes with a random move. which may disrupt their prior synchrony."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Decimillipede",
           "monsterId": "DECIMILLIPEDE_MIDDLE",
-          "count": 1,
-          "pattern": {
-            "type": "cycle",
-            "text": "Middle: Writhe → Outgas → Bulk; after Reattach, resumes at a random move."
-          }
+          "count": 1
         },
         {
           "displayName": "Decimillipede",
@@ -695,7 +1170,7 @@
             },
             {
               "name": "Writhe",
-              "textA9": "Deals 6x2 damage."
+              "textA9": "Deals 6×2 damage."
             },
             {
               "name": "Outgas",
@@ -706,22 +1181,32 @@
               "textA9": "Revives with 25 HP (if other segments are alive)."
             }
           ],
-          "monsterId": "DECIMILLIPEDE_BACK",
-          "count": 1,
           "pattern": {
-            "type": "cycle",
-            "text": "Back: Outgas → Bulk → Writhe; after Reattach, resumes at a random move."
-          }
+            "type": "random-with-constraint",
+            "text": "Each segment cycles through the following pattern: • Bulk • Writhe • Outgas Each segment starts on a different move, which will remain the case until one or more of them is killed. • When a segment is killed, it uses Reattach to revive with 25 HP provided at least one other segment is still alive. After reviving, it resumes with a random move. which may disrupt their prior synchrony."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Decimillipede",
+          "monsterId": "DECIMILLIPEDE_BACK",
+          "count": 1
         }
       ],
       "name": "Decimillipede",
       "rules": [
-        "Each dead segment Revives with 25 HP after 2 turns if any other segment is alive; it then resumes randomly.",
-        "Kill all remaining segments before a Reattach resolves."
+        "Each segment starts on a different move, which will remain the case until one or more of them is killed.",
+        "When a segment is killed, it uses Reattach to revive with 25 HP provided at least one other segment is still alive. After reviving, it resumes with a random move. which may disrupt their prior synchrony.",
+        "Because Doom triggers after Decimillipede segments will have regenerated via Reattach, it can sometimes lead to scenarios wherein one or more segments are actively dying via Doom, but not until after the other(s) have respawned. Which can reoccur the following turn, depending on the player's Doom sources.",
+        "This fight is functionally similar to the Darklings from Slay the Spire 1, with the same dynamic of 3 enemies that will revive if any of the others are alive.",
+        "Reducing the HP of one of them to 0 does not count as a Fatal kill unless it was the final enemy.",
+        "Decimillipede — Revives with 25 HP (if other segments are alive).",
+        "Each dead segment Revives with 25 HP if any other segment is alive; after Reattach it resumes at a random move.",
+        "Reducing a segment to 0 HP is not a Fatal kill unless it is the final enemy."
       ],
       "timing": [
-        "Poison resolves before enemy moves.",
-        "Doom resolves after Reattach, so the revived segment can be targeted; Doom can miss."
+        "When a segment is killed, it uses Reattach to revive with 25 HP provided at least one other segment is still alive. After reviving, it resumes with a random move. which may disrupt their prior synchrony.",
+        "Because Doom triggers after Decimillipede segments will have regenerated via Reattach, it can sometimes lead to scenarios wherein one or more segments are actively dying via Doom, but not until after the other(s) have respawned. Which can reoccur the following turn, depending on the player's Doom sources.",
+        "Poison triggers before enemy moves, and does not suffer from this same issue.",
+        "Poison triggers before enemy moves.",
+        "Doom triggers after segments regenerate via Reattach."
       ]
     },
     "DEVOTED_SCULPTOR_WEAK": {
@@ -744,12 +1229,13 @@
               "textA9": "Deals 15 damage."
             }
           ],
-          "monsterId": "DEVOTED_SCULPTOR",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Always opens with Forbidden Incantation, then uses Savage every turn afterward."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Devoted_Sculptor",
+          "monsterId": "DEVOTED_SCULPTOR",
+          "count": 1
         }
       ],
       "name": "Devoted Sculptor",
@@ -781,20 +1267,22 @@
             },
             {
               "name": "Grasp",
-              "textA9": "Deals 11x2 damage. Gains 3 Strength. Swaps current buff to Hunger."
+              "textA9": "Deals 11×2 damage. Gains 3 Strength. Swaps current buff to Hunger."
             }
           ],
-          "monsterId": "DOORMAKER",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Doormaker uses Dramatic Open on its first turn, then follows a repeating cycle: • Hunger • Scrutiny • Grasp"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Doormaker",
+          "monsterId": "DOORMAKER",
+          "count": 1
         }
       ],
       "name": "Doormaker",
       "rules": [
-        "Door spawns first, Doormaker appears when Door dies."
+        "Even though the HP bar in the first phase shows as \"infinity\", it is actually set to the finite number of 999,999,999 HP. As such, it is theoretically possible to kill the Doormaker in its first phase.",
+        "Door spawns first; Doormaker transforms from it on the first turn (deprecated after v0.107.1)."
       ],
       "timing": []
     },
@@ -806,13 +1294,13 @@
           "displayName": "Entomancer",
           "type": "Elite",
           "hpA8": [
-            155
+            165
           ],
           "startsWithA9": "Personal Hive 1",
           "moves": [
             {
               "name": "Beeeees!",
-              "textA9": "Deals 3 damage ×8."
+              "textA9": "Deals 3×8 damage."
             },
             {
               "name": "Spear!",
@@ -823,12 +1311,14 @@
               "textA9": "Gains 1 Personal Hive and 1 Strength. If Personal Hive is already at 3, gains 2 Strength instead."
             }
           ],
-          "monsterId": "ENTOMANCER",
-          "count": 1,
           "pattern": {
             "type": "cycle",
-            "text": "Beeeees! → Spear! → Pheromone Spit → repeat."
-          }
+            "text": "The Entomancer repeats a fixed three-move cycle: Beeeees!, then Spear!, then Pheromone Spit, and back to the start."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Entomancer",
+          "patchChecked": "v0.111.0 Enemies",
+          "monsterId": "ENTOMANCER",
+          "count": 1
         }
       ],
       "name": "Entomancer",
@@ -843,14 +1333,14 @@
           "displayName": "Exoskeleton",
           "type": "Normal",
           "hpA8": [
-            25,
-            29
+            26,
+            30
           ],
           "startsWithA9": "Hard to Kill 9",
           "moves": [
             {
               "name": "Skitter",
-              "textA9": "Deals 1 damage ×4."
+              "textA9": "Deals 1×4 damage."
             },
             {
               "name": "Mandibles",
@@ -861,12 +1351,14 @@
               "textA9": "Gains 2 Strength."
             }
           ],
-          "monsterId": "EXOSKELETON",
-          "count": 2,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Exoskeletons appear in groups of 3 or 4. Each one's opening move depends on its position in the group: • The first uses Skitter • The second uses Mandibles • The third uses Enrage • The fourth (if present) randomly picks Skitter or Mandibles. • After Skitter, the next move is randomly Skitter or Mandibles (cannot repeat the same move twice in a row). • After Mandibles, it always uses Enrage. • After Enrage, the next move is randomly Skitter or Mandibles."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Exoskeleton",
+          "patchChecked": "v0.111.0 Enemies",
+          "monsterId": "EXOSKELETON",
+          "count": 2
         }
       ],
       "name": "Exoskeletons",
@@ -881,14 +1373,14 @@
           "displayName": "Exoskeleton",
           "type": "Normal",
           "hpA8": [
-            25,
-            29
+            26,
+            30
           ],
           "startsWithA9": "Hard to Kill 9",
           "moves": [
             {
               "name": "Skitter",
-              "textA9": "Deals 1 damage ×4."
+              "textA9": "Deals 1×4 damage."
             },
             {
               "name": "Mandibles",
@@ -899,12 +1391,14 @@
               "textA9": "Gains 2 Strength."
             }
           ],
-          "monsterId": "EXOSKELETON",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Exoskeletons appear in groups of 3 or 4. Each one's opening move depends on its position in the group: • The first uses Skitter • The second uses Mandibles • The third uses Enrage • The fourth (if present) randomly picks Skitter or Mandibles. • After Skitter, the next move is randomly Skitter or Mandibles (cannot repeat the same move twice in a row). • After Mandibles, it always uses Enrage. • After Enrage, the next move is randomly Skitter or Mandibles."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Exoskeleton",
+          "patchChecked": "v0.111.0 Enemies",
+          "monsterId": "EXOSKELETON",
+          "count": 1
         }
       ],
       "name": "Exoskeletons",
@@ -935,12 +1429,13 @@
               "textA9": "Deals 13 damage."
             }
           ],
-          "monsterId": "FABRICATOR",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Each turn, the Fabricator checks if it has fewer than 4 living allies. If so, it randomly uses either Fabricate or Fabricating Strike (equal weight). If it already has 4 or more allies, it uses Disintegrate instead. The Fabricator avoids summoning the same bot consecutively."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fabricator",
+          "monsterId": "FABRICATOR",
+          "count": 1
         },
         {
           "displayName": "Guardbot",
@@ -955,13 +1450,14 @@
               "textA9": "Gives the Fabricator 15 Block."
             }
           ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Uses Guard every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fabricator",
           "monsterId": "GUARDBOT",
           "count": 1,
-          "role": "summoned option",
-          "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+          "role": "summoned option"
         },
         {
           "displayName": "Zapbot",
@@ -977,18 +1473,20 @@
               "textA9": "Deals 15 damage."
             }
           ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Uses Zap every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fabricator",
           "monsterId": "ZAPBOT",
           "count": 1,
-          "role": "summoned option",
-          "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+          "role": "summoned option"
         }
       ],
       "name": "Fabricator",
       "rules": [
-        "Summons defensive and aggressive bot minions."
+        "Fabricator — Summons 1 defensive bot (Guardbot or Noisebot) and 1 aggressive bot (Zapbot or Stabbot).",
+        "Fabricator — Deals 21 damage. Summons 1 aggressive bot (Zapbot or Stabbot)."
       ],
       "timing": []
     },
@@ -1017,13 +1515,13 @@
               "textA9": "Deals 12 damage."
             }
           ],
-          "partyNote": "Overgrowth; * Flyconid encounter: Flyconid + 1 random from Leaf Slime (M) or Twig Slime (M); * Snapping Jaxfruit encounter: Snapping Jaxfruit + Flyconid",
-          "monsterId": "FLYCONID",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "On its first turn, it randomly picks Frail Spores (2/3 chance) or Smash (1/3 chance). After that, each turn it randomly picks one of three moves: Weakening Spores (3/6 chance), Frail Spores (2/6 chance), or Smash (1/6 chance). It cannot use the same move twice in a row."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Flyconid",
+          "monsterId": "FLYCONID",
+          "count": 1
         },
         {
           "displayName": "Leaf Slime (M)",
@@ -1042,13 +1540,13 @@
               "textA9": "Shuffles 2 Slimed into your discard pile."
             }
           ],
-          "partyNote": "Overgrowth; * Slimes (Weak): Leaf Slime (S), Twig Slime (S), and randomly chosen as the medium slime; * Slimes (Normal): Leaf Slime (S), Twig Slime (S), Twig Slime (M); * Flyconid: randomly chosen companion with Flyconid; * Slithering Strangler: possible companion with Slithering Strangler (medium slime variant)",
-          "monsterId": "LEAF_SLIME_M",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Always starts with Sticky Shot, then alternates between Clump Shot and Sticky Shot."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimes",
+          "monsterId": "LEAF_SLIME_M",
+          "count": 1
         }
       ],
       "name": "Flyconid",
@@ -1079,17 +1577,20 @@
               "textA9": "Deals 16 damage."
             }
           ],
-          "partyNote": "Overgrowth; Appears as a solo normal encounter.; Summons Eye With Teeth mid-fight.",
-          "monsterId": "FOGMOG",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Fogmog always opens with Illusory Spores to summon an Eye With Teeth, then uses Thwack. After that, it randomly picks Thwack (40%) or Headbutt (60%), and cannot pick the same one twice in a row. After a random Thwack, it always follows up with Headbutt. After Headbutt, it always follows up with Thwack, then returns to the random pick."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fogmog",
+          "monsterId": "FOGMOG",
+          "count": 1
         },
         {
           "displayName": "Eye With Teeth",
           "type": "Minion",
+          "hpA8": [
+            6
+          ],
           "startsWithA9": "Illusion",
           "moves": [
             {
@@ -1097,19 +1598,22 @@
               "textA9": "Shuffles 3 Dazed into your discard pile."
             }
           ],
-          "partyNote": "Summoned by Fogmog.",
+          "pattern": {
+            "type": "cycle",
+            "text": "Uses Distract every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fogmog",
           "monsterId": "EYE_WITH_TEETH",
           "count": 1,
-          "role": "summoned",
-          "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+          "role": "summoned"
         }
       ],
       "name": "Fogmog",
       "rules": [
-        "Summons an Eye With Teeth mid-fight."
+        "Fogmog always opens with Illusory Spores to summon an Eye With Teeth, then uses Thwack.",
+        "Overgrowth; Appears as a solo normal encounter.; Summons Eye With Teeth mid-fight.",
+        "Fogmog — Summons an Eye With Teeth.",
+        "Summoned by Fogmog."
       ],
       "timing": []
     },
@@ -1136,15 +1640,16 @@
             },
             {
               "name": "Lash",
-              "textA9": "Deals 4 damage ×2."
+              "textA9": "Deals 4×2 damage."
             }
           ],
-          "monsterId": "FOSSIL_STALKER",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Always starts with Latch. After any move, the next move is chosen randomly with equal probability: • 33% chance of Latch • 33% chance of Tackle • 33% chance of Lash No restriction on repeating the same move consecutively."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fossil_Stalker",
+          "monsterId": "FOSSIL_STALKER",
+          "count": 1
         }
       ],
       "name": "Fossil Stalker",
@@ -1180,12 +1685,13 @@
               "textA9": "Deals 40 damage."
             }
           ],
-          "monsterId": "FROG_KNIGHT",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Opens with Tongue Lash, then follows a repeating cycle: Strike Down Evil, For the Queen, then a conditional check. If the Frog Knight's HP is below half and it has not yet used Beetle Charge, it uses Beetle Charge once, then continues with Tongue Lash. Otherwise, it uses Tongue Lash and continues the cycle."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Frog_Knight",
+          "monsterId": "FROG_KNIGHT",
+          "count": 1
         }
       ],
       "name": "Frog Knight",
@@ -1213,13 +1719,13 @@
               "textA9": "Gains 7 Strength."
             }
           ],
-          "partyNote": "Overgrowth; Appears as a solo weak encounter.; Also appears in a strong encounter with Shrinker Beetle.",
-          "monsterId": "FUZZY_WURM_CRAWLER",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Repeats a fixed three-turn cycle: • Acid Goop • Inhale • Acid Goop Then the cycle starts over."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fuzzy_Wurm_Crawler",
+          "monsterId": "FUZZY_WURM_CRAWLER",
+          "count": 1
         }
       ],
       "name": "Fuzzy Wurm Crawler",
@@ -1236,7 +1742,7 @@
           "hpA8": [
             158
           ],
-          "startsWithA9": "Galvanic 6",
+          "startsWithA9": "Galvanic 8",
           "moves": [
             {
               "name": "Shocking Slap",
@@ -1244,19 +1750,21 @@
             },
             {
               "name": "Thunder Strike",
-              "textA9": "Deals 7 damage 3 times."
+              "textA9": "Deals 7×3 damage."
             },
             {
               "name": "Galvanic Burst",
               "textA9": "Deals 17 damage. Gains 2 Strength."
             }
           ],
-          "monsterId": "GLOBE_HEAD",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Follows a fixed cycle: Shocking Slap, Thunder Strike, Galvanic Burst, then repeats."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Globe_Head",
+          "patchChecked": "v0.111.0 Enemies",
+          "monsterId": "GLOBE_HEAD",
+          "count": 1
         }
       ],
       "name": "Globe Head",
@@ -1278,24 +1786,24 @@
           "moves": [
             {
               "name": "Gimme",
-              "textA9": "Deals 8x2 damage."
+              "textA9": "Deals 8×2 damage."
             },
             {
               "name": "Double Smash",
-              "textA9": "Deals 7x2 damage. Applies 2 Weak."
+              "textA9": "Deals 7×2 damage. Applies 2 Weak."
             },
             {
               "name": "Hehe",
               "textA9": "Deals 9 damage. Gains 2 Strength."
             }
           ],
-          "partyNote": "Underdocks; Appears as a solo normal encounter.; Summons Fat Gremlin and Sneaky Gremlin on death.",
-          "monsterId": "GREMLIN_MERC",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Cycles through its moves in a fixed order: • Gimme • Double Smash • Hehe • Back to Gimme When the Gremlin Merc dies, its Surprise power triggers, summoning a Fat Gremlin and a Sneaky Gremlin. The Fat Gremlin inherits the stolen gold via Heist."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Gremlin_Merc",
+          "monsterId": "GREMLIN_MERC",
+          "count": 1
         },
         {
           "displayName": "Fat Gremlin",
@@ -1314,14 +1822,14 @@
               "textA9": "Flees from combat with any stolen gold."
             }
           ],
-          "partyNote": "Summoned by Gremlin Merc on death.",
+          "pattern": {
+            "type": "cycle",
+            "text": "Uses Spawned on its first turn (does nothing), then uses Flee every turn after, escaping with the stolen gold."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Gremlin_Merc",
           "monsterId": "FAT_GREMLIN",
           "count": 1,
-          "role": "summoned on death",
-          "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+          "role": "summoned on death"
         },
         {
           "displayName": "Sneaky Gremlin",
@@ -1340,21 +1848,28 @@
               "textA9": "Deals 10 damage."
             }
           ],
-          "partyNote": "Summoned by Gremlin Merc on death.",
+          "pattern": {
+            "type": "cycle",
+            "text": "Uses Spawned on its first turn (does nothing), then uses Tackle every turn after."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Gremlin_Merc",
           "monsterId": "SNEAKY_GREMLIN",
           "count": 1,
-          "role": "summoned on death",
-          "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+          "role": "summoned on death"
         }
       ],
       "name": "Gremlin Merc",
       "rules": [
-        "On death, summons Fat Gremlin and Sneaky Gremlin minions."
+        "Gremlin Merc is a normal Enemy found in the Underdocks. It starts with Surprise and Thievery, stealing gold with each attack. When the Gremlin Merc is killed, it summons a Fat Gremlin and a Sneaky Gremlin.",
+        "When the Gremlin Merc dies, its Surprise power triggers, summoning a Fat Gremlin and a Sneaky Gremlin. The Fat Gremlin inherits the stolen gold via Heist.",
+        "Uses Spawned on its first turn (does nothing), then uses Flee every turn after, escaping with the stolen gold.",
+        "Underdocks; Appears as a solo normal encounter.; Summons Fat Gremlin and Sneaky Gremlin on death.",
+        "Summoned by Gremlin Merc on death."
       ],
-      "timing": []
+      "timing": [
+        "When the Gremlin Merc dies, its Surprise power triggers, summoning a Fat Gremlin and a Sneaky Gremlin. The Fat Gremlin inherits the stolen gold via Heist.",
+        "Uses Spawned on its first turn (does nothing), then uses Flee every turn after, escaping with the stolen gold."
+      ]
     },
     "HAUNTED_SHIP_NORMAL": {
       "act": "Underdocks",
@@ -1377,15 +1892,16 @@
             },
             {
               "name": "Stomp",
-              "textA9": "Deals 5 damage ×3."
+              "textA9": "Deals 5×3 damage."
             }
           ],
-          "monsterId": "HAUNTED_SHIP",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "opener",
+            "text": "Always uses Haunt first. From the second turn onward, alternates between Swipe and Stomp, always starting with Swipe."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Haunted_Ship",
+          "monsterId": "HAUNTED_SHIP",
+          "count": 1
         }
       ],
       "name": "Haunted Ship",
@@ -1413,15 +1929,16 @@
             },
             {
               "name": "Puncture",
-              "textA9": "Deals 8 damage ×3."
+              "textA9": "Deals 8×3 damage."
             }
           ],
-          "monsterId": "HUNTER_KILLER",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Always opens with Tenderizing Goop. After that, randomly uses Bite or Puncture, with Puncture being twice as likely. Bite cannot be used twice in a row."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Hunter_Killer",
+          "monsterId": "HUNTER_KILLER",
+          "count": 1
         }
       ],
       "name": "Hunter Killer",
@@ -1450,19 +1967,20 @@
             },
             {
               "name": "Whirlwind",
-              "textA9": "Deals 6 damage ×3."
+              "textA9": "Deals 6×3 damage."
             },
             {
               "name": "Pulsate",
               "textA9": "Deal 10 damage. Gains 22 Block and Vital Spark 3."
             }
           ],
-          "monsterId": "INFESTED_PRISM",
-          "count": 1,
           "pattern": {
             "type": "cycle",
-            "text": "Jab → Radiate → Whirlwind → Pulsate → repeat."
-          }
+            "text": "The Infested Prism repeats a fixed four-move cycle: • Jab • Radiate • Whirlwind • Pulsate"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Infested_Prism",
+          "monsterId": "INFESTED_PRISM",
+          "count": 1
         }
       ],
       "name": "Infested Prisms",
@@ -1488,24 +2006,26 @@
             },
             {
               "name": "Windup Punch",
-              "textA9": "Deals 3 damage ×3."
+              "textA9": "Deals 3×3 damage."
             },
             {
               "name": "Piercing Gaze",
               "textA9": "Deals 11 damage."
             }
           ],
-          "partyNote": "Overgrowth; * Inklets: Inklet x3",
-          "monsterId": "INKLET",
-          "count": 3,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "The two outer Inklets open with Jab (most likely) or Windup Punch. The middle Inklet always opens with Windup Punch. Each Inklet will alternate between Jab and a random choice of either Piercing Gaze or Windup Punch. After either Windup Punch or Piercing Gaze, the Inklet always uses Jab. After Jab, it will randomly choose between Piercing Gaze and Windup Punch."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Inklet",
+          "monsterId": "INKLET",
+          "count": 3
         }
       ],
       "name": "Inklets",
-      "rules": [],
+      "rules": [
+        "One of Vantom's death messages implies that Inklets are creatures transformed into monsters by Vantom."
+      ],
       "timing": []
     },
     "KAISER_CRAB_BOSS": {
@@ -1530,7 +2050,7 @@
             },
             {
               "name": "Bug Sting",
-              "textA9": "Deals 7x2 damage. Applies 2 Weak and 2 Frail."
+              "textA9": "Deals 7×2 damage. Applies 2 Weak and 2 Frail."
             },
             {
               "name": "Adapt",
@@ -1541,12 +2061,13 @@
               "textA9": "Deals 14 damage. Gains 18 Block."
             }
           ],
-          "monsterId": "CRUSHER",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Crusher repeats a fixed five-move cycle: • Thrash • Enlarging Strike • Bug Sting • Adapt • Guarded Strike"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Kaiser_Crab",
+          "monsterId": "CRUSHER",
+          "count": 1
         },
         {
           "displayName": "Rocket",
@@ -1577,16 +2098,19 @@
               "textA9": "Does nothing."
             }
           ],
-          "monsterId": "ROCKET",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Rocket repeats a fixed five-move cycle: • Targeting Reticle • Precision Beam • Charge Up • Laser • Recharge"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Kaiser_Crab",
+          "monsterId": "ROCKET",
+          "count": 1
         }
       ],
       "name": "Kaiser Crab",
-      "rules": [],
+      "rules": [
+        "The Kaiser Crab is a Boss encounter found in Hive. It consists of two arms that fight simultaneously: the Crusher (left claw) and the Rocket (right claw). While both Crusher and Rocket are alive, all players have Surrounded applied and will turn towards a claw when playing a card against it. All attacks from the claw that the player faces away from have their final damage increased by 50%."
+      ],
       "timing": []
     },
     "KNIGHTS_ELITE": {
@@ -1606,20 +2130,20 @@
             },
             {
               "name": "Flail",
-              "textA9": "Deals 10 damage ×2."
+              "textA9": "Deals 10×2 damage."
             },
             {
               "name": "Ram",
               "textA9": "Deals 17 damage."
             }
           ],
-          "partyNote": "Glory; * Spectral Knight + Magi Knight",
-          "monsterId": "FLAIL_KNIGHT",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Opens with Ram, then randomly uses Breaker, Flail, or Ram each turn. Breaker cannot be used two turns in a row."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Knight_Gang",
+          "monsterId": "FLAIL_KNIGHT",
+          "count": 1
         },
         {
           "displayName": "Spectral Knight",
@@ -1638,16 +2162,16 @@
             },
             {
               "name": "Soul Flame",
-              "textA9": "Deals 4 damage ×3."
+              "textA9": "Deals 4×3 damage."
             }
           ],
-          "partyNote": "Glory; * Flail Knight + Magi Knight",
-          "monsterId": "SPECTRAL_KNIGHT",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "opener",
+            "text": "Opens with Hex. After that, alternates between Soul Slash and Soul Flame."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Knight_Gang",
+          "monsterId": "SPECTRAL_KNIGHT",
+          "count": 1
         },
         {
           "displayName": "Magi Knight",
@@ -1677,18 +2201,18 @@
               "textA9": "Deals 40 damage."
             }
           ],
-          "partyNote": "Glory; * Flail Knight + Spectral Knight",
-          "monsterId": "MAGI_KNIGHT",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "opener",
+            "text": "Starts with Power Shield, followed by Dampen. Then repeatedly uses Ram, Prep, and Magic Bomb in that order."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Knight_Gang",
+          "monsterId": "MAGI_KNIGHT",
+          "count": 1
         }
       ],
       "name": "Knights",
       "rules": [
-        "While Magi Knight is alive, Dampen Downgrades all player cards."
+        "Magi Knight — Applies Dampen. While Magi Knight is alive, all your cards are Downgraded."
       ],
       "timing": []
     },
@@ -1713,19 +2237,20 @@
             },
             {
               "name": "Knowledge Overwhelming",
-              "textA9": "Deals 9 damage ×3."
+              "textA9": "Deals 9×3 damage."
             },
             {
               "name": "Ponder",
               "textA9": "Deals 13 damage. Heals 30 HP per player. Gains 3 Strength."
             }
           ],
-          "monsterId": "KNOWLEDGE_DEMON",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Knowledge Demon repeats a fixed four-move cycle: • Curse of Knowledge • Slap • Knowledge Overwhelming • Ponder After the third Curse of Knowledge (once all three status sets have been offered), the cycle changes: Curse of Knowledge is skipped, and the remaining three moves repeat in order."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Knowledge_Demon",
+          "monsterId": "KNOWLEDGE_DEMON",
+          "count": 1
         }
       ],
       "name": "Knowledge Demon",
@@ -1754,7 +2279,7 @@
             },
             {
               "name": "Disembowel",
-              "textA9": "Deals 10 damage x2."
+              "textA9": "Deals 10×2 damage."
             },
             {
               "name": "Slash2",
@@ -1765,12 +2290,13 @@
               "textA9": "Removes 2 Strength and 2 Dexterity from the player. Gains 2 Strength."
             }
           ],
-          "monsterId": "LAGAVULIN_MATRIARCH",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Lagavulin Matriarch starts Asleep with 12 Plating. It sleeps for 3 turns or until it takes unblocked damage, whichever comes first. When it wakes up, it loses its Plating. After waking, it repeats this four-move cycle: • Slash • Disembowel • Slash2 • Soul Siphon"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Lagavulin_Matriarch",
+          "monsterId": "LAGAVULIN_MATRIARCH",
+          "count": 1
         }
       ],
       "name": "Lagavulin Matriarch",
@@ -1801,13 +2327,13 @@
               "textA9": "Deals 9 damage."
             }
           ],
-          "partyNote": "Underdocks; Appears as a solo normal encounter.; Summons Gas Bombs mid-fight.",
-          "monsterId": "LIVING_FOG",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Always uses Advanced Gas first, then alternates between Bloat and Super Gas Blast."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Living_Fog",
+          "monsterId": "LIVING_FOG",
+          "count": 1
         },
         {
           "displayName": "Gas Bomb",
@@ -1819,22 +2345,27 @@
           "moves": [
             {
               "name": "Explode",
-              "textA9": "Deals 9 damage. Dies."
+              "textA9": "Deals 9 damage. Dies.",
+              "intent": "Death Blow"
             }
           ],
-          "partyNote": "Summoned by Living Fog.",
+          "pattern": {
+            "type": "cycle",
+            "text": "Uses Explode every turn, dealing damage and killing itself."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Living_Fog",
           "monsterId": "GAS_BOMB",
           "count": 1,
-          "role": "summoned",
-          "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+          "role": "summoned"
         }
       ],
       "name": "Living Fog",
       "rules": [
-        "Summons Gas Bomb minions; their intent is Death Blow."
+        "Living Fog is a normal Enemy found in the Underdocks. It summons Gas Bombs that explode for damage and then die.",
+        "Underdocks; Appears as a solo normal encounter.; Summons Gas Bombs mid-fight.",
+        "Living Fog — Deals 6 damage. Summons 1 Gas Bomb.",
+        "Summoned by Living Fog.",
+        "Gas Bomb — Death Blow: Deals 9 damage. Dies."
       ],
       "timing": []
     },
@@ -1857,19 +2388,21 @@
             },
             {
               "name": "Curl and Grow",
-              "textA9": "Gains 18 Block. Gains 5 Strength."
+              "textA9": "Gains 18 Block. Gains 7 Strength."
             },
             {
               "name": "Pounce",
               "textA9": "Deals 16 damage."
             }
           ],
-          "monsterId": "LOUSE_PROGENITOR",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Louse Progenitor repeats a fixed three-move cycle: Web Cannon, then Curl and Grow, then Pounce, and back to the start."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Louse_Progenitor",
+          "patchChecked": "v0.111.0 Enemies",
+          "monsterId": "LOUSE_PROGENITOR",
+          "count": 1
         }
       ],
       "name": "Louse Progenitor",
@@ -1897,15 +2430,16 @@
             },
             {
               "name": "Claw",
-              "textA9": "Deals 5 damage ×2."
+              "textA9": "Deals 5×2 damage."
             }
           ],
-          "monsterId": "MAWLER",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Always opens with Claw. After that, each turn it randomly picks one of three moves with equal chance: Rip and Tear, Roar, or Claw. It cannot use the same move twice in a row, and Roar can only be used once per fight."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Mawler",
+          "monsterId": "MAWLER",
+          "count": 1
         }
       ],
       "name": "Mawler",
@@ -1930,7 +2464,7 @@
             },
             {
               "name": "Flamethrower",
-              "textA9": "Shuffles 4 Burn into your hand."
+              "textA9": "Deals 12 damage. Adds 4 Burn to your hand."
             },
             {
               "name": "Windup",
@@ -1941,12 +2475,14 @@
               "textA9": "Deals 40 damage."
             }
           ],
-          "monsterId": "MECHA_KNIGHT",
-          "count": 1,
           "pattern": {
-            "type": "opener",
-            "text": "Charge once, then Flamethrower → Windup → Heavy Cleave → repeat."
-          }
+            "type": "cycle",
+            "text": "Starts with Charge and then repeats this cycle for the rest of combat: • Flamethrower • Windup • Heavy Cleave"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Mecha_Knight",
+          "patchChecked": "v0.111.0 Enemies",
+          "monsterId": "MECHA_KNIGHT",
+          "count": 1
         }
       ],
       "name": "Mecha Knight",
@@ -1978,12 +2514,13 @@
               "textA9": "Deals 6 damage. Gains 3 Strength."
             }
           ],
-          "monsterId": "MYTE",
-          "count": 2,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Mytes always appear in pairs. One opens with Toxic Cornucopia and the other opens with Suck. Afterward, Mytes follow a fixed pattern: • Toxic Cornucopia • Bite • Suck"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Myte",
+          "monsterId": "MYTE",
+          "count": 2
         }
       ],
       "name": "Mytes",
@@ -2015,13 +2552,13 @@
               "textA9": "Gains 3 Strength."
             }
           ],
-          "partyNote": "Overgrowth; * Nibbits (Weak): appears alone; * Nibbits (Normal): Nibbit x2",
-          "monsterId": "NIBBIT",
-          "count": 2,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "opener",
+            "text": "When alone (Nibbits Weak encounter), the Nibbit opens with Butt. When paired (Nibbits Normal encounter), the front Nibbit opens with Hesitant Slice and the back Nibbit opens with Hiss. After the opening move, all Nibbits cycle in a fixed order: Butt, then Hesitant Slice, then Hiss, and repeat."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Nibbit",
+          "monsterId": "NIBBIT",
+          "count": 2
         }
       ],
       "name": "Nibbits",
@@ -2053,13 +2590,13 @@
               "textA9": "Gains 3 Strength."
             }
           ],
-          "partyNote": "Overgrowth; * Nibbits (Weak): appears alone; * Nibbits (Normal): Nibbit x2",
-          "monsterId": "NIBBIT",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "opener",
+            "text": "When alone (Nibbits Weak encounter), the Nibbit opens with Butt. When paired (Nibbits Normal encounter), the front Nibbit opens with Hesitant Slice and the back Nibbit opens with Hiss. After the opening move, all Nibbits cycle in a fixed order: Butt, then Hesitant Slice, then Hiss, and repeat."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Nibbit",
+          "monsterId": "NIBBIT",
+          "count": 1
         }
       ],
       "name": "Nibbits",
@@ -2087,13 +2624,13 @@
               "textA9": "Gains 7 Strength."
             }
           ],
-          "partyNote": "Overgrowth; Appears as a solo weak encounter.; Also appears in a strong encounter with Shrinker Beetle.",
-          "monsterId": "FUZZY_WURM_CRAWLER",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Repeats a fixed three-turn cycle: • Acid Goop • Inhale • Acid Goop Then the cycle starts over."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fuzzy_Wurm_Crawler",
+          "monsterId": "FUZZY_WURM_CRAWLER",
+          "count": 1
         },
         {
           "displayName": "Shrinker Beetle",
@@ -2116,13 +2653,13 @@
               "textA9": "Deals 14 damage."
             }
           ],
-          "partyNote": "Overgrowth; Appears as a solo weak encounter.; Also appears in a strong encounter with Fuzzy Wurm Crawler.",
-          "monsterId": "SHRINKER_BEETLE",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Always opens with Shrinker, then alternates between Chomp and Stomp."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Shrinker_Beetle",
+          "monsterId": "SHRINKER_BEETLE",
+          "count": 1
         }
       ],
       "name": "Overgrowth Crawlers",
@@ -2158,12 +2695,13 @@
               "textA9": "Gains 4 Strength."
             }
           ],
-          "monsterId": "OVICOPTER",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "opener",
+            "text": "Always opens with Lay Eggs to summon 3 Tough Eggs, then uses Smash, then Tenderizer. After Tenderizer, it checks how many allies it has. If it has 3 or fewer living allies, it uses Lay Eggs again. If it has more than 3, it uses Nutritional Paste instead. Then the cycle continues with Smash and Tenderizer."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ovicopter",
+          "monsterId": "OVICOPTER",
+          "count": 1
         },
         {
           "displayName": "Tough Egg",
@@ -2172,31 +2710,36 @@
             15,
             19
           ],
-          "startsWithA9": "Hatch",
+          "startsWithA9": "Minion Hatch 2",
           "moves": [
             {
               "name": "Hatch",
-              "textA9": "Hatches into a Hatchling with 20-23 HP. Removes all powers except Minion."
-            },
-            {
-              "name": "Nibble",
-              "textA9": "Deals 5 damage."
+              "textA9": "Hatches into a Hatchling. Removes all powers except Minion."
             }
           ],
+          "pattern": {
+            "type": "unknown",
+            "text": "The Tough Egg waits while its Hatch timer counts down. When the timer expires, it uses Hatch to transform into a Hatchling with new HP."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ovicopter",
           "monsterId": "TOUGH_EGG",
           "count": 3,
-          "role": "summoned",
-          "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+          "role": "summoned"
         }
       ],
       "name": "Ovicopter",
       "rules": [
-        "Summons 3 Tough Egg minions; eggs hatch into attackers."
+        "Ovicopter is a normal Enemy found in the Hive. It summons Tough Eggs that hatch into Hatchlings.",
+        "Always opens with Lay Eggs to summon 3 Tough Eggs, then uses Smash, then Tenderizer.",
+        "The Tough Egg waits while its Hatch timer counts down. When the timer expires, it uses Hatch to transform into a Hatchling with new HP.",
+        "The Hatchling is a minion that spawns from a Tough Egg",
+        "Hatch timer starts at 2 if summoned during the enemy turn, or 1 during the player turn.",
+        "Ovicopter — Summons 3 Tough Eggs.",
+        "Tough Egg — Hatches into a Hatchling. Removes all powers except Minion."
       ],
-      "timing": []
+      "timing": [
+        "Hatch timer starts at 2 if summoned during the enemy turn, or 1 during the player turn."
+      ]
     },
     "OWL_MAGISTRATE_NORMAL": {
       "act": "Glory",
@@ -2215,7 +2758,7 @@
             },
             {
               "name": "Peck Assault",
-              "textA9": "Deals 4 damage x6."
+              "textA9": "Deals 4×6 damage."
             },
             {
               "name": "Judicial Flight",
@@ -2226,12 +2769,13 @@
               "textA9": "Deals 36 damage. Applies 4 Vulnerable. Removes Soar."
             }
           ],
-          "monsterId": "OWL_MAGISTRATE",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Follows a fixed 4-move cycle: Magistrate Scrutiny, Peck Assault, Judicial Flight, Verdict, then repeats."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Owl_Magistrate",
+          "monsterId": "OWL_MAGISTRATE",
+          "count": 1
         }
       ],
       "name": "Owl Magistrate",
@@ -2261,20 +2805,20 @@
             },
             {
               "name": "Flail",
-              "textA9": "Deals 1 damage ×3."
+              "textA9": "Deals 1×3 damage."
             },
             {
               "name": "Enlarge",
               "textA9": "Gains 3 Strength."
             }
           ],
-          "partyNote": "Underdocks; * Phantasmal Gardener ×4",
-          "monsterId": "PHANTASMAL_GARDENER",
-          "count": 4,
           "pattern": {
             "type": "cycle",
-            "text": "Bite → Lash → Flail → Enlarge; all 4 Gardeners start at different offsets."
-          }
+            "text": "All four Gardeners cycle through the same four moves in a fixed order: • Bite • Lash • Flail • Enlarge Each Gardener starts at a different point in the cycle, so they always use different moves from each other."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Phantasmal_Gardener",
+          "monsterId": "PHANTASMAL_GARDENER",
+          "count": 4
         }
       ],
       "name": "Phantasmal Gardeners",
@@ -2300,16 +2844,16 @@
             },
             {
               "name": "Lash",
-              "textA9": "Deals 5 damage ×4."
+              "textA9": "Deals 5×4 damage."
             }
           ],
-          "partyNote": "Overgrowth; Appears as a solo elite encounter.; Summons Wriggler ×4 upon death (via Infested).",
-          "monsterId": "PHROG_PARASITE",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Phrog Parasite alternates between its two moves: • Infect • Lash • Back to Infect, and so on. When Phrog Parasite dies, Infested triggers and 4 Wrigglers are summoned. They will be Stunned and do nothing on their first turn. The fight continues until all Wrigglers are defeated."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Phrog_Parasite",
+          "monsterId": "PHROG_PARASITE",
+          "count": 1
         },
         {
           "displayName": "Wriggler",
@@ -2328,21 +2872,33 @@
               "textA9": "Shuffles 1 Infection into your discard pile. Gains 2 Strength."
             }
           ],
-          "partyNote": "Overgrowth; * Appears in the Dense Vegetation event (×4); * Summoned by Phrog Parasite upon death (×4, via Infested)",
+          "pattern": {
+            "type": "cycle",
+            "text": "Wrigglers alternate between Nasty Bite and Wriggle. When multiple Wrigglers are present, they start offset from each other: odd-numbered Wrigglers begin with Nasty Bite and even-numbered Wrigglers begin with Wriggle. When summoned by Phrog Parasite (via Infested), each Wriggler spends its first turn Stunned before beginning its pattern. In the Dense Vegetation event, 4 Wrigglers appear at once, starting their patterns immediately (not Stunned). Enemy2Nav Category:Monsters Category:Slay the Spire 2 Content"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Wriggler",
           "monsterId": "WRIGGLER",
           "count": 4,
-          "role": "summoned on death",
-          "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+          "role": "summoned on death"
         }
       ],
       "name": "Phrog Parasite",
       "rules": [
-        "On death, Infested summons 4 Wrigglers."
+        "When Phrog Parasite dies, Infested triggers and 4 Wrigglers are summoned. They will be Stunned and do nothing on their first turn. The fight continues until all Wrigglers are defeated.",
+        "Whether the Wrigglers are Stunned on the player's next turn depends on if the Phrog Parasite dies during the player turn or the enemy turn:",
+        "If the Phrog Parasite is killed with an Attack card or damage from an Orb, the Wrigglers will be Stunned during this turn, not the player's next turn.",
+        "If the Phrog Parasite dies to Poison or Doom, then the Wrigglers will have no Intent when spawned. They will be Stunned during the player's next turn.",
+        "This also applies if the Phrog Parasite dies as a result of its own attack, such as by Thorns or Necro Mastery.",
+        "Overgrowth; Appears as a solo elite encounter.; Summons Wriggler ×4 upon death (via Infested).",
+        "Wriggler is a normal Enemy found in the Overgrowth. It appears in the Dense Vegetation event and is also summoned by Phrog Parasite upon its death.",
+        "Overgrowth; * Appears in the Dense Vegetation event (×4); * Summoned by Phrog Parasite upon death (×4, via Infested)"
       ],
-      "timing": []
+      "timing": [
+        "When Phrog Parasite dies, Infested triggers and 4 Wrigglers are summoned. They will be Stunned and do nothing on their first turn. The fight continues until all Wrigglers are defeated.",
+        "Whether the Wrigglers are Stunned on the player's next turn depends on if the Phrog Parasite dies during the player turn or the enemy turn:",
+        "If the Phrog Parasite is killed with an Attack card or damage from an Orb, the Wrigglers will be Stunned during this turn, not the player's next turn.",
+        "If the Phrog Parasite dies to Poison or Doom, then the Wrigglers will have no Intent when spawned. They will be Stunned during the player's next turn."
+      ]
     },
     "PUNCH_CONSTRUCT_NORMAL": {
       "act": "Underdocks",
@@ -2362,20 +2918,20 @@
             },
             {
               "name": "Fast Punch",
-              "textA9": "Deals 6 damage ×2. Applies 1 Frail."
+              "textA9": "Deals 6×2 damage. Applies 1 Frail."
             },
             {
               "name": "Strong Punch",
               "textA9": "Deals 16 damage."
             }
           ],
-          "partyNote": "Underdocks; Appears as a solo normal encounter.; Glory; * Cubex Construct ×2",
-          "monsterId": "PUNCH_CONSTRUCT",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Cycles through its moves in a fixed order: • READY • Fast Punch • Strong Punch"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Punch_Construct",
+          "monsterId": "PUNCH_CONSTRUCT",
+          "count": 1
         }
       ],
       "name": "Punch Construct",
@@ -2407,7 +2963,7 @@
             },
             {
               "name": "Off with Your Head",
-              "textA9": "Deals 4 damage x5."
+              "textA9": "Deals 4×5 damage."
             },
             {
               "name": "Execution",
@@ -2418,13 +2974,13 @@
               "textA9": "Gains 2 Strength."
             }
           ],
-          "partyNote": "Glory; * Torch Head Amalgam",
-          "monsterId": "QUEEN",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Queen's pattern depends on whether the Torch Head Amalgam is alive: Opening (always): • Puppet Strings • You're Mine While the Amalgam is alive: : Repeats Burn Bright for Me. After the Amalgam dies: : If the Queen is currently using Burn Bright for Me, she immediately switches to Enrage, then enters the enraged loop: • Off with Your Head • Execution • Enrage • Back to Off with Your Head • Keep in mind that Queen will have gained 2 Strength and that the player will likely be permanently Vulnerable from You're Mine, making these the actual damage amounts: • Off with Your Head: 7x5 / 9x5 • Execution: 25 / 30"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Queen",
+          "monsterId": "QUEEN",
+          "count": 1
         },
         {
           "displayName": "Torch Head Amalgam",
@@ -2444,27 +3000,33 @@
             },
             {
               "name": "Beam",
-              "textA9": "Deals 8 damage x3."
+              "textA9": "Deals 8×3 damage."
             },
             {
               "name": "Weak Tackle",
               "textA9": "Deals 16 damage."
             }
           ],
-          "partyNote": "Glory; * Queen",
-          "monsterId": "TORCH_HEAD_AMALGAM",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Torch Head Amalgam follows a fixed sequence: • Strong Tackle • Tackle • Beam • Weak Tackle • Weak Tackle • Back to Beam (repeats steps 3-5)"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Queen",
+          "monsterId": "TORCH_HEAD_AMALGAM",
+          "count": 1
         }
       ],
       "name": "Queen",
       "rules": [
-        "Torch Head Amalgam is a Minion and fights alongside Queen."
+        "While the Amalgam is alive:",
+        "After the Amalgam dies:",
+        "If the Torch Head Amalgam dies after its turn to an effect like Doom, the Queen will immediately switch intents to Off with Your Head, skipping the usual Enrage .",
+        "If the Torch Head Amalgam is killed on Turn 2 or earlier, the Queen will not use Enrage on her first cycle."
       ],
-      "timing": []
+      "timing": [
+        "After the Amalgam dies:",
+        "If the Torch Head Amalgam dies after its turn to an effect like Doom, the Queen will immediately switch intents to Off with Your Head, skipping the usual Enrage ."
+      ]
     },
     "RUBY_RAIDERS_NORMAL": {
       "act": "Overgrowth",
@@ -2483,13 +3045,13 @@
               "textA9": "Deals 11 damage."
             }
           ],
-          "partyNote": "Overgrowth; * 2 others randomly chosen from Axe Raider, Brute Raider, Crossbow Raider, Tracker Raider",
-          "monsterId": "ASSASSIN_RAIDER",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Uses Killshot every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ruby_Raiders",
+          "monsterId": "ASSASSIN_RAIDER",
+          "count": 1
         },
         {
           "displayName": "Axe Raider",
@@ -2508,13 +3070,13 @@
               "textA9": "Deals 13 damage."
             }
           ],
-          "partyNote": "Overgrowth; * 2 others randomly chosen from Assassin Raider, Brute Raider, Crossbow Raider, Tracker Raider",
-          "monsterId": "AXE_RAIDER",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Repeats a fixed cycle: • Swing • Swing • Big Swing"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ruby_Raiders",
+          "monsterId": "AXE_RAIDER",
+          "count": 1
         },
         {
           "displayName": "Crossbow Raider",
@@ -2533,13 +3095,13 @@
               "textA9": "Deals 16 damage."
             }
           ],
-          "partyNote": "Overgrowth; * 2 others randomly chosen from Axe Raider, Assassin Raider, Brute Raider, Tracker Raider",
-          "monsterId": "CROSSBOW_RAIDER",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Alternates between Reload and Fire!, starting with Reload."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ruby_Raiders",
+          "monsterId": "CROSSBOW_RAIDER",
+          "count": 1
         }
       ],
       "name": "Ruby Raiders",
@@ -2569,19 +3131,22 @@
             },
             {
               "name": "Chew",
-              "textA9": "Deals 6 damage 2 times."
+              "textA9": "Deals 6×2 damage."
             }
           ],
-          "monsterId": "SCROLL_OF_BITING",
-          "count": 4,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Each Scroll of Biting starts on a different move in the cycle. The pattern is: Chomp, then More Teeth, then Chew. After Chew, it randomly picks either Chomp (cannot repeat) or Chew (weight 2), then continues the cycle from that point."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Scroll_of_Biting",
+          "monsterId": "SCROLL_OF_BITING",
+          "count": 4
         }
       ],
       "name": "Scrolls Of Biting",
-      "rules": [],
+      "rules": [
+        "If the Scroll of Biting dies from reflected damage such as Thorns or Flame Barrier while dealing unblocked damage to the player, the player will not lose any max HP from Paper Cuts."
+      ],
       "timing": []
     },
     "SCROLLS_OF_BITING_WEAK": {
@@ -2607,19 +3172,22 @@
             },
             {
               "name": "Chew",
-              "textA9": "Deals 6 damage 2 times."
+              "textA9": "Deals 6×2 damage."
             }
           ],
-          "monsterId": "SCROLL_OF_BITING",
-          "count": 3,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Each Scroll of Biting starts on a different move in the cycle. The pattern is: Chomp, then More Teeth, then Chew. After Chew, it randomly picks either Chomp (cannot repeat) or Chew (weight 2), then continues the cycle from that point."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Scroll_of_Biting",
+          "monsterId": "SCROLL_OF_BITING",
+          "count": 3
         }
       ],
       "name": "Scrolls Of Biting",
-      "rules": [],
+      "rules": [
+        "If the Scroll of Biting dies from reflected damage such as Thorns or Flame Barrier while dealing unblocked damage to the player, the player will not lose any max HP from Paper Cuts."
+      ],
       "timing": []
     },
     "SEAPUNK_NORMAL": {
@@ -2640,20 +3208,20 @@
             },
             {
               "name": "Spinning Kick",
-              "textA9": "Deals 2 damage ×4."
+              "textA9": "Deals 2×4 damage."
             },
             {
               "name": "Bubble Burp",
               "textA9": "Gains 8 Block and 2 Strength."
             }
           ],
-          "partyNote": "Underdocks; * Calcified Cultist (Seapunk encounter)",
-          "monsterId": "SEAPUNK",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Cycles through its moves in a fixed order: • Sea Kick • Spinning Kick • Bubble Burp • Back to Sea Kick"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Seapunk",
+          "monsterId": "SEAPUNK",
+          "count": 1
         },
         {
           "displayName": "Calcified Cultist",
@@ -2672,13 +3240,13 @@
               "textA9": "Deals 11 damage."
             }
           ],
-          "partyNote": "Underdocks; * Damp Cultist (Cultists encounter); * Seapunk (Seapunk Normal encounter)",
-          "monsterId": "CALCIFIED_CULTIST",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Always uses Incantation first, then Dark Strike every turn after."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Cultists",
+          "monsterId": "CALCIFIED_CULTIST",
+          "count": 1
         }
       ],
       "name": "Seapunk",
@@ -2703,20 +3271,20 @@
             },
             {
               "name": "Spinning Kick",
-              "textA9": "Deals 2 damage ×4."
+              "textA9": "Deals 2×4 damage."
             },
             {
               "name": "Bubble Burp",
               "textA9": "Gains 8 Block and 2 Strength."
             }
           ],
-          "partyNote": "Underdocks; * Calcified Cultist (Seapunk encounter)",
-          "monsterId": "SEAPUNK",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Cycles through its moves in a fixed order: • Sea Kick • Spinning Kick • Bubble Burp • Back to Sea Kick"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Seapunk",
+          "monsterId": "SEAPUNK",
+          "count": 1
         }
       ],
       "name": "Seapunk",
@@ -2744,12 +3312,13 @@
               "textA9": "Gains 4 Strength."
             }
           ],
-          "monsterId": "SEWER_CLAM",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "opener",
+            "text": "Always uses Jet first. Then alternates between Pressurize and Jet every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Sewer_Clam",
+          "monsterId": "SEWER_CLAM",
+          "count": 1
         }
       ],
       "name": "Sewer Clam",
@@ -2781,13 +3350,13 @@
               "textA9": "Deals 14 damage."
             }
           ],
-          "partyNote": "Overgrowth; Appears as a solo weak encounter.; Also appears in a strong encounter with Fuzzy Wurm Crawler.",
-          "monsterId": "SHRINKER_BEETLE",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Always opens with Shrinker, then alternates between Chomp and Stomp."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Shrinker_Beetle",
+          "monsterId": "SHRINKER_BEETLE",
+          "count": 1
         }
       ],
       "name": "Shrinker Beetle",
@@ -2816,15 +3385,16 @@
             },
             {
               "name": "Piercing Stabs",
-              "textA9": "Deals 8x2 damage."
+              "textA9": "Deals 8×2 damage."
             }
           ],
-          "monsterId": "SKULKING_COLONY",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Skulking Colony repeats the same four moves in order: • Zoom • Zoom • Inertia • Piercing Stabs"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Skulking_Colony",
+          "monsterId": "SKULKING_COLONY",
+          "count": 1
         }
       ],
       "name": "Skulking Colony",
@@ -2848,7 +3418,7 @@
             },
             {
               "name": "Furious Pummeling",
-              "textA9": "Deals 5 damage x4."
+              "textA9": "Deals 5×4 damage."
             },
             {
               "name": "Leeching Hug",
@@ -2859,12 +3429,13 @@
               "textA9": "Deals 33 damage."
             }
           ],
-          "monsterId": "SLIMED_BERSERKER",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Follows a fixed 4-move cycle: • Vomit Ichor • Furious Pummeling • Leeching Hug • Smother"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimed_Berserker",
+          "monsterId": "SLIMED_BERSERKER",
+          "count": 1
         }
       ],
       "name": "Slimed Berserker",
@@ -2892,13 +3463,13 @@
               "textA9": "Shuffles 1 Slimed into your discard pile."
             }
           ],
-          "partyNote": "Overgrowth; * Slimes (Weak): Leaf Slime (S), Twig Slime (S), and randomly chosen as the medium slime; * Slimes (Normal): Leaf Slime (S), Leaf Slime (M), Twig Slime (S); * Flyconid: randomly chosen companion with Flyconid; * Slithering Strangler: possible companion with Slithering Strangler (medium slime variant)",
-          "monsterId": "TWIG_SLIME_M",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Always starts with Sticky Shot. After that, each turn it randomly picks Chomp (67%) or Sticky Shot (33%). Cannot use Sticky Shot twice in a row."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimes",
+          "monsterId": "TWIG_SLIME_M",
+          "count": 1
         },
         {
           "displayName": "Leaf Slime (M)",
@@ -2917,13 +3488,13 @@
               "textA9": "Shuffles 2 Slimed into your discard pile."
             }
           ],
-          "partyNote": "Overgrowth; * Slimes (Weak): Leaf Slime (S), Twig Slime (S), and randomly chosen as the medium slime; * Slimes (Normal): Leaf Slime (S), Twig Slime (S), Twig Slime (M); * Flyconid: randomly chosen companion with Flyconid; * Slithering Strangler: possible companion with Slithering Strangler (medium slime variant)",
-          "monsterId": "LEAF_SLIME_M",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Always starts with Sticky Shot, then alternates between Clump Shot and Sticky Shot."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimes",
+          "monsterId": "LEAF_SLIME_M",
+          "count": 1
         },
         {
           "displayName": "Twig Slime (S)",
@@ -2938,13 +3509,13 @@
               "textA9": "Deals 5 damage."
             }
           ],
-          "partyNote": "Overgrowth; * Slimes (Weak): Leaf Slime (S) + 1 random from Leaf Slime (M) or Twig Slime (M); * Slimes (Normal): Leaf Slime (S), Leaf Slime (M), Twig Slime (M); * Slithering Strangler: possible companion with Slithering Strangler (2 small slimes variant)",
-          "monsterId": "TWIG_SLIME_S",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Uses Tackle every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimes",
+          "monsterId": "TWIG_SLIME_S",
+          "count": 1
         },
         {
           "displayName": "Leaf Slime (S)",
@@ -2963,13 +3534,13 @@
               "textA9": "Shuffles 1 Slimed into your discard pile."
             }
           ],
-          "partyNote": "Overgrowth; * Slimes (Weak): Twig Slime (S) + 1 random from Leaf Slime (M) or Twig Slime (M); * Slimes (Normal): Leaf Slime (M), Twig Slime (S), Twig Slime (M); * Slithering Strangler: possible companion with Slithering Strangler (2 small slimes variant)",
-          "monsterId": "LEAF_SLIME_S",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Randomly picks Tackle or Goop each turn. Cannot use the same move twice in a row."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimes",
+          "monsterId": "LEAF_SLIME_S",
+          "count": 1
         }
       ],
       "name": "Slimes",
@@ -2997,13 +3568,13 @@
               "textA9": "Shuffles 1 Slimed into your discard pile."
             }
           ],
-          "partyNote": "Overgrowth; * Slimes (Weak): Leaf Slime (S), Twig Slime (S), and randomly chosen as the medium slime; * Slimes (Normal): Leaf Slime (S), Leaf Slime (M), Twig Slime (S); * Flyconid: randomly chosen companion with Flyconid; * Slithering Strangler: possible companion with Slithering Strangler (medium slime variant)",
-          "monsterId": "TWIG_SLIME_M",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Always starts with Sticky Shot. After that, each turn it randomly picks Chomp (67%) or Sticky Shot (33%). Cannot use Sticky Shot twice in a row."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimes",
+          "monsterId": "TWIG_SLIME_M",
+          "count": 1
         },
         {
           "displayName": "Twig Slime (S)",
@@ -3018,13 +3589,13 @@
               "textA9": "Deals 5 damage."
             }
           ],
-          "partyNote": "Overgrowth; * Slimes (Weak): Leaf Slime (S) + 1 random from Leaf Slime (M) or Twig Slime (M); * Slimes (Normal): Leaf Slime (S), Leaf Slime (M), Twig Slime (M); * Slithering Strangler: possible companion with Slithering Strangler (2 small slimes variant)",
-          "monsterId": "TWIG_SLIME_S",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Uses Tackle every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimes",
+          "monsterId": "TWIG_SLIME_S",
+          "count": 1
         },
         {
           "displayName": "Leaf Slime (S)",
@@ -3043,13 +3614,13 @@
               "textA9": "Shuffles 1 Slimed into your discard pile."
             }
           ],
-          "partyNote": "Overgrowth; * Slimes (Weak): Twig Slime (S) + 1 random from Leaf Slime (M) or Twig Slime (M); * Slimes (Normal): Leaf Slime (M), Twig Slime (S), Twig Slime (M); * Slithering Strangler: possible companion with Slithering Strangler (2 small slimes variant)",
-          "monsterId": "LEAF_SLIME_S",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Randomly picks Tackle or Goop each turn. Cannot use the same move twice in a row."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimes",
+          "monsterId": "LEAF_SLIME_S",
+          "count": 1
         }
       ],
       "name": "Slimes",
@@ -3081,13 +3652,13 @@
               "textA9": "Deals 13 damage."
             }
           ],
-          "partyNote": "Overgrowth; * Slithering Strangler + 1 random secondary: Snapping Jaxfruit, or 1 medium slime (Leaf Slime (M) or Twig Slime (M)), or 2 small slimes (Leaf Slime (S) + Twig Slime (S))",
-          "monsterId": "SLITHERING_STRANGLER",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Always opens with Constrict. After that, it randomly picks Thwack or Lash (equal chance, can repeat). After either attack, it always uses Constrict again, then returns to the random pick. The pattern is: • Constrict • 50/50 chance to use Lash or Thwack • Constrict • 50/50 chance to use Lash or Thwack"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slithering_Strangler",
+          "monsterId": "SLITHERING_STRANGLER",
+          "count": 1
         },
         {
           "displayName": "Leaf Slime (S)",
@@ -3106,13 +3677,13 @@
               "textA9": "Shuffles 1 Slimed into your discard pile."
             }
           ],
-          "partyNote": "Overgrowth; * Slimes (Weak): Twig Slime (S) + 1 random from Leaf Slime (M) or Twig Slime (M); * Slimes (Normal): Leaf Slime (M), Twig Slime (S), Twig Slime (M); * Slithering Strangler: possible companion with Slithering Strangler (2 small slimes variant)",
-          "monsterId": "LEAF_SLIME_S",
-          "count": 2,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Randomly picks Tackle or Goop each turn. Cannot use the same move twice in a row."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimes",
+          "monsterId": "LEAF_SLIME_S",
+          "count": 2
         }
       ],
       "name": "Slithering Strangler",
@@ -3144,12 +3715,13 @@
               "textA9": "Deals 7 damage. Gains 3 Strength."
             }
           ],
-          "monsterId": "SLUDGE_SPINNER",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Always uses Oil Spray first. After that, randomly uses one of its three moves each turn. Cannot use the same move twice in a row."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Sludge_Spinner",
+          "monsterId": "SLUDGE_SPINNER",
+          "count": 1
         }
       ],
       "name": "Sludge Spinner",
@@ -3177,12 +3749,13 @@
               "textA9": "Deals 18 damage. Gains 2 Strength."
             }
           ],
-          "monsterId": "SLUMBERING_BEETLE",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Slumbering Beetle starts asleep and uses Snore each turn while it has Slumber. Once Slumber wears off (after taking turns or losing HP 3 times), it wakes up, loses its Plating, and uses Roll Out every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slumbering_Beetle",
+          "monsterId": "SLUMBERING_BEETLE",
+          "count": 1
         },
         {
           "displayName": "Bowlbug (Rock)",
@@ -3202,12 +3775,13 @@
               "textA9": "Stunned. Does nothing."
             }
           ],
-          "monsterId": "BOWLBUG_ROCK",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Uses Headbutt every turn. However, if Headbutt's damage is fully prevented by a player, the Bowlbug (Rock) becomes Stunned and uses Dizzy on its next turn, then resumes Headbutt."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
+          "monsterId": "BOWLBUG_ROCK",
+          "count": 1
         },
         {
           "displayName": "Bowlbug (Silk)",
@@ -3219,19 +3793,20 @@
           "moves": [
             {
               "name": "Thrash",
-              "textA9": "Deals 5 damage x2."
+              "textA9": "Deals 5×2 damage."
             },
             {
               "name": "Spin Web",
               "textA9": "Applies 1 Weak."
             }
           ],
-          "monsterId": "BOWLBUG_SILK",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Alternates between Spin Web and Thrash."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
+          "monsterId": "BOWLBUG_SILK",
+          "count": 1
         }
       ],
       "name": "Slumbering Beetle",
@@ -3255,13 +3830,13 @@
               "textA9": "Deals 4 damage. Gains 2 Strength."
             }
           ],
-          "partyNote": "Overgrowth; * Snapping Jaxfruit encounter: Snapping Jaxfruit + Flyconid; * Slithering Strangler encounter: Slithering Strangler + 1 random companion (Snapping Jaxfruit or 1 medium slime or 2 small slimes)",
-          "monsterId": "SNAPPING_JAXFRUIT",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Uses Energy Orb every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Snapping_Jaxfruit",
+          "monsterId": "SNAPPING_JAXFRUIT",
+          "count": 1
         },
         {
           "displayName": "Flyconid",
@@ -3284,13 +3859,13 @@
               "textA9": "Deals 12 damage."
             }
           ],
-          "partyNote": "Overgrowth; * Flyconid encounter: Flyconid + 1 random from Leaf Slime (M) or Twig Slime (M); * Snapping Jaxfruit encounter: Snapping Jaxfruit + Flyconid",
-          "monsterId": "FLYCONID",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "On its first turn, it randomly picks Frail Spores (2/3 chance) or Smash (1/3 chance). After that, each turn it randomly picks one of three moves: Weakening Spores (3/6 chance), Frail Spores (2/6 chance), or Smash (1/6 chance). It cannot use the same move twice in a row."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Flyconid",
+          "monsterId": "FLYCONID",
+          "count": 1
         }
       ],
       "name": "Snapping Jaxfruit",
@@ -3314,7 +3889,7 @@
             },
             {
               "name": "De-Gas",
-              "textA9": "Deals 17 damage."
+              "textA9": "Deals 18 damage."
             },
             {
               "name": "Gaze",
@@ -3329,17 +3904,21 @@
               "textA9": "Deals 15 damage. Applies 3 Vulnerable."
             }
           ],
-          "monsterId": "SOUL_FYSH",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Soul Fysh repeats the same five moves in order: • Beckon • De-Gas • Gaze • Fade • Scream"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Soul_Fysh",
+          "patchChecked": "v0.111.0 Enemies",
+          "monsterId": "SOUL_FYSH",
+          "count": 1
         }
       ],
       "name": "Soul Fysh",
       "rules": [],
-      "timing": []
+      "timing": [
+        "The first iteration of Fade's Intangible fades instantly during the transition from Soul Fysh's turn to the player's. It effectively gains just 1 Intangible."
+      ]
     },
     "SOUL_NEXUS_ELITE": {
       "act": "Glory",
@@ -3358,19 +3937,20 @@
             },
             {
               "name": "Maelstrom",
-              "textA9": "Deals 7 damage ×4."
+              "textA9": "Deals 7×4 damage."
             },
             {
               "name": "Drain Life",
               "textA9": "Deals 19 damage. Applies 2 Vulnerable and 2 Weak."
             }
           ],
-          "monsterId": "SOUL_NEXUS",
-          "count": 1,
           "pattern": {
-            "type": "opener",
-            "text": "Soul Burn opener; then Soul Burn / Maelstrom / Drain Life equally at random, never the same move twice."
-          }
+            "type": "random-with-constraint",
+            "text": "Opens with Soul Burn, then randomly uses Soul Burn, Maelstrom, or Drain Life each turn. No move can be used two turns in a row. All three moves are equally weighted."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Soul_Nexus",
+          "monsterId": "SOUL_NEXUS",
+          "count": 1
         }
       ],
       "name": "Soul Nexus",
@@ -3402,12 +3982,13 @@
               "textA9": "Deals 19 damage."
             }
           ],
-          "monsterId": "SPINY_TOAD",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Cycles through Protruding Spikes, Spike Explosion, Tongue Lash in order, repeating."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Spiny_Toad",
+          "monsterId": "SPINY_TOAD",
+          "count": 1
         }
       ],
       "name": "Spiny Toad",
@@ -3432,7 +4013,7 @@
             },
             {
               "name": "Thrash",
-              "textA9": "Deals 4x3 damage. Gains 6 Vigor."
+              "textA9": "Deals 4×3 damage. Gains 6 Vigor."
             },
             {
               "name": "Stun",
@@ -3443,12 +4024,13 @@
               "textA9": "Applies 99 Vulnerable."
             }
           ],
-          "monsterId": "TERROR_EEL",
-          "count": 1,
           "pattern": {
-            "type": "opener",
-            "text": "Crash opener, then alternates Crash ↔ Thrash. At the Shriek threshold: Stun → Terror, then resume."
-          }
+            "type": "cycle",
+            "text": "The Terror Eel alternates between Crash and Thrash, starting with Crash. When its HP drops to its Shriek threshold (70, or 75), it becomes Stunned and then uses Terror before resuming the Crash/Thrash cycle. • Terror applies 99 Vulnerable, which effectively makes the player take 50% more damage from attacks for the rest of the fight."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Terror_Eel",
+          "monsterId": "TERROR_EEL",
+          "count": 1
         }
       ],
       "name": "Terror Eel",
@@ -3476,13 +4058,14 @@
               "textA9": "Deals 16 damage. Applies 1 Vulnerable."
             }
           ],
+          "pattern": {
+            "type": "opener",
+            "text": "Starts with Adaptable and Enrage 3. Alternates between Bite and Skull Bash. When reduced to 0 HP, Adaptable prevents death and it revives into Phase 2. |-|Phase 2= Type = Boss Adaptable Painful Stabs"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Test_Subject",
           "monsterId": "TEST_SUBJECT",
           "count": 1,
-          "role": "phase 1",
-          "pattern": {
-            "type": "cycle",
-            "text": "Phase 1 alternates Bite ↔ Skull Bash."
-          }
+          "role": "phase 1"
         },
         {
           "displayName": "Test Subject (Phase 2)",
@@ -3494,16 +4077,17 @@
           "moves": [
             {
               "name": "Multi-Claw",
-              "textA9": "Deals 11 damage x3 (increases by 1 hit each use)."
+              "textA9": "Deals 11×3 damage (increases by 1 hit each use)."
             }
           ],
-          "monsterId": "TEST_SUBJECT_PHASE_2",
-          "count": 1,
-          "role": "phase 2",
           "pattern": {
             "type": "cycle",
-            "text": "Phase 2 repeats Multi-Claw every turn, starting at 3 hits and adding 1 hit each use."
-          }
+            "text": "Revives with 212 HP, gains Painful Stabs and loses Enrage. Uses Multi-Claw every turn. Multi-Claw starts at 3 hits and gains +1 hit each use. When reduced to 0 HP again, it revives into Phase 3. |-|Phase 3= Type = Boss Nemesis"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Test_Subject",
+          "monsterId": "TEST_SUBJECT_PHASE_2",
+          "count": 1,
+          "role": "phase 2"
         },
         {
           "displayName": "Test Subject (Phase 3)",
@@ -3515,7 +4099,7 @@
           "moves": [
             {
               "name": "Lacerate",
-              "textA9": "Deals 11 damage x3."
+              "textA9": "Deals 11×3 damage."
             },
             {
               "name": "Big Pounce",
@@ -3526,21 +4110,28 @@
               "textA9": "Shuffles 5 Burn into discard pile. Gains 3 Strength."
             }
           ],
-          "monsterId": "TEST_SUBJECT_PHASE_3",
-          "count": 1,
-          "role": "phase 3",
           "pattern": {
             "type": "cycle",
-            "text": "Phase 3: Lacerate → Big Pounce → Burning Growl → repeat."
-          }
+            "text": "Revives with 313 HP, gains Nemesis, and loses Adaptable and Painful Stabs. Cycles through: • Lacerate • Big Pounce • Burning Growl • Back to Lacerate"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Test_Subject",
+          "monsterId": "TEST_SUBJECT_PHASE_3",
+          "count": 1,
+          "role": "phase 3"
         }
       ],
       "name": "Test Subject",
       "rules": [
-        "These 3 bodies are sequential phases, not simultaneous enemies: Adaptable revives Phase 1 as Phase 2, then Phase 2 as Phase 3.",
-        "Each transition removes all status effects; the body cannot be targeted until it revives."
+        "When reduced to 0 HP, Adaptable prevents death and it revives into Phase 2.",
+        "Cards with on-kill or Fatal triggers (Feed, The Hunt, Knockout Blow, Sunder, and Hand of Greed) will trigger successfully during any of the Test Subject's phases.",
+        "Because the Test Subject is a Boss in Act 3, after which there are no opportunities to spend Gold or earn card rewards, Feed, Knockout Blow, and Sunder are the only cards with an on-kill or Fatal trigger that matters.",
+        "Test Subject starts each save as Test Subject #C8 with the number increasing by 2 each time it's killed.",
+        "The three listed bodies are sequential phases, not simultaneous enemies; Adaptable revives the next phase.",
+        "Each transition removes all status effects and the body cannot be targeted until it revives."
       ],
       "timing": [
+        "Cards with on-kill or Fatal triggers (Feed, The Hunt, Knockout Blow, Sunder, and Hand of Greed) will trigger successfully during any of the Test Subject's phases.",
+        "Because the Test Subject is a Boss in Act 3, after which there are no opportunities to spend Gold or earn card rewards, Feed, Knockout Blow, and Sunder are the only cards with an on-kill or Fatal trigger that matters.",
         "On-kill and Fatal effects trigger on each phase transition."
       ]
     },
@@ -3561,7 +4152,7 @@
             },
             {
               "name": "Thrash",
-              "textA9": "Deals 9 damage ×2."
+              "textA9": "Deals 9×2 damage."
             },
             {
               "name": "Lunging Bite",
@@ -3572,16 +4163,19 @@
               "textA9": "Gains 3 Strength."
             }
           ],
-          "monsterId": "THE_INSATIABLE",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Insatiable always opens with Liquify Ground, then repeats the following cycle: • Thrash • Lunging Bite • Salivate • Thrash • Back to the first Thrash"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Insatiable",
+          "monsterId": "THE_INSATIABLE",
+          "count": 1
         }
       ],
       "name": "The Insatiable",
-      "rules": [],
+      "rules": [
+        "Fairy in a Bottle will not prevent the death stemming from Sandpit"
+      ],
       "timing": []
     },
     "THE_KIN_BOSS": {
@@ -3605,24 +4199,24 @@
             },
             {
               "name": "Soul Beam",
-              "textA9": "Deals 3 damage ×3."
+              "textA9": "Deals 3×3 damage."
             },
             {
               "name": "Dark Ritual",
               "textA9": "Gains 3 Strength."
             }
           ],
-          "partyNote": "Overgrowth; * Kin Follower ×2; * Kin Priest",
-          "monsterId": "KIN_PRIEST",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Kin Priest cycles through four moves in a fixed order: • Orb of Frailty • Orb of Weakness • Soul Beam • Dark Ritual"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Kin",
+          "monsterId": "KIN_PRIEST",
+          "count": 1
         },
         {
           "displayName": "Kin Follower",
-          "type": "Boss",
+          "type": "Minion",
           "hpA8": [
             62,
             63
@@ -3635,20 +4229,20 @@
             },
             {
               "name": "Boomerang",
-              "textA9": "Deals 2 damage ×2."
+              "textA9": "Deals 2×2 damage."
             },
             {
               "name": "Power Dance",
               "textA9": "Gains 3 Strength."
             }
           ],
-          "partyNote": "Overgrowth; * Kin Follower ×2; * Kin Priest",
-          "monsterId": "KIN_FOLLOWER",
-          "count": 2,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Each Kin Follower cycles through three moves in a fixed order: • Quick Slash • Boomerang • Power Dance The two Kin Followers start offset from each other: one begins with Quick Slash and the other begins with Power Dance."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Kin",
+          "monsterId": "KIN_FOLLOWER",
+          "count": 2
         }
       ],
       "name": "The Kin",
@@ -3673,15 +4267,16 @@
             },
             {
               "name": "Eye Lasers",
-              "textA9": "Deals 5 damage x2."
+              "textA9": "Deals 5×2 damage."
             }
           ],
-          "monsterId": "THE_LOST",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Alternates between Debilitating Smog and Eye Lasers, starting with Debilitating Smog."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Lost_and_Forgotten",
+          "monsterId": "THE_LOST",
+          "count": 1
         },
         {
           "displayName": "The Forgotten",
@@ -3700,12 +4295,13 @@
               "textA9": "Deals 15 damage plus the amount of Dexterity the Forgotten has."
             }
           ],
-          "monsterId": "THE_FORGOTTEN",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Alternates between Miasma and Dread, starting with Miasma."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Lost_and_Forgotten",
+          "monsterId": "THE_FORGOTTEN",
+          "count": 1
         }
       ],
       "name": "The Lost And Forgotten",
@@ -3740,16 +4336,20 @@
               "textA9": "Deals 7 damage. Gains 7 Block."
             }
           ],
-          "monsterId": "THE_OBSCURA",
-          "count": 1,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "The Obscura always opens with Illusion to summon a Parafright. After that, it randomly picks one of three moves — Piercing Gaze, Wail, or Hardening Strike — and cannot use the same move twice in a row."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Obscura",
+          "monsterId": "THE_OBSCURA",
+          "count": 1
         },
         {
           "displayName": "Parafright",
           "type": "Minion",
+          "hpA8": [
+            21
+          ],
           "startsWithA9": "Illusion",
           "moves": [
             {
@@ -3757,20 +4357,25 @@
               "textA9": "Deals 17 damage."
             }
           ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Uses Slam every turn. Enemy2Nav Category:Monsters Category:Minions Category:Slay the Spire 2 Content"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Obscura",
           "monsterId": "PARAFRIGHT",
           "count": 1,
-          "role": "summoned",
-          "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+          "role": "summoned"
         }
       ],
       "name": "The Obscura",
       "rules": [
-        "Summons a Parafright minion."
+        "The Obscura always opens with Illusion to summon a Parafright. After that, it randomly picks one of three moves — Piercing Gaze, Wail, or Hardening Strike — and cannot use the same move twice in a row.",
+        "The Parafright is a minion summoned by The Obscura via Illusion.",
+        "The Obscura — Summons a Parafright."
       ],
-      "timing": []
+      "timing": [
+        "The Obscura always opens with Illusion to summon a Parafright. After that, it randomly picks one of three moves — Piercing Gaze, Wail, or Hardening Strike — and cannot use the same move twice in a row."
+      ]
     },
     "THIEVING_HOPPER_WEAK": {
       "act": "Hive",
@@ -3790,7 +4395,7 @@
             },
             {
               "name": "Flutter",
-              "textA9": "Gains Flutter (takes 50% less Attack damage; must be hit 5 times to Stun it)."
+              "textA9": "Gains Flutter (takes 50% less Attack damage, must be hit 5 times to Stun it)."
             },
             {
               "name": "Hat Trick",
@@ -3805,17 +4410,23 @@
               "textA9": "Flees the combat, taking any stolen cards with it."
             }
           ],
-          "monsterId": "THIEVING_HOPPER",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Thieving Hopper follows a fixed sequence: • Thievery (stealing a card and dealing damage) • Flutter (gaining damage reduction) • Hat Trick • Nab • Escape (fleeing the fight permanently) If it escapes, any cards it stole are lost for the rest of the run. Killing it before it escapes returns the stolen cards."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Thieving_Hopper",
+          "monsterId": "THIEVING_HOPPER",
+          "count": 1
         }
       ],
       "name": "Thieving Hopper",
-      "rules": [],
-      "timing": []
+      "rules": [
+        "Escape (fleeing the fight permanently)",
+        "If it escapes, any cards it stole are lost for the rest of the run. Killing it before it escapes returns the stolen cards."
+      ],
+      "timing": [
+        "If it escapes, any cards it stole are lost for the rest of the run. Killing it before it escapes returns the stolen cards."
+      ]
     },
     "TOADPOLES_WEAK": {
       "act": "Underdocks",
@@ -3831,7 +4442,7 @@
           "moves": [
             {
               "name": "Spike Spit",
-              "textA9": "Deals 4 damage ×3. Removes 2 Thorns from self."
+              "textA9": "Deals 4×3 damage. Removes 2 Thorns from self."
             },
             {
               "name": "Whirl",
@@ -3842,13 +4453,13 @@
               "textA9": "Gains 2 Thorns."
             }
           ],
-          "partyNote": "Underdocks; * Toadpoles (Weak): Toadpole ×2",
-          "monsterId": "TOADPOLE",
-          "count": 2,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Cycles through its moves in a fixed order: Whirl, then Spiken, then Spike Spit, repeating. In the Toadpoles (Weak) encounter, the front Toadpole starts with Spiken instead."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Toadpole",
+          "monsterId": "TOADPOLE",
+          "count": 2
         }
       ],
       "name": "Toadpoles",
@@ -3883,12 +4494,13 @@
               "textA9": "Stunned. Does nothing this turn."
             }
           ],
-          "monsterId": "TUNNELER",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "opener",
+            "text": "Opens with Bite, then uses Burrow. While burrowed, uses Attack from Below every turn. If its Block is fully broken while burrowed, it uses Emerging Strike, then starts the cycle over with Bite. Enemy2Nav Category:Monsters Category:Slay the Spire 2 Content"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Tunneler",
+          "monsterId": "TUNNELER",
+          "count": 1
         }
       ],
       "name": "Tunneler",
@@ -3923,12 +4535,13 @@
               "textA9": "Stunned. Does nothing this turn."
             }
           ],
-          "monsterId": "TUNNELER",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "opener",
+            "text": "Opens with Bite, then uses Burrow. While burrowed, uses Attack from Below every turn. If its Block is fully broken while burrowed, it uses Emerging Strike, then starts the cycle over with Bite. Enemy2Nav Category:Monsters Category:Slay the Spire 2 Content"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Tunneler",
+          "monsterId": "TUNNELER",
+          "count": 1
         }
       ],
       "name": "Tunneler",
@@ -3956,12 +4569,13 @@
               "textA9": "Deals 18 damage. Gains 3 Strength."
             }
           ],
-          "monsterId": "LIVING_SHIELD",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Uses Shield Slam every turn while the Turret Operator is alive. • Once the Turret Operator is killed, switches to Smash every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Turret_Operator",
+          "monsterId": "LIVING_SHIELD",
+          "count": 1
         },
         {
           "displayName": "Turret Operator",
@@ -3972,23 +4586,28 @@
           "moves": [
             {
               "name": "Unload!",
-              "textA9": "Deals 4 damage x5."
+              "textA9": "Deals 4×5 damage."
             },
             {
               "name": "Loading",
               "textA9": "Gains 1 Strength."
             }
           ],
-          "monsterId": "TURRET_OPERATOR",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Follows a fixed 3-move cycle: • Unload! • Unload! • Loading"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Turret_Operator",
+          "monsterId": "TURRET_OPERATOR",
+          "count": 1
         }
       ],
       "name": "Turret Operator",
-      "rules": [],
+      "rules": [
+        "Uses Shield Slam every turn while the Turret Operator is alive.",
+        "Once the Turret Operator is killed, switches to Smash every turn.",
+        "Turret Operator and Living Shield appear to be designed in reference to Slay the Spire 1's Centurion and Mystic. The two fights' combatants share similar proportions, and both Living Shield and Centurion employ an additional attack if their smaller companion is killed."
+      ],
       "timing": []
     },
     "TWO_TAILED_RATS_NORMAL": {
@@ -4020,20 +4639,23 @@
               "textA9": "Summons a new Two-Tailed Rat."
             }
           ],
-          "partyNote": "Underdocks; * Two-Tailed Rat ×3",
-          "monsterId": "TWO_TAILED_RAT",
-          "count": 3,
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "text": "Each rat starts with a different move: one uses Scratch, one uses Disease Bite, and one uses Screech. After the first turn, each rat randomly picks from Scratch, Disease Bite, or Screech each turn. Cannot use the same move twice in a row. After at least two turns, a rat may use Call for Backup to summon a new rat. Each rat can only summon once, and the group can summon up to three times total."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Two-Tailed_Rat",
+          "monsterId": "TWO_TAILED_RAT",
+          "count": 3
         }
       ],
       "name": "Two Tailed Rats",
       "rules": [
+        "After at least two turns, a rat may use Call for Backup to summon a new rat. Each rat can only summon once, and the group can summon up to three times total.",
         "Two-Tailed Rat — Summons a new Two-Tailed Rat."
       ],
-      "timing": []
+      "timing": [
+        "After at least two turns, a rat may use Call for Backup to summon a new rat. Each rat can only summon once, and the group can summon up to three times total."
+      ]
     },
     "VANTOM_BOSS": {
       "act": "Overgrowth",
@@ -4053,7 +4675,7 @@
             },
             {
               "name": "Inky Lance",
-              "textA9": "Deals 7 damage ×2."
+              "textA9": "Deals 7×2 damage."
             },
             {
               "name": "Dismember",
@@ -4064,12 +4686,13 @@
               "textA9": "Gains 2 Strength."
             }
           ],
-          "monsterId": "VANTOM",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Vantom cycles through its four moves in a fixed order, repeating forever: • Ink Blot • Inky Lance • Dismember • Prepare"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Vantom",
+          "monsterId": "VANTOM",
+          "count": 1
         }
       ],
       "name": "Vantom",
@@ -4089,7 +4712,7 @@
           "moves": [
             {
               "name": "Swipe",
-              "textA9": "Deals 7 damage ×2."
+              "textA9": "Deals 7×2 damage."
             },
             {
               "name": "Grasping Vines",
@@ -4100,12 +4723,13 @@
               "textA9": "Deals 18 damage."
             }
           ],
-          "monsterId": "VINE_SHAMBLER",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "Follows a fixed repeating cycle: • Swipe • Grasping Vines • Chomp • Back to Swipe"
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Vine_Shambler",
+          "monsterId": "VINE_SHAMBLER",
+          "count": 1
         }
       ],
       "name": "Vine Shambler",
@@ -4153,22 +4777,30 @@
             },
             {
               "name": "Explode",
-              "textA9": "Deals damage equal to its stored Steam Eruption amount, then dies."
+              "textA9": "Deals damage equal to its stored Steam Eruption amount, then dies.",
+              "intent": "Death Blow"
             }
           ],
-          "monsterId": "WATERFALL_GIANT",
-          "count": 1,
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Uses the listed moves; exact opener and repeat constraints vary."
-          }
+            "type": "cycle",
+            "text": "The Waterfall Giant uses Pressurize on its first turn, then follows a repeating cycle: • Stomp • Ram • Siphon • Pressure Gun • Pressure Up • Back to Stomp Almost every move also adds 3 Steam Eruption. When the Waterfall Giant is killed while it has Steam Eruption, it becomes invulnerable and uses About To Blow, cleansing all its buffs and debuffs. Next turn it will use Explode, dealing damage equal to its accumulated Steam Eruption before dying. • If the Waterfall Giant is killed when it has no Steam Eruption (e.g. via Doom), it dies normally without triggering the explosion sequence."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Waterfall_Giant",
+          "monsterId": "WATERFALL_GIANT",
+          "count": 1
         }
       ],
       "name": "Waterfall Giant",
       "rules": [
-        "Waterfall Giant — Deals damage equal to its stored Steam Eruption amount, then dies."
+        "Almost every move also adds 3 Steam Eruption. When the Waterfall Giant is killed while it has Steam Eruption, it becomes invulnerable and uses About To Blow, cleansing all its buffs and debuffs. Next turn it will use Explode, dealing damage equal to its accumulated Steam Eruption before dying.",
+        "If the Waterfall Giant is killed when it has no Steam Eruption (e.g. via Doom), it dies normally without triggering the explosion sequence.",
+        "Even though the HP bar in the last phase shows as \"infinity\", it is actually set to the finite number of 999,999,999 HP. As such, it is theoretically possible to kill the Waterfall Giant in its last phase.",
+        "If a card both deals damage and applies a debuff like Neutralize, the damage can kill the Waterfall Giant and activate About To Blow, then the debuff will be applied.",
+        "Waterfall Giant — Death Blow: Deals damage equal to its stored Steam Eruption amount, then dies."
       ],
-      "timing": []
+      "timing": [
+        "Almost every move also adds 3 Steam Eruption. When the Waterfall Giant is killed while it has Steam Eruption, it becomes invulnerable and uses About To Blow, cleansing all its buffs and debuffs. Next turn it will use Explode, dealing damage equal to its accumulated Steam Eruption before dying."
+      ]
     }
   }
 }
