@@ -618,7 +618,7 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "Opens with Thrash, then uses Buff once, then uses Thrash every turn after. Enemy2Nav Category:Monsters Category:Slay the Spire 2 Content"
+            "text": "Opens with Thrash, then uses Buff once, then uses Thrash every turn after."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
           "monsterId": "BOWLBUG_NECTAR",
@@ -2874,7 +2874,7 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "Wrigglers alternate between Nasty Bite and Wriggle. When multiple Wrigglers are present, they start offset from each other: odd-numbered Wrigglers begin with Nasty Bite and even-numbered Wrigglers begin with Wriggle. When summoned by Phrog Parasite (via Infested), each Wriggler spends its first turn Stunned before beginning its pattern. In the Dense Vegetation event, 4 Wrigglers appear at once, starting their patterns immediately (not Stunned). Enemy2Nav Category:Monsters Category:Slay the Spire 2 Content"
+            "text": "Wrigglers alternate between Nasty Bite and Wriggle. When multiple Wrigglers are present, they start offset from each other: odd-numbered Wrigglers begin with Nasty Bite and even-numbered Wrigglers begin with Wriggle. When summoned by Phrog Parasite (via Infested), each Wriggler spends its first turn Stunned before beginning its pattern. In the Dense Vegetation event, 4 Wrigglers appear at once, starting their patterns immediately (not Stunned)."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Wriggler",
           "monsterId": "WRIGGLER",
@@ -4359,7 +4359,7 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "Uses Slam every turn. Enemy2Nav Category:Monsters Category:Minions Category:Slay the Spire 2 Content"
+            "text": "Uses Slam every turn."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Obscura",
           "monsterId": "PARAFRIGHT",
@@ -4496,7 +4496,7 @@
           ],
           "pattern": {
             "type": "opener",
-            "text": "Opens with Bite, then uses Burrow. While burrowed, uses Attack from Below every turn. If its Block is fully broken while burrowed, it uses Emerging Strike, then starts the cycle over with Bite. Enemy2Nav Category:Monsters Category:Slay the Spire 2 Content"
+            "text": "Opens with Bite, then uses Burrow. While burrowed, uses Attack from Below every turn. If its Block is fully broken while burrowed, it uses Emerging Strike, then starts the cycle over with Bite."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Tunneler",
           "monsterId": "TUNNELER",
@@ -4537,7 +4537,7 @@
           ],
           "pattern": {
             "type": "opener",
-            "text": "Opens with Bite, then uses Burrow. While burrowed, uses Attack from Below every turn. If its Block is fully broken while burrowed, it uses Emerging Strike, then starts the cycle over with Bite. Enemy2Nav Category:Monsters Category:Slay the Spire 2 Content"
+            "text": "Opens with Bite, then uses Burrow. While burrowed, uses Attack from Below every turn. If its Block is fully broken while burrowed, it uses Emerging Strike, then starts the cycle over with Bite."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Tunneler",
           "monsterId": "TUNNELER",

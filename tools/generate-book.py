@@ -194,11 +194,14 @@ def plain(raw):
                 if len(args) > 2 and args[2]:
                     return args[2]
                 return args[1] if len(args) > 1 else (args[0] if args else "")
-            if lower in {"clear", "beta content"}:
+            if lower in {"clear", "beta content", "enemy2nav", "patchnav",
+                         "sequel disambiguation", "intents table/end",
+                         "update history table/start", "update history table/end"}:
                 return ""
             candidates = [arg for arg in args if arg and not re.fullmatch(r"\d+", arg)]
             if not candidates:
-                return kind if not args else ""
+                # Navboxes and other arg-less chrome are not prose.
+                return ""
             if lower in {"bd2", "kw2", "c2", "m", "m2", "e", "r2", "p2", "2"}:
                 return candidates[-1]
             return candidates[-1]
@@ -206,6 +209,7 @@ def plain(raw):
         if updated == text:
             break
         text = updated
+    text = re.sub(r"(?i)\[\[Category:[^\]]*\]\]", "", text)
     text = re.sub(r"\[\[(?:[^\]|]+\|)?([^\]]+)\]\]", r"\1", text)
     text = re.sub(r"<ref\b[^>]*>.*?</ref>|<ref\b[^>]*/>", "", text, flags=re.I | re.S)
     text = re.sub(r"<[^>]+>", "", text)
@@ -311,6 +315,28 @@ def remove_templates(text, names):
     return result
 
 
+# Last body on an article has no following heading, so pattern extraction must
+# also stop at navboxes and categories instead of swallowing page chrome.
+PATTERN_STOP = re.compile(
+    r"(?m)^(?:\s*={2,5}[^=].*?={2,5}\s*$"
+    r"|\s*\{\{\s*(?:Enemy2Nav|PatchNav)\b"
+    r"|\s*\[\[Category:)"
+)
+
+
+def pattern_slice(text, start):
+    rest = text[start:]
+    stop = PATTERN_STOP.search(rest)
+    prose = rest[:stop.start()] if stop else rest
+    prose = remove_templates(prose, [
+        "Clear", "Enemy2Nav", "PatchNav", "Sequel Disambiguation",
+        "Beta content", "Intents Table/end",
+        "Update History Table/start", "Update History Table/end", "Update History Table/row",
+    ])
+    prose = re.sub(r"(?i)\[\[(?:Category|File|Image):[^\]]*\]\]", "", prose)
+    return prose
+
+
 def extract_page_notes(text):
     text = re.split(r"(?mi)^\s*==\s*Update History\s*==\s*$", text, maxsplit=1)[0]
     text = remove_templates(text, ["Enemy Infobox", "#invoke:Infobox", "Intents Table/row", "Intents Table/start", "Intents Table/end"])
@@ -384,12 +410,10 @@ def article_records(page):
                 if re.search(r"Death\s*Blow", fields.get("Intent", ""), re.I):
                     move["intent"] = "Death Blow"
                 moves.append(move)
-        prose_end = re.search(r"(?m)^\s*={2,5}[^=].*?={2,5}\s*$", text[table_end:])
-        prose = text[table_end:table_end + prose_end.start() if prose_end else len(text)]
         record = records.setdefault(name, {"displayName": name, "_position": opening})
         if moves:
             record["moves"] = moves
-        record["pattern"] = parse_pattern(prose)
+        record["pattern"] = parse_pattern(pattern_slice(text, table_end))
     for opening, template_end, template in iter_templates(text, "Intents"):
         _, positional, _ = parse_template(template)
         if not positional:
@@ -397,10 +421,8 @@ def article_records(page):
         name = plain(positional[0])
         if name in records and records[name].get("pattern"):
             continue
-        prose_end = re.search(r"(?m)^\s*={2,5}[^=].*?={2,5}\s*$", text[template_end:])
-        prose = text[template_end:template_end + prose_end.start() if prose_end else len(text)]
         record = records.setdefault(name, {"displayName": name, "_position": opening})
-        record["pattern"] = parse_pattern(prose)
+        record["pattern"] = parse_pattern(pattern_slice(text, template_end))
     page_rules, page_timing = extract_page_notes(text)
     for record in records.values():
         record["rules"] = page_rules

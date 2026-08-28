@@ -72,9 +72,40 @@ test("v0.111.0 Axebot article values and Stock cycle are authoritative", () => {
   const moves = Object.fromEntries(axebot.lineup[0].moves.map((move) => [move.name, move.textA9]));
   assert.equal(moves["Hammer Uppercut"], "Deals 18 damage. Applies 2 Weak and 2 Frail.");
   assert.equal(moves["The One-Two"], "Deals 11×2 damage.");
+  assert.equal(moves["Boot Up"], "Gains 15 Block and 4/8 Strength.");
   assert.equal(axebot.lineup[0].pattern.type, "cycle");
   assert.match(axebot.lineup[0].pattern.text, /Hammer Uppercut.*The One-Two/i);
   assert.ok(axebot.rules.some((rule) => /\+10 Max HP/i.test(rule)));
+});
+
+test("slash spawn alternatives each scale (Axebot Boot Up 4/8 → 9/19)", () => {
+  const axebot = scaledEncounter(encounterFor("AXEBOTS_NORMAL"));
+  const boot = axebot.lineup[0].moves.find((move) => move.name === "Boot Up");
+  assert.equal(boot.sourceA9, "Gains 15 Block and 4/8 Strength.");
+  assert.equal(boot.text, "Gains 30 Block and 9/19 Strength.");
+  assert.equal(
+    scaleMechanicsText("Gains 15 Block and 4/8 Strength.", { players: 2, act: 3, kind: "hallway" }),
+    "Gains 30 Block and 9/19 Strength.",
+  );
+});
+
+test("last-body pattern prose does not swallow wiki chrome", () => {
+  const nectar = encounterFor("BOWLBUGS_NORMAL").lineup.find((body) => body.displayName === "Bowlbug (Nectar)");
+  assert.equal(nectar.pattern.text, "Opens with Thrash, then uses Buff once, then uses Thrash every turn after.");
+  assert.equal(
+    encounterFor("THE_OBSCURA_NORMAL").lineup.find((body) => body.displayName === "Parafright").pattern.text,
+    "Uses Slam every turn.",
+  );
+  for (const id of ["TUNNELER_NORMAL", "TUNNELER_WEAK", "PHROG_PARASITE_ELITE", "BOWLBUGS_NORMAL", "THE_OBSCURA_NORMAL"]) {
+    for (const body of encounterFor(id).lineup) {
+      assert.doesNotMatch(body.pattern.text, /Enemy2Nav|Category:/);
+    }
+  }
+  for (const id of encounterIds) {
+    for (const body of encounterFor(id).lineup) {
+      assert.doesNotMatch(body.pattern.text, /Enemy2Nav|Category:/);
+    }
+  }
 });
 
 test("v0.111.0 Exoskeleton and Entomancer A8 HP fixtures", () => {
@@ -149,6 +180,14 @@ test("startsWith scales HP and general buffs but not durations or counts", () =>
 
   const deci = scaledEncounter(encounterFor("DECIMILLIPEDE_ELITE"));
   assert.equal(deci.lineup[0].startsWith, "Reattach 60");
+});
+
+test("Decimillipede timing scales Reattach HP like rules", () => {
+  const deci = scaledEncounter(encounterFor("DECIMILLIPEDE_ELITE"));
+  assert.ok(deci.rules.some((rule) => /revive with 60 HP/i.test(rule)));
+  assert.ok(deci.timing.some((line) => /revive with 60 HP/i.test(line)));
+  assert.ok(deci.timing.every((line) => !/revive with 25 HP/i.test(line)));
+  assert.ok(deci.rules.every((rule) => !/revive with 25 HP/i.test(rule)));
 });
 
 test("Gains PowerName N HP thresholds scale like Vital Spark", () => {
