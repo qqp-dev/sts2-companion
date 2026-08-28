@@ -5,10 +5,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
-import { encounterFor, encounterIds, scaleMechanicsText, scaleRange, scaledEncounter } from "../src/book.mjs";
+import { bookMeta, encounterFor, encounterIds, scaleMechanicsText, scaleRange, scaledEncounter } from "../src/book.mjs";
 import { createSts2Handler } from "../src/http.mjs";
 import { apply, inject, name } from "../src/plugin.mjs";
-import { createStateReader, parseLog, parseSave } from "../src/state.mjs";
+import { createStateReader, parseLog, parseReleaseInfo, parseSave } from "../src/state.mjs";
 
 const fixture = (name) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), "utf8");
 
@@ -67,6 +67,104 @@ test("A10 two-player Act 1 HP is scaled from the stored A8 range", () => {
   assert.deepEqual(scaleRange([46, 52], { players: 2, act: 1, kind: "elite" }), [101, 114]);
 });
 
+test("v0.111.0 Axebot article values and Stock cycle are authoritative", () => {
+  const axebot = encounterFor("AXEBOTS_NORMAL");
+  const moves = Object.fromEntries(axebot.lineup[0].moves.map((move) => [move.name, move.textA9]));
+  assert.equal(moves["Hammer Uppercut"], "Deals 18 damage. Applies 2 Weak and 2 Frail.");
+  assert.equal(moves["The One-Two"], "Deals 11×2 damage.");
+  assert.equal(moves["Boot Up"], "Gains 15 Block and 4/8 Strength.");
+  assert.equal(axebot.lineup[0].pattern.type, "cycle");
+  assert.match(axebot.lineup[0].pattern.text, /Hammer Uppercut.*The One-Two/i);
+  assert.ok(axebot.rules.some((rule) => /\+10 Max HP/i.test(rule)));
+});
+
+test("slash spawn alternatives each scale (Axebot Boot Up 4/8 → 9/19)", () => {
+  const axebot = scaledEncounter(encounterFor("AXEBOTS_NORMAL"));
+  const boot = axebot.lineup[0].moves.find((move) => move.name === "Boot Up");
+  assert.equal(boot.sourceA9, "Gains 15 Block and 4/8 Strength.");
+  assert.equal(boot.text, "Gains 30 Block and 9/19 Strength.");
+  assert.equal(
+    scaleMechanicsText("Gains 15 Block and 4/8 Strength.", { players: 2, act: 3, kind: "hallway" }),
+    "Gains 30 Block and 9/19 Strength.",
+  );
+});
+
+test("last-body pattern prose does not swallow wiki chrome", () => {
+  const nectar = encounterFor("BOWLBUGS_NORMAL").lineup.find((body) => body.displayName === "Bowlbug (Nectar)");
+  assert.equal(nectar.pattern.text, "Opens with Thrash, then uses Buff once, then uses Thrash every turn after.");
+  assert.equal(
+    encounterFor("THE_OBSCURA_NORMAL").lineup.find((body) => body.displayName === "Parafright").pattern.text,
+    "Uses Slam every turn.",
+  );
+  for (const id of ["TUNNELER_NORMAL", "TUNNELER_WEAK", "PHROG_PARASITE_ELITE", "BOWLBUGS_NORMAL", "THE_OBSCURA_NORMAL"]) {
+    for (const body of encounterFor(id).lineup) {
+      assert.doesNotMatch(body.pattern.text, /Enemy2Nav|Category:/);
+    }
+  }
+  for (const id of encounterIds) {
+    for (const body of encounterFor(id).lineup) {
+      assert.doesNotMatch(body.pattern.text, /Enemy2Nav|Category:/);
+    }
+  }
+});
+
+test("Test Subject tabber chrome is excluded from every phase pattern", () => {
+  const subject = encounterFor("TEST_SUBJECT_BOSS");
+  for (const body of subject.lineup) {
+    assert.doesNotMatch(body.pattern.text, /\|-\||Type\s*=\s*Boss|Power Infobox/i);
+  }
+});
+
+test("scaled pattern prose matches rendered HP and buff magnitudes", () => {
+  const decimillipede = scaledEncounter(encounterFor("DECIMILLIPEDE_ELITE"));
+  for (const body of decimillipede.lineup) {
+    assert.match(body.pattern.text, /Reattach to revive with 60 HP/i);
+    assert.doesNotMatch(body.pattern.text, /revive with 25 HP/i);
+  }
+
+  const subject = scaledEncounter(encounterFor("TEST_SUBJECT_BOSS"));
+  assert.match(subject.lineup[0].pattern.text, /Enrage 7/i);
+  assert.doesNotMatch(subject.lineup[0].pattern.text, /Enrage 3/i);
+  for (const body of subject.lineup.slice(1)) {
+    assert.match(body.pattern.text, new RegExp(`Revives with ${body.hp[0]} HP`, "i"));
+    assert.doesNotMatch(body.pattern.text, /Revives with (?:212|313) HP/i);
+  }
+
+  const effigy = scaledEncounter(encounterFor("BYGONE_EFFIGY_ELITE"));
+  const body = effigy.lineup[0];
+  const wake = body.moves.find((move) => move.name === "Wake");
+  assert.match(body.pattern.text, /gains 22 Strength/i);
+  assert.match(wake.text, /Gains 22 Strength/i);
+  assert.doesNotMatch(body.pattern.text, /gains 10 Strength/i);
+});
+
+test("v0.111.0 Exoskeleton and Entomancer A8 HP fixtures", () => {
+  assert.deepEqual(encounterFor("EXOSKELETONS_WEAK").lineup[0].hpA8, [26, 30]);
+  assert.deepEqual(encounterFor("EXOSKELETONS_NORMAL").lineup[0].hpA8, [26, 30]);
+  assert.deepEqual(encounterFor("ENTOMANCER_ELITE").lineup[0].hpA8, [165]);
+});
+
+test("all remaining v0.111.0 Enemies patch magnitudes win", () => {
+  const move = (encounterId, moveName) => encounterFor(encounterId).lineup[0].moves.find((item) => item.name === moveName).textA9;
+  assert.equal(move("MECHA_KNIGHT_ELITE", "Flamethrower"), "Deals 12 damage. Adds 4 Burn to your hand.");
+  assert.equal(encounterFor("GLOBE_HEAD_NORMAL").lineup[0].startsWithA9, "Galvanic 8");
+  assert.equal(move("LOUSE_PROGENITOR_NORMAL", "Curl and Grow"), "Gains 18 Block. Gains 7 Strength.");
+  assert.equal(move("SOUL_FYSH_BOSS", "De-Gas"), "Deals 18 damage.");
+});
+
+test("book provenance targets the public beta and never uses the fabricated pattern stub", () => {
+  assert.equal(bookMeta.targetVersion, "v0.111.0");
+  assert.equal(bookMeta.targetBranch, "public-beta");
+  assert.match(bookMeta.harvestedAt, /Z$/);
+  assert.ok(bookMeta.wikiPages.length >= 70);
+  assert.match(bookMeta.patchPage.title, /V0\.111\.0/);
+  for (const id of encounterIds) {
+    for (const body of encounterFor(id).lineup) {
+      assert.notEqual(body.pattern.text, "Uses the listed moves; exact opener and repeat constraints vary.");
+    }
+  }
+});
+
 test("attacks do not MP-scale while block and general buffs use their categories", () => {
   assert.equal(
     scaleMechanicsText("Deals 7 damage. Gains 2 Strength. Gains 18 Block.", { players: 2, act: 2, kind: "elite" }),
@@ -84,6 +182,23 @@ test("attacks do not MP-scale while block and general buffs use their categories
   assert.equal(louse.lineup[0].startsWithA9, "Curl Up 18");
   assert.equal(louse.lineup[0].startsWith, "Curl Up 43");
   assert.ok(encounterIds.length >= 80);
+});
+
+test("opener and added buff prose scales without changing removed buffs", () => {
+  assert.equal(
+    scaleMechanicsText(
+      "Starts with Enrage 3. Starts Asleep with 12 Plating. Adds 3 Steam Eruption. Has gained 2 Strength. Removes 2 Strength.",
+      { players: 2, act: 3, kind: "boss" },
+    ),
+    "Starts with Enrage 7. Starts Asleep with 31 Plating. Adds 7 Steam Eruption. Has gained 5 Strength. Removes 2 Strength.",
+  );
+});
+
+test("article Death Blow intent is retained as an extra rule", () => {
+  const fog = encounterFor("LIVING_FOG_NORMAL");
+  const gasBomb = fog.lineup.find((body) => body.displayName === "Gas Bomb");
+  assert.equal(gasBomb.moves[0].intent, "Death Blow");
+  assert.ok(fog.rules.some((rule) => /Death Blow:.*Dies/i.test(rule)));
 });
 
 test("startsWith scales HP and general buffs but not durations or counts", () => {
@@ -105,6 +220,14 @@ test("startsWith scales HP and general buffs but not durations or counts", () =>
 
   const deci = scaledEncounter(encounterFor("DECIMILLIPEDE_ELITE"));
   assert.equal(deci.lineup[0].startsWith, "Reattach 60");
+});
+
+test("Decimillipede timing scales Reattach HP like rules", () => {
+  const deci = scaledEncounter(encounterFor("DECIMILLIPEDE_ELITE"));
+  assert.ok(deci.rules.some((rule) => /revive with 60 HP/i.test(rule)));
+  assert.ok(deci.timing.some((line) => /revive with 60 HP/i.test(line)));
+  assert.ok(deci.timing.every((line) => !/revive with 25 HP/i.test(line)));
+  assert.ok(deci.rules.every((rule) => !/revive with 25 HP/i.test(rule)));
 });
 
 test("Gains PowerName N HP thresholds scale like Vital Spark", () => {
@@ -153,13 +276,52 @@ test("newest rotated godot log wins when godot.log is stale", () => {
   } finally { rmSync(root, { recursive: true, force: true }); }
 });
 
+test("release_info is local, injectable, and limited to version and branch", () => {
+  assert.deepEqual(parseReleaseInfo('{"version":"v0.111.0","branch":"v0.111.0","commit":"ignored"}'), {
+    version: "v0.111.0",
+    branch: "v0.111.0",
+  });
+  const dir = mkdtempSync(join(tmpdir(), "sts2-release-"));
+  try {
+    const releaseInfoPath = join(dir, "release_info.json");
+    writeFileSync(releaseInfoPath, '{"version":"v0.111.0","branch":"v0.111.0"}');
+    const state = createStateReader({
+      logPath: join(dir, "missing.log"),
+      savePath: join(dir, "missing.save"),
+      releaseInfoPath,
+    }).read();
+    assert.deepEqual(state.releaseInfo, { version: "v0.111.0", branch: "v0.111.0" });
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test("version mismatch and leftover unknown pattern are visible known-unknowns", async () => {
+  const mismatch = {
+    status: "combat",
+    encounterId: "OVICOPTER_NORMAL",
+    monsterIds: [],
+    releaseInfo: { version: "v0.110.1", branch: "v0.110.1" },
+  };
+  await withServer(createSts2Handler({ read: () => mismatch }), async (server) => {
+    const page = await request(server, "/sts2");
+    assert.equal(page.status, 200);
+    assert.match(page.body, /Version mismatch/);
+    assert.match(page.body, /Book v0\.111\.0 · public-beta/);
+    assert.match(page.body, /Game v0\.110\.1 · v0\.110\.1/);
+    assert.match(page.body, /known unknown · pattern/);
+    assert.match(page.body, /Tough Egg waits while its Hatch timer/i);
+  });
+});
+
 test("unknown encounter remains a successful visible page and state", async () => {
-  const reader = { read: () => ({ status: "combat", encounterId: "EVENT_ODDBALL_ENCOUNTER", monsterIds: [] }) };
+  const reader = { read: () => ({ status: "combat", encounterId: "EVENT_ODDBALL_ENCOUNTER", monsterIds: ["MYSTERY_BODY"] }) };
   const handler = createSts2Handler(reader);
   await withServer(handler, async (server) => {
     const page = await request(server, "/sts2");
     assert.equal(page.status, 200);
     assert.match(page.body, /EVENT_ODDBALL_ENCOUNTER/);
+    assert.match(page.body, /MYSTERY_BODY/);
+    assert.match(page.body, /HP unknown/);
+    assert.match(page.body, /Version unknown/);
     assert.match(page.headers["content-security-policy"], /default-src 'none'/);
     assert.equal(page.headers["cache-control"], "no-store");
     const state = await request(server, "/sts2/state");

@@ -74,6 +74,17 @@ export function parseSave(input) {
   return found;
 }
 
+/** Parse only the release fields needed for local book compatibility. */
+export function parseReleaseInfo(input) {
+  const value = typeof input === "string" || Buffer.isBuffer(input)
+    ? JSON.parse(String(input))
+    : input;
+  if (!value || typeof value !== "object") return null;
+  const version = typeof value.version === "string" ? value.version : null;
+  const branch = typeof value.branch === "string" ? value.branch : null;
+  return version || branch ? { version, branch } : null;
+}
+
 function regularFiles(paths) {
   return [...new Set(paths.filter(Boolean))].filter((path) => {
     try { return statSync(path).isFile(); } catch { return false; }
@@ -117,13 +128,26 @@ function saveFiles(root) {
   }
 }
 
+function defaultReleaseInfoPaths(env, home) {
+  const xdgData = env.XDG_DATA_HOME ?? join(home, ".local", "share");
+  return [
+    join(home, ".var", "app", "com.valvesoftware.Steam", ".local", "share", "Steam", "steamapps", "common", "Slay the Spire 2", "release_info.json"),
+    join(home, ".steam", "steam", "steamapps", "common", "Slay the Spire 2", "release_info.json"),
+    join(xdgData, "Steam", "steamapps", "common", "Slay the Spire 2", "release_info.json"),
+  ];
+}
+
 export function resolvePaths(options = {}) {
   const env = options.env ?? process.env;
   const home = options.home ?? env.HOME ?? homedir();
   const roots = options.rootPaths ?? (options.root ? [options.root] : defaultRoots(env, home));
   const logs = options.logPaths ?? (options.logPath ? [options.logPath] : roots.flatMap(logFiles));
   const saves = options.savePaths ?? (options.savePath ? [options.savePath] : roots.flatMap(saveFiles));
-  return { logPath: newest(logs), savePath: newest(saves) };
+  const explicitRelease = options.releaseInfoPath
+    ? [options.releaseInfoPath]
+    : options.gamePath ? [join(options.gamePath, "release_info.json")] : null;
+  const releases = options.releaseInfoPaths ?? explicitRelease ?? defaultReleaseInfoPaths(env, home);
+  return { logPath: newest(logs), savePath: newest(saves), releaseInfoPath: newest(releases) };
 }
 
 function safeRead(path) {
@@ -138,10 +162,13 @@ export function createStateReader(options = {}) {
       const paths = resolvePaths(options);
       const logText = safeRead(paths.logPath);
       const saveText = safeRead(paths.savePath);
+      const releaseText = safeRead(paths.releaseInfoPath);
       let log = { status: "idle", encounterId: null };
       let saved = null;
+      let releaseInfo = null;
       try { if (logText != null) log = parseLog(logText); } catch { /* idle */ }
       try { if (saveText != null) saved = parseSave(saveText); } catch { /* mid-write */ }
+      try { if (releaseText != null) releaseInfo = parseReleaseInfo(releaseText); } catch { /* unreadable/mid-update */ }
 
       if (log.status !== "idle") {
         const matching = saved?.encounterId === log.encounterId ? saved : null;
@@ -151,9 +178,10 @@ export function createStateReader(options = {}) {
           actId: matching?.actId ?? null,
           roomType: matching?.roomType ?? null,
           source: "log",
+          releaseInfo,
         };
       }
-      if (saved) return { ...saved, source: "save" };
+      if (saved) return { ...saved, source: "save", releaseInfo };
       return {
         status: "idle",
         encounterId: null,
@@ -161,9 +189,10 @@ export function createStateReader(options = {}) {
         actId: null,
         roomType: null,
         source: null,
+        releaseInfo,
       };
     },
   };
 }
 
-export const internals = Object.freeze({ defaultRoots, logFiles, saveFiles, newest, unprefix });
+export const internals = Object.freeze({ defaultRoots, defaultReleaseInfoPaths, logFiles, saveFiles, newest, unprefix });
