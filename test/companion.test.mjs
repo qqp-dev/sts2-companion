@@ -294,6 +294,62 @@ test("release_info is local, injectable, and limited to version and branch", () 
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
+test("qq chrome is black and square and omits matching version chrome", async () => {
+  const matching = {
+    status: "combat",
+    encounterId: "DECIMILLIPEDE_ELITE",
+    monsterIds: ["DECIMILLIPEDE_FRONT", "DECIMILLIPEDE_MIDDLE", "DECIMILLIPEDE_BACK"],
+    releaseInfo: { version: "v0.111.0", branch: "public-beta" },
+  };
+  await withServer(createSts2Handler({ read: () => matching }), async (server) => {
+    const page = await request(server, "/sts2");
+    assert.equal(page.status, 200);
+    assert.match(page.body, /<meta name="theme-color" content="#000">/);
+    assert.match(page.body, /--page:#000;/);
+    assert.match(page.body, /background:#000;/);
+    assert.match(page.body, /color:#e8e8e8;/);
+    assert.match(page.body, /font-family:"Geist UI",ui-sans-serif,system-ui/);
+    assert.match(page.body, /--chrome-size:1rem;/);
+    assert.match(page.body, /<div class="status-line status-combat"><i class="status-dot"[^>]*><\/i>combat<\/div>/);
+    assert.match(page.body, /\.status-combat\{color:var\(--combat\)\}/);
+    assert.match(page.body, /--combat:#f7ce74;/);
+    assert.match(page.body, /<footer class="source"><div class="scale-note">scaling ·/);
+    assert.match(page.body, /<div class="starts">starts ·/);
+    assert.doesNotMatch(page.body, /IN COMBAT|LAST COMBAT|status-badge/);
+    assert.doesNotMatch(page.body, /border-radius:99rem|gradient|box-shadow/);
+    assert.doesNotMatch(page.body, /<div class="version-card|version-match/i);
+    assert.doesNotMatch(page.body, /DECIMILLIPEDE_ELITE|DECIMILLIPEDE_FRONT/);
+    assert.equal(page.body.match(/a10 · 2p/g)?.length, 1);
+
+    const client = await request(server, "/sts2/client.js");
+    assert.equal(client.status, 200);
+    assert.match(client.body, /version\.matches === true\) return null/);
+    assert.match(client.body, /showRawId && body\.monsterId/);
+    assert.doesNotMatch(client.body, /IN COMBAT|LAST COMBAT|status-badge/);
+  });
+});
+
+test("idle and last states use quiet lowercase chrome", async () => {
+  let current = { status: "idle", encounterId: null, monsterIds: [], releaseInfo: null };
+  await withServer(createSts2Handler({ read: () => current }), async (server) => {
+    const idle = await request(server, "/sts2");
+    assert.match(idle.body, /<p class="idle-copy">no run \/ no combat · waiting for the next fight<\/p>/);
+    assert.match(idle.body, /version unknown/);
+    assert.doesNotMatch(idle.body, /idle-mark|idle-title|◇/);
+
+    current = {
+      status: "last",
+      encounterId: "AXEBOTS_NORMAL",
+      monsterIds: ["AXEBOT"],
+      releaseInfo: { version: "v0.111.0", branch: "public-beta" },
+    };
+    const last = await request(server, "/sts2");
+    assert.match(last.body, /<div class="status-line status-last"><i class="status-dot"[^>]*><\/i>last<\/div>/);
+    assert.match(last.body, /\.status-last\{color:var\(--muted\)\}/);
+    assert.doesNotMatch(last.body, /LAST COMBAT|AXEBOTS_NORMAL|class="monster-id"|<div class="version-card/);
+  });
+});
+
 test("version mismatch and leftover unknown pattern are visible known-unknowns", async () => {
   const mismatch = {
     status: "combat",
@@ -304,9 +360,9 @@ test("version mismatch and leftover unknown pattern are visible known-unknowns",
   await withServer(createSts2Handler({ read: () => mismatch }), async (server) => {
     const page = await request(server, "/sts2");
     assert.equal(page.status, 200);
-    assert.match(page.body, /Version mismatch/);
-    assert.match(page.body, /Book v0\.111\.0 · public-beta/);
-    assert.match(page.body, /Game v0\.110\.1 · v0\.110\.1/);
+    assert.match(page.body, /version mismatch/);
+    assert.match(page.body, /book v0\.111\.0 · public-beta/);
+    assert.match(page.body, /game v0\.110\.1 · v0\.110\.1/);
     assert.match(page.body, /known unknown · pattern/);
     assert.match(page.body, /Tough Egg waits while its Hatch timer/i);
   });
@@ -321,7 +377,7 @@ test("unknown encounter remains a successful visible page and state", async () =
     assert.match(page.body, /EVENT_ODDBALL_ENCOUNTER/);
     assert.match(page.body, /MYSTERY_BODY/);
     assert.match(page.body, /HP unknown/);
-    assert.match(page.body, /Version unknown/);
+    assert.match(page.body, /version unknown/);
     assert.match(page.headers["content-security-policy"], /default-src 'none'/);
     assert.equal(page.headers["cache-control"], "no-store");
     const state = await request(server, "/sts2/state");
