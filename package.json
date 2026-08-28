@@ -1,0 +1,7 @@
+{
+  "name": "@hypermemetic-ai/sts2-companion",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Phone-first STS2 encounter HUD as a qq plugin. Design is not in this stub."
+}

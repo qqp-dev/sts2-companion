@@ -1,0 +1,9 @@
+.env
+.env.*
+*.local
+.DS_Store
+.qq/
+.pi/
+node_modules/
+.vscode/
+.idea/
