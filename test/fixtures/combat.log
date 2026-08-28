@@ -1,0 +1,3 @@
+[INFO] booted
+[INFO] Creating NCombatRoom with mode=ActiveCombat encounter=DECIMILLIPEDE_ELITE.
+[DEBUG] [ActionQueueSynchronizer] Combat state becomes PreCombatSetup.

@@ -1,0 +1,6 @@
+# Optional sibling profile layer. `dsh plugin add` activates this only when
+# the sts2-companion sibling is present.
+
+- insert:
+    - id: sts2-companion
+      name: '@hypermemetic-ai/sts2-companion'

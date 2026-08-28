@@ -1,0 +1,23 @@
+{
+  "ascension": 10,
+  "current_act_index": 1,
+  "acts": [
+    { "id": "ACT.OVERGROWTH" },
+    { "id": "ACT.HIVE" }
+  ],
+  "map_point_history": [
+    [
+      { "map_point_type": "monster", "rooms": [
+        { "room_type": "monster", "model_id": "ENCOUNTER.SLIMES_WEAK", "monster_ids": ["MONSTER.TWIG_SLIME_M"] }
+      ] }
+    ],
+    [
+      { "map_point_type": "event", "rooms": [
+        { "room_type": "event", "model_id": "EVENT.TEST" }
+      ] },
+      { "map_point_type": "elite", "rooms": [
+        { "room_type": "elite", "model_id": "ENCOUNTER.DECIMILLIPEDE_ELITE", "monster_ids": ["MONSTER.DECIMILLIPEDE_FRONT", "MONSTER.DECIMILLIPEDE_MIDDLE", "MONSTER.DECIMILLIPEDE_BACK"] }
+      ] }
+    ]
+  ]
+}
