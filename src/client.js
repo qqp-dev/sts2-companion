@@ -30,6 +30,7 @@
     heading.append(el("div", body.hp ? "hp" : "hp unknown-field", body.hp ? `${range(body.hp)} HP` : "HP unknown"));
     card.append(heading);
     if (body.role) card.append(el("div", "role", body.role));
+    if (body.pack) card.append(el("div", "pack", `pack · ${body.pack}`));
     if (showRawId && body.monsterId) card.append(el("div", "monster-id", body.monsterId));
     for (const flag of body.sourceFlags ?? []) card.append(el("div", "source-flag", flag));
     if (body.startsWith) card.append(el("div", "starts", `starts · ${body.startsWith}`));
@@ -115,7 +116,7 @@
     listSection(root, "timing", book.timing);
     const source = el("footer", "source");
     const scale = book.scale;
-    source.append(el("div", "scale-note", `scaling · hp & buffs ×${scale.hpAndBuff.toFixed(1)} · block ×${scale.block} · attacks unscaled`));
+    source.append(el("div", "scale-note", `hp & stored buffs ×${scale.hpAndStoredBuff.toFixed(1)} · block ×${scale.block} · attacks & combat stats unscaled`));
     source.append(el("div", "", "source values · wiki.gg · a8 hp · a9 moves · rendered for a10 / 2p"));
     root.append(source);
   }

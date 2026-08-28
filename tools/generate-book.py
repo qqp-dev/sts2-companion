@@ -534,8 +534,24 @@ def merged_body(name):
     return apply_patch_override(name, merged)
 
 
-# body name, count, optional monster id. Count is the A10 two-player book lineup.
-def L(name, count=1, monster=None, role=None): return {"body": name, "count": count, **({"monsterId": monster} if monster else {}), **({"role": role} if role else {})}
+# Count is used only for a stable number of equivalent live bodies. Fixed
+# opener slots get separate specs; mutable summon/death rosters get one card
+# with a short pack line instead of a frozen N× title.
+def P(kind, text): return {"type": kind, "text": text}
+def L(name, count=1, monster=None, role=None, pattern=None, pack=None):
+    return {
+        "body": name,
+        "count": count,
+        **({"monsterId": monster} if monster else {}),
+        **({"role": role} if role else {}),
+        **({"pattern": pattern} if pattern else {}),
+        **({"pack": pack} if pack else {}),
+    }
+
+
+NIBBIT_CYCLE = "Then cycle: repeat the fixed three-move sequence shown in the move table, beginning with Butt."
+MYTE_CYCLE = "Then cycle: Toxic Cornucopia → Bite → Suck → repeat."
+EXOSKELETON_RULES = "Then cycle rules: after Skitter, randomly use Skitter or Mandibles without repeating; after Mandibles, use Enrage; after Enrage, randomly use Skitter or Mandibles."
 
 ENCOUNTERS = {}
 def add(act, kind, ids):
@@ -544,40 +560,75 @@ def add(act, kind, ids):
 
 add("Overgrowth", "hallway", {
  "FUZZY_WURM_CRAWLER_WEAK":[L("Fuzzy Wurm Crawler")], "SLIMES_WEAK":[L("Twig Slime (M)"),L("Twig Slime (S)"),L("Leaf Slime (S)")],
- "SHRINKER_BEETLE_WEAK":[L("Shrinker Beetle")], "NIBBITS_WEAK":[L("Nibbit")], "NIBBITS_NORMAL":[L("Nibbit",2)],
+ "SHRINKER_BEETLE_WEAK":[L("Shrinker Beetle")],
+ "NIBBITS_WEAK":[L("Nibbit", pattern=P("cycle", f"Opener (turn 1): Butt. {NIBBIT_CYCLE}"))],
+ "NIBBITS_NORMAL":[
+     L("Nibbit", role="front slot", pattern=P("cycle", "Opener (turn 1): Hesitant Slice. Then cycle: Butt → Hesitant Slice → Hiss → repeat.")),
+     L("Nibbit", role="back slot", pattern=P("cycle", "Opener (turn 1): Hiss. Then cycle: Butt → Hesitant Slice → Hiss → repeat.")),
+ ],
  "FLYCONID_NORMAL":[L("Flyconid"),L("Leaf Slime (M)")], "MAWLER_NORMAL":[L("Mawler")], "VINE_SHAMBLER_NORMAL":[L("Vine Shambler")],
- "FOGMOG_NORMAL":[L("Fogmog"),L("Eye With Teeth", role="summoned")], "INKLETS_NORMAL":[L("Inklet",3)],
+ "FOGMOG_NORMAL":[L("Fogmog"),L("Eye With Teeth", role="summoned")], "INKLETS_NORMAL":[L("Inklet", 3, pattern=P("random-with-constraint", "Openers by position (turn 1): each outer Inklet uses Jab (most likely) or Windup Punch; the middle uses Windup Punch. Then cycle rules: after Jab, randomly use Piercing Gaze or Windup Punch; after either of those, use Jab."))],
  "SLIMES_NORMAL":[L("Twig Slime (M)"),L("Leaf Slime (M)"),L("Twig Slime (S)"),L("Leaf Slime (S)")],
  "SLITHERING_STRANGLER_NORMAL":[L("Slithering Strangler"),L("Leaf Slime (S)",2)], "SNAPPING_JAXFRUIT_NORMAL":[L("Snapping Jaxfruit"),L("Flyconid")],
  "RUBY_RAIDERS_NORMAL":[L("Assassin Raider"),L("Axe Raider"),L("Crossbow Raider")], "CUBEX_CONSTRUCT_NORMAL":[L("Cubex Construct")],
  "OVERGROWTH_CRAWLERS":[L("Fuzzy Wurm Crawler"),L("Shrinker Beetle")],
 })
 add("Underdocks", "hallway", {
- "CORPSE_SLUGS_WEAK":[L("Corpse Slug",2)], "TOADPOLES_WEAK":[L("Toadpole",2)], "SLUDGE_SPINNER_WEAK":[L("Sludge Spinner")],
- "SEAPUNK_WEAK":[L("Seapunk")], "LIVING_FOG_NORMAL":[L("Living Fog"),L("Gas Bomb", role="summoned")], "CORPSE_SLUGS_NORMAL":[L("Corpse Slug",3)],
- "PUNCH_CONSTRUCT_NORMAL":[L("Punch Construct")], "FOSSIL_STALKER_NORMAL":[L("Fossil Stalker")], "TWO_TAILED_RATS_NORMAL":[L("Two-Tailed Rat",3)],
- "HAUNTED_SHIP_NORMAL":[L("Haunted Ship")], "GREMLIN_MERC_NORMAL":[L("Gremlin Merc"),L("Fat Gremlin", role="summoned on death"),L("Sneaky Gremlin", role="summoned on death")],
+ "CORPSE_SLUGS_WEAK":[L("Corpse Slug", 2, pattern=P("cycle", "Start offsets (turn 1): the two Corpse Slugs begin on different cycle steps. Cycle: Whip Slap → Glomp → Goop → repeat."))], "TOADPOLES_WEAK":[
+     L("Toadpole", role="front slot", pattern=P("cycle", "Opener (turn 1): Spiken. Then continue the cycle: Spike Spit → Whirl → Spiken → repeat.")),
+     L("Toadpole", role="back slot", pattern=P("cycle", "Opener (turn 1): Whirl. Then continue the cycle: Spiken → Spike Spit → Whirl → repeat.")),
+ ], "SLUDGE_SPINNER_WEAK":[L("Sludge Spinner")],
+ "SEAPUNK_WEAK":[L("Seapunk")], "LIVING_FOG_NORMAL":[L("Living Fog"),L("Gas Bomb", role="summoned")], "CORPSE_SLUGS_NORMAL":[L("Corpse Slug", 3, pattern=P("cycle", "Start offsets (turn 1): the three Corpse Slugs begin on different cycle steps. Cycle: Whip Slap → Glomp → Goop → repeat."))],
+ "PUNCH_CONSTRUCT_NORMAL":[L("Punch Construct")], "FOSSIL_STALKER_NORMAL":[L("Fossil Stalker")],
+ "TWO_TAILED_RATS_NORMAL":[L(
+     "Two-Tailed Rat", role="live-body template", pack="3 initially · each rat can summon once; 3 summons maximum",
+     pattern=P("random-with-constraint", "Openers (turn 1, 3 initial rats): Scratch, Disease Bite, and Screech, one each. Then each live rat randomly uses Scratch, Disease Bite, or Screech without repeating its previous move. After at least two turns, Call for Backup may summon a new rat."),
+ )],
+ "HAUNTED_SHIP_NORMAL":[L("Haunted Ship")], "GREMLIN_MERC_NORMAL":[L("Gremlin Merc"),L("Fat Gremlin", role="summoned"),L("Sneaky Gremlin", role="summoned")],
  "SEAPUNK_NORMAL":[L("Seapunk"),L("Calcified Cultist")], "CULTISTS_NORMAL":[L("Calcified Cultist"),L("Damp Cultist")], "SEWER_CLAM_NORMAL":[L("Sewer Clam")],
 })
 add("Hive", "hallway", {
  "TUNNELER_WEAK":[L("Tunneler")], "THIEVING_HOPPER_WEAK":[L("Thieving Hopper")], "BOWLBUGS_WEAK":[L("Bowlbug (Rock)"),L("Bowlbug (Egg)")],
- "EXOSKELETONS_WEAK":[L("Exoskeleton")], "MYTES_NORMAL":[L("Myte",2)], "BOWLBUGS_NORMAL":[L("Bowlbug (Rock)"),L("Bowlbug (Silk)"),L("Bowlbug (Nectar)")],
+ "EXOSKELETONS_WEAK":[L("Exoskeleton", 3, pattern=P("random-with-constraint", f"Openers by position (turn 1): first — Skitter; second — Mandibles; third — Enrage. {EXOSKELETON_RULES}"))],
+ "MYTES_NORMAL":[
+     L("Myte", role="Toxic Cornucopia opener slot", pattern=P("cycle", f"Opener (turn 1): Toxic Cornucopia. {MYTE_CYCLE}")),
+     L("Myte", role="Suck opener slot", pattern=P("cycle", f"Opener (turn 1): Suck. {MYTE_CYCLE}")),
+ ], "BOWLBUGS_NORMAL":[L("Bowlbug (Rock)"),L("Bowlbug (Silk)"),L("Bowlbug (Nectar)")],
  "LOUSE_PROGENITOR_NORMAL":[L("Louse Progenitor")], "SPINY_TOAD_NORMAL":[L("Spiny Toad")], "THE_OBSCURA_NORMAL":[L("The Obscura"),L("Parafright", role="summoned")],
- "EXOSKELETONS_NORMAL":[L("Exoskeleton",2)], "OVICOPTER_NORMAL":[L("Ovicopter"),L("Tough Egg",3, role="summoned")], "SLUMBERING_BEETLE_NORMAL":[L("Slumbering Beetle"),L("Bowlbug (Rock)"),L("Bowlbug (Silk)")],
- "HUNTER_KILLER_NORMAL":[L("Hunter Killer")], "CHOMPERS_NORMAL":[L("Chomper",2)], "TUNNELER_NORMAL":[L("Tunneler")],
+ "EXOSKELETONS_NORMAL":[L("Exoskeleton", 4, pattern=P("random-with-constraint", f"Openers by position (turn 1): first — Skitter; second — Mandibles; third — Enrage; fourth — randomly Skitter or Mandibles. {EXOSKELETON_RULES}"))],
+ "OVICOPTER_NORMAL":[L("Ovicopter"),L("Tough Egg", role="summoned", pack="Lay Eggs summons 3 at a time; eggs hatch into live Hatchlings")], "SLUMBERING_BEETLE_NORMAL":[L("Slumbering Beetle"),L("Bowlbug (Rock)"),L("Bowlbug (Silk)")],
+ "HUNTER_KILLER_NORMAL":[L("Hunter Killer")],
+ "CHOMPERS_NORMAL":[
+     L("Chomper", role="Clamp opener slot", pattern=P("cycle", "Opener (turn 1): Clamp. Then continue the cycle: Screech → Clamp → repeat.")),
+     L("Chomper", role="Screech opener slot", pattern=P("cycle", "Opener (turn 1): Screech. Then continue the cycle: Clamp → Screech → repeat.")),
+ ], "TUNNELER_NORMAL":[L("Tunneler")],
 })
 add("Glory", "hallway", {
- "DEVOTED_SCULPTOR_WEAK":[L("Devoted Sculptor")], "SCROLLS_OF_BITING_WEAK":[L("Scroll of Biting",3)],
+ "DEVOTED_SCULPTOR_WEAK":[L("Devoted Sculptor")], "SCROLLS_OF_BITING_WEAK":[L("Scroll of Biting", 3, pattern=P("random-with-constraint", "Start offsets (turn 1): the three Scrolls each begin on a different cycle step. Cycle: Chomp → More Teeth → Chew. After Chew, randomly restart at Chomp (cannot repeat) or Chew (weight 2), then continue the cycle."))],
  "TURRET_OPERATOR_WEAK":[L("Living Shield"),L("Turret Operator")], "OWL_MAGISTRATE_NORMAL":[L("Owl Magistrate")], "GLOBE_HEAD_NORMAL":[L("Globe Head")],
  "SLIMED_BERSERKER_NORMAL":[L("Slimed Berserker")], "CONSTRUCT_MENAGERIE_NORMAL":[L("Punch Construct"),L("Cubex Construct",2)],
  "THE_LOST_AND_FORGOTTEN_NORMAL":[L("The Lost"),L("The Forgotten")], "FROG_KNIGHT_NORMAL":[L("Frog Knight")],
- "FABRICATOR_NORMAL":[L("Fabricator"),L("Guardbot", role="summoned option"),L("Zapbot", role="summoned option")], "SCROLLS_OF_BITING_NORMAL":[L("Scroll of Biting",4)], "AXEBOTS_NORMAL":[L("Axebot",2)],
+ "FABRICATOR_NORMAL":[L("Fabricator"),L("Guardbot", role="summoned"),L("Zapbot", role="summoned")], "SCROLLS_OF_BITING_NORMAL":[L("Scroll of Biting", 4, pattern=P("random-with-constraint", "Start offsets (turn 1): the four-Scroll pack begins with staggered cycle steps. Cycle: Chomp → More Teeth → Chew. After Chew, randomly restart at Chomp (cannot repeat) or Chew (weight 2), then continue the cycle."))],
+ "AXEBOTS_NORMAL":[L(
+     "Axebot", role="live-body template", pack="1 initially · Stock respawns replace the defeated body",
+     pattern=P("cycle", "Opener (turn 1): Hammer Uppercut. Then continue the cycle: The One-Two → Hammer Uppercut → repeat. Stock respawn opener: Boot Up (the second respawn uses its improved value), then enter the cycle at Hammer Uppercut."),
+ )],
 })
-add("Overgrowth", "elite", {"BYGONE_EFFIGY_ELITE":[L("Bygone Effigy")], "BYRDONIS_ELITE":[L("Byrdonis")], "PHROG_PARASITE_ELITE":[L("Phrog Parasite"),L("Wriggler",4, role="summoned on death")]})
-add("Underdocks", "elite", {"PHANTASMAL_GARDENERS_ELITE":[L("Phantasmal Gardener",4)], "SKULKING_COLONY_ELITE":[L("Skulking Colony")], "TERROR_EEL_ELITE":[L("Terror Eel")]})
-add("Hive", "elite", {"DECIMILLIPEDE_ELITE":[L("Decimillipede",1,"DECIMILLIPEDE_FRONT"),L("Decimillipede",1,"DECIMILLIPEDE_MIDDLE"),L("Decimillipede",1,"DECIMILLIPEDE_BACK")], "ENTOMANCER_ELITE":[L("Entomancer")], "INFESTED_PRISMS_ELITE":[L("Infested Prism")]})
+add("Overgrowth", "elite", {"BYGONE_EFFIGY_ELITE":[L("Bygone Effigy")], "BYRDONIS_ELITE":[L("Byrdonis")], "PHROG_PARASITE_ELITE":[L("Phrog Parasite"),L(
+     "Wriggler", role="summoned", pack="4 appear on Phrog Parasite death",
+     pattern=P("cycle", "Summon delay: Stunned for the first turn. Start offsets: odd-numbered Wrigglers open with Nasty Bite; even-numbered Wrigglers open with Wriggle. Then cycle: alternate Nasty Bite and Wriggle."),
+ )]})
+add("Underdocks", "elite", {"PHANTASMAL_GARDENERS_ELITE":[L("Phantasmal Gardener", 4, pattern=P("cycle", "Start offsets (turn 1): each of the four Gardeners begins on a different step. Cycle: Bite → Lash → Flail → Enlarge → repeat."))], "SKULKING_COLONY_ELITE":[L("Skulking Colony")], "TERROR_EEL_ELITE":[L("Terror Eel")]})
+add("Hive", "elite", {"DECIMILLIPEDE_ELITE":[
+     L("Decimillipede", 1, "DECIMILLIPEDE_FRONT", pattern=P("cycle", "Start offset (turn 1): each segment begins on a different step. Cycle: Bulk → Writhe → Outgas → repeat. After Reattach, segments revive with 25 HP and resume at random; sync may break.")),
+     L("Decimillipede", 1, "DECIMILLIPEDE_MIDDLE", pattern=P("cycle", "Start offset (turn 1): each segment begins on a different step. Cycle: Bulk → Writhe → Outgas → repeat. After Reattach, segments revive with 25 HP and resume at random; sync may break.")),
+     L("Decimillipede", 1, "DECIMILLIPEDE_BACK", pattern=P("cycle", "Start offset (turn 1): each segment begins on a different step. Cycle: Bulk → Writhe → Outgas → repeat. After Reattach, segments revive with 25 HP and resume at random; sync may break.")),
+ ], "ENTOMANCER_ELITE":[L("Entomancer")], "INFESTED_PRISMS_ELITE":[L("Infested Prism")]})
 add("Glory", "elite", {"KNIGHTS_ELITE":[L("Flail Knight"),L("Spectral Knight"),L("Magi Knight")], "MECHA_KNIGHT_ELITE":[L("Mecha Knight")], "SOUL_NEXUS_ELITE":[L("Soul Nexus")]})
-add("Overgrowth", "boss", {"CEREMONIAL_BEAST_BOSS":[L("Ceremonial Beast")], "THE_KIN_BOSS":[L("Kin Priest"),L("Kin Follower",2)], "VANTOM_BOSS":[L("Vantom")]})
+add("Overgrowth", "boss", {"CEREMONIAL_BEAST_BOSS":[L("Ceremonial Beast")], "THE_KIN_BOSS":[L("Kin Priest"),
+     L("Kin Follower", role="Quick Slash opener slot", pattern=P("cycle", "Opener (turn 1): Quick Slash. Then continue the cycle: Boomerang → Power Dance → Quick Slash → repeat.")),
+     L("Kin Follower", role="Power Dance opener slot", pattern=P("cycle", "Opener (turn 1): Power Dance. Then continue the cycle: Quick Slash → Boomerang → Power Dance → repeat.")),
+ ], "VANTOM_BOSS":[L("Vantom")]})
 add("Underdocks", "boss", {"LAGAVULIN_MATRIARCH_BOSS":[L("Lagavulin Matriarch")], "SOUL_FYSH_BOSS":[L("Soul Fysh")], "WATERFALL_GIANT_BOSS":[L("Waterfall Giant")]})
 add("Hive", "boss", {"THE_INSATIABLE_BOSS":[L("The Insatiable")], "KNOWLEDGE_DEMON_BOSS":[L("Knowledge Demon")], "KAISER_CRAB_BOSS":[L("Crusher"),L("Rocket")]})
 add("Glory", "boss", {"QUEEN_BOSS":[L("Queen"),L("Torch Head Amalgam")], "TEST_SUBJECT_BOSS":[L("Test Subject", role="phase 1"),L("Test Subject (Phase 2)", role="phase 2"),L("Test Subject (Phase 3)", role="phase 3")], "AEONGLASS_BOSS":[L("Aeonglass")], "DOORMAKER_BOSS":[L("Doormaker")]})
@@ -615,6 +666,8 @@ for encounter_id, encounter in ENCOUNTERS.items():
             "monsterId": spec.get("monsterId", default_id),
             "count": spec["count"],
             **({"role": spec["role"]} if spec.get("role") else {}),
+            **({"pattern": deepcopy(spec["pattern"])} if spec.get("pattern") else {}),
+            **({"pack": spec["pack"]} if spec.get("pack") else {}),
         })
     encounter["name"] = encounter_id.removesuffix("_WEAK").removesuffix("_NORMAL").removesuffix("_ELITE").removesuffix("_BOSS").replace("_", " ").title()
     encounter["lineup"] = lineup

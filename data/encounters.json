@@ -520,12 +520,14 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "The Axebot always cycles Hammer Uppercut thenThe One-Two then repeat. The Axebots spawned mid-fight via Stock opens with Boot Up before entering the cycle. The second spawned Axebot uses the improved version of Boot Up. Every time a new Axebot is spawned it gains +10 Max HP more than the last one (So the first respawn has 10 HP more, the second 20 HP more etc.)."
+            "text": "Opener (turn 1): Hammer Uppercut. Then continue the cycle: The One-Two → Hammer Uppercut → repeat. Stock respawn opener: Boot Up (the second respawn uses its improved value), then enter the cycle at Hammer Uppercut."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Axebot",
           "patchChecked": "v0.111.0 Enemies",
           "monsterId": "AXEBOT",
-          "count": 2
+          "count": 1,
+          "role": "live-body template",
+          "pack": "1 initially · Stock respawns replace the defeated body"
         }
       ],
       "name": "Axebots",
@@ -830,11 +832,39 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "Chompers always appear in pairs. One opens with Clamp and the other opens with Screech. After that, each one alternates between Clamp and Screech every turn."
+            "text": "Opener (turn 1): Clamp. Then continue the cycle: Screech → Clamp → repeat."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Chomper",
           "monsterId": "CHOMPER",
-          "count": 2
+          "count": 1,
+          "role": "Clamp opener slot"
+        },
+        {
+          "displayName": "Chomper",
+          "type": "Normal",
+          "hpA8": [
+            63,
+            67
+          ],
+          "startsWithA9": "Artifact 2",
+          "moves": [
+            {
+              "name": "Clamp",
+              "textA9": "Deals 9×2 damage."
+            },
+            {
+              "name": "Screech",
+              "textA9": "Shuffles 3 Dazed into your discard pile."
+            }
+          ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Opener (turn 1): Screech. Then continue the cycle: Clamp → Screech → repeat."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Chomper",
+          "monsterId": "CHOMPER",
+          "count": 1,
+          "role": "Screech opener slot"
         }
       ],
       "name": "Chompers",
@@ -936,7 +966,7 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "Cycles through its moves in a fixed order: • Whip Slap • Glomp • Goop • Back to Whip Slap Each Corpse Slug in the encounter starts on a different move in the cycle, so they are staggered."
+            "text": "Start offsets (turn 1): the three Corpse Slugs begin on different cycle steps. Cycle: Whip Slap → Glomp → Goop → repeat."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Corpse_Slug",
           "monsterId": "CORPSE_SLUG",
@@ -975,7 +1005,7 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "Cycles through its moves in a fixed order: • Whip Slap • Glomp • Goop • Back to Whip Slap Each Corpse Slug in the encounter starts on a different move in the cycle, so they are staggered."
+            "text": "Start offsets (turn 1): the two Corpse Slugs begin on different cycle steps. Cycle: Whip Slap → Glomp → Goop → repeat."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Corpse_Slug",
           "monsterId": "CORPSE_SLUG",
@@ -1114,8 +1144,8 @@
             }
           ],
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Each segment cycles through the following pattern: • Bulk • Writhe • Outgas Each segment starts on a different move, which will remain the case until one or more of them is killed. • When a segment is killed, it uses Reattach to revive with 25 HP provided at least one other segment is still alive. After reviving, it resumes with a random move. which may disrupt their prior synchrony."
+            "type": "cycle",
+            "text": "Start offset (turn 1): each segment begins on a different step. Cycle: Bulk → Writhe → Outgas → repeat. After Reattach, segments revive with 25 HP and resume at random; sync may break."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Decimillipede",
           "monsterId": "DECIMILLIPEDE_FRONT",
@@ -1148,8 +1178,8 @@
             }
           ],
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Each segment cycles through the following pattern: • Bulk • Writhe • Outgas Each segment starts on a different move, which will remain the case until one or more of them is killed. • When a segment is killed, it uses Reattach to revive with 25 HP provided at least one other segment is still alive. After reviving, it resumes with a random move. which may disrupt their prior synchrony."
+            "type": "cycle",
+            "text": "Start offset (turn 1): each segment begins on a different step. Cycle: Bulk → Writhe → Outgas → repeat. After Reattach, segments revive with 25 HP and resume at random; sync may break."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Decimillipede",
           "monsterId": "DECIMILLIPEDE_MIDDLE",
@@ -1182,8 +1212,8 @@
             }
           ],
           "pattern": {
-            "type": "random-with-constraint",
-            "text": "Each segment cycles through the following pattern: • Bulk • Writhe • Outgas Each segment starts on a different move, which will remain the case until one or more of them is killed. • When a segment is killed, it uses Reattach to revive with 25 HP provided at least one other segment is still alive. After reviving, it resumes with a random move. which may disrupt their prior synchrony."
+            "type": "cycle",
+            "text": "Start offset (turn 1): each segment begins on a different step. Cycle: Bulk → Writhe → Outgas → repeat. After Reattach, segments revive with 25 HP and resume at random; sync may break."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Decimillipede",
           "monsterId": "DECIMILLIPEDE_BACK",
@@ -1353,12 +1383,12 @@
           ],
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Exoskeletons appear in groups of 3 or 4. Each one's opening move depends on its position in the group: • The first uses Skitter • The second uses Mandibles • The third uses Enrage • The fourth (if present) randomly picks Skitter or Mandibles. • After Skitter, the next move is randomly Skitter or Mandibles (cannot repeat the same move twice in a row). • After Mandibles, it always uses Enrage. • After Enrage, the next move is randomly Skitter or Mandibles."
+            "text": "Openers by position (turn 1): first — Skitter; second — Mandibles; third — Enrage; fourth — randomly Skitter or Mandibles. Then cycle rules: after Skitter, randomly use Skitter or Mandibles without repeating; after Mandibles, use Enrage; after Enrage, randomly use Skitter or Mandibles."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Exoskeleton",
           "patchChecked": "v0.111.0 Enemies",
           "monsterId": "EXOSKELETON",
-          "count": 2
+          "count": 4
         }
       ],
       "name": "Exoskeletons",
@@ -1393,12 +1423,12 @@
           ],
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Exoskeletons appear in groups of 3 or 4. Each one's opening move depends on its position in the group: • The first uses Skitter • The second uses Mandibles • The third uses Enrage • The fourth (if present) randomly picks Skitter or Mandibles. • After Skitter, the next move is randomly Skitter or Mandibles (cannot repeat the same move twice in a row). • After Mandibles, it always uses Enrage. • After Enrage, the next move is randomly Skitter or Mandibles."
+            "text": "Openers by position (turn 1): first — Skitter; second — Mandibles; third — Enrage. Then cycle rules: after Skitter, randomly use Skitter or Mandibles without repeating; after Mandibles, use Enrage; after Enrage, randomly use Skitter or Mandibles."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Exoskeleton",
           "patchChecked": "v0.111.0 Enemies",
           "monsterId": "EXOSKELETON",
-          "count": 1
+          "count": 3
         }
       ],
       "name": "Exoskeletons",
@@ -1457,7 +1487,7 @@
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fabricator",
           "monsterId": "GUARDBOT",
           "count": 1,
-          "role": "summoned option"
+          "role": "summoned"
         },
         {
           "displayName": "Zapbot",
@@ -1480,7 +1510,7 @@
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fabricator",
           "monsterId": "ZAPBOT",
           "count": 1,
-          "role": "summoned option"
+          "role": "summoned"
         }
       ],
       "name": "Fabricator",
@@ -1829,7 +1859,7 @@
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Gremlin_Merc",
           "monsterId": "FAT_GREMLIN",
           "count": 1,
-          "role": "summoned on death"
+          "role": "summoned"
         },
         {
           "displayName": "Sneaky Gremlin",
@@ -1855,7 +1885,7 @@
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Gremlin_Merc",
           "monsterId": "SNEAKY_GREMLIN",
           "count": 1,
-          "role": "summoned on death"
+          "role": "summoned"
         }
       ],
       "name": "Gremlin Merc",
@@ -2015,7 +2045,7 @@
           ],
           "pattern": {
             "type": "random-with-constraint",
-            "text": "The two outer Inklets open with Jab (most likely) or Windup Punch. The middle Inklet always opens with Windup Punch. Each Inklet will alternate between Jab and a random choice of either Piercing Gaze or Windup Punch. After either Windup Punch or Piercing Gaze, the Inklet always uses Jab. After Jab, it will randomly choose between Piercing Gaze and Windup Punch."
+            "text": "Openers by position (turn 1): each outer Inklet uses Jab (most likely) or Windup Punch; the middle uses Windup Punch. Then cycle rules: after Jab, randomly use Piercing Gaze or Windup Punch; after either of those, use Jab."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Inklet",
           "monsterId": "INKLET",
@@ -2516,11 +2546,42 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "Mytes always appear in pairs. One opens with Toxic Cornucopia and the other opens with Suck. Afterward, Mytes follow a fixed pattern: • Toxic Cornucopia • Bite • Suck"
+            "text": "Opener (turn 1): Toxic Cornucopia. Then cycle: Toxic Cornucopia → Bite → Suck → repeat."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Myte",
           "monsterId": "MYTE",
-          "count": 2
+          "count": 1,
+          "role": "Toxic Cornucopia opener slot"
+        },
+        {
+          "displayName": "Myte",
+          "type": "Normal",
+          "hpA8": [
+            64,
+            69
+          ],
+          "moves": [
+            {
+              "name": "Toxic Cornucopia",
+              "textA9": "Adds 2 Toxic to your hand."
+            },
+            {
+              "name": "Bite",
+              "textA9": "Deals 15 damage."
+            },
+            {
+              "name": "Suck",
+              "textA9": "Deals 6 damage. Gains 3 Strength."
+            }
+          ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Opener (turn 1): Suck. Then cycle: Toxic Cornucopia → Bite → Suck → repeat."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Myte",
+          "monsterId": "MYTE",
+          "count": 1,
+          "role": "Suck opener slot"
         }
       ],
       "name": "Mytes",
@@ -2553,12 +2614,43 @@
             }
           ],
           "pattern": {
-            "type": "opener",
-            "text": "When alone (Nibbits Weak encounter), the Nibbit opens with Butt. When paired (Nibbits Normal encounter), the front Nibbit opens with Hesitant Slice and the back Nibbit opens with Hiss. After the opening move, all Nibbits cycle in a fixed order: Butt, then Hesitant Slice, then Hiss, and repeat."
+            "type": "cycle",
+            "text": "Opener (turn 1): Hesitant Slice. Then cycle: Butt → Hesitant Slice → Hiss → repeat."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Nibbit",
           "monsterId": "NIBBIT",
-          "count": 2
+          "count": 1,
+          "role": "front slot"
+        },
+        {
+          "displayName": "Nibbit",
+          "type": "Normal",
+          "hpA8": [
+            44,
+            48
+          ],
+          "moves": [
+            {
+              "name": "Butt",
+              "textA9": "Deals 13 damage."
+            },
+            {
+              "name": "Hesitant Slice",
+              "textA9": "Deals 7 damage. Gains 6 Block."
+            },
+            {
+              "name": "Hiss",
+              "textA9": "Gains 3 Strength."
+            }
+          ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Opener (turn 1): Hiss. Then cycle: Butt → Hesitant Slice → Hiss → repeat."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Nibbit",
+          "monsterId": "NIBBIT",
+          "count": 1,
+          "role": "back slot"
         }
       ],
       "name": "Nibbits",
@@ -2591,8 +2683,8 @@
             }
           ],
           "pattern": {
-            "type": "opener",
-            "text": "When alone (Nibbits Weak encounter), the Nibbit opens with Butt. When paired (Nibbits Normal encounter), the front Nibbit opens with Hesitant Slice and the back Nibbit opens with Hiss. After the opening move, all Nibbits cycle in a fixed order: Butt, then Hesitant Slice, then Hiss, and repeat."
+            "type": "cycle",
+            "text": "Opener (turn 1): Butt. Then cycle: repeat the fixed three-move sequence shown in the move table, beginning with Butt."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Nibbit",
           "monsterId": "NIBBIT",
@@ -2723,8 +2815,9 @@
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ovicopter",
           "monsterId": "TOUGH_EGG",
-          "count": 3,
-          "role": "summoned"
+          "count": 1,
+          "role": "summoned",
+          "pack": "Lay Eggs summons 3 at a time; eggs hatch into live Hatchlings"
         }
       ],
       "name": "Ovicopter",
@@ -2814,7 +2907,7 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "All four Gardeners cycle through the same four moves in a fixed order: • Bite • Lash • Flail • Enlarge Each Gardener starts at a different point in the cycle, so they always use different moves from each other."
+            "text": "Start offsets (turn 1): each of the four Gardeners begins on a different step. Cycle: Bite → Lash → Flail → Enlarge → repeat."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Phantasmal_Gardener",
           "monsterId": "PHANTASMAL_GARDENER",
@@ -2874,12 +2967,13 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "Wrigglers alternate between Nasty Bite and Wriggle. When multiple Wrigglers are present, they start offset from each other: odd-numbered Wrigglers begin with Nasty Bite and even-numbered Wrigglers begin with Wriggle. When summoned by Phrog Parasite (via Infested), each Wriggler spends its first turn Stunned before beginning its pattern. In the Dense Vegetation event, 4 Wrigglers appear at once, starting their patterns immediately (not Stunned)."
+            "text": "Summon delay: Stunned for the first turn. Start offsets: odd-numbered Wrigglers open with Nasty Bite; even-numbered Wrigglers open with Wriggle. Then cycle: alternate Nasty Bite and Wriggle."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Wriggler",
           "monsterId": "WRIGGLER",
-          "count": 4,
-          "role": "summoned on death"
+          "count": 1,
+          "role": "summoned",
+          "pack": "4 appear on Phrog Parasite death"
         }
       ],
       "name": "Phrog Parasite",
@@ -3136,7 +3230,7 @@
           ],
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Each Scroll of Biting starts on a different move in the cycle. The pattern is: Chomp, then More Teeth, then Chew. After Chew, it randomly picks either Chomp (cannot repeat) or Chew (weight 2), then continues the cycle from that point."
+            "text": "Start offsets (turn 1): the four-Scroll pack begins with staggered cycle steps. Cycle: Chomp → More Teeth → Chew. After Chew, randomly restart at Chomp (cannot repeat) or Chew (weight 2), then continue the cycle."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Scroll_of_Biting",
           "monsterId": "SCROLL_OF_BITING",
@@ -3177,7 +3271,7 @@
           ],
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Each Scroll of Biting starts on a different move in the cycle. The pattern is: Chomp, then More Teeth, then Chew. After Chew, it randomly picks either Chomp (cannot repeat) or Chew (weight 2), then continues the cycle from that point."
+            "text": "Start offsets (turn 1): the three Scrolls each begin on a different cycle step. Cycle: Chomp → More Teeth → Chew. After Chew, randomly restart at Chomp (cannot repeat) or Chew (weight 2), then continue the cycle."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Scroll_of_Biting",
           "monsterId": "SCROLL_OF_BITING",
@@ -4238,11 +4332,43 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "Each Kin Follower cycles through three moves in a fixed order: • Quick Slash • Boomerang • Power Dance The two Kin Followers start offset from each other: one begins with Quick Slash and the other begins with Power Dance."
+            "text": "Opener (turn 1): Quick Slash. Then continue the cycle: Boomerang → Power Dance → Quick Slash → repeat."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Kin",
           "monsterId": "KIN_FOLLOWER",
-          "count": 2
+          "count": 1,
+          "role": "Quick Slash opener slot"
+        },
+        {
+          "displayName": "Kin Follower",
+          "type": "Minion",
+          "hpA8": [
+            62,
+            63
+          ],
+          "startsWithA9": "Minion",
+          "moves": [
+            {
+              "name": "Quick Slash",
+              "textA9": "Deals 5 damage."
+            },
+            {
+              "name": "Boomerang",
+              "textA9": "Deals 2×2 damage."
+            },
+            {
+              "name": "Power Dance",
+              "textA9": "Gains 3 Strength."
+            }
+          ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Opener (turn 1): Power Dance. Then continue the cycle: Quick Slash → Boomerang → Power Dance → repeat."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Kin",
+          "monsterId": "KIN_FOLLOWER",
+          "count": 1,
+          "role": "Power Dance opener slot"
         }
       ],
       "name": "The Kin",
@@ -4455,11 +4581,42 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "Cycles through its moves in a fixed order: Whirl, then Spiken, then Spike Spit, repeating. In the Toadpoles (Weak) encounter, the front Toadpole starts with Spiken instead."
+            "text": "Opener (turn 1): Spiken. Then continue the cycle: Spike Spit → Whirl → Spiken → repeat."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Toadpole",
           "monsterId": "TOADPOLE",
-          "count": 2
+          "count": 1,
+          "role": "front slot"
+        },
+        {
+          "displayName": "Toadpole",
+          "type": "Normal",
+          "hpA8": [
+            22,
+            26
+          ],
+          "moves": [
+            {
+              "name": "Spike Spit",
+              "textA9": "Deals 4×3 damage. Removes 2 Thorns from self."
+            },
+            {
+              "name": "Whirl",
+              "textA9": "Deals 8 damage."
+            },
+            {
+              "name": "Spiken",
+              "textA9": "Gains 2 Thorns."
+            }
+          ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Opener (turn 1): Whirl. Then continue the cycle: Spiken → Spike Spit → Whirl → repeat."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Toadpole",
+          "monsterId": "TOADPOLE",
+          "count": 1,
+          "role": "back slot"
         }
       ],
       "name": "Toadpoles",
@@ -4641,11 +4798,13 @@
           ],
           "pattern": {
             "type": "random-with-constraint",
-            "text": "Each rat starts with a different move: one uses Scratch, one uses Disease Bite, and one uses Screech. After the first turn, each rat randomly picks from Scratch, Disease Bite, or Screech each turn. Cannot use the same move twice in a row. After at least two turns, a rat may use Call for Backup to summon a new rat. Each rat can only summon once, and the group can summon up to three times total."
+            "text": "Openers (turn 1, 3 initial rats): Scratch, Disease Bite, and Screech, one each. Then each live rat randomly uses Scratch, Disease Bite, or Screech without repeating its previous move. After at least two turns, Call for Backup may summon a new rat."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Two-Tailed_Rat",
           "monsterId": "TWO_TAILED_RAT",
-          "count": 3
+          "count": 1,
+          "role": "live-body template",
+          "pack": "3 initially · each rat can summon once; 3 summons maximum"
         }
       ],
       "name": "Two Tailed Rats",

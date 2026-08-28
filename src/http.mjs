@@ -43,6 +43,7 @@ function renderBody(body, showRawId = false) {
     ? `<div class="hp">${escapeHtml(range(body.hp))} HP</div>`
     : `<div class="hp unknown-field">HP unknown</div>`;
   const role = body.role ? `<div class="role">${escapeHtml(body.role)}</div>` : "";
+  const pack = body.pack ? `<div class="pack">pack · ${escapeHtml(body.pack)}</div>` : "";
   const rawId = showRawId && body.monsterId ? `<div class="monster-id">${escapeHtml(body.monsterId)}</div>` : "";
   const flags = (body.sourceFlags ?? []).map((flag) => `<div class="source-flag">${escapeHtml(flag)}</div>`).join("");
   const starts = body.startsWith ? `<div class="starts">starts · ${escapeHtml(body.startsWith)}</div>` : "";
@@ -50,7 +51,7 @@ function renderBody(body, showRawId = false) {
     ? `<div class="pattern${body.pattern.type === "unknown" ? " unknown-field" : ""}"><span class="pattern-type">${escapeHtml(body.pattern.type === "unknown" ? "known unknown · pattern" : body.pattern.type.replaceAll("-", " "))}</span> ${escapeHtml(body.pattern.text)}</div>`
     : `<div class="pattern unknown-field"><span class="pattern-type">known unknown · pattern</span> Pattern data is missing.</div>`;
   const moves = (body.moves ?? []).map((move) => `<div class="move"><strong class="move-name">${escapeHtml(move.name)}${move.intent ? `<small class="move-intent">${escapeHtml(move.intent)}</small>` : ""}</strong><span class="move-text">${escapeHtml(move.text)}</span></div>`).join("");
-  return `<article class="body-card"><div class="body-heading"><h2 class="body-name">${escapeHtml(count + body.displayName)}</h2>${hp}</div>${role}${rawId}${flags}${starts}${pattern}<div class="moves">${moves}</div></article>`;
+  return `<article class="body-card"><div class="body-heading"><h2 class="body-name">${escapeHtml(count + body.displayName)}</h2>${hp}</div>${role}${pack}${rawId}${flags}${starts}${pattern}<div class="moves">${moves}</div></article>`;
 }
 
 function listSection(title, values) {
@@ -91,7 +92,7 @@ function renderState(state, basePath) {
     content += `<div class="cards">${book.lineup.map((body) => renderBody(body)).join("")}</div>`;
     content += listSection("death & extra rules", book.rules);
     content += listSection("timing", book.timing);
-    content += `<footer class="source"><div class="scale-note">scaling · hp &amp; buffs ×${book.scale.hpAndBuff.toFixed(1)} · block ×${book.scale.block} · attacks unscaled</div><div>source values · wiki.gg · a8 hp · a9 moves · rendered for a10 / 2p</div></footer>`;
+    content += `<footer class="source"><div class="scale-note">hp &amp; stored buffs ×${book.scale.hpAndStoredBuff.toFixed(1)} · block ×${book.scale.block} · attacks &amp; combat stats unscaled</div><div>source values · wiki.gg · a8 hp · a9 moves · rendered for a10 / 2p</div></footer>`;
   }
   return `<main id="encounter" data-base-path="${escapeHtml(basePath)}" class="state state-${escapeHtml(state.status)}">${content}</main>`;
 }
@@ -128,6 +129,7 @@ body{margin:0;color:var(--text)}
 .status-last .status-dot{background:var(--muted)}
 .encounter-name{font-size:clamp(1.2rem,4vw,1.65rem);font-weight:650;line-height:1.15;margin:.7rem 0 .35rem;letter-spacing:.02em;text-wrap:balance}
 .meta,.role{color:var(--muted);font-size:.85rem;font-weight:560;letter-spacing:.02em;text-transform:lowercase}
+.pack{color:var(--muted);font-size:.78rem;margin:.2rem 0 .45rem}
 .meta{margin-top:.55rem}
 .role{margin-top:.4rem}
 .encounter-id,.monster-id{margin-top:.4rem;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--danger-soft);font-size:.75rem;overflow-wrap:anywhere}

@@ -33,13 +33,20 @@ function scaleToken(token, factor) {
     .join("/");
 }
 
-// HP and general-buff magnitudes (Reattach, Hardened Shell, Curl Up, Plating, …).
-// Durations (Asleep, Slumber) and non-buff counts (Artifact, Thievery) stay stored.
-const GENERAL_BUFF = "Vital Spark|Hardened Shell|Personal Hive|Steam Eruption|Curl Up|Reattach|Plating|Shriek|Enrage|Strength|Ritual|Intangible|Thorns|Vigor|Dexterity|Plow";
+// A9 already supplies combat-stat magnitudes. Multiplayer scaling has three
+// independent buckets: combat stats stay source-true like attacks, Block uses
+// player count only, and stored powers use the same players × HP factor as HP.
+export const scalingCategories = Object.freeze({
+  combatStats: Object.freeze(["Strength", "Dexterity", "Vigor"]),
+  block: Object.freeze(["Block"]),
+  storedPowers: Object.freeze(["Plating", "Curl Up", "Reattach", "Hardened Shell", "Vital Spark", "Plow", "Personal Hive", "Steam Eruption", "Enrage", "Ritual", "Intangible", "Thorns", "Shriek"]),
+});
+const BLOCK = scalingCategories.block.join("|");
+const STORED_POWERS = scalingCategories.storedPowers.join("|");
 
-function scaleNamedBuffs(text, factor) {
+function scaleNamedStoredPowers(text, factor) {
   return String(text).replace(
-    new RegExp(String.raw`\b(${GENERAL_BUFF})\s+(\d+(?:[-/]\d+)*)\b`, "gi"),
+    new RegExp(String.raw`\b(${STORED_POWERS})\s+(\d+(?:[-/]\d+)*)\b`, "gi"),
     (_, power, value) => `${power} ${scaleToken(value, factor)}`,
   );
 }
@@ -47,14 +54,15 @@ function scaleNamedBuffs(text, factor) {
 /**
  * Convert the source A9 mechanics sentence into its multiplayer rendering.
  * Attack clauses and applied debuff durations remain unchanged. Enemy block
- * scales only by players; gained powers and revive HP use players × actScale.
+ * scales only by players; stored powers and revive HP use players × actScale.
+ * Strength, Dexterity, and Vigor remain at their A9 source magnitudes.
  * HP-threshold powers written as "Gains PowerName N" (Plow, Vital Spark) scale too.
  */
 export function scaleMechanicsText(text, options = {}) {
   const players = Number(options.players ?? 2);
   const general = players * actScale(options);
   const numericPower = new RegExp(
-    String.raw`\b(\d+(?:[-/]\d+)*)(\s*(?:\+\s*X\s*)?)\s+(Block|${GENERAL_BUFF})\b`,
+    String.raw`\b(\d+(?:[-/]\d+)*)(\s*(?:\+\s*X\s*)?)\s+(${BLOCK}|${STORED_POWERS})\b`,
     "gi",
   );
   let rendered = String(text ?? "").split(/(?<=\.)\s+/).map((sentence) => {
@@ -62,10 +70,10 @@ export function scaleMechanicsText(text, options = {}) {
     if (scaleAt < 0) return sentence;
     const prefix = sentence.slice(0, scaleAt);
     let mechanics = sentence.slice(scaleAt).replace(numericPower, (_, value, addition, power) => {
-      const factor = power.toLowerCase() === "block" ? players : general;
+      const factor = scalingCategories.block.some((name) => name.toLowerCase() === power.toLowerCase()) ? players : general;
       return `${scaleToken(value, factor)}${addition} ${power}`;
     });
-    mechanics = scaleNamedBuffs(mechanics, general);
+    mechanics = scaleNamedStoredPowers(mechanics, general);
     return prefix + mechanics;
   }).join(" ");
 
@@ -77,8 +85,10 @@ export function scaleMechanicsText(text, options = {}) {
 
 function scaledStartsWith(text, options) {
   if (!text) return null;
-  const general = Number(options.players ?? 2) * actScale(options);
-  return scaleNamedBuffs(text, general);
+  const players = Number(options.players ?? 2);
+  const general = players * actScale(options);
+  const block = new RegExp(String.raw`\b(${BLOCK})\s+(\d+(?:[-/]\d+)*)\b`, "gi");
+  return scaleNamedStoredPowers(String(text).replace(block, (_, power, value) => `${power} ${scaleToken(value, players)}`), general);
 }
 
 function scaledPattern(pattern, options) {
@@ -101,6 +111,7 @@ export function scaledEncounter(encounter, options = {}) {
       displayName: body.displayName,
       count: body.count,
       role: body.role ?? null,
+      pack: body.pack ?? null,
       hpA8: body.hpA8 ?? null,
       hp: scaleRange(body.hpA8, scaling),
       startsWithA9: body.startsWithA9 ?? null,
@@ -120,9 +131,10 @@ export function scaledEncounter(encounter, options = {}) {
     timing: (encounter.timing ?? []).map((line) => scaleMechanicsText(line, scaling)),
     scale: {
       players: scaling.players,
-      hpAndBuff: scaling.players * actScale(scaling),
+      hpAndStoredBuff: scaling.players * actScale(scaling),
       block: scaling.players,
       attacks: 1,
+      combatStats: 1,
     },
   };
 }
