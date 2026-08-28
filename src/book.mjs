@@ -58,15 +58,15 @@ export function scaleMechanicsText(text, options = {}) {
     "gi",
   );
   let rendered = String(text ?? "").split(/(?<=\.)\s+/).map((sentence) => {
-    const gainAt = sentence.search(/\b(?:gains?|gives?)\b/i);
-    if (gainAt < 0) return sentence;
-    const prefix = sentence.slice(0, gainAt);
-    let gains = sentence.slice(gainAt).replace(numericPower, (_, value, addition, power) => {
+    const scaleAt = sentence.search(/\b(?:gains?|gained|gaining|gives?|gave|given|adds?|added|adding|starts?|begins?|opens?)\b/i);
+    if (scaleAt < 0) return sentence;
+    const prefix = sentence.slice(0, scaleAt);
+    let mechanics = sentence.slice(scaleAt).replace(numericPower, (_, value, addition, power) => {
       const factor = power.toLowerCase() === "block" ? players : general;
       return `${scaleToken(value, factor)}${addition} ${power}`;
     });
-    gains = scaleNamedBuffs(gains, general);
-    return prefix + gains;
+    mechanics = scaleNamedBuffs(mechanics, general);
+    return prefix + mechanics;
   }).join(" ");
 
   // Reattach/revive and explicit produced HP are HP scaling, not attacks.
@@ -79,6 +79,11 @@ function scaledStartsWith(text, options) {
   if (!text) return null;
   const general = Number(options.players ?? 2) * actScale(options);
   return scaleNamedBuffs(text, general);
+}
+
+function scaledPattern(pattern, options) {
+  const source = pattern ?? { type: "unknown", text: "Pattern data is missing from the local book." };
+  return { ...source, text: scaleMechanicsText(source.text, options) };
 }
 
 export function scaledEncounter(encounter, options = {}) {
@@ -100,7 +105,7 @@ export function scaledEncounter(encounter, options = {}) {
       hp: scaleRange(body.hpA8, scaling),
       startsWithA9: body.startsWithA9 ?? null,
       startsWith: scaledStartsWith(body.startsWithA9, scaling),
-      pattern: body.pattern ?? { type: "unknown", text: "Pattern data is missing from the local book." },
+      pattern: scaledPattern(body.pattern, scaling),
       sourcePage: body.sourcePage ?? null,
       sourceFlags: body.sourceFlags ?? [],
       patchChecked: body.patchChecked ?? null,

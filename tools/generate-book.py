@@ -315,12 +315,15 @@ def remove_templates(text, names):
     return result
 
 
-# Last body on an article has no following heading, so pattern extraction must
-# also stop at navboxes and categories instead of swallowing page chrome.
+# A pattern can end at an article heading or in the middle of tabber markup.
+# Stop before structural templates/tags reach plain(), which would otherwise
+# turn phase labels and infobox fields into apparent pattern prose.
 PATTERN_STOP = re.compile(
-    r"(?m)^(?:\s*={2,5}[^=].*?={2,5}\s*$"
-    r"|\s*\{\{\s*(?:Enemy2Nav|PatchNav)\b"
-    r"|\s*\[\[Category:)"
+    r"(?im)(?:^\s*={2,5}[^=].*?={2,5}\s*$"
+    r"|<tabber\b|</tabber\s*>|^\s*\|-\|"
+    r"|\{\{\s*[^{}\n|]*\bInfobox\b"
+    r"|^\s*\{\{\s*(?:Clear|Enemy2Nav|PatchNav|Sequel Disambiguation|Beta content)\b"
+    r"|^\s*\[\[Category:)"
 )
 
 

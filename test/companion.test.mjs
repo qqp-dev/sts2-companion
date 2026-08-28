@@ -108,6 +108,36 @@ test("last-body pattern prose does not swallow wiki chrome", () => {
   }
 });
 
+test("Test Subject tabber chrome is excluded from every phase pattern", () => {
+  const subject = encounterFor("TEST_SUBJECT_BOSS");
+  for (const body of subject.lineup) {
+    assert.doesNotMatch(body.pattern.text, /\|-\||Type\s*=\s*Boss|Power Infobox/i);
+  }
+});
+
+test("scaled pattern prose matches rendered HP and buff magnitudes", () => {
+  const decimillipede = scaledEncounter(encounterFor("DECIMILLIPEDE_ELITE"));
+  for (const body of decimillipede.lineup) {
+    assert.match(body.pattern.text, /Reattach to revive with 60 HP/i);
+    assert.doesNotMatch(body.pattern.text, /revive with 25 HP/i);
+  }
+
+  const subject = scaledEncounter(encounterFor("TEST_SUBJECT_BOSS"));
+  assert.match(subject.lineup[0].pattern.text, /Enrage 7/i);
+  assert.doesNotMatch(subject.lineup[0].pattern.text, /Enrage 3/i);
+  for (const body of subject.lineup.slice(1)) {
+    assert.match(body.pattern.text, new RegExp(`Revives with ${body.hp[0]} HP`, "i"));
+    assert.doesNotMatch(body.pattern.text, /Revives with (?:212|313) HP/i);
+  }
+
+  const effigy = scaledEncounter(encounterFor("BYGONE_EFFIGY_ELITE"));
+  const body = effigy.lineup[0];
+  const wake = body.moves.find((move) => move.name === "Wake");
+  assert.match(body.pattern.text, /gains 22 Strength/i);
+  assert.match(wake.text, /Gains 22 Strength/i);
+  assert.doesNotMatch(body.pattern.text, /gains 10 Strength/i);
+});
+
 test("v0.111.0 Exoskeleton and Entomancer A8 HP fixtures", () => {
   assert.deepEqual(encounterFor("EXOSKELETONS_WEAK").lineup[0].hpA8, [26, 30]);
   assert.deepEqual(encounterFor("EXOSKELETONS_NORMAL").lineup[0].hpA8, [26, 30]);
@@ -152,6 +182,16 @@ test("attacks do not MP-scale while block and general buffs use their categories
   assert.equal(louse.lineup[0].startsWithA9, "Curl Up 18");
   assert.equal(louse.lineup[0].startsWith, "Curl Up 43");
   assert.ok(encounterIds.length >= 80);
+});
+
+test("opener and added buff prose scales without changing removed buffs", () => {
+  assert.equal(
+    scaleMechanicsText(
+      "Starts with Enrage 3. Starts Asleep with 12 Plating. Adds 3 Steam Eruption. Has gained 2 Strength. Removes 2 Strength.",
+      { players: 2, act: 3, kind: "boss" },
+    ),
+    "Starts with Enrage 7. Starts Asleep with 31 Plating. Adds 7 Steam Eruption. Has gained 5 Strength. Removes 2 Strength.",
+  );
 });
 
 test("article Death Blow intent is retained as an extra rule", () => {

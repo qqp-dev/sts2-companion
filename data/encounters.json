@@ -4060,7 +4060,7 @@
           ],
           "pattern": {
             "type": "opener",
-            "text": "Starts with Adaptable and Enrage 3. Alternates between Bite and Skull Bash. When reduced to 0 HP, Adaptable prevents death and it revives into Phase 2. |-|Phase 2= Type = Boss Adaptable Painful Stabs"
+            "text": "Starts with Adaptable and Enrage 3. Alternates between Bite and Skull Bash. When reduced to 0 HP, Adaptable prevents death and it revives into Phase 2."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Test_Subject",
           "monsterId": "TEST_SUBJECT",
@@ -4082,7 +4082,7 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "Revives with 212 HP, gains Painful Stabs and loses Enrage. Uses Multi-Claw every turn. Multi-Claw starts at 3 hits and gains +1 hit each use. When reduced to 0 HP again, it revives into Phase 3. |-|Phase 3= Type = Boss Nemesis"
+            "text": "Revives with 212 HP, gains Painful Stabs and loses Enrage. Uses Multi-Claw every turn. Multi-Claw starts at 3 hits and gains +1 hit each use. When reduced to 0 HP again, it revives into Phase 3."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Test_Subject",
           "monsterId": "TEST_SUBJECT_PHASE_2",
