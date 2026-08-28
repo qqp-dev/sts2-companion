@@ -20,23 +20,24 @@
     section.append(el("h2", "section-title", title));
     const list = el("ul");
     for (const value of values) list.append(el("li", "note", value));
-    section.append(list); parent.append(section);
+    section.append(list);
+    parent.append(section);
   }
-  function bodyCard(body) {
+  function bodyCard(body, showRawId = false) {
     const card = el("article", "body-card");
     const heading = el("div", "body-heading");
     heading.append(el("h2", "body-name", `${body.count > 1 ? `${body.count}× ` : ""}${body.displayName}`));
     heading.append(el("div", body.hp ? "hp" : "hp unknown-field", body.hp ? `${range(body.hp)} HP` : "HP unknown"));
     card.append(heading);
     if (body.role) card.append(el("div", "role", body.role));
-    if (body.monsterId) card.append(el("div", "monster-id", body.monsterId));
-    if (body.startsWith) card.append(el("div", "starts", `Starts · ${body.startsWith}`));
+    if (showRawId && body.monsterId) card.append(el("div", "monster-id", body.monsterId));
+    for (const flag of body.sourceFlags ?? []) card.append(el("div", "source-flag", flag));
+    if (body.startsWith) card.append(el("div", "starts", `starts · ${body.startsWith}`));
     const pattern = el("div", body.pattern?.type === "unknown" || !body.pattern ? "pattern unknown-field" : "pattern");
     pattern.append(el("span", "pattern-type", body.pattern?.type === "unknown" || !body.pattern
       ? "known unknown · pattern" : body.pattern.type.replaceAll("-", " ")));
     pattern.append(document.createTextNode(` ${body.pattern?.text ?? "Pattern data is missing."}`));
     card.append(pattern);
-    for (const flag of body.sourceFlags ?? []) card.append(el("div", "source-flag", flag));
     const moves = el("div", "moves");
     for (const move of body.moves ?? []) {
       const row = el("div", "move");
@@ -52,53 +53,71 @@
   function versionCard(version) {
     const book = version?.book ?? {};
     const installed = version?.installed;
-    const bookLabel = `Book ${book.version ?? "unknown"} · ${book.branch ?? "unknown branch"}`;
-    if (!installed) {
+    const bookLabel = `book ${book.version ?? "unknown"} · ${book.branch ?? "unknown branch"}`;
+    if (!installed?.version) {
       const card = el("div", "version-card known-unknown");
-      card.append(el("strong", "", "Version unknown"));
+      card.append(el("strong", "", "version unknown"));
       card.append(el("span", "", `${bookLabel} · installed release_info.json unreadable`));
       return card;
     }
-    const card = el("div", `version-card ${version.matches === false ? "version-mismatch" : "version-match"}`);
-    card.append(el("strong", "", version.matches === false ? "Version mismatch" : "Version match"));
-    card.append(el("span", "", `${bookLabel} · Game ${installed.version ?? "unknown"} · ${installed.branch ?? "unknown branch"}`));
+    const installedLabel = `game ${installed.version} · ${installed.branch ?? "unknown branch"}`;
+    if (version.matches === false) {
+      const card = el("div", "version-card version-mismatch");
+      card.append(el("strong", "", "version mismatch"));
+      card.append(el("span", "", `${bookLabel} · ${installedLabel}`));
+      return card;
+    }
+    if (version.matches === true) return null;
+    const card = el("div", "version-card known-unknown");
+    card.append(el("strong", "", "version unknown"));
+    card.append(el("span", "", `${bookLabel} · ${installedLabel} · comparison unavailable`));
     return card;
+  }
+  function appendVersion(parent, version) {
+    const card = versionCard(version);
+    if (card) parent.append(card);
   }
   function render(state) {
     signature = JSON.stringify(state);
     root.replaceChildren();
     root.className = `state state-${state.status}`;
     if (state.status === "idle") {
-      root.append(versionCard(state.version));
+      appendVersion(root, state.version);
       const idle = el("div", "idle");
-      idle.append(el("div", "idle-mark", "◇"));
-      idle.append(el("h1", "idle-title", "No run / no combat"));
-      idle.append(el("p", "idle-copy", "Start a fight in Slay the Spire 2. This page will update automatically."));
+      idle.append(el("p", "idle-copy", "no run / no combat · waiting for the next fight"));
       root.append(idle);
       return;
     }
     const book = state.encounter;
+    const label = state.status === "combat" ? "combat" : "last";
     const header = el("header", "encounter-header");
-    header.append(el("div", "status-badge", state.status === "combat" ? "IN COMBAT" : "LAST COMBAT"));
+    const status = el("div", `status-line status-${label}`);
+    const dot = el("i", "status-dot");
+    dot.setAttribute("aria-hidden", "true");
+    status.append(dot);
+    status.append(document.createTextNode(label));
+    header.append(status);
     header.append(el("h1", "encounter-name", book?.name ?? state.encounterId));
-    header.append(el("div", "encounter-id", state.encounterId));
-    const meta = [book?.act, book?.kind, "A10 · 2 players"].filter(Boolean).join(" · ");
+    if (!book?.known && state.encounterId) header.append(el("div", "encounter-id", state.encounterId));
+    const meta = [book?.act, book?.kind].filter(Boolean).join(" · ");
     header.append(el("div", "meta", meta));
     root.append(header);
-    root.append(versionCard(state.version));
+    appendVersion(root, state.version);
     if (!book?.known) {
-      root.append(el("div", "unknown", "No local book entry for this encounter yet. The raw encounter identity is still shown."));
-      for (const body of book?.lineup ?? []) root.append(bodyCard({ ...body, moves: [] }));
+      root.append(el("div", "unknown", "No local book entry for this encounter yet. Raw encounter and monster identities are shown."));
+      for (const body of book?.lineup ?? []) root.append(bodyCard({ ...body, moves: [] }, true));
       return;
     }
-    const scale = book.scale;
-    root.append(el("div", "scale-note", `HP & buffs ×${scale.hpAndBuff.toFixed(1)} · Block ×${scale.block} · Attacks unscaled`));
     const cards = el("div", "cards");
     for (const body of book.lineup) cards.append(bodyCard(body));
     root.append(cards);
-    listSection(root, "Death & extra rules", book.rules);
-    listSection(root, "Timing", book.timing);
-    root.append(el("footer", "source", "Source values: wiki.gg · A8 HP · A9 moves · rendered for A10 / 2P"));
+    listSection(root, "death & extra rules", book.rules);
+    listSection(root, "timing", book.timing);
+    const source = el("footer", "source");
+    const scale = book.scale;
+    source.append(el("div", "scale-note", `scaling · hp & buffs ×${scale.hpAndBuff.toFixed(1)} · block ×${scale.block} · attacks unscaled`));
+    source.append(el("div", "", "source values · wiki.gg · a8 hp · a9 moves · rendered for a10 / 2p"));
+    root.append(source);
   }
   async function poll() {
     try {
