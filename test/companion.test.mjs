@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
-import { bookMeta, encounterFor, encounterIds, scaleMechanicsText, scaleRange, scaledEncounter } from "../src/book.mjs";
+import { bookMeta, encounterFor, encounterIds, scaleMechanicsText, scaleRange, scaledEncounter, scalingCategories } from "../src/book.mjs";
 import { createSts2Handler } from "../src/http.mjs";
 import { apply, inject, name } from "../src/plugin.mjs";
 import { createStateReader, parseLog, parseReleaseInfo, parseSave } from "../src/state.mjs";
@@ -78,14 +78,14 @@ test("v0.111.0 Axebot article values and Stock cycle are authoritative", () => {
   assert.ok(axebot.rules.some((rule) => /\+10 Max HP/i.test(rule)));
 });
 
-test("slash spawn alternatives each scale (Axebot Boot Up 4/8 → 9/19)", () => {
+test("Axebot Boot Up scales block but keeps A9 combat stats", () => {
   const axebot = scaledEncounter(encounterFor("AXEBOTS_NORMAL"));
   const boot = axebot.lineup[0].moves.find((move) => move.name === "Boot Up");
   assert.equal(boot.sourceA9, "Gains 15 Block and 4/8 Strength.");
-  assert.equal(boot.text, "Gains 30 Block and 9/19 Strength.");
+  assert.equal(boot.text, "Gains 30 Block and 4/8 Strength.");
   assert.equal(
     scaleMechanicsText("Gains 15 Block and 4/8 Strength.", { players: 2, act: 3, kind: "hallway" }),
-    "Gains 30 Block and 9/19 Strength.",
+    "Gains 30 Block and 4/8 Strength.",
   );
 });
 
@@ -118,7 +118,7 @@ test("Test Subject tabber chrome is excluded from every phase pattern", () => {
 test("scaled pattern prose matches rendered HP and buff magnitudes", () => {
   const decimillipede = scaledEncounter(encounterFor("DECIMILLIPEDE_ELITE"));
   for (const body of decimillipede.lineup) {
-    assert.match(body.pattern.text, /Reattach to revive with 60 HP/i);
+    assert.match(body.pattern.text, /revive with 60 HP/i);
     assert.doesNotMatch(body.pattern.text, /revive with 25 HP/i);
   }
 
@@ -133,9 +133,8 @@ test("scaled pattern prose matches rendered HP and buff magnitudes", () => {
   const effigy = scaledEncounter(encounterFor("BYGONE_EFFIGY_ELITE"));
   const body = effigy.lineup[0];
   const wake = body.moves.find((move) => move.name === "Wake");
-  assert.match(body.pattern.text, /gains 22 Strength/i);
-  assert.match(wake.text, /Gains 22 Strength/i);
-  assert.doesNotMatch(body.pattern.text, /gains 10 Strength/i);
+  assert.match(body.pattern.text, /gains 10 Strength/i);
+  assert.match(wake.text, /Gains 10 Strength/i);
 });
 
 test("v0.111.0 Exoskeleton and Entomancer A8 HP fixtures", () => {
@@ -165,10 +164,19 @@ test("book provenance targets the public beta and never uses the fabricated patt
   }
 });
 
-test("attacks do not MP-scale while block and general buffs use their categories", () => {
+test("scaling buckets name exactly the combat stats, Block, and stored powers", () => {
+  assert.deepEqual(scalingCategories.combatStats, ["Strength", "Dexterity", "Vigor"]);
+  assert.deepEqual(scalingCategories.block, ["Block"]);
+  assert.deepEqual(scalingCategories.storedPowers, [
+    "Plating", "Curl Up", "Reattach", "Hardened Shell", "Vital Spark", "Plow", "Personal Hive",
+    "Steam Eruption", "Enrage", "Ritual", "Intangible", "Thorns", "Shriek",
+  ]);
+});
+
+test("attacks and combat stats stay A9 while block and stored powers scale", () => {
   assert.equal(
-    scaleMechanicsText("Deals 7 damage. Gains 2 Strength. Gains 18 Block.", { players: 2, act: 2, kind: "elite" }),
-    "Deals 7 damage. Gains 4 Strength. Gains 36 Block.",
+    scaleMechanicsText("Deals 7 damage. Gains 2 Strength, 3 Dexterity, and 4 Vigor. Gains 18 Block.", { players: 2, act: 2, kind: "elite" }),
+    "Deals 7 damage. Gains 2 Strength, 3 Dexterity, and 4 Vigor. Gains 36 Block.",
   );
   assert.equal(
     scaleMechanicsText("Deal 10 damage. Gains 22 Block and Vital Spark 3.", { players: 2, act: 2, kind: "elite" }),
@@ -176,11 +184,16 @@ test("attacks do not MP-scale while block and general buffs use their categories
   );
   assert.equal(
     scaleMechanicsText("Removes 2 Strength from the player. Gains 2 Strength.", { players: 2, act: 2, kind: "elite" }),
-    "Removes 2 Strength from the player. Gains 4 Strength.",
+    "Removes 2 Strength from the player. Gains 2 Strength.",
   );
   const louse = scaledEncounter(encounterFor("LOUSE_PROGENITOR_NORMAL"));
   assert.equal(louse.lineup[0].startsWithA9, "Curl Up 18");
   assert.equal(louse.lineup[0].startsWith, "Curl Up 43");
+  const synthetic = scaledEncounter({
+    name: "Synthetic", act: "Overgrowth", kind: "hallway", rules: [], timing: [],
+    lineup: [{ displayName: "Synthetic", monsterId: "SYNTHETIC", count: 1, hpA8: [1], startsWithA9: "Block 5; Strength 2; Dexterity 3; Vigor 4; Plating 6", moves: [], pattern: { type: "cycle", text: "Cycle: wait." } }],
+  });
+  assert.equal(synthetic.lineup[0].startsWith, "Block 10; Strength 2; Dexterity 3; Vigor 4; Plating 13");
   assert.ok(encounterIds.length >= 80);
 });
 
@@ -190,8 +203,126 @@ test("opener and added buff prose scales without changing removed buffs", () => 
       "Starts with Enrage 3. Starts Asleep with 12 Plating. Adds 3 Steam Eruption. Has gained 2 Strength. Removes 2 Strength.",
       { players: 2, act: 3, kind: "boss" },
     ),
-    "Starts with Enrage 7. Starts Asleep with 31 Plating. Adds 7 Steam Eruption. Has gained 5 Strength. Removes 2 Strength.",
+    "Starts with Enrage 7. Starts Asleep with 31 Plating. Adds 7 Steam Eruption. Has gained 2 Strength. Removes 2 Strength.",
   );
+});
+
+function combatStatMagnitudes(text) {
+  const values = [];
+  const expression = /\b(?:Strength|Dexterity|Vigor)\s+(\d+(?:[-/]\d+)*)\b|\b(\d+(?:[-/]\d+)*)\s+(?:Strength|Dexterity|Vigor)\b/gi;
+  for (const match of String(text ?? "").matchAll(expression)) values.push(match[1] ?? match[2]);
+  return values;
+}
+
+function assertCombatStatsUnscaled(source, rendered, location) {
+  assert.deepEqual(combatStatMagnitudes(rendered), combatStatMagnitudes(source), location);
+}
+
+test("every combat-stat magnitude in the whole scaled book equals its A9 source", () => {
+  for (const encounterId of encounterIds) {
+    const source = encounterFor(encounterId);
+    const rendered = scaledEncounter(source);
+    for (let index = 0; index < source.lineup.length; index += 1) {
+      const sourceBody = source.lineup[index];
+      const renderedBody = rendered.lineup[index];
+      const bodyLocation = `${encounterId} ${sourceBody.displayName} #${index + 1}`;
+      assertCombatStatsUnscaled(sourceBody.startsWithA9, renderedBody.startsWith, `${bodyLocation} startsWith`);
+      assertCombatStatsUnscaled(sourceBody.pattern?.text, renderedBody.pattern?.text, `${bodyLocation} pattern`);
+      for (let moveIndex = 0; moveIndex < (sourceBody.moves ?? []).length; moveIndex += 1) {
+        assertCombatStatsUnscaled(
+          sourceBody.moves[moveIndex].textA9,
+          renderedBody.moves[moveIndex].text,
+          `${bodyLocation} move ${sourceBody.moves[moveIndex].name}`,
+        );
+      }
+    }
+    source.rules.forEach((rule, index) => assertCombatStatsUnscaled(rule, rendered.rules[index], `${encounterId} rule #${index + 1}`));
+    source.timing.forEach((line, index) => assertCombatStatsUnscaled(line, rendered.timing[index], `${encounterId} timing #${index + 1}`));
+  }
+});
+
+test("Nibbit cards use encounter-local turn-one openers and A9 Hiss", () => {
+  const weak = encounterFor("NIBBITS_WEAK");
+  assert.equal(weak.lineup.length, 1);
+  assert.equal(weak.lineup[0].count, 1);
+  assert.match(weak.lineup[0].pattern.text, /opener \(turn 1\): Butt/i);
+  assert.doesNotMatch(weak.lineup[0].pattern.text, /paired|front|Hiss|Normal/i);
+
+  const normal = encounterFor("NIBBITS_NORMAL");
+  assert.equal(normal.lineup.length, 2);
+  assert.ok(normal.lineup.every((body) => body.count === 1));
+  const front = normal.lineup.find((body) => /front/i.test(body.role));
+  const back = normal.lineup.find((body) => /back/i.test(body.role));
+  assert.match(front.pattern.text, /opener \(turn 1\): Hesitant Slice/i);
+  assert.match(back.pattern.text, /opener \(turn 1\): Hiss/i);
+  assert.ok(normal.lineup.every((body) => !/Weak|alone|paired/i.test(body.pattern.text)));
+
+  const hiss = scaledEncounter(normal).lineup[0].moves.find((move) => move.name === "Hiss");
+  assert.equal(hiss.text, "Gains 3 Strength.");
+});
+
+test("fixed identical rosters have one immutable card per opener slot", () => {
+  const expected = [
+    ["CHOMPERS_NORMAL", "Chomper", ["Clamp", "Screech"]],
+    ["MYTES_NORMAL", "Myte", ["Toxic Cornucopia", "Suck"]],
+    ["THE_KIN_BOSS", "Kin Follower", ["Quick Slash", "Power Dance"]],
+    ["TOADPOLES_WEAK", "Toadpole", ["Spiken", "Whirl"]],
+  ];
+  for (const [encounterId, name, openers] of expected) {
+    const slots = encounterFor(encounterId).lineup.filter((body) => body.displayName === name);
+    assert.equal(slots.length, openers.length, `${encounterId} slot count`);
+    assert.ok(slots.every((body) => body.count === 1), `${encounterId} has no N× card`);
+    for (const opener of openers) {
+      assert.ok(slots.some((body) => body.pattern.text.includes(`Opener (turn 1): ${opener}`)), `${encounterId} ${opener} opener`);
+    }
+  }
+});
+
+test("Exoskeleton counts and position openers are bound to each encounter", () => {
+  const weak = encounterFor("EXOSKELETONS_WEAK");
+  const normal = encounterFor("EXOSKELETONS_NORMAL");
+  assert.equal(weak.lineup.length, 1);
+  assert.equal(normal.lineup.length, 1);
+  assert.equal(weak.lineup[0].count, 3);
+  assert.equal(normal.lineup[0].count, 4);
+  assert.match(weak.lineup[0].pattern.text, /Openers by position \(turn 1\).*first.*Skitter.*second.*Mandibles.*third.*Enrage/i);
+  assert.doesNotMatch(weak.lineup[0].pattern.text, /fourth|groups? of 3 or 4|Normal/i);
+  assert.match(normal.lineup[0].pattern.text, /fourth.*randomly.*Skitter.*Mandibles/i);
+  assert.doesNotMatch(normal.lineup[0].pattern.text, /Weak|groups? of 3 or 4/i);
+});
+
+test("mutable summon and death rosters render live-body templates, not frozen N× cards", () => {
+  const rats = encounterFor("TWO_TAILED_RATS_NORMAL");
+  assert.equal(rats.lineup.length, 1);
+  assert.equal(rats.lineup[0].count, 1);
+  assert.match(rats.lineup[0].pack, /3 initially/i);
+  assert.match(rats.lineup[0].pattern.text, /Openers? \(turn 1/i);
+  assert.ok(rats.rules.some((rule) => /summon a new (?:Two-Tailed )?Rat/i.test(rule)));
+
+  const axebot = encounterFor("AXEBOTS_NORMAL");
+  assert.equal(axebot.lineup.length, 1);
+  assert.equal(axebot.lineup[0].count, 1);
+  assert.match(axebot.lineup[0].pack, /1 initially|Stock/i);
+  assert.ok(axebot.rules.some((rule) => /respawn|spawned mid-fight|Stock/i.test(rule)));
+
+  const wriggler = encounterFor("PHROG_PARASITE_ELITE").lineup.find((body) => body.displayName === "Wriggler");
+  assert.equal(wriggler.count, 1);
+  assert.equal(wriggler.role, "summoned");
+  assert.match(wriggler.pack, /4.*death/i);
+
+  const egg = encounterFor("OVICOPTER_NORMAL").lineup.find((body) => body.displayName === "Tough Egg");
+  assert.equal(egg.count, 1);
+  assert.equal(egg.role, "summoned");
+  assert.match(egg.pack, /3.*Lay Eggs|Lay Eggs.*3/i);
+});
+
+test("Decimillipede descriptions preserve offsets without claiming lasting sync", () => {
+  const encounter = encounterFor("DECIMILLIPEDE_ELITE");
+  for (const segment of encounter.lineup) {
+    assert.match(segment.pattern.text, /start offset/i);
+    assert.match(segment.pattern.text, /cycle.*Bulk.*Writhe.*Outgas/i);
+    assert.match(segment.pattern.text, /after Reattach.*random.*sync/i);
+  }
 });
 
 test("article Death Blow intent is retained as an extra rule", () => {
@@ -201,7 +332,7 @@ test("article Death Blow intent is retained as an extra rule", () => {
   assert.ok(fog.rules.some((rule) => /Death Blow:.*Dies/i.test(rule)));
 });
 
-test("startsWith scales HP and general buffs but not durations or counts", () => {
+test("startsWith scales stored powers but not durations or counts", () => {
   const lag = scaledEncounter(encounterFor("LAGAVULIN_MATRIARCH_BOSS"));
   assert.equal(lag.lineup[0].startsWithA9, "Plating 12; Asleep 3");
   assert.equal(lag.lineup[0].startsWith, "Plating 26; Asleep 3");
@@ -313,7 +444,7 @@ test("qq chrome is black and square and omits matching version chrome", async ()
     assert.match(page.body, /<div class="status-line status-combat"><i class="status-dot"[^>]*><\/i>combat<\/div>/);
     assert.match(page.body, /\.status-combat\{color:var\(--combat\)\}/);
     assert.match(page.body, /--combat:#f7ce74;/);
-    assert.match(page.body, /<footer class="source"><div class="scale-note">scaling ·/);
+    assert.match(page.body, /<footer class="source"><div class="scale-note">hp &amp; stored buffs ×2\.4 · block ×2 · attacks &amp; combat stats unscaled<\/div>/);
     assert.match(page.body, /<div class="starts">starts ·/);
     assert.doesNotMatch(page.body, /IN COMBAT|LAST COMBAT|status-badge/);
     assert.doesNotMatch(page.body, /border-radius:99rem|gradient|box-shadow/);
@@ -325,6 +456,7 @@ test("qq chrome is black and square and omits matching version chrome", async ()
     assert.equal(client.status, 200);
     assert.match(client.body, /version\.matches === true\) return null/);
     assert.match(client.body, /showRawId && body\.monsterId/);
+    assert.match(client.body, /hp & stored buffs.*attacks & combat stats unscaled/);
     assert.doesNotMatch(client.body, /IN COMBAT|LAST COMBAT|status-badge/);
   });
 });
