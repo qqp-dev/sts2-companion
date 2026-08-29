@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any, Callable, Mapping
 
 from .canonical import atomic_write, strict_json_bytes
-from .errors import FoundationError
+from .errors import SourceExtractionError
 
 EXPECTED_INPUTS: dict[str, dict[str, Any]] = {
     "release_info.json": {
@@ -65,7 +65,7 @@ def sha256_file(path: Path) -> str:
             while chunk := handle.read(1024 * 1024):
                 digest.update(chunk)
     except OSError as exc:
-        raise FoundationError(f"cannot read input {path}: {exc}") from exc
+        raise SourceExtractionError(f"cannot read input {path}: {exc}") from exc
     return digest.hexdigest()
 
 
@@ -95,11 +95,11 @@ def verify_inputs(
             continue
         try:
             digest = sha256_file(path)
-        except FoundationError as exc:
+        except SourceExtractionError as exc:
             failures.append(str(exc))
             continue
         if type(expected.get("size")) is not int or not isinstance(expected.get("sha256"), str):
-            raise FoundationError(f"invalid extractor input manifest entry: {relative_path}")
+            raise SourceExtractionError(f"invalid extractor input manifest entry: {relative_path}")
         if size != expected["size"]:
             failures.append(
                 f"size mismatch for {relative_path}: got {size}, expected {expected['size']}"
@@ -111,7 +111,7 @@ def verify_inputs(
         verified.append(VerifiedInput(relative_path, path, size, digest))
 
     if failures:
-        raise FoundationError("input gate failed; " + "; ".join(failures))
+        raise SourceExtractionError("input gate failed; " + "; ".join(failures))
 
     release_input = next(
         item for item in verified if item.relative_path == "release_info.json"
@@ -119,10 +119,10 @@ def verify_inputs(
     try:
         release_bytes = release_input.path.read_bytes()
     except OSError as exc:
-        raise FoundationError(f"cannot read release_info.json: {exc}") from exc
+        raise SourceExtractionError(f"cannot read release_info.json: {exc}") from exc
     release = strict_json_bytes(release_bytes, "release_info.json")
     if not isinstance(release, dict):
-        raise FoundationError("release_info.json: top level must be an object")
+        raise SourceExtractionError("release_info.json: top level must be an object")
 
     release_failures: list[str] = []
     for key, expected_value in expected_release.items():
@@ -133,7 +133,7 @@ def verify_inputs(
                 f"{key}={value!r}, expected {expected_value!r}"
             )
     if release_failures:
-        raise FoundationError(
+        raise SourceExtractionError(
             "release metadata mismatch (possible mixed-version inputs); "
             + "; ".join(release_failures)
         )
@@ -157,5 +157,5 @@ def regenerate_after_gate(
     )
     data = builder(verified)
     if not isinstance(data, bytes):
-        raise FoundationError("extractor builder did not return bytes")
+        raise SourceExtractionError("extractor builder did not return bytes")
     atomic_write(Path(destination), data)

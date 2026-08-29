@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate or verify the checked source-first foundation artifact."""
+"""Regenerate or verify the checked source-first world-model artifact."""
 
 from __future__ import annotations
 
@@ -9,19 +9,19 @@ import sys
 
 # Running this file directly puts tools/ on sys.path, so the local package is
 # importable without installation or PYTHONPATH changes.
-from source_foundation.canonical import atomic_write
-from source_foundation.dependencies import require_metadata_dependencies
-from source_foundation.errors import FoundationError
-from source_foundation.input_gate import verify_inputs
+from source_extractor.canonical import atomic_write
+from source_extractor.dependencies import require_metadata_dependencies
+from source_extractor.errors import SourceExtractionError
+from source_extractor.input_gate import verify_inputs
 
-_DEFAULT_OUTPUT = Path(__file__).resolve().parents[1] / "data/game-v0.111.0-foundation.json"
+_DEFAULT_OUTPUT = Path(__file__).resolve().parents[1] / "data/game-v0.111.0-source.json"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Read exact v0.111.0 game files as bytes and derive canonical "
-            "encounter IDs plus shipped English titles. No game code is executed."
+            "normalized monster identities/names, HP formulas/scaling, and encounter roster/pool facts. No game code is executed."
         )
     )
     parser.add_argument(
@@ -49,7 +49,7 @@ def main() -> int:
     try:
         require_metadata_dependencies()
         # Import only after exact pinned dependency versions are confirmed.
-        from source_foundation.extractor import build_artifact
+        from source_extractor.extractor import build_artifact
 
         verified = verify_inputs(args.game_root)
         generated = build_artifact(verified)
@@ -57,11 +57,11 @@ def main() -> int:
             try:
                 existing = args.output.read_bytes()
             except OSError as exc:
-                raise FoundationError(
+                raise SourceExtractionError(
                     f"cannot read checked artifact {args.output}: {exc}"
                 ) from exc
             if existing != generated:
-                raise FoundationError(
+                raise SourceExtractionError(
                     f"checked artifact differs: regenerate {args.output} without --check"
                 )
             print(f"verified byte-identical artifact: {args.output}")
@@ -69,12 +69,12 @@ def main() -> int:
             atomic_write(args.output, generated)
             print(f"wrote {args.output} ({len(generated)} bytes)")
         return 0
-    except FoundationError as exc:
-        print(f"source foundation extraction failed: {exc}", file=sys.stderr)
+    except SourceExtractionError as exc:
+        print(f"source extraction failed: {exc}", file=sys.stderr)
         return 1
     except Exception as exc:  # no traceback by default; keep failures actionable.
         print(
-            f"source foundation extraction failed unexpectedly: "
+            f"source extraction failed unexpectedly: "
             f"{type(exc).__name__}: {exc}",
             file=sys.stderr,
         )
