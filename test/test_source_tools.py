@@ -15,6 +15,7 @@ sys.path.insert(0, str(REPO_ROOT / "tools"))
 from source_extractor.ast import evaluate_expression, validate_expression, validate_selection
 from source_extractor.canonical import canonical_json_bytes
 from source_extractor.cil_safety import validate_cil_slice
+from source_extractor.encounters import _compile_fixed_selection, _derive_fixed_slot_names
 from source_extractor.localization import require_localized_text
 from source_extractor.errors import SourceExtractionError
 from source_extractor.input_gate import regenerate_after_gate
@@ -340,6 +341,113 @@ class RosterAstTests(unittest.TestCase):
             node = {"kind": "permutation", "selection": node}
         with self.assertRaisesRegex(SourceExtractionError, "depth limit"):
             validate_selection(node)
+
+
+class FixedRosterCompilerTests(unittest.TestCase):
+    MODEL = "MegaCrit.Sts2.Core.Models.ModelDb::Monster sig:1001001e00 generic:MegaCrit.Sts2.Core.Models.Monsters.{}"
+    TO_MUTABLE = "MegaCrit.Sts2.Core.Models.MonsterModel::ToMutable sig:20001288e4"
+    SLOT_CTOR = "<TypeSpec:151182e9021288e40e>::.ctor sig:20020113001301"
+    ARRAY_CTOR = "<TypeSpec:1512b74801151182e9021288e40e>::.ctor sig:2001011d1300"
+    SINGLE_CTOR = "<TypeSpec:1512b75001151182e9021288e40e>::.ctor sig:2001011300"
+    SLOT_ARRAY_CTOR = "<TypeSpec:1512b748010e>::.ctor sig:2001011d1300"
+    SLOT_TYPE = "TypeSpec:151182e9021288e40e"
+
+    @staticmethod
+    def instruction(opcode: str, operand=None) -> dict:
+        return {"opcode": opcode, "operand": operand}
+
+    def monster_slot(self, simple: str) -> list[dict]:
+        return [
+            self.instruction("call", self.MODEL.format(simple)),
+            self.instruction("callvirt", self.TO_MUTABLE),
+            self.instruction("ldnull"),
+            self.instruction("newobj", self.SLOT_CTOR),
+        ]
+
+    @staticmethod
+    def record(instructions: list[dict]) -> dict:
+        return {"instructions": instructions, "symbolSignature": "Synthetic::GenerateMonsters sig:test"}
+
+    def test_fixed_compiler_follows_returned_collection_not_call_site_order(self):
+        instructions = [
+            *self.monster_slot("Alpha"), self.instruction("stloc.0"),
+            *self.monster_slot("Beta"), self.instruction("stloc.1"),
+            self.instruction("ldc.i4.2"), self.instruction("newarr", self.SLOT_TYPE),
+            self.instruction("dup"), self.instruction("ldc.i4.0"), self.instruction("ldloc.1"),
+            self.instruction("stelem", self.SLOT_TYPE),
+            self.instruction("dup"), self.instruction("ldc.i4.1"), self.instruction("ldloc.0"),
+            self.instruction("stelem", self.SLOT_TYPE),
+            self.instruction("newobj", self.ARRAY_CTOR), self.instruction("ret"),
+        ]
+        selection = _compile_fixed_selection(self.record(instructions))
+        self.assertEqual(
+            [item["model"] for item in selection["children"]],
+            ["MONSTER.BETA", "MONSTER.ALPHA"],
+        )
+
+    def test_unused_model_call_and_unproved_branch_fail_closed(self):
+        unused = [
+            *self.monster_slot("Unused"),
+            *self.monster_slot("Returned"),
+            self.instruction("newobj", self.SINGLE_CTOR), self.instruction("ret"),
+        ]
+        with self.assertRaisesRegex(SourceExtractionError, "residual evaluation stack"):
+            _compile_fixed_selection(self.record(unused))
+        branch = [
+            *self.monster_slot("Only"), self.instruction("newobj", self.SINGLE_CTOR),
+            self.instruction("br.s", 1), self.instruction("ret"),
+        ]
+        with self.assertRaisesRegex(SourceExtractionError, "unsupported branch"):
+            _compile_fixed_selection(self.record(branch))
+
+    def test_unknown_call_and_malformed_collection_fail_closed(self):
+        unknown = self.monster_slot("Only")
+        unknown[1] = self.instruction("callvirt", self.TO_MUTABLE + " changed")
+        unknown.extend([self.instruction("newobj", self.SINGLE_CTOR), self.instruction("ret")])
+        with self.assertRaisesRegex(SourceExtractionError, "unknown call/signature"):
+            _compile_fixed_selection(self.record(unknown))
+
+        wrong_invocation = self.monster_slot("Only")
+        wrong_invocation[1] = self.instruction("call", self.TO_MUTABLE)
+        wrong_invocation.extend([self.instruction("newobj", self.SINGLE_CTOR), self.instruction("ret")])
+        with self.assertRaisesRegex(SourceExtractionError, "unrecognized invocation opcode"):
+            _compile_fixed_selection(self.record(wrong_invocation))
+
+        malformed = [
+            *self.monster_slot("Only"), self.instruction("stloc.0"),
+            self.instruction("ldc.i4.2"), self.instruction("newarr", self.SLOT_TYPE),
+            self.instruction("dup"), self.instruction("ldc.i4.0"), self.instruction("ldloc.0"),
+            self.instruction("stelem", self.SLOT_TYPE),
+            self.instruction("newobj", self.ARRAY_CTOR), self.instruction("ret"),
+        ]
+        with self.assertRaisesRegex(SourceExtractionError, "incomplete fixed roster array"):
+            _compile_fixed_selection(self.record(malformed))
+
+    def slot_getter(self, names: list[str]) -> list[dict]:
+        count_opcode = f"ldc.i4.{len(names)}"
+        instructions = [self.instruction(count_opcode), self.instruction("newarr", "System.String")]
+        for index, name in enumerate(names):
+            instructions.extend([
+                self.instruction("dup"), self.instruction(f"ldc.i4.{index}"),
+                self.instruction("ldstr", "string:" + name), self.instruction("stelem.ref"),
+            ])
+        instructions.extend([self.instruction("newobj", self.SLOT_ARRAY_CTOR), self.instruction("ret")])
+        return instructions
+
+    def test_fixed_slot_getter_derives_count_and_rejects_unknown_cardinality(self):
+        self.assertEqual(_derive_fixed_slot_names(self.slot_getter(["one", "two", "three", "four"])), [
+            "string:one", "string:two", "string:three", "string:four",
+        ])
+        missing = self.slot_getter(["one", "two"])
+        del missing[6:10]
+        with self.assertRaisesRegex(SourceExtractionError, "not a proven fixed string array"):
+            _derive_fixed_slot_names(missing)
+        dynamic = self.slot_getter(["one"])
+        dynamic[0] = self.instruction("newobj", "Synthetic::get_UnknownSlotCount sig:test")
+        with self.assertRaisesRegex(SourceExtractionError, "unknown call/signature"):
+            _derive_fixed_slot_names(dynamic)
+        with self.assertRaisesRegex(SourceExtractionError, "no proven fixed cardinality"):
+            _derive_fixed_slot_names([])
 
 
 class SyntheticFailClosedTests(unittest.TestCase):

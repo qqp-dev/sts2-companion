@@ -123,6 +123,14 @@ between the two complete small-slime orders, with an independent medium choice
 in the middle. This proves exactly three bodies and exactly one of each small
 slime without pretending the four candidates are one lineup.
 
+Fixed rosters are compiled by a bounded stack/data-flow interpreter over a
+strict opcode, call-signature, and collection-builder allowlist; model call
+sites alone are not treated as bodies. Reviewed loops require an exact CFG and
+a separately proven finite input. Dense Vegetation, for example, iterates its
+source-defined four-entry `get_Slots` array and therefore emits an ordered
+four-Wriggler sequence. An unknown or dynamic slot cardinality fails extraction
+instead of being flattened to the loop body's single `ModelDb.Monster` call.
+
 ## Provenance
 
 Raw facts use `authority: "rawSource"` (directly or through the artifact-level

@@ -15,7 +15,7 @@ from typing import Any
 import dnfile
 from dncil.cil.body.reader import read_method_body_from_bytes
 
-from .canonical import witness_sha256
+from .canonical import slugify_ascii_type_name as _slugify_ascii_type_name, witness_sha256
 from .errors import SourceExtractionError
 
 _ENCOUNTER_NAMESPACE = "MegaCrit.Sts2.Core.Models.Encounters"
@@ -27,7 +27,6 @@ _EXPECTED_ABSTRACT = {_EVENT_BASE}
 _EXPECTED_DEPRECATED = {_DEPRECATED}
 _EXPECTED_COUNTS = {"ordinary": 81, "event": 8, "abstract": 1, "deprecated": 1}
 _REQUIRED_CONCRETE_METHODS = {"get_AllPossibleMonsters", "GenerateMonsters"}
-_ASCII_TYPE_NAME = re.compile(r"^[A-Za-z][A-Za-z0-9]*$")
 
 # These hashes are version assertions and rule recognizers, not generated IDs.
 # methodBodySha256 covers the method header + CIL code bytes from dncil.raw_bytes.
@@ -371,19 +370,6 @@ class AssemblyMetadata:
             "normalizedSemanticWitness": _MODEL_ID_WITNESS,
             "semanticWitnessSha256": witness_sha256(_MODEL_ID_WITNESS),
         }
-
-
-def _slugify_ascii_type_name(name: str) -> str:
-    # The accepted source vocabulary is intentionally narrow. Any new Unicode,
-    # punctuation, or whitespace input requires reviewing the shipped regexes.
-    if not _ASCII_TYPE_NAME.fullmatch(name):
-        raise SourceExtractionError(f"unrecognized Slugify input vocabulary: {name!r}")
-    camel_split = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name.strip())
-    upper = camel_split.upper()
-    slug = re.sub(r"[^A-Z0-9_]", "", re.sub(r"\s+", "_", upper))
-    if not slug:
-        raise SourceExtractionError(f"Slugify produced an empty entry for {name!r}")
-    return slug
 
 
 def _slugify_category(name: str) -> str:

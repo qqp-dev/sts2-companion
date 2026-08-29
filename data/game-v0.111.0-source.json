@@ -601,8 +601,8 @@
         "canonicalId": "DENSE_VEGETATION_EVENT_ENCOUNTER",
         "initialRoster": {
           "cardinality": {
-            "maximum": 1,
-            "minimum": 1
+            "maximum": 4,
+            "minimum": 4
           },
           "provenance": {
             "methods": [
@@ -614,13 +614,34 @@
                 "methodBodySha256": "282e8b521417ce0d4e37a1ebbff0e99b70ea67de9ab565d938c95b834a8cf952",
                 "normalizedInstructionsSha256": "9d0459ca4af4eaaf921f7eb16b738c2a043eac4bd18d3de950d808b23fa2d122",
                 "symbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.DenseVegetationEventEncounter::GenerateMonsters sig:2000151281fd01151182e9021288e40e"
+              },
+              {
+                "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+                "cilInstructionsSha256": "04d4d01bb0080e74a5cd582e2538ad06d882b4c481c26d290d37605d170a4491",
+                "diagnosticMetadataToken": "0x060037da",
+                "metadataSignature": "2000151281fd010e",
+                "methodBodySha256": "8ccbb20cd82f2160d78090290137d4a98b33067d650f4e7219837f1583bc4601",
+                "normalizedInstructionsSha256": "71ecd23ab3ccd7e361e4e82a718904b350595d2c7591fb60b1b51f242ca73976",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.DenseVegetationEventEncounter::get_Slots sig:2000151281fd010e"
               }
             ],
-            "normalizedSemanticWitnessSha256": "36fe6e154f96209b056ec5f201f073f7c97ed03ffba4065120c3b50b5c31ea74",
-            "semanticWitnessSha256": "3811352e2fc2dae605612f8a44821a5d87b79ea5e71458f1369cb0e50d450748"
+            "normalizedSemanticWitnessSha256": "170169d7e83c68277471b54dab0951a73bb2456b699552edda90d36705ef41ce",
+            "semanticWitnessSha256": "0678a69295602a9b83a69108ef74cd3f99f60a9a2fbe0ecccb594e04efa9cd15"
           },
           "selection": {
             "children": [
+              {
+                "kind": "fixed",
+                "model": "MONSTER.WRIGGLER"
+              },
+              {
+                "kind": "fixed",
+                "model": "MONSTER.WRIGGLER"
+              },
+              {
+                "kind": "fixed",
+                "model": "MONSTER.WRIGGLER"
+              },
               {
                 "kind": "fixed",
                 "model": "MONSTER.WRIGGLER"
@@ -638,10 +659,19 @@
                   "methodBodySha256": "282e8b521417ce0d4e37a1ebbff0e99b70ea67de9ab565d938c95b834a8cf952",
                   "normalizedInstructionsSha256": "9d0459ca4af4eaaf921f7eb16b738c2a043eac4bd18d3de950d808b23fa2d122",
                   "symbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.DenseVegetationEventEncounter::GenerateMonsters sig:2000151281fd01151182e9021288e40e"
+                },
+                {
+                  "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+                  "cilInstructionsSha256": "04d4d01bb0080e74a5cd582e2538ad06d882b4c481c26d290d37605d170a4491",
+                  "diagnosticMetadataToken": "0x060037da",
+                  "metadataSignature": "2000151281fd010e",
+                  "methodBodySha256": "8ccbb20cd82f2160d78090290137d4a98b33067d650f4e7219837f1583bc4601",
+                  "normalizedInstructionsSha256": "71ecd23ab3ccd7e361e4e82a718904b350595d2c7591fb60b1b51f242ca73976",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.DenseVegetationEventEncounter::get_Slots sig:2000151281fd010e"
                 }
               ],
-              "normalizedSemanticWitnessSha256": "36fe6e154f96209b056ec5f201f073f7c97ed03ffba4065120c3b50b5c31ea74",
-              "semanticWitnessSha256": "3811352e2fc2dae605612f8a44821a5d87b79ea5e71458f1369cb0e50d450748"
+              "normalizedSemanticWitnessSha256": "170169d7e83c68277471b54dab0951a73bb2456b699552edda90d36705ef41ce",
+              "semanticWitnessSha256": "0678a69295602a9b83a69108ef74cd3f99f60a9a2fbe0ecccb594e04efa9cd15"
             }
           }
         },
@@ -13767,7 +13797,7 @@
       }
     ]
   },
-  "extractorVersion": "2.0.0",
+  "extractorVersion": "2.0.1",
   "game": {
     "branch": "v0.111.0",
     "commit": "41cef1ea",

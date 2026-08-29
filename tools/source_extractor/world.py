@@ -8,7 +8,8 @@ from typing import Any
 from .ast import evaluate_expression, validate_expression
 from .canonical import witness_sha256
 from .errors import SourceExtractionError
-from .metadata import AssemblyMetadata, _slugify_ascii_type_name
+from .canonical import slugify_ascii_type_name as _slugify_ascii_type_name
+from .metadata import AssemblyMetadata
 
 MONSTER_NAMESPACE = "MegaCrit.Sts2.Core.Models.Monsters"
 MONSTER_BASE = "MegaCrit.Sts2.Core.Models.MonsterModel"

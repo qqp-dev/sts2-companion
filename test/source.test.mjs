@@ -33,7 +33,7 @@ const exactManifest = [
 test("source artifact is canonical, exactly pinned, partial, and raw-only", () => {
   assert.equal(artifactBytes.toString("utf8"), `${JSON.stringify(sortedValue(artifact), null, 2)}\n`);
   assert.equal(artifact.schemaVersion, 2);
-  assert.equal(artifact.extractorVersion, "2.0.0");
+  assert.equal(artifact.extractorVersion, "2.0.1");
   assert.equal(artifact.runtimeReady, false);
   assert.equal(artifact.status, "incomplete");
   assert.deepEqual(artifact.inputs, exactManifest);
@@ -177,6 +177,12 @@ test("named random roster and production regressions retain exact structure", ()
   assert.equal(encounter("RUBY_RAIDERS_NORMAL").initialRoster.selection.count, 3);
   assert.equal(encounter("BOWLBUGS_NORMAL").initialRoster.selection.children[1].draws, "withoutReplacement");
   assert.deepEqual([...members(encounter("BOWLBUGS_WEAK").initialRoster.selection.children[1])].sort(), ["MONSTER.BOWLBUG_EGG", "MONSTER.BOWLBUG_NECTAR"]);
+
+  const vegetation = encounter("DENSE_VEGETATION_EVENT_ENCOUNTER");
+  assert.equal(vegetation.title, "Wrigglers");
+  assert.deepEqual(vegetation.initialRoster.cardinality, { maximum: 4, minimum: 4 });
+  assert.deepEqual(vegetation.initialRoster.selection.children.map((child) => child.model), Array(4).fill("MONSTER.WRIGGLER"));
+  assert.ok(vegetation.initialRoster.provenance.methods.some((method) => method.symbolSignature.includes("::get_Slots ")));
 
   const fabricator = encounter("FABRICATOR_NORMAL");
   assert.deepEqual([...members(fabricator.initialRoster.selection)], ["MONSTER.FABRICATOR"]);
