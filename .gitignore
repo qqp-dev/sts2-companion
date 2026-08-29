@@ -7,3 +7,6 @@
 node_modules/
 .vscode/
 .idea/
+.venv-source/
+__pycache__/
+*.py[cod]

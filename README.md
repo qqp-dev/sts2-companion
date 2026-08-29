@@ -35,6 +35,75 @@ unclassified article pattern, an unreadable release file, and a version
 mismatch are likewise rendered as explicit known-unknowns instead of a blank
 page.
 
+## Staged source-first foundation (development only)
+
+Source-first extraction is being introduced in independent stages. The checked
+`data/game-v0.111.0-foundation.json` is the first, deliberately incomplete
+stage. It proves only these facts for the exact pinned game files:
+
+- the 81 current ordinary and 8 current event encounter model identities; and
+- their exact shipped English titles from
+  `localization/eng/encounters.json`.
+
+The artifact has `runtimeReady: false`. The app does **not** import it and still
+uses the wiki-derived `data/encounters.json`; displayed event fights and the
+legacy displayed Doormaker row are therefore unchanged. The foundation does
+not yet prove HP, monster/body identities, rosters or pools, moves, powers,
+multiplayer scaling, patterns, or state formulas. `sts2.xml` is part of the
+exact mixed-version input gate only; this stage extracts no XML facts and makes
+no save-migration claims.
+
+The extractor reads PCK, PE/CLI metadata, and CIL method bodies as bytes. It
+does not load the assembly through .NET reflection, execute game methods or
+CIL, initialize Godot, inject into the game, or unpack the full PCK. Its Python
+packages are development-only and exactly pinned in
+`requirements-source-foundation.txt`.
+
+For this pinned build, the census considers top-level TypeDefs in the exact
+encounter namespace that inherit `EncounterModel`. Metadata abstract flags
+exclude the abstract battleworn event base, and the explicitly named
+`DeprecatedEncounter` placeholder is excluded. Concrete descendants of that
+event base are events, as are direct `EncounterModel` descendants ending in
+`EventEncounter`; remaining concrete direct descendants are ordinary. Every
+concrete record must expose the expected encounter methods. Unknown
+inheritance, names, slug behavior, types, or count drift aborts extraction.
+
+The documented installation root is:
+
+```text
+/home/qqp/.var/app/com.valvesoftware.Steam/data/Steam/steamapps/common/Slay the Spire 2
+```
+
+Pass the game root explicitly. To create an isolated development environment,
+regenerate atomically, and then verify byte-for-byte equality:
+
+```sh
+python3 -m venv .venv-source
+.venv-source/bin/python -m pip install -r requirements-source-foundation.txt
+
+GAME_ROOT="${STS2_GAME_ROOT:-/home/qqp/.var/app/com.valvesoftware.Steam/data/Steam/steamapps/common/Slay the Spire 2}"
+.venv-source/bin/python tools/extract-source-foundation.py \
+  --game-root "$GAME_ROOT"
+.venv-source/bin/python tools/extract-source-foundation.py \
+  --game-root "$GAME_ROOT" --check
+```
+
+For an additional determinism check, generate twice to temporary destinations
+and compare them:
+
+```sh
+.venv-source/bin/python tools/extract-source-foundation.py --game-root "$GAME_ROOT" --output /tmp/sts2-foundation-a.json
+.venv-source/bin/python tools/extract-source-foundation.py --game-root "$GAME_ROOT" --output /tmp/sts2-foundation-b.json
+cmp /tmp/sts2-foundation-a.json /tmp/sts2-foundation-b.json
+```
+
+The four raw game files are proprietary inputs and are never checked in.
+Ordinary `npm test` needs neither those files nor the optional Python packages
+and performs regression/integrity validation of the checked artifact. That is
+not independent source proof: proof-strength evidence comes from successful,
+fail-closed regeneration using the exact hashed raw files and pinned parser
+versions.
+
 ## Optional sibling follow-up (outside this worktree)
 
 Do not patch `qq-core/bin/qq` here. The follow-up is exactly:
