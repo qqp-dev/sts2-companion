@@ -4,6 +4,7 @@ import hashlib
 import json
 from decimal import Decimal
 from pathlib import Path
+from types import SimpleNamespace
 import struct
 import sys
 import tempfile
@@ -12,9 +13,12 @@ import unittest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 
-from source_extractor.ast import evaluate_expression, validate_expression, validate_selection
+from source_extractor.ast import evaluate_expression, validate_expression, validate_graph, validate_operation, validate_selection
 from source_extractor.canonical import canonical_json_bytes
 from source_extractor.cil_safety import validate_cil_slice
+from source_extractor.cil_eval import CilDataFlow, decode_method_signature, value_expression
+from source_extractor.invocations import ClosedWorldInvocationAudit
+from source_extractor.behavior import _intent_records
 from source_extractor.encounters import _compile_fixed_selection, _derive_fixed_slot_names
 from source_extractor.localization import require_localized_text
 from source_extractor.errors import SourceExtractionError
@@ -472,6 +476,357 @@ class SyntheticFailClosedTests(unittest.TestCase):
             require_localized_text({}, "KEY.name")
         with self.assertRaisesRegex(SourceExtractionError, "invalid localization"):
             require_localized_text({"KEY.name": ""}, "KEY.name")
+
+
+class CombatAstTests(unittest.TestCase):
+    def test_reference_and_combat_query_are_closed(self):
+        reference = {"kind": "reference", "reference": "MegaCrit.Sts2.Core.Models.Monsters.Aeonglass::get_EbbDamage sig:200008", "valueType": "integer"}
+        self.assertEqual(validate_expression(reference, expected_type="integer"), "integer")
+        compiled = {**reference, "compiled": {"kind": "constant", "value": 22, "valueType": "integer"}}
+        self.assertEqual(evaluate_expression(compiled, {}), 22)
+        with self.assertRaisesRegex(SourceExtractionError, "cannot evaluate unresolved method reference"):
+            evaluate_expression(reference, {})
+        query = {"kind": "combatQuery", "query": "powerAmount", "valueType": "integer"}
+        self.assertEqual(evaluate_expression(query, {"query:powerAmount": 4}), 4)
+        with self.assertRaisesRegex(SourceExtractionError, "unsupported combat query"):
+            validate_expression({"kind": "combatQuery", "query": "wikiGuess", "valueType": "integer"})
+
+    def test_operations_and_graphs_fail_closed(self):
+        proof = {
+            "assemblySha256": "a" * 64, "cilInstructionsSha256": "b" * 64,
+            "metadataSignature": "2001", "methodBodySha256": "c" * 64,
+            "normalizedInstructionsSha256": "d" * 64, "normalizedSliceSha256": "e" * 64,
+            "semanticWitnessSha256": "f" * 64, "symbolSignature": "AttackCommand::FromMonster sig:2001",
+        }
+        op = {"kind": "attack", "operationId": "MONSTER.X#A/op/0",
+              "provenance": {"semanticWitnessSha256": "a" * 64},
+              "sinkSymbolSignature": "DamageCmd::Attack sig:0001",
+              "target": "allOpponentsOfSourceMonster", "targetProvenance": proof,
+              "value": {"kind": "constant", "value": "7", "valueType": "decimal"}}
+        validate_operation(op)
+        with self.assertRaisesRegex(SourceExtractionError, "unsupported operation kind"):
+            validate_operation({**op, "kind": "wikiEffect"})
+        for missing in ("target", "targetProvenance", "value"):
+            with self.assertRaisesRegex(SourceExtractionError, "missing fields"):
+                validate_operation({key: value for key, value in op.items() if key != missing})
+        common = {"operationId": "MONSTER.X#A/op/1", "provenance": {}, "sourceOrder": 4}
+        kill = {**common, "kind": "kill", "sinkSymbolSignature": "CreatureCmd::Kill sig:0002",
+                "target": "sourceMonster", "playDeathEffects": {"kind": "constant", "value": False, "valueType": "boolean"}}
+        validate_operation(kill)
+        with self.assertRaisesRegex(SourceExtractionError, "missing fields"):
+            validate_operation({key: value for key, value in kill.items() if key != "playDeathEffects"})
+        remove = {**common, "kind": "removePower", "sinkSymbolSignature": "PowerCmd::Remove sig:0001",
+                  "target": "sourceMonster", "model": "POWER.SOAR_POWER"}
+        validate_operation(remove)
+        runtime_remove = {**common, "kind": "removePower", "sinkSymbolSignature": "PowerCmd::Remove sig:0001",
+                          "target": "runtimeSelectedPowerInstance", "modelContract": {
+                              "classification": "runtimeSelectedPowerInstance", "sourceKinds": ["call"],
+                              "sourceSymbolSignature": "IEnumerator::get_Current sig:2000"}}
+        validate_operation(runtime_remove)
+        with self.assertRaisesRegex(SourceExtractionError, "exactly one"):
+            validate_operation({**runtime_remove, "model": "POWER.FAKE"})
+        state_write = {**common, "kind": "stateWrite", "sinkSymbolSignature": "Monster::set_Ready sig:2001",
+                       "memberSymbolSignature": "Monster::set_Ready sig:2001", "target": "sourceMonster",
+                       "value": {"kind": "constant", "value": True, "valueType": "boolean"}}
+        validate_operation(state_write)
+        graph = {
+            "canonicalMonster": "MONSTER.X", "graphId": "GRAPH.X", "sourceType": "X",
+            "topology": {}, "provenance": {"semanticWitnessSha256": "b" * 64},
+            "initial": "GRAPH.X/A",
+            "nodes": [{"kind": "move", "nodeId": "GRAPH.X/A", "moveId": "MONSTER.X#A"}],
+            "edges": [{"kind": "followUp", "from": "GRAPH.X/A", "to": "GRAPH.X/A"}],
+        }
+        validate_graph(graph, known_moves={"MONSTER.X#A"})
+        with self.assertRaisesRegex(SourceExtractionError, "unresolved move"):
+            validate_graph(graph, known_moves={"MONSTER.OTHER#A"})
+        with self.assertRaisesRegex(SourceExtractionError, "unsupported graph node"):
+            validate_graph({**graph, "nodes": [{"kind": "wikiPattern", "nodeId": "GRAPH.X/A"}]})
+
+
+class CilSemanticEvaluatorTests(unittest.TestCase):
+    @staticmethod
+    def ins(opcode, operand=None, offset=None):
+        row = {"opcode": opcode, "operand": operand}
+        row["offsetDiagnostic"] = offset
+        return row
+
+    def flow(self, rows):
+        normalized = [self.ins(op, arg, i) for i, (op, arg) in enumerate(rows)]
+        evaluator = CilDataFlow(normalized)
+        return evaluator, evaluator.run()
+
+    def test_signature_controls_static_instance_and_argument_order(self):
+        static = decode_method_signature("X::Sink sig:0002010808")
+        instance = decode_method_signature("X::Fluent sig:20010808")
+        self.assertFalse(static.has_this)
+        self.assertEqual(len(static.parameters), 2)
+        self.assertTrue(instance.has_this)
+        evaluator, calls = self.flow([
+            ("ldarg.0", None), ("ldc.i4.2", None),
+            ("callvirt", "X::Fluent sig:20010808"), ("pop", None), ("ret", None),
+        ])
+        invocation = calls[2]
+        self.assertEqual(invocation.receiver.kind, "argument")
+        self.assertEqual(invocation.arguments[0].data, 2)
+
+    def test_decoy_getter_and_constants_do_not_replace_exact_sink_arguments(self):
+        _, calls = self.flow([
+            ("ldarg.0", None), ("call", "X::get_Decoy sig:000008"), ("pop", None),
+            ("ldc.i4.s", 99), ("pop", None),
+            ("ldc.i4.5", None), ("ldc.i4.8", None),
+            ("call", "X::Sink sig:0002010808"), ("ret", None),
+        ])
+        invocation = calls[7]
+        self.assertEqual([item.data for item in invocation.arguments], [5, 8])
+        self.assertEqual(value_expression(invocation.arguments[0], field_name="amount", instruction_index=7)["value"], 5)
+
+    def test_locals_arithmetic_and_exact_conversion_are_preserved(self):
+        _, calls = self.flow([
+            ("ldc.i4.2", None), ("stloc.0", None), ("ldloc.0", None),
+            ("ldc.i4.3", None), ("mul", None),
+            ("call", "System.Decimal::op_Implicit sig:000111844908"),
+            ("call", "X::Sink sig:000101118449"), ("ret", None),
+        ])
+        expression = value_expression(calls[6].arguments[0], field_name="amount", instruction_index=6)
+        self.assertEqual(expression["kind"], "convert")
+        self.assertEqual(expression["mode"], "exact")
+        self.assertEqual(expression["expression"]["operator"], "multiply")
+        self.assertEqual([row["value"] for row in expression["expression"]["operands"]], [2, 3])
+
+    def test_equal_join_resolves_but_nonunique_join_fails_closed(self):
+        def branch(right):
+            rows = [
+                self.ins("ldc.i4.1", None, 0), self.ins("brtrue.s", 4, 1),
+                self.ins("ldc.i4.2", None, 2), self.ins("br.s", 5, 3),
+                self.ins(f"ldc.i4.{right}", None, 4),
+                self.ins("call", "X::Sink sig:00010108", 5), self.ins("ret", None, 6),
+            ]
+            flow = CilDataFlow(rows); return flow.run()[5].arguments[0]
+        equal = value_expression(branch(2), field_name="joined amount", instruction_index=5)
+        self.assertEqual(equal["value"], 2)
+        with self.assertRaisesRegex(SourceExtractionError, "non-unique joined amount"):
+            value_expression(branch(3), field_name="joined amount", instruction_index=5)
+
+    def test_unknown_signature_opcode_type_and_stack_fail_closed(self):
+        with self.assertRaisesRegex(SourceExtractionError, "no required metadata signature"):
+            self.flow([("call", "X::NoSignature"), ("ret", None)])
+        with self.assertRaisesRegex(SourceExtractionError, "unknown stack-affecting opcode"):
+            self.flow([("localloc", None), ("ret", None)])
+        with self.assertRaisesRegex(SourceExtractionError, "stack underflow"):
+            self.flow([("call", "X::Sink sig:00010108"), ("ret", None)])
+        _, calls = self.flow([("ldarg.0", None), ("call", "X::Sink sig:00010108"), ("ret", None)])
+        with self.assertRaisesRegex(SourceExtractionError, "unresolved amount expression"):
+            value_expression(calls[1].arguments[0], field_name="amount", instruction_index=1)
+
+    def test_source_field_requires_supplied_context_and_trailing_enum_is_distinct(self):
+        source = {"kind": "sourceField", "symbol": "X::counter", "valueType": "integer"}
+        self.assertEqual(validate_expression(source), "integer")
+        with self.assertRaisesRegex(SourceExtractionError, "missing state input"):
+            evaluate_expression(source, {})
+        self.assertEqual(evaluate_expression(source, {"field:X::counter": 4}), 4)
+        _, calls = self.flow([
+            ("ldc.i4.7", None), ("ldc.i4.8", None), ("ldnull", None), ("ldc.i4.0", None),
+            ("call", "X::Gain sig:00040108081c02"), ("ret", None),
+        ])
+        self.assertEqual(calls[4].arguments[0].data, 7)
+        self.assertEqual(calls[4].arguments[1].data, 8)
+
+    def test_intent_constructor_uses_signature_stack_and_preserves_func_delegate(self):
+        target = "X::<GenerateMoveStateMachine>b__0 sig:200008"
+        intent_ctor = "X.Intents.MultiAttackIntent::.ctor sig:20020108151281bd0108"
+        rows = [
+            self.ins("ldc.i4.1", None, 0),
+            self.ins("newarr", "X.Intents.AbstractIntent", 1),
+            self.ins("dup", None, 2),
+            self.ins("ldc.i4.0", None, 3),  # array index, never a ctor argument
+            self.ins("ldarg.0", None, 4),
+            self.ins("call", "X::get_Damage sig:200008", 5),
+            self.ins("ldarg.0", None, 6),
+            self.ins("ldftn", target, 7),
+            self.ins("newobj", "<TypeSpec:FuncInt>::.ctor sig:2002011c18", 8),
+            self.ins("newobj", intent_ctor, 9),
+            self.ins("stelem.ref", None, 10),
+            self.ins("ret", None, 11),
+        ]
+
+        def method_record(symbol, instructions):
+            return {
+                "assemblySha256": "a" * 64,
+                "cilInstructionsSha256": "b" * 64,
+                "diagnosticMetadataToken": "0x06000001",
+                "instructions": instructions,
+                "metadataSignature": symbol.split(" sig:", 1)[1],
+                "methodBodySha256": "c" * 64,
+                "normalizedInstructionsSha256": "d" * 64,
+                "symbolSignature": symbol,
+            }
+
+        target_rows = [
+            self.ins("ldarg.0", None, 0),
+            self.ins("call", "X::get_Count sig:200008", 1),
+            self.ins("ret", None, 2),
+        ]
+        target_record = method_record(target, target_rows)
+
+        class FakeAssembly:
+            @staticmethod
+            def find_methods(owner, name):
+                return [1] if (owner, name) == ("X", "<GenerateMoveStateMachine>b__0") else []
+
+            @staticmethod
+            def method_symbol(index):
+                return target
+
+            @staticmethod
+            def method_record(index, assembly_sha256):
+                return target_record
+
+        record = method_record("X::GenerateMoveStateMachine sig:200001", rows)
+        calls = CilDataFlow(rows).run()
+        intents = _intent_records(
+            rows, record, invocations=calls, assembly=FakeAssembly(), assembly_sha256="a" * 64
+        )
+        self.assertEqual(len(intents), 1)
+        self.assertEqual(intents[0]["constructorSymbolSignature"], intent_ctor)
+        damage, count = intents[0]["arguments"]
+        self.assertEqual(damage["reference"], "X::get_Damage sig:200008")
+        self.assertEqual(count["kind"], "sourceDelegate")
+        self.assertEqual(count["binding"], {"argumentIndex": 0, "kind": "methodArgument"})
+        self.assertEqual(count["targetMethod"]["symbolSignature"], target)
+        self.assertEqual(count["resultExpression"]["reference"], "X::get_Count sig:200008")
+        self.assertNotIn({"kind": "constant", "value": 0, "valueType": "integer"}, intents[0]["arguments"])
+
+        malformed = [dict(row) for row in rows]
+        malformed[7] = self.ins("ldnull", None, 7)
+        with self.assertRaisesRegex(SourceExtractionError, "delegate target"):
+            _intent_records(
+                malformed, method_record("X::GenerateMoveStateMachine sig:200001", malformed),
+                invocations=CilDataFlow(malformed).run(), assembly=FakeAssembly(),
+                assembly_sha256="a" * 64,
+            )
+
+    def test_required_attack_target_evidence_cannot_be_omitted(self):
+        operation = {"kind": "attack", "operationId": "X/op/0", "provenance": {},
+                     "sinkSymbolSignature": "X::Attack sig:0001",
+                     "value": {"kind": "constant", "value": "1", "valueType": "decimal"}}
+        with self.assertRaisesRegex(SourceExtractionError, "missing fields"):
+            validate_operation(operation)
+
+
+class ClosedWorldInvocationTests(unittest.TestCase):
+    @staticmethod
+    def ins(opcode, operand, offset):
+        return {"offsetDiagnostic": offset, "opcode": opcode, "operand": operand}
+
+    @classmethod
+    def invocation(cls, rows, index):
+        return CilDataFlow(rows).run()[index]
+
+    @staticmethod
+    def record(symbol, rows):
+        return {
+            "assemblySha256": "a" * 64,
+            "cilInstructionsSha256": "b" * 64,
+            "diagnosticMetadataToken": "0x06000001",
+            "instructions": rows,
+            "metadataSignature": symbol.split(" sig:", 1)[1],
+            "methodBodySha256": "c" * 64,
+            "normalizedInstructionsSha256": "d" * 64,
+            "symbolSignature": symbol,
+        }
+
+    class EmptyAssembly:
+        md = SimpleNamespace(MethodDef=SimpleNamespace(rows=[]), InterfaceImpl=SimpleNamespace(rows=[]))
+        type_names = {}
+
+        @staticmethod
+        def find_methods(owner, member): return []
+
+        @staticmethod
+        def derives_from(owner, ancestor): return False
+
+    def test_unknown_gameplay_and_framework_calls_fail_with_stable_evidence(self):
+        unknown_rows = [self.ins("call", "MegaCrit.Sts2.Core.Commands.NewGameplayCmd::DoThing sig:000001", 0),
+                        self.ins("ret", None, 1)]
+        invocation = self.invocation(unknown_rows, 0)
+        record = self.record("X::MoveNext sig:200001", unknown_rows)
+        messages = []
+        for _ in range(2):
+            audit = ClosedWorldInvocationAudit(self.EmptyAssembly(), "a" * 64, {})
+            with self.assertRaises(SourceExtractionError) as caught:
+                audit.classify(invocation, record, "MONSTER.X#MOVE")
+            messages.append(str(caught.exception))
+        self.assertEqual(messages[0], messages[1])
+        self.assertRegex(messages[0], r"^UNRESOLVED\.INVOCATION\.[0-9a-f]{64}:")
+        self.assertIn("unknown command/effect API", messages[0])
+
+        godot_rows = [self.ins("ldarg.0", None, 0),
+                      self.ins("callvirt", "Godot.Node::UnknownGameplayishCall sig:200001", 1),
+                      self.ins("ret", None, 2)]
+        godot_call = self.invocation(godot_rows, 1)
+        with self.assertRaisesRegex(SourceExtractionError, "unclassified invocation declaration"):
+            ClosedWorldInvocationAudit(self.EmptyAssembly(), "a" * 64, {}).classify(
+                godot_call, self.record("X::MoveNext sig:200001", godot_rows), "MONSTER.X#MOVE"
+            )
+
+    def test_narrow_presentation_call_is_counted_not_ignored(self):
+        rows = [self.ins("ldstr", "string:sfx", 0), self.ins("ldc.r4", 0.5, 1),
+                self.ins("call", "MegaCrit.Sts2.Core.Commands.SfxCmd::Play sig:0002010e0c", 2),
+                self.ins("ret", None, 3)]
+        audit = ClosedWorldInvocationAudit(self.EmptyAssembly(), "a" * 64, {})
+        decision = audit.classify(self.invocation(rows, 2), self.record("X::MoveNext sig:200001", rows), "MONSTER.X#MOVE")
+        self.assertEqual(decision["classification"], "provenNonGameplayPlumbing")
+        self.assertEqual(decision["role"], "presentation")
+        self.assertEqual(audit.summary()["denominator"], 1)
+        self.assertEqual(audit.summary()["unresolved"], 0)
+
+    def helper_assembly(self, nested_symbol):
+        owner = "MegaCrit.Sts2.Core.Models.Monsters.FixtureMonster"
+        helper_symbol = owner + "::Helper sig:200001"
+        if "Kill" in nested_symbol:
+            helper_rows = [self.ins("ldnull", None, 0), self.ins("ldc.i4.0", None, 1),
+                           self.ins("call", nested_symbol, 2), self.ins("pop", None, 3), self.ins("ret", None, 4)]
+        else:
+            helper_rows = [self.ins("call", nested_symbol, 0), self.ins("ret", None, 1)]
+        helper_record = self.record(helper_symbol, helper_rows)
+        flags = SimpleNamespace(mdSpecialName=False, mdAbstract=False)
+
+        class FakeAssembly(self.EmptyAssembly):
+            md = SimpleNamespace(MethodDef=SimpleNamespace(rows=[SimpleNamespace(Flags=flags)]),
+                                 InterfaceImpl=SimpleNamespace(rows=[]))
+            type_names = {1: owner}
+
+            @staticmethod
+            def find_methods(candidate_owner, member):
+                return [1] if (candidate_owner, member) == (owner, "Helper") else []
+
+            @staticmethod
+            def method_symbol(index): return helper_symbol
+
+            @staticmethod
+            def method_record(index, assembly_sha256): return helper_record
+
+        outer_rows = [self.ins("ldarg.0", None, 0), self.ins("call", helper_symbol, 1), self.ins("ret", None, 2)]
+        return FakeAssembly(), outer_rows
+
+    def test_helper_effects_are_traversed_and_unknown_nested_commands_fail(self):
+        kill = "MegaCrit.Sts2.Core.Commands.CreatureCmd::Kill sig:000212812112a7e402"
+        assembly, rows = self.helper_assembly(kill)
+        audit = ClosedWorldInvocationAudit(assembly, "a" * 64, {})
+        decision = audit.classify(self.invocation(rows, 1), self.record("X::MoveNext sig:200001", rows), "MONSTER.X#MOVE")
+        self.assertEqual(decision["classification"], "traversedGameplayHelper")
+        effects = decision["evidence"]["gameplayEffects"]
+        self.assertEqual([(row["kind"], row["sinkSymbolSignature"]) for row in effects], [("kill", kill)])
+        self.assertEqual(decision["evidence"]["nestedInvocationSites"], 1)
+        helper_summary = audit.summary()
+        self.assertEqual((helper_summary["directDenominator"], helper_summary["helperDenominator"]), (1, 1))
+
+        unknown = "MegaCrit.Sts2.Core.Commands.NewGameplayCmd::HiddenEffect sig:000001"
+        assembly, rows = self.helper_assembly(unknown)
+        with self.assertRaisesRegex(SourceExtractionError, r"UNRESOLVED\.INVOCATION\.[0-9a-f]{64}.*unknown command/effect API"):
+            ClosedWorldInvocationAudit(assembly, "a" * 64, {}).classify(
+                self.invocation(rows, 1), self.record("X::MoveNext sig:200001", rows), "MONSTER.X#MOVE"
+            )
 
 
 if __name__ == "__main__":

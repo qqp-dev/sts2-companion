@@ -32,8 +32,8 @@ const exactManifest = [
 
 test("source artifact is canonical, exactly pinned, partial, and raw-only", () => {
   assert.equal(artifactBytes.toString("utf8"), `${JSON.stringify(sortedValue(artifact), null, 2)}\n`);
-  assert.equal(artifact.schemaVersion, 2);
-  assert.equal(artifact.extractorVersion, "2.0.1");
+  assert.equal(artifact.schemaVersion, 4);
+  assert.equal(artifact.extractorVersion, "4.0.0");
   assert.equal(artifact.runtimeReady, false);
   assert.equal(artifact.status, "incomplete");
   assert.deepEqual(artifact.inputs, exactManifest);
@@ -51,7 +51,7 @@ test("source artifact is canonical, exactly pinned, partial, and raw-only", () =
   assert.doesNotMatch(artifactBytes.toString("utf8"), /(?:generated|extracted|created)(?:At|_at)|timestamp/i);
 });
 
-test("coverage is denominator-based and later combat families are explicitly deferred", () => {
+test("coverage is denominator-based and Wave B combat families are complete or honestly classified", () => {
   const complete = {
     encounterIdentities: 89,
     encounterPossibleMembership: 89,
@@ -65,13 +65,25 @@ test("coverage is denominator-based and later combat families are explicitly def
     monsterIdentitiesCurrentReachable: 108,
     monsterNamesEnglishCurrentReachable: 108,
     monsterNamespaceCensus: 121,
+    blockMultiplayerScaling: 1,
+    moveActions: 307,
+    moveIntentArguments: 311,
+    moveIntentClassification: 387,
+    moveOperations: 307,
+    invocationClassification: 6683,
+    moveRegistrationCensus: 307,
+    moveSelectionGraphs: 100,
+    moveTitleClassification: 307,
+    operationDirectSinks: 491,
+    operationSemanticFields: 1081,
+    powerMultiplayerOptIns: 12,
+    powerMultiplayerOverrides: 5,
   };
   for (const [family, denominator] of Object.entries(complete)) {
     assert.deepEqual(artifact.coverage[family], { denominator, numerator: denominator, status: "complete", unresolved: 0 }, family);
   }
-  for (const family of ["blockMultiplayerScaling", "moveIntents", "moveMultiplayerScaling", "moveOperations", "moveRegistrationsAndTitles", "moveSelectionGraphs", "patterns", "powerMultiplayerScaling", "powers"]) {
-    assert.deepEqual(artifact.coverage[family], { status: "notExtracted" }, family);
-  }
+  assert.deepEqual(artifact.coverage.moveTitlesEnglish, { denominator: 307, numerator: 289, status: "classified", unresolved: 18 });
+  assert.equal(artifact.coverage.powerCardReferencedModels.status, "complete");
 });
 
 test("monster census, identities, reachability, and exclusions are exact", () => {
@@ -202,4 +214,175 @@ test("source artifact is not consumed and runtime wiki book remains byte-identic
   for (const file of ["../src/book.mjs", "../src/client.js", "../src/http.mjs", "../src/plugin.mjs", "../src/state.mjs"]) {
     assert.doesNotMatch(readFileSync(new URL(file, import.meta.url), "utf8"), /game-v0\.111\.0-source/);
   }
+});
+
+const move = (id) => artifact.behavior.registrations.find((row) => row.canonicalId === id);
+const graph = (id) => artifact.behavior.graphs.find((row) => row.graphId === id);
+
+test("Wave B registrations, async split, titles, and intents are exact", () => {
+  assert.equal(artifact.behavior.registrations.length, 307);
+  assert.equal(artifact.behavior.summary.asyncActions, 301);
+  assert.equal(artifact.behavior.summary.synchronousNoOpActions, 6);
+  assert.equal(artifact.behavior.summary.localizedTitles, 289);
+  assert.equal(artifact.behavior.summary.missingOrInternalTitles, 18);
+  assert.equal(artifact.behavior.graphs.length, 100);
+  const missing = artifact.behavior.registrations.filter((row) => row.title.classification !== "localized");
+  assert.equal(missing.length, 18);
+  for (const row of missing) {
+    assert.equal(row.title.classification, "missingLocalization");
+    assert.match(row.title.requestedLocalizationKey, /\.title$/);
+  }
+  const ebb = move("MONSTER.AEONGLASS#EBB_MOVE");
+  assert.equal(ebb.title.english, "Ebb");
+  assert.equal(ebb.execution.kind, "asyncStateMachine");
+  assert.equal(ebb.intents[0].kind, "attack");
+  assert.equal(ebb.intents[1].kind, "block");
+  assert.equal(move("MONSTER.WRIGGLER#SPAWNED_MOVE").execution.kind, "synchronousNoOp");
+
+  assert.equal(artifact.behavior.summary.intentConstructorSites, 387);
+  assert.equal(artifact.behavior.summary.resolvedIntentConstructorSites, 387);
+  assert.equal(artifact.behavior.summary.requiredIntentArguments, 311);
+  assert.equal(artifact.behavior.summary.resolvedIntentArguments, 311);
+  const delegateArgument = (moveId) => move(moveId).intents.flatMap((intent) => intent.arguments)
+    .find((argument) => argument.kind === "sourceDelegate");
+  const multiClaw = move("MONSTER.TEST_SUBJECT#MULTI_CLAW_MOVE").intents[0];
+  assert.match(multiClaw.constructorSymbolSignature, /MultiAttackIntent::\.ctor sig:20020108151281bd0108$/);
+  assert.match(multiClaw.arguments[0].reference, /get_MultiClawDamage/);
+  assert.match(multiClaw.arguments[1].resultExpression.reference, /get_MultiClawTotalCount/);
+  assert.deepEqual(multiClaw.arguments[1].binding, { argumentIndex: 0, kind: "methodArgument" });
+  assert.doesNotMatch(JSON.stringify(multiClaw.arguments), /"value":0/);
+
+  for (const [moveId, callback, getter] of [
+    ["MONSTER.THE_FORGOTTEN#DREAD", "b__11_0", "get_DreadDamage"],
+    ["MONSTER.WATERFALL_GIANT#PRESSURE_GUN_MOVE", "b__68_0", "get_CurrentPressureGunDamage"],
+    ["MONSTER.GAS_BOMB#EXPLODE_MOVE", "b__19_0", "get_ExplodeDamage"],
+    ["MONSTER.WATERFALL_GIANT#EXPLODE_MOVE", "b__68_1", "get_SteamEruptionDamage"],
+  ]) {
+    const argument = delegateArgument(moveId);
+    assert.ok(argument, moveId);
+    assert.match(argument.targetMethod.symbolSignature, new RegExp(`${callback} sig:`));
+    assert.match(argument.resultExpression.expression.reference, new RegExp(`${getter} sig:`));
+    assert.match(argument.targetMethod.methodBodySha256, /^[0-9a-f]{64}$/);
+    assert.match(argument.targetMethod.normalizedSliceSha256, /^[0-9a-f]{64}$/);
+  }
+});
+
+test("direct sinks, helpers, and dynamic fixtures remain formulas", () => {
+  assert.deepEqual(artifact.behavior.summary.directSinkCounts, {
+    addGeneratedCard: 6, addStatusCard: 14, applyPower: 126, attack: 204,
+    attackHitCount: 49, escape: 2, gainBlock: 23, heal: 2, kill: 2,
+    removeCard: 1, removePower: 6, stateWrite: 51, summon: 5,
+  });
+  assert.equal(artifact.behavior.summary.directSinkSites, 491);
+  assert.equal(artifact.behavior.summary.requiredSemanticFields, 1081);
+  assert.equal(artifact.behavior.summary.resolvedSemanticFields, 1081);
+  assert.deepEqual(artifact.behavior.invocationCensus.summary, {
+    classificationCounts: {
+      normalizedGameplayOperation: 508,
+      provenNonGameplayPlumbing: 5095,
+      traversedGameplayHelper: 1080,
+    },
+    denominator: 6683, directDenominator: 6332, helperDenominator: 351,
+    resolved: 6683, unresolved: 0, vocabularySize: 1156, directVocabularySize: 1041,
+  });
+  assert.equal(artifact.behavior.invocationCensus.decisions.length, 6683);
+  assert.equal(new Set(artifact.behavior.invocationCensus.decisions.map((row) => row.invocationId)).size, 6683);
+  assert.equal(artifact.behavior.invocationCensus.decisions.filter((row) => row.invocationId.startsWith("HELPER.")).length, 351);
+  for (const [kind, count] of Object.entries(artifact.behavior.summary.directSinkCounts)) {
+    assert.deepEqual(artifact.coverage.operationDirectSinksByKind[kind], { denominator: count, numerator: count, status: "complete", unresolved: 0 });
+  }
+  const lasers = move("MONSTER.AEONGLASS#EYE_LASERS_MOVE");
+  assert.equal(lasers.operations[0].kind, "attack");
+  assert.equal(lasers.operations[0].value.kind, "convert");
+  assert.equal(lasers.operations[0].value.mode, "exact");
+  assert.match(lasers.operations[0].value.expression.reference, /get_EyeLasersDamage/);
+  assert.equal(lasers.operations[0].target, "allOpponentsOfSourceMonster");
+  assert.match(lasers.operations[0].targetProvenance.normalizedSliceSha256, /^[0-9a-f]{64}$/);
+  assert.equal(lasers.operations[1].kind, "attackHitCount");
+  const oneTwo = move("MONSTER.AXEBOT#ONE_TWO_MOVE");
+  assert.equal(oneTwo.operations.find((op) => op.kind === "attackHitCount").value.value, 2);
+  const bootStrength = move("MONSTER.AXEBOT#BOOT_UP_MOVE").operations.find((op) => op.kind === "applyPower");
+  assert.equal(bootStrength.value.expression.operator, "multiply");
+  assert.deepEqual(bootStrength.value.expression.operands.map((row) => row.reference.match(/::(get_[^ ]+)/)[1]), ["get_BootUpStrGain", "get_RespawnCount"]);
+  const wake = move("MONSTER.BYGONE_EFFIGY#WAKE_MOVE").operations.find((op) => op.kind === "applyPower");
+  assert.equal(wake.value.expression.value, 10);
+  const shrink = move("MONSTER.SHRINKER_BEETLE#SHRINKER_MOVE").operations.find((op) => op.kind === "applyPower");
+  assert.deepEqual(shrink.value, { kind: "constant", value: "-1", valueType: "decimal" });
+  const goop = move("MONSTER.LEAF_SLIME_S#GOOP_MOVE").operations.find((op) => op.kind === "addStatusCard");
+  assert.equal(goop.value.value, 1);
+  const guard = move("MONSTER.GUARDBOT#GUARD_MOVE").operations.find((op) => op.kind === "gainBlock");
+  assert.equal(guard.target, "iteratedCreature");
+  assert.equal(guard.value.expression.value, 15);
+  const bloat = move("MONSTER.LIVING_FOG#BLOAT_MOVE").operations.find((op) => op.kind === "summon");
+  assert.equal(bloat.selection.slot, "nextOpenCombatSlot");
+  assert.ok(!("value" in bloat));
+  const remove = move("MONSTER.THIEVING_HOPPER#THIEVERY_MOVE").operations.find((op) => op.kind === "removeCard");
+  assert.equal(remove.target, "rngSelectedCombatCard");
+  assert.ok(!("value" in remove));
+  for (const moveId of ["MONSTER.GAS_BOMB#EXPLODE_MOVE", "MONSTER.WATERFALL_GIANT#EXPLODE_MOVE"]) {
+    const kill = move(moveId).operations.find((op) => op.kind === "kill");
+    assert.equal(kill.target, "sourceMonster");
+    assert.deepEqual(kill.playDeathEffects, { kind: "constant", value: false, valueType: "boolean" });
+  }
+  assert.equal(move("MONSTER.OWL_MAGISTRATE#VERDICT").operations.find((op) => op.kind === "removePower").model, "POWER.SOAR_POWER");
+  assert.deepEqual(move("MONSTER.TEST_SUBJECT#RESPAWN_MOVE").operations.filter((op) => op.kind === "removePower").map((op) => op.model), ["POWER.ADAPTABLE_POWER", "POWER.PAINFUL_STABS_POWER"]);
+  const dynamicPowerRemoval = move("MONSTER.TOUGH_EGG#HATCH_MOVE").operations.find((op) => op.kind === "removePower" && op.modelContract);
+  assert.equal(dynamicPowerRemoval.target, "runtimeSelectedPowerInstance");
+  assert.match(dynamicPowerRemoval.modelContract.sourceSymbolSignature, /::get_Current sig:/);
+  const allOperations = artifact.behavior.registrations.flatMap((row) => row.operations);
+  assert.ok(allOperations.every((op) => /^[0-9a-f]{64}$/.test(op.provenance.normalizedSliceSha256)));
+  assert.ok(allOperations.filter((op) => ["summon", "removeCard", "escape"].includes(op.kind)).every((op) => !("value" in op)));
+  const serializedOperations = JSON.stringify(allOperations);
+  for (const forbidden of ["resolvedStackValue", '"target":"allPlayers"', "NRunMusicController::get_Instance", "NCombatRoom::get_Instance", "MonsterModel::get_AttackSfx"]) {
+    assert.ok(!serializedOperations.includes(forbidden), forbidden);
+  }
+  const helpers = artifact.behavior.registrations.filter((row) => row.operations.some((op) => op.kind === "helperEffect"));
+  const helperKinds = new Set(helpers.flatMap((row) => row.operations.filter((op) => op.kind === "helperEffect").map((op) => op.helper)));
+  for (const helper of ["reattach", "fabricate", "chooseCurse", "hatch", "pressureState"]) {
+    assert.ok(helperKinds.has(helper), helper);
+  }
+});
+
+test("selection graphs preserve topology, Flyconid/Fabricator/Decimillipede fixtures, and referential integrity", () => {
+  const topo = artifact.behavior.summary.topology;
+  assert.deepEqual(topo, {
+    behaviorClasses: 100, bothBranchKinds: 2, conditionalClasses: 16, conditionalNodes: 17,
+    followUpAssignments: 309, moveConstructors: 307, mustOnceFlags: 4, randomClasses: 20, randomNodes: 22,
+  });
+  const fly = graph("GRAPH.FLYCONID");
+  assert.equal(fly.initial, "GRAPH.FLYCONID/INITIAL");
+  assert.equal(fly.topology.randomNodes, 2);
+  assert.equal(fly.edges.filter((edge) => edge.kind === "randomBranch").length, 5);
+  assert.ok(fly.edges.every((edge) => edge.kind !== "randomBranch" || edge.weight === 2));
+  const fabricator = graph("GRAPH.FABRICATOR");
+  assert.ok(fabricator.topology.randomNodes > 0 && fabricator.topology.conditionalNodes > 0);
+  const decim = graph("GRAPH.DECIMILLIPEDE_SEGMENT");
+  assert.ok(Array.isArray(decim.initial));
+  assert.equal(decim.initial.length, 3);
+  const moveIds = new Set(artifact.behavior.registrations.map((row) => row.canonicalId));
+  for (const row of artifact.behavior.graphs) {
+    assert.match(row.provenance.semanticWitnessSha256, /^[0-9a-f]{64}$/);
+    for (const node of row.nodes) {
+      if (node.kind === "move") {
+        assert.ok(moveIds.has(`${row.canonicalMonster}#${node.stateId}`), node.nodeId);
+      }
+    }
+  }
+});
+
+test("Block and Power multiplayer formulas are distinct from ordinary attacks", () => {
+  const block = artifact.multiplayerScaling.block;
+  assert.equal(block.expression.kind, "conditional");
+  assert.deepEqual(block.fixtures.map((row) => row.multiplier), ["1", "2", "3.9", "1"]);
+  const power = artifact.multiplayerScaling.power;
+  assert.equal(power.optIns.length, 12);
+  assert.equal(power.overrides.length, 5);
+  assert.equal(power.overrides.find((row) => row.canonicalPower === "POWER.BUFFER_POWER").active, false);
+  assert.equal(power.overrides.find((row) => row.canonicalPower === "POWER.PLATING_POWER").active, true);
+  assert.equal(artifact.multiplayerScaling.ordinaryMonsterAttack.scalesInMultiplayer, false);
+  assert.equal(artifact.powers.length, 43);
+  for (const removedPower of ["POWER.ADAPTABLE_POWER", "POWER.HATCH_POWER"]) {
+    assert.ok(artifact.powers.some((row) => row.canonicalId === removedPower), removedPower);
+  }
+  assert.equal(artifact.cards.length, 9);
 });

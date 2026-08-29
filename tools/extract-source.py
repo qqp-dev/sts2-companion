@@ -21,7 +21,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Read exact v0.111.0 game files as bytes and derive canonical "
-            "normalized monster identities/names, HP formulas/scaling, and encounter roster/pool facts. No game code is executed."
+            "world identities, HP/combat formulas, and selection graphs. No game code is executed."
         )
     )
     parser.add_argument(
