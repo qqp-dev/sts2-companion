@@ -15,6 +15,7 @@
   "files": [
     "src/",
     "data/",
+    "docs/",
     "cordis.patch.yml",
     "README.md"
   ],

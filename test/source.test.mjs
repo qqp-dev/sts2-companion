@@ -1,0 +1,199 @@
+import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+
+import { encounterFor, encounterIds } from "../src/book.mjs";
+
+const artifactBytes = readFileSync(new URL("../data/game-v0.111.0-source.json", import.meta.url));
+const artifact = JSON.parse(artifactBytes);
+const oldBookBytes = readFileSync(new URL("../data/encounters.json", import.meta.url));
+const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
+const sortedValue = (value) => {
+  if (Array.isArray(value)) return value.map(sortedValue);
+  if (value && typeof value === "object") return Object.fromEntries(Object.keys(value).sort().map((key) => [key, sortedValue(value[key])]));
+  return value;
+};
+const monster = (id) => artifact.monsters.find((record) => record.canonicalId === id);
+const encounter = (id) => [...artifact.encounters.ordinary, ...artifact.encounters.event].find((record) => record.canonicalId === id);
+const members = (node, output = new Set()) => {
+  if (node.model) output.add(node.model);
+  for (const key of ["children", "choices"]) for (const child of node[key] ?? []) members(child, output);
+  if (node.selection) members(node.selection, output);
+  return output;
+};
+
+const exactManifest = [
+  { path: "SlayTheSpire2.pck", sha256: "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34", size: 1990363992 },
+  { path: "data_sts2_linuxbsd_x86_64/sts2.dll", sha256: "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f", size: 9756160 },
+  { path: "data_sts2_linuxbsd_x86_64/sts2.xml", sha256: "a88331870d38cdb84d8fc371ab3d7fb619afa25c8c7249a47aaa77e1c7bf4286", size: 5650972 },
+  { path: "release_info.json", sha256: "9e5dbce5bcd8ff3b7b432291200220642408e31b8bae7bba14f39aeb6914cd51", size: 150 },
+];
+
+test("source artifact is canonical, exactly pinned, partial, and raw-only", () => {
+  assert.equal(artifactBytes.toString("utf8"), `${JSON.stringify(sortedValue(artifact), null, 2)}\n`);
+  assert.equal(artifact.schemaVersion, 2);
+  assert.equal(artifact.extractorVersion, "2.0.0");
+  assert.equal(artifact.runtimeReady, false);
+  assert.equal(artifact.status, "incomplete");
+  assert.deepEqual(artifact.inputs, exactManifest);
+  assert.deepEqual(artifact.game, { branch: "v0.111.0", commit: "41cef1ea", mainAssemblyHash: 1579942752, version: "v0.111.0" });
+  assert.deepEqual(artifact.safety, {
+    assemblyExecution: false,
+    cilExecution: false,
+    godotInitialization: false,
+    mode: "metadataAndBoundedCilAnalysis",
+    pckAccess: "readOnlySelective",
+    reflectionLoading: false,
+  });
+  assert.equal(artifact.authority.artifactTier, "rawSource");
+  assert.equal(artifact.authority.fallbackPolicy.silentMerge, false);
+  assert.doesNotMatch(artifactBytes.toString("utf8"), /(?:generated|extracted|created)(?:At|_at)|timestamp/i);
+});
+
+test("coverage is denominator-based and later combat families are explicitly deferred", () => {
+  const complete = {
+    encounterIdentities: 89,
+    encounterPossibleMembership: 89,
+    encounterProductionMembership: 89,
+    encounterRosters: 89,
+    encounterTitlesEnglish: 89,
+    hpInitialConcreteCensus: 120,
+    hpInitialCurrentReachable: 108,
+    hpMultiplayerScaling: 1,
+    hpSpecialStateFormulas: 4,
+    monsterIdentitiesCurrentReachable: 108,
+    monsterNamesEnglishCurrentReachable: 108,
+    monsterNamespaceCensus: 121,
+  };
+  for (const [family, denominator] of Object.entries(complete)) {
+    assert.deepEqual(artifact.coverage[family], { denominator, numerator: denominator, status: "complete", unresolved: 0 }, family);
+  }
+  for (const family of ["blockMultiplayerScaling", "moveIntents", "moveMultiplayerScaling", "moveOperations", "moveRegistrationsAndTitles", "moveSelectionGraphs", "patterns", "powerMultiplayerScaling", "powers"]) {
+    assert.deepEqual(artifact.coverage[family], { status: "notExtracted" }, family);
+  }
+});
+
+test("monster census, identities, reachability, and exclusions are exact", () => {
+  assert.equal(artifact.monsters.length, 120);
+  assert.deepEqual(artifact.monsterCensus.counts, {
+    abstract: 1, concrete: 120, eventOnlyReachable: 6, excludedConcrete: 12,
+    namespaceTotal: 121, ordinaryReachable: 102, totalReachable: 108,
+  });
+  assert.deepEqual(artifact.monsterCensus.abstractTypes, ["MegaCrit.Sts2.Core.Models.Monsters.DecimillipedeSegment"]);
+  assert.equal(artifact.monsterCensus.hpGetterCensus.length, 120);
+  assert.equal(artifact.reachability.ordinaryReachableModels.length, 102);
+  assert.equal(artifact.reachability.eventOnlyModels.length, 6);
+  assert.equal(artifact.reachability.reachableModels.length, 108);
+  assert.deepEqual(artifact.reachability.eventOnlyModels, [
+    "MONSTER.ARCHITECT", "MONSTER.BATTLE_FRIEND_V1", "MONSTER.BATTLE_FRIEND_V2",
+    "MONSTER.BATTLE_FRIEND_V3", "MONSTER.FAKE_MERCHANT_MONSTER", "MONSTER.MYSTERIOUS_KNIGHT",
+  ]);
+  assert.equal(artifact.monsterCensus.excludedConcrete.length, 12);
+  assert.equal(artifact.monsterCensus.excludedConcrete.find((row) => row.canonicalId === "DEPRECATED_MONSTER").classification, "deprecatedPlaceholder");
+  assert.equal(new Set(artifact.monsters.map((row) => row.canonicalId)).size, 120);
+});
+
+test("all reachable names are shipped joins and special title states stay model-distinct", () => {
+  const reachable = artifact.monsters.filter((row) => ["ordinaryReachable", "eventOnly"].includes(row.reachability.classification));
+  assert.equal(reachable.length, 108);
+  assert.ok(reachable.every((row) => row.name && row.provenance.name.localization.authority === "rawSource"));
+  assert.equal(monster("FLYCONID").name.text, "Flyconid");
+  assert.equal(monster("DECIMILLIPEDE_SEGMENT_FRONT").name.text, "Decimillipede");
+  assert.equal(monster("DECIMILLIPEDE_SEGMENT_FRONT").provenance.name.localization.localizationKey, "DECIMILLIPEDE_SEGMENT.name");
+  assert.equal(monster("TEST_SUBJECT").name.kind, "localizedTemplate");
+  assert.equal(monster("TEST_SUBJECT").name.template, "Test Subject #C{Count}");
+  assert.equal(monster("TEST_SUBJECT").name.inputs.Count.operator, "add");
+  assert.equal(artifact.states.hatchlingName.text, "Hatchling");
+  assert.ok(artifact.states.stateIdentities.some((row) => row.stateId === "MONSTER.TOUGH_EGG#HATCHED" && row.canonicalModel === "MONSTER.TOUGH_EGG"));
+  assert.ok(artifact.states.stateIdentities.some((row) => row.stateId === "MONSTER.TEST_SUBJECT#PHASE_3" && row.canonicalModel === "MONSTER.TEST_SUBJECT"));
+});
+
+test("initial and special HP expressions retain source branches and exact A8 pins", () => {
+  assert.deepEqual(monster("FLYCONID").initialHp.a8SinglePlayer, { maximum: 53, minimum: 51 });
+  assert.equal(monster("FLYCONID").initialHp.provenance.minimum.diagnosticMetadataToken, "0x06002ed2");
+  assert.deepEqual(monster("AXEBOT").initialHp.a8SinglePlayer, { maximum: 86, minimum: 76 });
+  assert.equal(monster("AXEBOT").initialHp.expression.minimum.kind, "arithmetic");
+  assert.deepEqual(monster("TEST_SUBJECT").initialHp.a8SinglePlayer, { maximum: 111, minimum: 111 });
+  assert.deepEqual(artifact.states.toughEggHatch.a8SinglePlayer, { maximum: 23, minimum: 20 });
+  assert.deepEqual(artifact.states.testSubjectPhases.phases.map((row) => row.a8SinglePlayer), [111, 212, 313]);
+  assert.equal(artifact.states.axebotRespawn.preMultiplayerScaling, true);
+  assert.equal(artifact.states.decimillipedeReattach.operation, "healCurrentHp");
+  assert.deepEqual(artifact.states.decimillipedeReattach.amountExpression, { kind: "constant", value: "25", valueType: "decimal" });
+  for (const row of artifact.monsters) {
+    assert.equal(row.initialHp.expression.kind, "range");
+    assert.ok(row.initialHp.a8SinglePlayer.minimum <= row.initialHp.a8SinglePlayer.maximum);
+    for (const side of ["minimum", "maximum"]) {
+      const proof = row.initialHp.provenance[side];
+      assert.match(proof.symbolSignature, /::get_(?:Min|Max|First)/);
+      assert.match(proof.methodBodySha256, /^[0-9a-f]{64}$/);
+      assert.match(proof.normalizedExpressionSha256, /^[0-9a-f]{64}$/);
+    }
+  }
+});
+
+test("HP multiplayer scaling preserves Decimal identity/factors and no invented rounding", () => {
+  const hp = artifact.multiplayerScaling.hp;
+  assert.equal(hp.expression.kind, "conditional");
+  assert.deepEqual(hp.expression.whenFalse.operands[2].factors, { act1: "1.1", act2: "1.2", act3Boss: "1.3", act3NonBoss: "1.2" });
+  assert.deepEqual(hp.numericSemantics, {
+    factorType: "System.Decimal", outputType: "System.Decimal",
+    playerCountConversion: "System.Decimal.op_Implicit(System.Int32)",
+    rounding: "none", sourceHpType: "System.Decimal", truncation: "none",
+  });
+  assert.deepEqual(hp.regressionWitnesses.map((row) => row.result), ["100", "220.0", "240.0", "240.0", "260.0"]);
+});
+
+test("all 89 roster ASTs are joined, cardinality-safe, and referentially complete", () => {
+  const all = [...artifact.encounters.ordinary, ...artifact.encounters.event];
+  const known = new Set(artifact.monsters.map((row) => `MONSTER.${row.canonicalId}`));
+  assert.equal(all.length, 89);
+  assert.equal(new Set(all.map((row) => row.canonicalId)).size, 89);
+  for (const row of all) {
+    assert.ok(row.initialRoster.cardinality.minimum > 0);
+    assert.ok(row.initialRoster.cardinality.maximum >= row.initialRoster.cardinality.minimum);
+    assert.match(row.initialRoster.provenance.semanticWitnessSha256, /^[0-9a-f]{64}$/);
+    const selected = members(row.initialRoster.selection);
+    for (const model of selected) assert.ok(known.has(model), `${row.canonicalId}: ${model}`);
+    for (const model of [...row.possibleMonsters, ...row.producedMonsters]) assert.ok(known.has(model), `${row.canonicalId}: ${model}`);
+    assert.ok([...selected].every((model) => row.possibleMonsters.includes(model)));
+    assert.ok(row.producedMonsters.every((model) => row.possibleMonsters.includes(model) && !selected.has(model)));
+  }
+});
+
+test("named random roster and production regressions retain exact structure", () => {
+  const fly = encounter("FLYCONID_NORMAL");
+  assert.deepEqual(fly.initialRoster.cardinality, { maximum: 2, minimum: 2 });
+  assert.equal(fly.initialRoster.selection.children[0].kind, "uniformChoice");
+  assert.deepEqual([...members(fly.initialRoster.selection.children[0])].sort(), ["MONSTER.LEAF_SLIME_M", "MONSTER.TWIG_SLIME_M"]);
+  assert.equal(fly.initialRoster.selection.children[1].model, "MONSTER.FLYCONID");
+
+  assert.deepEqual(encounter("SLIMES_WEAK").initialRoster.cardinality, { maximum: 3, minimum: 3 });
+  assert.equal(encounter("SLIMES_WEAK").initialRoster.selection.kind, "uniformChoice");
+  assert.deepEqual(encounter("SLIMES_NORMAL").initialRoster.cardinality, { maximum: 4, minimum: 4 });
+  assert.equal(encounter("SLIMES_NORMAL").initialRoster.selection.children[2].kind, "uniformChoice");
+  assert.deepEqual(encounter("SLITHERING_STRANGLER_NORMAL").initialRoster.cardinality, { maximum: 3, minimum: 2 });
+  assert.equal(encounter("RUBY_RAIDERS_NORMAL").initialRoster.selection.kind, "filteredChoice");
+  assert.equal(encounter("RUBY_RAIDERS_NORMAL").initialRoster.selection.count, 3);
+  assert.equal(encounter("BOWLBUGS_NORMAL").initialRoster.selection.children[1].draws, "withoutReplacement");
+  assert.deepEqual([...members(encounter("BOWLBUGS_WEAK").initialRoster.selection.children[1])].sort(), ["MONSTER.BOWLBUG_EGG", "MONSTER.BOWLBUG_NECTAR"]);
+
+  const fabricator = encounter("FABRICATOR_NORMAL");
+  assert.deepEqual([...members(fabricator.initialRoster.selection)], ["MONSTER.FABRICATOR"]);
+  assert.deepEqual(fabricator.producedMonsters, ["MONSTER.GUARDBOT", "MONSTER.NOISEBOT", "MONSTER.STABBOT", "MONSTER.ZAPBOT"]);
+  assert.deepEqual(fabricator.productionPools.map((pool) => [pool.poolId, pool.members]), [
+    ["aggressive", ["MONSTER.ZAPBOT", "MONSTER.STABBOT"]],
+    ["defensive", ["MONSTER.GUARDBOT", "MONSTER.NOISEBOT"]],
+  ]);
+});
+
+test("source artifact is not consumed and runtime wiki book remains byte-identical", () => {
+  assert.equal(sha256(oldBookBytes), "0c01dd0b851c501acea59fb41b10a828030ad2c3e63f9fc624f98b6e403e0103");
+  assert.equal(encounterIds.length, 82);
+  assert.ok(encounterFor("DOORMAKER_BOSS"));
+  assert.equal(encounterFor("BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER"), null);
+  assert.equal(encounterFor("AEONGLASS_BOSS").name, "Aeonglass");
+  for (const file of ["../src/book.mjs", "../src/client.js", "../src/http.mjs", "../src/plugin.mjs", "../src/state.mjs"]) {
+    assert.doesNotMatch(readFileSync(new URL(file, import.meta.url), "utf8"), /game-v0\.111\.0-source/);
+  }
+});

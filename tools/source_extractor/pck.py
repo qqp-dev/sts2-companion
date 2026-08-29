@@ -7,7 +7,7 @@ import hashlib
 from pathlib import Path, PurePosixPath
 import struct
 
-from .errors import FoundationError
+from .errors import SourceExtractionError
 
 _U32 = struct.Struct("<I")
 _U64 = struct.Struct("<Q")
@@ -44,7 +44,7 @@ class PckEntry:
 def _exact(handle, count: int, context: str) -> bytes:
     data = handle.read(count)
     if len(data) != count:
-        raise FoundationError(
+        raise SourceExtractionError(
             f"PCK {context}: truncated at offset {handle.tell() - len(data)} "
             f"(wanted {count} bytes, got {len(data)})"
         )
@@ -56,18 +56,18 @@ def _checked_path(raw: bytes, index: int) -> str:
     # terminator; other paths have trailing NUL padding only.
     path_bytes = raw.rstrip(b"\0")
     if not path_bytes or b"\0" in path_bytes:
-        raise FoundationError(f"PCK entry {index}: malformed path padding")
+        raise SourceExtractionError(f"PCK entry {index}: malformed path padding")
     try:
         path = path_bytes.decode("utf-8")
     except UnicodeDecodeError as exc:
-        raise FoundationError(f"PCK entry {index}: invalid UTF-8 path: {exc}") from exc
+        raise SourceExtractionError(f"PCK entry {index}: invalid UTF-8 path: {exc}") from exc
     pure = PurePosixPath(path)
     if (
         pure.is_absolute()
         or "\\" in path
         or any(part in ("", ".", "..") for part in pure.parts)
     ):
-        raise FoundationError(f"PCK entry {index}: unsafe path {path!r}")
+        raise SourceExtractionError(f"PCK entry {index}: unsafe path {path!r}")
     return path
 
 
@@ -78,11 +78,11 @@ def read_selected(pck_path: Path, selected_path: str) -> tuple[bytes, PckEntry, 
         pack_size = path.stat().st_size
         handle = path.open("rb")
     except OSError as exc:
-        raise FoundationError(f"cannot open PCK {path}: {exc}") from exc
+        raise SourceExtractionError(f"cannot open PCK {path}: {exc}") from exc
 
     with handle:
         if _exact(handle, 4, "magic") != b"GDPC":
-            raise FoundationError("PCK magic mismatch: expected GDPC")
+            raise SourceExtractionError("PCK magic mismatch: expected GDPC")
         (
             pack_format,
             major,
@@ -93,17 +93,17 @@ def read_selected(pck_path: Path, selected_path: str) -> tuple[bytes, PckEntry, 
             directory_offset,
         ) = _HEADER.unpack(_exact(handle, _HEADER.size, "header"))
         if pack_format != _SUPPORTED_FORMAT:
-            raise FoundationError(
+            raise SourceExtractionError(
                 f"unsupported PCK format {pack_format}; expected {_SUPPORTED_FORMAT}"
             )
         if pack_flags != _SUPPORTED_PACK_FLAGS:
-            raise FoundationError(
+            raise SourceExtractionError(
                 f"unsupported PCK pack flags {pack_flags}; expected {_SUPPORTED_PACK_FLAGS}"
             )
         if file_base < 4 + _HEADER.size or file_base > pack_size:
-            raise FoundationError(f"PCK file base out of bounds: {file_base}")
+            raise SourceExtractionError(f"PCK file base out of bounds: {file_base}")
         if directory_offset < file_base or directory_offset > pack_size - 4:
-            raise FoundationError(
+            raise SourceExtractionError(
                 f"PCK directory offset out of bounds: {directory_offset} for {pack_size} bytes"
             )
 
@@ -113,7 +113,7 @@ def read_selected(pck_path: Path, selected_path: str) -> tuple[bytes, PckEntry, 
         # length, MD5, and flags. Bound count before iterating attacker data.
         remaining = pack_size - directory_offset - 4
         if file_count > remaining // 44:
-            raise FoundationError(
+            raise SourceExtractionError(
                 f"PCK directory count {file_count} cannot fit in {remaining} bytes"
             )
 
@@ -121,7 +121,7 @@ def read_selected(pck_path: Path, selected_path: str) -> tuple[bytes, PckEntry, 
         for index in range(file_count):
             path_size = _U32.unpack(_exact(handle, 4, f"entry {index} path length"))[0]
             if path_size < 4 or path_size > _MAX_PATH_BYTES or path_size % 4:
-                raise FoundationError(
+                raise SourceExtractionError(
                     f"PCK entry {index}: invalid padded path length {path_size}"
                 )
             entry_path = _checked_path(
@@ -136,16 +136,16 @@ def read_selected(pck_path: Path, selected_path: str) -> tuple[bytes, PckEntry, 
                 _exact(handle, 4, f"entry {index} flags")
             )[0]
             if entry_flags != _SUPPORTED_ENTRY_FLAGS:
-                raise FoundationError(
+                raise SourceExtractionError(
                     f"unsupported PCK entry flags {entry_flags} for {entry_path}"
                 )
             if entry_path in entries:
-                raise FoundationError(f"duplicate PCK path {entry_path!r}")
+                raise SourceExtractionError(f"duplicate PCK path {entry_path!r}")
             if stored_offset > _MAX_U64 - file_base:
-                raise FoundationError(f"PCK entry offset overflow for {entry_path}")
+                raise SourceExtractionError(f"PCK entry offset overflow for {entry_path}")
             physical_offset = file_base + stored_offset
             if physical_offset > directory_offset or length > directory_offset - physical_offset:
-                raise FoundationError(
+                raise SourceExtractionError(
                     f"PCK entry out of bounds for {entry_path}: "
                     f"offset {physical_offset}, length {length}, directory {directory_offset}"
                 )
@@ -169,9 +169,9 @@ def read_selected(pck_path: Path, selected_path: str) -> tuple[bytes, PckEntry, 
         )
         entry = entries.get(selected_path)
         if entry is None:
-            raise FoundationError(f"PCK entry not found: {selected_path}")
+            raise SourceExtractionError(f"PCK entry not found: {selected_path}")
         if entry.size > _MAX_SELECTED_BYTES:
-            raise FoundationError(
+            raise SourceExtractionError(
                 f"selected PCK entry is unexpectedly large: {entry.size} bytes"
             )
         handle.seek(entry.physical_offset)
@@ -181,7 +181,7 @@ def read_selected(pck_path: Path, selected_path: str) -> tuple[bytes, PckEntry, 
         except TypeError:  # Python builds without the keyword.
             actual_md5 = hashlib.md5(data).hexdigest()
         if actual_md5 != entry.md5:
-            raise FoundationError(
+            raise SourceExtractionError(
                 f"PCK MD5 mismatch for {selected_path}: got {actual_md5}, expected {entry.md5}"
             )
         return data, entry, info

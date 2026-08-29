@@ -2,13 +2,13 @@
 
 from importlib import metadata
 
-from .errors import FoundationError
+from .errors import SourceExtractionError
 
 REQUIRED = {"dnfile": "0.18.0", "dncil": "1.0.2"}
 INSTALL_HELP = (
     "create a development venv and install the pins: "
     "python3 -m venv .venv-source && "
-    ".venv-source/bin/python -m pip install -r requirements-source-foundation.txt"
+    ".venv-source/bin/python -m pip install -r requirements-source.txt"
 )
 
 
@@ -23,4 +23,4 @@ def require_metadata_dependencies() -> None:
         if actual != expected:
             problems.append(f"{package}=={actual} is installed (need {expected})")
     if problems:
-        raise FoundationError("; ".join(problems) + "; " + INSTALL_HELP)
+        raise SourceExtractionError("; ".join(problems) + "; " + INSTALL_HELP)

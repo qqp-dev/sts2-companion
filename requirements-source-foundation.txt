@@ -1,3 +1,0 @@
-# Development-only, metadata/CIL parsing dependencies for the source foundation extractor.
-dnfile==0.18.0
-dncil==1.0.2
