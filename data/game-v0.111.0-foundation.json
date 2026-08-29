@@ -1,0 +1,2745 @@
+{
+  "coverage": {
+    "encounterIdentities": {
+      "count": 89,
+      "status": "complete"
+    },
+    "encounterTitlesEnglish": {
+      "count": 89,
+      "status": "complete"
+    },
+    "hp": {
+      "status": "notExtracted"
+    },
+    "monsterIdentities": {
+      "status": "notExtracted"
+    },
+    "moves": {
+      "status": "notExtracted"
+    },
+    "multiplayerScaling": {
+      "status": "notExtracted"
+    },
+    "patterns": {
+      "status": "notExtracted"
+    },
+    "powers": {
+      "status": "notExtracted"
+    },
+    "rostersAndPools": {
+      "status": "notExtracted"
+    },
+    "stateFormulas": {
+      "status": "notExtracted"
+    }
+  },
+  "encounterCensus": {
+    "abstractTypes": [
+      "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventEncounter"
+    ],
+    "counts": {
+      "abstract": 1,
+      "currentEvent": 8,
+      "currentOrdinary": 81,
+      "currentTotal": 89,
+      "deprecatedPlaceholder": 1
+    },
+    "deprecatedPlaceholderTypes": [
+      "MegaCrit.Sts2.Core.Models.Encounters.DeprecatedEncounter"
+    ]
+  },
+  "encounters": {
+    "event": [
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+        "kind": "event",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005c5",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventV1Encounter"
+            },
+            "semanticWitnessSha256": "af1cd90165826c551f1f9b12c8dcb6219a20c3c31156ee6ce4eac6039711d09e",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventV1Encounter"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "1169cbf670de0160620a997e06fcd1b3e497fba81172eb96bde590adb3c1b1b0",
+            "localizationKey": "BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventV1Encounter",
+        "title": "Battleworn Dummy"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+        "kind": "event",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005c6",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventV2Encounter"
+            },
+            "semanticWitnessSha256": "6bddd941131c8ed7e937c86ea4ad38c62ef81ecf66113662eee6afd3f6d46d20",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventV2Encounter"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "b88c98c15a2ee49910bd8dd962c9698ab8a51b36ed2edef04e5dba55b34374ec",
+            "localizationKey": "BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventV2Encounter",
+        "title": "Battleworn Dummy"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+        "kind": "event",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005c7",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventV3Encounter"
+            },
+            "semanticWitnessSha256": "8efe5ee33de724dc78fecb262d2ed0bc7857bd15912136307ee27bd369fffd7e",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventV3Encounter"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "e980a91fcc0cc104f8400840739452c280d8025e1a7f51216386f82a40c9c44f",
+            "localizationKey": "BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventV3Encounter",
+        "title": "Battleworn Dummy"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "DENSE_VEGETATION_EVENT_ENCOUNTER",
+        "kind": "event",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005d4",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "DENSE_VEGETATION_EVENT_ENCOUNTER",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.DenseVegetationEventEncounter"
+            },
+            "semanticWitnessSha256": "6179aaa4ef8733d02080753c56615d182d703a41e38d02f9fddfa3f06b129fb0",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.DenseVegetationEventEncounter"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "a1d7884840ac79ad2f51b39f8bfe14fbf9abcdede98f7275401261b6c7e4a3c8",
+            "localizationKey": "DENSE_VEGETATION_EVENT_ENCOUNTER.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.DenseVegetationEventEncounter",
+        "title": "Wrigglers"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "FAKE_MERCHANT_EVENT_ENCOUNTER",
+        "kind": "event",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005db",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "FAKE_MERCHANT_EVENT_ENCOUNTER",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FakeMerchantEventEncounter"
+            },
+            "semanticWitnessSha256": "7db142de8134ae3e6166fed9e0d402ece1dd033b81d346a17161378aa1c3f25e",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FakeMerchantEventEncounter"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "1ef481d5cb5c9759976054586b531717fab995c367c6484e5182eb223a642e23",
+            "localizationKey": "FAKE_MERCHANT_EVENT_ENCOUNTER.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FakeMerchantEventEncounter",
+        "title": "The Merchant???"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+        "kind": "event",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005ef",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.MysteriousKnightEventEncounter"
+            },
+            "semanticWitnessSha256": "8a4e0da21b2b8464e4695c066170e1ae675d74ec198e0500cb293e1412e15521",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.MysteriousKnightEventEncounter"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "6bbef6213ee3ad51ca32717fc895eb9a74a018bfd80f3bb0ef031ccbc2471b28",
+            "localizationKey": "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.MysteriousKnightEventEncounter",
+        "title": "Mysterious Knight"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "PUNCH_OFF_EVENT_ENCOUNTER",
+        "kind": "event",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005f9",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "PUNCH_OFF_EVENT_ENCOUNTER",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.PunchOffEventEncounter"
+            },
+            "semanticWitnessSha256": "6c87d0d3b53974f1d1ae728c5624992fbb8081c4f71bb3026e5e16da33748773",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.PunchOffEventEncounter"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "362fd540abf186e9a643da82d82183dca8b8e855a7135f231889fc4fab9864a7",
+            "localizationKey": "PUNCH_OFF_EVENT_ENCOUNTER.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.PunchOffEventEncounter",
+        "title": "Punch Constructs"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "THE_ARCHITECT_EVENT_ENCOUNTER",
+        "kind": "event",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x0200060f",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "THE_ARCHITECT_EVENT_ENCOUNTER",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheArchitectEventEncounter"
+            },
+            "semanticWitnessSha256": "88cf7073828a1a744f689a8b3342c16e54ce89fb453245ea23cfdc392499bf62",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheArchitectEventEncounter"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "2e717ff25c18a226fe4f4a92fd447c5e021150f6c12c2f4206e349d5a3113872",
+            "localizationKey": "THE_ARCHITECT_EVENT_ENCOUNTER.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheArchitectEventEncounter",
+        "title": "The Architect"
+      }
+    ],
+    "ordinary": [
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "AEONGLASS_BOSS",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005c2",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "AEONGLASS_BOSS",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.AeonglassBoss"
+            },
+            "semanticWitnessSha256": "65c13eef6bd9ebe828d1cc6cd26336ea51542e23e78ed984869f7dbc9b988235",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.AeonglassBoss"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "98fd83b7fd584c711a55ba5fbbb0f70ac5f34a21392d1144bb69b66d324d3c05",
+            "localizationKey": "AEONGLASS_BOSS.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.AeonglassBoss",
+        "title": "Aeonglass"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "AXEBOTS_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005c3",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "AXEBOTS_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.AxebotsNormal"
+            },
+            "semanticWitnessSha256": "fd8bcfa3d02d6d96ddb73288e36575a03ab205294b61c0ac35c51ff504adee98",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.AxebotsNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "dbf64bb39c2ac15fc48b87b8cac1c91b184bf4a7339346c2e880b785b07abe60",
+            "localizationKey": "AXEBOTS_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.AxebotsNormal",
+        "title": "Axebot"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "BOWLBUGS_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005c8",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "BOWLBUGS_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BowlbugsNormal"
+            },
+            "semanticWitnessSha256": "96b19fda98dab0ac9fbddb6424513d544b108695b94b61de20157b450d305bca",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BowlbugsNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "36e69a8c9bc366be9b52ae4b8155c4006ab72aa3f445a67c67fb156c8678fb71",
+            "localizationKey": "BOWLBUGS_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BowlbugsNormal",
+        "title": "Bowlbug Swarm"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "BOWLBUGS_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005c9",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "BOWLBUGS_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BowlbugsWeak"
+            },
+            "semanticWitnessSha256": "adc3f5ce19aa4518f5a67319b99348032a9b74e980d67ce429c028c9dc7f86cd",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BowlbugsWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "ee9bc2138b40a61da80cb68b5a67c88b7da65cc4c5e97bc3f300446f943fd232",
+            "localizationKey": "BOWLBUGS_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BowlbugsWeak",
+        "title": "Bowlbugs"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "BYGONE_EFFIGY_ELITE",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005ca",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "BYGONE_EFFIGY_ELITE",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BygoneEffigyElite"
+            },
+            "semanticWitnessSha256": "dcf20bc763a1cbba8a34ed797d7642405578d2a61365f20f7300ff6466dea13d",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BygoneEffigyElite"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "6fda68894243f89b5a89deac2908e20b50b24cb4cc9e20013931b9965a5f8937",
+            "localizationKey": "BYGONE_EFFIGY_ELITE.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.BygoneEffigyElite",
+        "title": "Bygone Effigy"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "BYRDONIS_ELITE",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005cb",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "BYRDONIS_ELITE",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ByrdonisElite"
+            },
+            "semanticWitnessSha256": "826df260af9954b5f2735569bdeeae26984d8e4009332b1ad8fcd87c2fc6831a",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ByrdonisElite"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "d4f61b32ac48607e429c23815c30f816b47fceec970ecdce3acde282a3692d9c",
+            "localizationKey": "BYRDONIS_ELITE.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ByrdonisElite",
+        "title": "Byrdonis"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "CEREMONIAL_BEAST_BOSS",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005cc",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "CEREMONIAL_BEAST_BOSS",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CeremonialBeastBoss"
+            },
+            "semanticWitnessSha256": "251e6389c6abcfcba78895a0a39efd71ce3d7753e4e7bee8ce35f976e758f592",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CeremonialBeastBoss"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "a2097e635c9d58598dd815776fe37ca3290d2159b59aeb5c2adace73d7679c5b",
+            "localizationKey": "CEREMONIAL_BEAST_BOSS.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CeremonialBeastBoss",
+        "title": "Ceremonial Beast"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "CHOMPERS_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005cd",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "CHOMPERS_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ChompersNormal"
+            },
+            "semanticWitnessSha256": "dce0a2a2bb2fdc04230c60d5839985787df769a5ab01e3af07e75200ac960dda",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ChompersNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "cbe917c44d8625a9d712207c6b5eb0a28241f2dc4a780f945d48a4fd9603f5d8",
+            "localizationKey": "CHOMPERS_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ChompersNormal",
+        "title": "An Automaton Pair"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "CONSTRUCT_MENAGERIE_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005ce",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "CONSTRUCT_MENAGERIE_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ConstructMenagerieNormal"
+            },
+            "semanticWitnessSha256": "3460e6082889229e096c8d59938ebb7b63bc3641554a1a3cd5aab9c7c2731bca",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ConstructMenagerieNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "a83c750b164bd0bc0094329fbf9b96c331aee004b792f3d1cb2aff2d476d422a",
+            "localizationKey": "CONSTRUCT_MENAGERIE_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ConstructMenagerieNormal",
+        "title": "Construct Menagerie"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "CORPSE_SLUGS_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005cf",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "CORPSE_SLUGS_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CorpseSlugsNormal"
+            },
+            "semanticWitnessSha256": "04347ed1a34348c5827ef18a603260b35d1a98041b48d31d890265adf8c612c1",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CorpseSlugsNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "4ab9441871b9c16c005f8dc46a348d4d4f83ab2ace9ba98d8450153f5a9a9574",
+            "localizationKey": "CORPSE_SLUGS_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CorpseSlugsNormal",
+        "title": "Many Corpse Slugs"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "CORPSE_SLUGS_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005d0",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "CORPSE_SLUGS_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CorpseSlugsWeak"
+            },
+            "semanticWitnessSha256": "2f1bb1d58e3873c9baa7c839b17d7d495512a3cf9d9fc26df07cae1feb815a89",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CorpseSlugsWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "b1228def9d60f8e799f48d0504b6170e9edb1d820eb188ec9c0c32ad7ee6b8b4",
+            "localizationKey": "CORPSE_SLUGS_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CorpseSlugsWeak",
+        "title": "Corpse Slugs"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "CUBEX_CONSTRUCT_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005d1",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "CUBEX_CONSTRUCT_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CubexConstructNormal"
+            },
+            "semanticWitnessSha256": "20edc526a23ffe13d96075793b716fb628b6ea96a26b28fcd4124c1f991c8c9c",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CubexConstructNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "ddb102838d3ec1bb97b5fbe8787d8797ac15d27b02ce39bb67e67db7c6e43cce",
+            "localizationKey": "CUBEX_CONSTRUCT_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CubexConstructNormal",
+        "title": "Cubex Construct"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "CULTISTS_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005d2",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "CULTISTS_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CultistsNormal"
+            },
+            "semanticWitnessSha256": "0307d716246fb3c06c3b25db346b49a69c76f27033e70ab2999a50a7c8afe430",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CultistsNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "74b9f7d8cb3b2c7d352a1ad27518f74fd740fb0ed44b8ec92a3fb0179e514cbf",
+            "localizationKey": "CULTISTS_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.CultistsNormal",
+        "title": "Cultists"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "DECIMILLIPEDE_ELITE",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005d3",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "DECIMILLIPEDE_ELITE",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.DecimillipedeElite"
+            },
+            "semanticWitnessSha256": "48df98c4bce206e4db7bd83d828eaa152b785b02fe1d32282791941a6cd96138",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.DecimillipedeElite"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "fde49d21c8262a49d7643eb62c10076c2bdb455fca64c0ee5129dab4fe05d5c0",
+            "localizationKey": "DECIMILLIPEDE_ELITE.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.DecimillipedeElite",
+        "title": "The Decimillipede"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "DEVOTED_SCULPTOR_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005d6",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "DEVOTED_SCULPTOR_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.DevotedSculptorWeak"
+            },
+            "semanticWitnessSha256": "83bcd4d1814e72fcfa903ef57fab18a980a3831a152dc780ba20e034ed9e3678",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.DevotedSculptorWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "9445ef68b62bd816fd15c995f3324cf15183376fef960288fa83b2a1530b9c1d",
+            "localizationKey": "DEVOTED_SCULPTOR_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.DevotedSculptorWeak",
+        "title": "Devoted Sculptor"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "ENTOMANCER_ELITE",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005d7",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "ENTOMANCER_ELITE",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.EntomancerElite"
+            },
+            "semanticWitnessSha256": "afc35f10a0b1d7a9422597494b76a13f1fd015f7eada46f83adc29191635766c",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.EntomancerElite"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "fcc7b9c83d338356c7ab222590e0dbe5f1f8dabb23cc9e3a10680f2d95f83501",
+            "localizationKey": "ENTOMANCER_ELITE.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.EntomancerElite",
+        "title": "Entomancer"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "EXOSKELETONS_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005d8",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "EXOSKELETONS_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ExoskeletonsNormal"
+            },
+            "semanticWitnessSha256": "391fe7c820240929bfe464bc36987216279ecf268c4b00e0da196319d9e24d5b",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ExoskeletonsNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "597256f3c06710daf9eab862878a00e7ee131aa7161e291bdfd8f5d580818f00",
+            "localizationKey": "EXOSKELETONS_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ExoskeletonsNormal",
+        "title": "Many Exoskeletons"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "EXOSKELETONS_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005d9",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "EXOSKELETONS_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ExoskeletonsWeak"
+            },
+            "semanticWitnessSha256": "68b6eee47039a1946b439b4fdd7e62358c320dfc269d8c9f97352a7db92c76fb",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ExoskeletonsWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "ecd069661292513d123ecce928822991482be0061925f5202f0d2f2a8e2ba308",
+            "localizationKey": "EXOSKELETONS_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ExoskeletonsWeak",
+        "title": "Exoskeletons"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "FABRICATOR_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005da",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "FABRICATOR_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FabricatorNormal"
+            },
+            "semanticWitnessSha256": "fadb9d40344f239e4962ce9b74a6d7b04e5240a8c4f9275810e17c3d7c961268",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FabricatorNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "2a8a523a4941a2a92aec37458894132ee27cf4d9a5f81b7cdfbbd9e143855d53",
+            "localizationKey": "FABRICATOR_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FabricatorNormal",
+        "title": "Fabricator"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "FLYCONID_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005dc",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "FLYCONID_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FlyconidNormal"
+            },
+            "semanticWitnessSha256": "db2767a953ca6ed9891aa7069f02f18b5bcd4bad063091a012f26e039ac698be",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FlyconidNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "b11617bf05aa3442aec96472a8a8d4e9455a73ea40997247a06da47ba180855a",
+            "localizationKey": "FLYCONID_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FlyconidNormal",
+        "title": "Shroom and Slime"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "FOGMOG_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005dd",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "FOGMOG_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FogmogNormal"
+            },
+            "semanticWitnessSha256": "28a97bedab9c2462b4aa62ee9444e9a90c4930e7fb2247dd660839bf4164263a",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FogmogNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "8f704ba38aaa5ad2ab7872f4a5d1a97ac4479d2044e2b9f7a2641f88bfde573b",
+            "localizationKey": "FOGMOG_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FogmogNormal",
+        "title": "Fogmog"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "FOSSIL_STALKER_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005de",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "FOSSIL_STALKER_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FossilStalkerNormal"
+            },
+            "semanticWitnessSha256": "38124fd18ac03e380802f47efe4f721a39f0885e4451f63a01f11c3f4a86b9a0",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FossilStalkerNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "4a1404fabbf6819766dfbc26b4bada958972d78d04f31d7aa7ba87020e08aa05",
+            "localizationKey": "FOSSIL_STALKER_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FossilStalkerNormal",
+        "title": "Fossil Stalker"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "FROG_KNIGHT_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005df",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "FROG_KNIGHT_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FrogKnightNormal"
+            },
+            "semanticWitnessSha256": "b6bed845ee482c380d6bac602edd015035de322abbd7806121851e3a12e3518d",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FrogKnightNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "f7d78add8b30340a7e5011d12b707d2bd718f02b051e35e4e0d0e01f42f566c5",
+            "localizationKey": "FROG_KNIGHT_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FrogKnightNormal",
+        "title": "Frog Knight"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "FUZZY_WURM_CRAWLER_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005e0",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "FUZZY_WURM_CRAWLER_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FuzzyWurmCrawlerWeak"
+            },
+            "semanticWitnessSha256": "b5c6aed02860bef8987b2080b82a8659f3269088cfd347f9791179c4d79f370a",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FuzzyWurmCrawlerWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "8e9e90f2f4a9713225e3aa5d1ab652d5b67a646aa56ad6797d6ce26648e3b2ce",
+            "localizationKey": "FUZZY_WURM_CRAWLER_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.FuzzyWurmCrawlerWeak",
+        "title": "Fuzzy Wurm Crawler"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "GLOBE_HEAD_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005e1",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "GLOBE_HEAD_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.GlobeHeadNormal"
+            },
+            "semanticWitnessSha256": "5aeccc5c0fd934af569081662802fe9e986fabafd45260683a9506a9b0a90363",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.GlobeHeadNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "97d557d064eb93367d88c2854ac52dabea12d7e8a0f7349e86c91cc2d21e665d",
+            "localizationKey": "GLOBE_HEAD_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.GlobeHeadNormal",
+        "title": "A Lone Globe Head"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "GREMLIN_MERC_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005e2",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "GREMLIN_MERC_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.GremlinMercNormal"
+            },
+            "semanticWitnessSha256": "04dbd25227437fcdf59a13ec44cb9747a04517a010c48a271fbfdeefb28297c3",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.GremlinMercNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "8118286448fb208a5c7bf872fec3188b4a155835bf5816f8498e31e4c8cec83c",
+            "localizationKey": "GREMLIN_MERC_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.GremlinMercNormal",
+        "title": "Two Gremlins in a Trenchcoat"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "HAUNTED_SHIP_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005e3",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "HAUNTED_SHIP_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.HauntedShipNormal"
+            },
+            "semanticWitnessSha256": "90e3c2877e1e4a9dae33a0b33516896142e8e5752e9cca370f4022aff0f91205",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.HauntedShipNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "7d75c3ab0a7ee89b69bffa4f409a5cfd3ec20cec4fac6fc2b1f1d16c4457196c",
+            "localizationKey": "HAUNTED_SHIP_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.HauntedShipNormal",
+        "title": "Haunted Ship"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "HUNTER_KILLER_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005e4",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "HUNTER_KILLER_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.HunterKillerNormal"
+            },
+            "semanticWitnessSha256": "5f49f623eb02fba0d02a538ba27a51634fcc76823849f28c141d244a7df332b4",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.HunterKillerNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "a678e5cc1ce57096d7c7bcbf89debae925afd23847cb9d6e06a538d3f96cc45f",
+            "localizationKey": "HUNTER_KILLER_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.HunterKillerNormal",
+        "title": "Hunter Killer"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "INFESTED_PRISMS_ELITE",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005e5",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "INFESTED_PRISMS_ELITE",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.InfestedPrismsElite"
+            },
+            "semanticWitnessSha256": "471088b6dad850dab47ed3a1271d51202e5f079fa249e82d2c6283c0f421be18",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.InfestedPrismsElite"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "df16b5ae1140f7fff0d304dfe41d7449a5a3b564783023d9d06bb17bb1790011",
+            "localizationKey": "INFESTED_PRISMS_ELITE.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.InfestedPrismsElite",
+        "title": "Infested Prism"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "INKLETS_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005e6",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "INKLETS_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.InkletsNormal"
+            },
+            "semanticWitnessSha256": "83c988269fa9e28e61f7a5d3b26f9300a97ba02f9f33c01b5697c91e8e85c247",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.InkletsNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "012c57daf5caea33877235ccd3d17de99533b33b93dd21416df4a61d4b24aba6",
+            "localizationKey": "INKLETS_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.InkletsNormal",
+        "title": "Inklets"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "KAISER_CRAB_BOSS",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005e7",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "KAISER_CRAB_BOSS",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.KaiserCrabBoss"
+            },
+            "semanticWitnessSha256": "c82afaca2d3779f48dc74c27169bdc228753725cb362da2c36547ab57e80f494",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.KaiserCrabBoss"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "62a3283e8b9415fbdcea3acc9f74f14065bf4116262c7667165929e38b6a13f4",
+            "localizationKey": "KAISER_CRAB_BOSS.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.KaiserCrabBoss",
+        "title": "Kaiser Crab"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "KNIGHTS_ELITE",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005e8",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "KNIGHTS_ELITE",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.KnightsElite"
+            },
+            "semanticWitnessSha256": "e57bb79d11f7aa09aff329084c458743bff64d10bc9955ec0aeb2c10dc19c7a6",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.KnightsElite"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "0a75b8c8e694b7f5fc03233ba1b76f3acef65e8954af6d0d03c141fa85c24393",
+            "localizationKey": "KNIGHTS_ELITE.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.KnightsElite",
+        "title": "Knight Gang"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "KNOWLEDGE_DEMON_BOSS",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005e9",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "KNOWLEDGE_DEMON_BOSS",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.KnowledgeDemonBoss"
+            },
+            "semanticWitnessSha256": "cfa1f9721b4554e46c809d5d44e27b3f6707a2f3473f0c8924eeb3e6bbb7a18c",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.KnowledgeDemonBoss"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "5f8dad67170b06388305d572ac3af27862e1c54f4132c673deb06c098eb271b2",
+            "localizationKey": "KNOWLEDGE_DEMON_BOSS.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.KnowledgeDemonBoss",
+        "title": "Knowledge Demon"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "LAGAVULIN_MATRIARCH_BOSS",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005ea",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "LAGAVULIN_MATRIARCH_BOSS",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.LagavulinMatriarchBoss"
+            },
+            "semanticWitnessSha256": "02ea707afb90911055320f2f77af0dfbf6908c9e0709ef12a22566d36fe6c0ac",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.LagavulinMatriarchBoss"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "232591db1cba80c042a58a3c759b9e5558ca2cac5bba424a4cd626099e818bec",
+            "localizationKey": "LAGAVULIN_MATRIARCH_BOSS.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.LagavulinMatriarchBoss",
+        "title": "Lagavulin Matriarch"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "LIVING_FOG_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005eb",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "LIVING_FOG_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.LivingFogNormal"
+            },
+            "semanticWitnessSha256": "6679564673a790a4e1be1e5b1b0f26543fc74a63766eaac639c060b74164bbf8",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.LivingFogNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "141b74bae7181ccb5ad4f5896e8acaec1466576073b372d09087e074d926caa4",
+            "localizationKey": "LIVING_FOG_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.LivingFogNormal",
+        "title": "Living Fog"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "LOUSE_PROGENITOR_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005ec",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "LOUSE_PROGENITOR_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.LouseProgenitorNormal"
+            },
+            "semanticWitnessSha256": "b9eddd83fcc54f47eaf985a2830647f5c20cf05853e4ac5629d19a8da8926ebe",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.LouseProgenitorNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "b5d0b5126cef12a7306f8d3008b95fe6f0f0a229a201e34a840a9c9b21bae193",
+            "localizationKey": "LOUSE_PROGENITOR_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.LouseProgenitorNormal",
+        "title": "Louse Progenitor"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "MAWLER_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005ed",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "MAWLER_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.MawlerNormal"
+            },
+            "semanticWitnessSha256": "d7f979bf4b8e6520403884f326fb8b9e54de36b75d287c8bb492d72b57fc0d45",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.MawlerNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "dc451182e5ae225d3e18161d87b5910395f503a3ab8df8a9a3c0accc0cf7559f",
+            "localizationKey": "MAWLER_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.MawlerNormal",
+        "title": "Mawler"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "MECHA_KNIGHT_ELITE",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005ee",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "MECHA_KNIGHT_ELITE",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.MechaKnightElite"
+            },
+            "semanticWitnessSha256": "49bb8ea342fe1e546cc9c7b20723b73160e47fd9a8ba96b029042e5ef11af4d8",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.MechaKnightElite"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "95134805044ef9e42def7bbe85f203efc1bacffb2f0f52dba6cfa92aea9a4e44",
+            "localizationKey": "MECHA_KNIGHT_ELITE.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.MechaKnightElite",
+        "title": "Mecha Knight"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "MYTES_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005f0",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "MYTES_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.MytesNormal"
+            },
+            "semanticWitnessSha256": "9db7e056e77df19af84dc5fb590039274c09974004729e9368e23c923033a760",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.MytesNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "7021425fd118576847335017096dbca0572472efa3a22f5e3da1fd0706efe6f7",
+            "localizationKey": "MYTES_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.MytesNormal",
+        "title": "Mass of Mytes"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "NIBBITS_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005f1",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "NIBBITS_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.NibbitsNormal"
+            },
+            "semanticWitnessSha256": "dfbedf413fea1fdd4f626b99c5b1c9723c63fb14582e458950513235f15f7f2f",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.NibbitsNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "1c482df9dfe0cd4ade8b7e7474c024c5203939c053d7888935f75cb80ab67561",
+            "localizationKey": "NIBBITS_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.NibbitsNormal",
+        "title": "A Pair of Nibbits"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "NIBBITS_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005f2",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "NIBBITS_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.NibbitsWeak"
+            },
+            "semanticWitnessSha256": "e6c83e732857abcec0183f33af10d3b216050f6abb4c76a9c028dbb2270d7528",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.NibbitsWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "8b4e72056b0d70d214468fb029fd5efa86ab0c9608ba2e3077a39e46621592c6",
+            "localizationKey": "NIBBITS_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.NibbitsWeak",
+        "title": "A Lone Nibbit"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "OVERGROWTH_CRAWLERS",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005f3",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "OVERGROWTH_CRAWLERS",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.OvergrowthCrawlers"
+            },
+            "semanticWitnessSha256": "172390253c27ee43cb61aeba043221275d1ed9d43af7ac6c9d8090e59271584c",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.OvergrowthCrawlers"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "d05d5f42f0a7a4ea370fb29afb9a7ddbe6e8d947cb0dfd98d28a68c2c661e82f",
+            "localizationKey": "OVERGROWTH_CRAWLERS.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.OvergrowthCrawlers",
+        "title": "Overgrowth Crawlers"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "OVICOPTER_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005f4",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "OVICOPTER_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.OvicopterNormal"
+            },
+            "semanticWitnessSha256": "232c2977485777bb190b71d402629274321230295b553cf330a6ae18b85b619d",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.OvicopterNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "ea1eccb663bde7442fe8204d1cc2eaa1bb77ae784393f33b222dcd7f4cdde8c3",
+            "localizationKey": "OVICOPTER_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.OvicopterNormal",
+        "title": "Ovicopter"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "OWL_MAGISTRATE_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005f5",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "OWL_MAGISTRATE_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.OwlMagistrateNormal"
+            },
+            "semanticWitnessSha256": "bce40a0c2601ed4f22c05cb66500ec252e2f1eefb6ba29d5aaed0e20ec3f0f1f",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.OwlMagistrateNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "dac99f9650db9cfe7ccdcc15da4b6dc8f3fc1d3df6f7d4a3b991359a14f88ae7",
+            "localizationKey": "OWL_MAGISTRATE_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.OwlMagistrateNormal",
+        "title": "Owl Magistrate"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "PHANTASMAL_GARDENERS_ELITE",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005f6",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "PHANTASMAL_GARDENERS_ELITE",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.PhantasmalGardenersElite"
+            },
+            "semanticWitnessSha256": "d291a999cc487957e718a4bfdb11ac3ef1b02695a53d80ba672048a9d3aabebd",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.PhantasmalGardenersElite"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "e0d965b5c654772973a0b38a6ea0b3eadaf6911c4959f5c51d92ea5a0dc7052c",
+            "localizationKey": "PHANTASMAL_GARDENERS_ELITE.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.PhantasmalGardenersElite",
+        "title": "Phantasmal Gardeners"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "PHROG_PARASITE_ELITE",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005f7",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "PHROG_PARASITE_ELITE",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.PhrogParasiteElite"
+            },
+            "semanticWitnessSha256": "f38c63facc8d8df304c7af9b82b6e63d576e9ec9969114bcb2cc9ee222c01f78",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.PhrogParasiteElite"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "36fe04938abce2e59cac2fc5bc02c0e90133e1fdad2adff9cb0ef0a2d7933001",
+            "localizationKey": "PHROG_PARASITE_ELITE.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.PhrogParasiteElite",
+        "title": "Phrog Parasite"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "PUNCH_CONSTRUCT_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005f8",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "PUNCH_CONSTRUCT_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.PunchConstructNormal"
+            },
+            "semanticWitnessSha256": "8a9bbefe5b94075392bbfd002df3c98a4e61def5e2969d7d54c3a2dc7574c063",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.PunchConstructNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "73ca2db801af9f254da5ebad8f431c3304e6cb08dddbb728b66d9835f7392bec",
+            "localizationKey": "PUNCH_CONSTRUCT_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.PunchConstructNormal",
+        "title": "Punch Construct"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "QUEEN_BOSS",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005fa",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "QUEEN_BOSS",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.QueenBoss"
+            },
+            "semanticWitnessSha256": "e749ba6e0d0a547df85682136a42782ed0b5a218aacfbaa92ffbc4523baae908",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.QueenBoss"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "11edc772b1928cb60047f490a09916a1a3557148c28fd84847c893edef4f9d35",
+            "localizationKey": "QUEEN_BOSS.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.QueenBoss",
+        "title": "Queen"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "RUBY_RAIDERS_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005fb",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "RUBY_RAIDERS_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.RubyRaidersNormal"
+            },
+            "semanticWitnessSha256": "96935f6142d8f1704ae88fde7e3269692caf281ffccd5cdf30ea6761c2be5ed9",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.RubyRaidersNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "0e49821454728f015e479c421affc0b0fe4d69cd28af92c2915645da23faaec0",
+            "localizationKey": "RUBY_RAIDERS_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.RubyRaidersNormal",
+        "title": "Ruby Raiders"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SCROLLS_OF_BITING_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005fc",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SCROLLS_OF_BITING_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ScrollsOfBitingNormal"
+            },
+            "semanticWitnessSha256": "7c29e463413a05d227423f8725029fda047b987554fac1be3c34be35fc203356",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ScrollsOfBitingNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "367bca8616c9e029b28084ca395cd683757d358f6dc630305e3ccfa022db8ca0",
+            "localizationKey": "SCROLLS_OF_BITING_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ScrollsOfBitingNormal",
+        "title": "Many Scrolls of Biting"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SCROLLS_OF_BITING_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005fd",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SCROLLS_OF_BITING_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ScrollsOfBitingWeak"
+            },
+            "semanticWitnessSha256": "ff67b605060b67020c70c7b488206780c9c695899bf1371a1db68421749dd493",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ScrollsOfBitingWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "56c589a61e9552dbd76be2160788dcec9735a14f974373f11a01c0e46cde49c4",
+            "localizationKey": "SCROLLS_OF_BITING_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ScrollsOfBitingWeak",
+        "title": "Scrolls of Biting"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SEAPUNK_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005fe",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SEAPUNK_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SeapunkNormal"
+            },
+            "semanticWitnessSha256": "8d76ebf8a8d46b01019313d2a0cbfeea4834657591767c42b2ef184e9dbff373",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SeapunkNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "7cbc3a1ef5d1a94949a9f10c4a031f5bde4bbd9c23379276d3144c3b93fe85bd",
+            "localizationKey": "SEAPUNK_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SeapunkNormal",
+        "title": "Underdocks Wildlife"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SEAPUNK_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x020005ff",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SEAPUNK_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SeapunkWeak"
+            },
+            "semanticWitnessSha256": "6def0d28ed5925d4e01aa760005822e7809440c522eec4889918bff7c64b2867",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SeapunkWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "93b564373eeb6db9004872b8a7f000769eab18bf5ebcdc98f7cd0631b54ad009",
+            "localizationKey": "SEAPUNK_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SeapunkWeak",
+        "title": "Seapunk"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SEWER_CLAM_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000600",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SEWER_CLAM_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SewerClamNormal"
+            },
+            "semanticWitnessSha256": "c8e40c3373f989fcba8b0cb5df8dc6d5580c93cb7b00e8cd604b6f3555e57bff",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SewerClamNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "1ff156f8db28d75dce3f2414193b872c80f0703ad981c2bc748a1b8c7b61963a",
+            "localizationKey": "SEWER_CLAM_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SewerClamNormal",
+        "title": "Sewer Clam"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SHRINKER_BEETLE_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000601",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SHRINKER_BEETLE_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ShrinkerBeetleWeak"
+            },
+            "semanticWitnessSha256": "bc6bf3696b53d26c5020a3722e82939e2f2236ba9093b86f84583b2b23e5d8bf",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ShrinkerBeetleWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "5f335fd6ef264201a9c0f75c9c93d67172c8ace2af560e33893e1f449eeafaa0",
+            "localizationKey": "SHRINKER_BEETLE_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ShrinkerBeetleWeak",
+        "title": "Shrinker Beetle"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SKULKING_COLONY_ELITE",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000602",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SKULKING_COLONY_ELITE",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SkulkingColonyElite"
+            },
+            "semanticWitnessSha256": "1398ed05176666327d15ea8b54d94aef643caea3376455ec1ad591270683d7dd",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SkulkingColonyElite"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "619d984e55e47e5fe0dd5d584c993e7eb4843a1318f3144df03dbe9b4c34e164",
+            "localizationKey": "SKULKING_COLONY_ELITE.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SkulkingColonyElite",
+        "title": "Skulking Colony"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SLIMED_BERSERKER_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000603",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SLIMED_BERSERKER_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlimedBerserkerNormal"
+            },
+            "semanticWitnessSha256": "d3a127f7e81be64d3584160a88785289632a9893b244c1a017ef4c66726aea38",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlimedBerserkerNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "dc0e01484c4a400f0d081f4f32237af4e11eb07b1d46b85a881207f5400e8136",
+            "localizationKey": "SLIMED_BERSERKER_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlimedBerserkerNormal",
+        "title": "Slimed Berserker"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SLIMES_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000604",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SLIMES_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlimesNormal"
+            },
+            "semanticWitnessSha256": "fcb566916542980aea5622342947d7c7816f6583874d43c4fc074b86b5894a51",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlimesNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "38f9da2adc17e17aef9279124be2e04f3cefc9e7e3660a7380a9539fd04f5503",
+            "localizationKey": "SLIMES_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlimesNormal",
+        "title": "Swarm of Slimes"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SLIMES_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000605",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SLIMES_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlimesWeak"
+            },
+            "semanticWitnessSha256": "957df35ce9e53da2218c46f16a72547624fc9382054642038abb149c47db9c5e",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlimesWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "d875043639d0cb510e40c8ea4e9b98abdd15bb9eccf95dfcf96ab70188a2f06d",
+            "localizationKey": "SLIMES_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlimesWeak",
+        "title": "Group of Slimes"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SLITHERING_STRANGLER_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000606",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SLITHERING_STRANGLER_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlitheringStranglerNormal"
+            },
+            "semanticWitnessSha256": "000552fab5183f2f4dcbac719dcac2af061050438d5e1119f5dd5f9966df0f84",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlitheringStranglerNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "8b5f4016b68eb1d45f11cbac2f569bbeab6fc7250d11dc65cfd2d6a4c6afc7cd",
+            "localizationKey": "SLITHERING_STRANGLER_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlitheringStranglerNormal",
+        "title": "Strangler and Friend"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SLUDGE_SPINNER_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000607",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SLUDGE_SPINNER_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SludgeSpinnerWeak"
+            },
+            "semanticWitnessSha256": "ac7c919f0b0e847b8455c71405199ea824d8c9d9080ecaf3081112d4c88b192c",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SludgeSpinnerWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "c74dc86151ab795f1e20070c8fdaea5ad0fb9b51adeb90ab6b37d3c1bf06fc61",
+            "localizationKey": "SLUDGE_SPINNER_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SludgeSpinnerWeak",
+        "title": "Sludge Spinner"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SLUMBERING_BEETLE_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000608",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SLUMBERING_BEETLE_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlumberingBeetleNormal"
+            },
+            "semanticWitnessSha256": "65996ea955ee9546d80cae1fb6cc0adcca94c7e68333edae1d4a033b19582e5a",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlumberingBeetleNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "1b8499549894472802f3e44f21f02ec0e50cbcf16ae487ee6a57647891264063",
+            "localizationKey": "SLUMBERING_BEETLE_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SlumberingBeetleNormal",
+        "title": "Slumber Party"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SNAPPING_JAXFRUIT_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000609",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SNAPPING_JAXFRUIT_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SnappingJaxfruitNormal"
+            },
+            "semanticWitnessSha256": "481e46a0473965e7860c1f3a36a8af11852c05b3f04175e9dd6b053feacc039d",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SnappingJaxfruitNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "064ce4b086bbc7692fc3faeabe133dff2704f019d6ce256c62657636786af1e4",
+            "localizationKey": "SNAPPING_JAXFRUIT_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SnappingJaxfruitNormal",
+        "title": "Overgrowth Flora"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SOUL_FYSH_BOSS",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x0200060a",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SOUL_FYSH_BOSS",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SoulFyshBoss"
+            },
+            "semanticWitnessSha256": "50f4c5e6f3df2bd71ac2564553f7c87b7a945ee0950e6e6374dcc799ed74881a",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SoulFyshBoss"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "a4b96edc927b55ed7a2010fa100425e71ddc4d56e61b93845a948b8cd0b3f2ca",
+            "localizationKey": "SOUL_FYSH_BOSS.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SoulFyshBoss",
+        "title": "Soul Fysh"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SOUL_NEXUS_ELITE",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x0200060b",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SOUL_NEXUS_ELITE",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SoulNexusElite"
+            },
+            "semanticWitnessSha256": "70931a24d5f6cd9c3018ff9607282d664f1f919abbb2ea4e35a522c4fbbf35a8",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SoulNexusElite"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "1eca977b69fd92bbd7386c38fbc8c0708ed55d1411872cbd6d0aa69532b28bea",
+            "localizationKey": "SOUL_NEXUS_ELITE.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SoulNexusElite",
+        "title": "Soul Nexus"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "SPINY_TOAD_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x0200060c",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "SPINY_TOAD_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SpinyToadNormal"
+            },
+            "semanticWitnessSha256": "61892583f03d67dadb78daa67b4799772a555d440ff69b431d1d1c34e1cd7ee3",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SpinyToadNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "83a8b9a49caee237362d6ad2e442142084da7b84abbc9a575dfeedbe60a659df",
+            "localizationKey": "SPINY_TOAD_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.SpinyToadNormal",
+        "title": "Spiny Toad"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "TERROR_EEL_ELITE",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x0200060d",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "TERROR_EEL_ELITE",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TerrorEelElite"
+            },
+            "semanticWitnessSha256": "bebfb5baef76d6c961fa817d12d60a83b8fb70455d6c46d2a02202626c2937d1",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TerrorEelElite"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "ae07b2a57af3f8b897722d26dab3843e6036b55ea95d72ab2b97021ccc835deb",
+            "localizationKey": "TERROR_EEL_ELITE.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TerrorEelElite",
+        "title": "Terror Eel"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "TEST_SUBJECT_BOSS",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x0200060e",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "TEST_SUBJECT_BOSS",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TestSubjectBoss"
+            },
+            "semanticWitnessSha256": "4582397fb6ec36ce68d7a5f0995fb7ba834ca809bd7a5e8df1b3cc4a513efe1c",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TestSubjectBoss"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "d0ca74a57cc12ec43260bd07648e7cef356d61e63857468a41c8f049e8796cd9",
+            "localizationKey": "TEST_SUBJECT_BOSS.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TestSubjectBoss",
+        "title": "Test Subject"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "THE_INSATIABLE_BOSS",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000610",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "THE_INSATIABLE_BOSS",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheInsatiableBoss"
+            },
+            "semanticWitnessSha256": "6dd12fa1afbcbb59814810bbf67d0619d46702af99c710578fc2c17b00913801",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheInsatiableBoss"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "b2614711d3d817c7bb37bcf1adb8998bfba7633dd4dbf8e2753294ae02f26f7f",
+            "localizationKey": "THE_INSATIABLE_BOSS.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheInsatiableBoss",
+        "title": "The Insatiable"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "THE_KIN_BOSS",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000611",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "THE_KIN_BOSS",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheKinBoss"
+            },
+            "semanticWitnessSha256": "a9c974266271ad9646e15ca1f296a70fe17805e0de8bdbfd86a144cf14113fd9",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheKinBoss"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "4126993f62d55299b6a31f2d2f712fcb8a4f4af7fa598d0ca53533496ed48f91",
+            "localizationKey": "THE_KIN_BOSS.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheKinBoss",
+        "title": "The Kin"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "THE_LOST_AND_FORGOTTEN_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000612",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "THE_LOST_AND_FORGOTTEN_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheLostAndForgottenNormal"
+            },
+            "semanticWitnessSha256": "653e69f0dc6e34c060da71db52ad6bb5c193d6c8dd30505de0e23d69062c5e1d",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheLostAndForgottenNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "7b8e4977dfa7347f4ca540f9abf4b8887d97acf29e34ae69e4459c7c9c243569",
+            "localizationKey": "THE_LOST_AND_FORGOTTEN_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheLostAndForgottenNormal",
+        "title": "Lost and Forgotten"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "THE_OBSCURA_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000613",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "THE_OBSCURA_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheObscuraNormal"
+            },
+            "semanticWitnessSha256": "a872e1aab6e1b5c14529e11349fc1a803e432e903fe663c8f4fda573166bca88",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheObscuraNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "10eef4c53dfaf605b03f3b28a4bb51c46f2ff9a5151515c3bac6dc67ed2747cc",
+            "localizationKey": "THE_OBSCURA_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TheObscuraNormal",
+        "title": "The Obscura"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "THIEVING_HOPPER_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000614",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "THIEVING_HOPPER_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ThievingHopperWeak"
+            },
+            "semanticWitnessSha256": "4723c40416c772784511e0174fa03a377fe3b66016747de80be78535cae390eb",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ThievingHopperWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "b94c3cd1a7254f6d49abaf4e14a559d2d9704e46d0dde2c0505544155215a0da",
+            "localizationKey": "THIEVING_HOPPER_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ThievingHopperWeak",
+        "title": "Thieving Hopper"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "TOADPOLES_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000615",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "TOADPOLES_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ToadpolesWeak"
+            },
+            "semanticWitnessSha256": "1558a578366693458153ca0eaec0eed58a742d22acbb126cb1577a5633697b59",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ToadpolesWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "73983380a346fdf8d5be0f3bb53b372d1ed577f2e5068813e6c25d33ddcc6453",
+            "localizationKey": "TOADPOLES_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.ToadpolesWeak",
+        "title": "Toadpoles"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "TUNNELER_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000616",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "TUNNELER_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TunnelerNormal"
+            },
+            "semanticWitnessSha256": "1ee5bd08791273792cc663d97e693d2d14223684fb097e9089bec58340ac3ab6",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TunnelerNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "00aa90c48e372e86152ee3d894c099407e1ed84d13ca9d45a251ca59ecfeeaa1",
+            "localizationKey": "TUNNELER_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TunnelerNormal",
+        "title": "Tunneling Twosome"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "TUNNELER_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000617",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "TUNNELER_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TunnelerWeak"
+            },
+            "semanticWitnessSha256": "855711b0fe092678e340b302a82b14738b6a95d46f3c8b55e8af9d7f335f011d",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TunnelerWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "b09deee3c826b962655226c97b697875b3dc8babba50df9c7b7974acbf8b724e",
+            "localizationKey": "TUNNELER_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TunnelerWeak",
+        "title": "Tunneler"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "TURRET_OPERATOR_WEAK",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000618",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "TURRET_OPERATOR_WEAK",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TurretOperatorWeak"
+            },
+            "semanticWitnessSha256": "96a95b3b3f4f9ccf4459c8fc43dbf6c307288bbd837880214a261f4d5e733416",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TurretOperatorWeak"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "3eaa04864facc159688db448095cb04f1362e7f6dcef19a5b10b6484711cba0f",
+            "localizationKey": "TURRET_OPERATOR_WEAK.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TurretOperatorWeak",
+        "title": "Turret Operator"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "TWO_TAILED_RATS_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x02000619",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "TWO_TAILED_RATS_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TwoTailedRatsNormal"
+            },
+            "semanticWitnessSha256": "f98bd545c97ef350ac640525e655b9f0af7f2fcf8a21a5f4ee5df0760937a572",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TwoTailedRatsNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "504cc6ca48a94ca2f63767f97809c31178bcfcd2029f358544548e35aa6d5562",
+            "localizationKey": "TWO_TAILED_RATS_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.TwoTailedRatsNormal",
+        "title": "Two-Tailed Rats"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "VANTOM_BOSS",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x0200061a",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "VANTOM_BOSS",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.VantomBoss"
+            },
+            "semanticWitnessSha256": "c66392fe9a5dbc9941b33c8aa47c368b11a0d1258888a0acfb605682a97169d3",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.VantomBoss"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "1f5ec978c175a828dc4cf78e8fa776b886003128a5d31e27c593bb8a7fe53dab",
+            "localizationKey": "VANTOM_BOSS.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.VantomBoss",
+        "title": "Vantom"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "VINE_SHAMBLER_NORMAL",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x0200061b",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "VINE_SHAMBLER_NORMAL",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.VineShamblerNormal"
+            },
+            "semanticWitnessSha256": "9811b6fc6dc4033b25ac80c812d088978a5f61762baa393cdb981b94d7b422d6",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.VineShamblerNormal"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "5ba4eda17521a050258519db4f32cb0def179f43e9ca6f791b34ee998ae135f9",
+            "localizationKey": "VINE_SHAMBLER_NORMAL.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.VineShamblerNormal",
+        "title": "Vine Shambler"
+      },
+      {
+        "assemblyCategory": "ENCOUNTER",
+        "canonicalId": "WATERFALL_GIANT_BOSS",
+        "kind": "ordinary",
+        "provenance": {
+          "identity": {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "diagnosticMetadataToken": "0x0200061c",
+            "modelIdRule": "modelDb.typeToId.v0.111.0",
+            "semanticWitness": {
+              "category": "ENCOUNTER",
+              "entry": "WATERFALL_GIANT_BOSS",
+              "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.WaterfallGiantBoss"
+            },
+            "semanticWitnessSha256": "ebca86e051f92bd751f16ca2d837afd8db653bb8afa4eae40f22af33f8bbb955",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.WaterfallGiantBoss"
+          },
+          "title": {
+            "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+            "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+            "keyValueWitnessSha256": "dc2ebef36714f6fdbdc798ec43f84ce814e5e228c00df7e8c59ee6dc8dba7b93",
+            "localizationKey": "WATERFALL_GIANT_BOSS.title",
+            "pckPath": "localization/eng/encounters.json",
+            "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+          }
+        },
+        "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.WaterfallGiantBoss",
+        "title": "Waterfall Giant"
+      }
+    ]
+  },
+  "extractorVersion": "1.0.0",
+  "game": {
+    "branch": "v0.111.0",
+    "commit": "41cef1ea",
+    "mainAssemblyHash": 1579942752,
+    "version": "v0.111.0"
+  },
+  "inputs": [
+    {
+      "path": "SlayTheSpire2.pck",
+      "sha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34",
+      "size": 1990363992
+    },
+    {
+      "path": "data_sts2_linuxbsd_x86_64/sts2.dll",
+      "sha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+      "size": 9756160
+    },
+    {
+      "path": "data_sts2_linuxbsd_x86_64/sts2.xml",
+      "sha256": "a88331870d38cdb84d8fc371ab3d7fb619afa25c8c7249a47aaa77e1c7bf4286",
+      "size": 5650972
+    },
+    {
+      "path": "release_info.json",
+      "sha256": "9e5dbce5bcd8ff3b7b432291200220642408e31b8bae7bba14f39aeb6914cd51",
+      "size": 150
+    }
+  ],
+  "provenance": {
+    "assemblyRules": {
+      "modelDb.typeToId.v0.111.0": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "methods": [
+          {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "cilInstructionsSha256": "8acf2667bce35b850c72bbff8715232cc4267c29b22da80b36d161012c49cc29",
+            "diagnosticMetadataToken": "0x06004d79",
+            "metadataSignature": "00010e0e",
+            "methodBodySha256": "84f528b6ccc8e2850a32c27108d0bbeb64394625a886c8f07539dbc456760514",
+            "symbolSignature": "System.String MegaCrit.Sts2.Core.Helpers.StringHelper::Slugify(System.String)"
+          },
+          {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "cilInstructionsSha256": "6c26ee37003c9a958d93bc76f274273f7aa553e1ea31d600a5a97d19bc8e0f6b",
+            "diagnosticMetadataToken": "0x06001a32",
+            "metadataSignature": "00010e1245",
+            "methodBodySha256": "036cff84f4cc7dacde67cf4554811c9888cc9ceff16ab3f2a759cf6ff7bf3982",
+            "symbolSignature": "System.String MegaCrit.Sts2.Core.Models.ModelDb::GetCategory(System.Type)"
+          },
+          {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "cilInstructionsSha256": "1829813b6b66ed8e189646c867123990af3ebd33dc8a49a7442dd6eed4f137b3",
+            "diagnosticMetadataToken": "0x06001a33",
+            "metadataSignature": "00010e1245",
+            "methodBodySha256": "9dd81afe5c97577a6cf8c243ff15f4962821423846e813c18a14e79ada5bd044",
+            "symbolSignature": "System.String MegaCrit.Sts2.Core.Models.ModelDb::GetEntry(System.Type)"
+          },
+          {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "cilInstructionsSha256": "5ba5220f0dc80bd85beda49c7c5baeb4caadd9c7bf46cbd64a05d2c6dd8a1daf",
+            "diagnosticMetadataToken": "0x06001a78",
+            "metadataSignature": "00010e0e",
+            "methodBodySha256": "01793ece8c9e885a1a8d61b987a0dd3acb6c55af039894f8befe95fce39d561d",
+            "symbolSignature": "System.String MegaCrit.Sts2.Core.Models.ModelId::SlugifyCategory(System.String)"
+          },
+          {
+            "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+            "cilInstructionsSha256": "fbeb0f51fecc656f7302dac48ae55761a9ecaab33761a720f6ea1eaed7cd2561",
+            "diagnosticMetadataToken": "0x06001a31",
+            "metadataSignature": "000112451245",
+            "methodBodySha256": "7332f8f32f88163ca2b64d749c8f12d9bf56198c6b1e0335850711191a24c25d",
+            "symbolSignature": "System.Type MegaCrit.Sts2.Core.Models.ModelDb::GetCategoryType(System.Type)"
+          }
+        ],
+        "normalizedSemanticWitness": "categoryType = first base type whose base is AbstractModel; category = Slugify(categoryType.Name), then remove trailing _MODEL; entry = Slugify(concreteType.Name); ModelId(category, entry); Slugify = trim, split ASCII lower-or-digit/upper camel boundaries with _, uppercase invariant, replace whitespace with _, remove special characters",
+        "semanticWitnessSha256": "3db4da00a2fab7df86dcb365ff4e304e4c72f84362ae0b338fa6601372c05877"
+      }
+    },
+    "localizationBlob": {
+      "entryFlags": 0,
+      "entryMd5": "1589dcf731c52d77c63f7cce25f86068",
+      "entrySha256": "d4d8ce9e8e2ff984d6f6cfdd9575b11d7639cfa015cd0da030f040e2b722ed6a",
+      "pckDirectoryOffset": 1989121168,
+      "pckFileCount": 12449,
+      "pckFormat": 3,
+      "pckGodotVersion": [
+        4,
+        5,
+        1
+      ],
+      "pckPath": "localization/eng/encounters.json",
+      "pckSha256": "42443027622a6a82de8ab21e81ed5b68e522c0f5647fb6a26a74c4a0970a0d34"
+    },
+    "witnessCanonicalization": "SHA-256 of UTF-8 RFC 8259 JSON with object keys sorted, no insignificant whitespace, and non-ASCII preserved"
+  },
+  "runtimeReady": false,
+  "safety": {
+    "assemblyExecution": false,
+    "cilExecution": false,
+    "godotInitialization": false,
+    "mode": "metadataOnly",
+    "pckAccess": "readOnlySelective",
+    "reflectionLoading": false
+  },
+  "schemaVersion": 1,
+  "status": "incomplete"
+}
