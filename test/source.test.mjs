@@ -304,6 +304,20 @@ test("direct sinks, helpers, and dynamic fixtures remain formulas", () => {
   const bootStrength = move("MONSTER.AXEBOT#BOOT_UP_MOVE").operations.find((op) => op.kind === "applyPower");
   assert.equal(bootStrength.value.expression.operator, "multiply");
   assert.deepEqual(bootStrength.value.expression.operands.map((row) => row.reference.match(/::(get_[^ ]+)/)[1]), ["get_BootUpStrGain", "get_RespawnCount"]);
+  const queenStrength = move("MONSTER.QUEEN#BURN_BRIGHT_FOR_ME_MOVE").operations.find((op) => op.kind === "applyPower");
+  assert.deepEqual(queenStrength.value.expression, {
+    atOrAbove: { kind: "constant", value: 1, valueType: "integer" },
+    below: { kind: "constant", value: 1, valueType: "integer" },
+    kind: "ascensionSelect", threshold: 9, valueType: "integer",
+  });
+  const gardenerScale = move("MONSTER.PHANTASMAL_GARDENER#ENLARGE_MOVE").operations
+    .find((op) => op.kind === "stateWrite" && op.memberSymbolSignature.includes("::set_CurrentScale sig:"));
+  const logarithm = gardenerScale.value.operands[1].operands[1];
+  assert.match(logarithm.reference, /^Godot\.Mathf::Log sig:00010c0c$/);
+  assert.equal(logarithm.arguments.length, 1);
+  assert.equal(logarithm.arguments[0].operator, "add");
+  assert.match(logarithm.arguments[0].operands[0].expression.reference, /::get_EnlargeTriggers sig:/);
+  assert.deepEqual(logarithm.arguments[0].operands[1], { kind: "constant", value: "1.0", valueType: "decimal" });
   const wake = move("MONSTER.BYGONE_EFFIGY#WAKE_MOVE").operations.find((op) => op.kind === "applyPower");
   assert.equal(wake.value.expression.value, 10);
   const shrink = move("MONSTER.SHRINKER_BEETLE#SHRINKER_MOVE").operations.find((op) => op.kind === "applyPower");
@@ -333,6 +347,7 @@ test("direct sinks, helpers, and dynamic fixtures remain formulas", () => {
   assert.ok(allOperations.every((op) => /^[0-9a-f]{64}$/.test(op.provenance.normalizedSliceSha256)));
   assert.ok(allOperations.filter((op) => ["summon", "removeCard", "escape"].includes(op.kind)).every((op) => !("value" in op)));
   const serializedOperations = JSON.stringify(allOperations);
+  assert.ok(!serializedOperations.includes("AscensionHelper::GetValueIfAscension"));
   for (const forbidden of ["resolvedStackValue", '"target":"allPlayers"', "NRunMusicController::get_Instance", "NCombatRoom::get_Instance", "MonsterModel::get_AttackSfx"]) {
     assert.ok(!serializedOperations.includes(forbidden), forbidden);
   }

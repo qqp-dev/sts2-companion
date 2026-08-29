@@ -213,12 +213,29 @@ def validate_expression(node: Any, *, path: str = "$", expected_type: str | None
             return obj["valueType"]
 
         if kind == "reference":
-            allowed = {"kind", "reference", "valueType", "compiled"}
+            allowed = {"kind", "reference", "valueType", "compiled", "arguments"}
             obj = _object(value, where, allowed, {"kind", "reference", "valueType"})
             if not isinstance(obj["reference"], str) or "::" not in obj["reference"]:
                 _fail(where + ".reference", "must be a method symbol signature")
             if obj["valueType"] not in {"integer", "decimal", "boolean", "integerRange"}:
                 _fail(where + ".valueType", "unsupported reference type")
+            # Import locally to keep the AST module's basic grammar independent
+            # while still enforcing the exact argument contract encoded by CIL.
+            from .cil_eval import decode_method_signature
+            signature = decode_method_signature(obj["reference"])
+            if signature.parameters:
+                if "arguments" not in obj:
+                    _fail(where + ".arguments", "required by parameterized method signature")
+                arguments = obj["arguments"]
+                if not isinstance(arguments, list) or len(arguments) != len(signature.parameters):
+                    _fail(where + ".arguments", f"must contain exactly {len(signature.parameters)} expressions")
+                for index, (argument, parameter) in enumerate(zip(arguments, signature.parameters, strict=True)):
+                    argument_type = visit(argument, f"{where}.arguments[{index}]", depth + 1)
+                    expected = parameter.numeric
+                    if expected is not None and argument_type != expected:
+                        _fail(f"{where}.arguments[{index}]", f"must be {expected}")
+            elif "arguments" in obj:
+                _fail(where + ".arguments", "not allowed for an argument-free method signature")
             if "compiled" in obj:
                 compiled_type = visit(obj["compiled"], where + ".compiled", depth + 1)
                 if compiled_type != obj["valueType"]:

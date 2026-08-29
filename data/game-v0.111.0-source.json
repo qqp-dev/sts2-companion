@@ -120244,7 +120244,7 @@
               "methodBodySha256": "30b964ac47fedde51501abb6c7855af8ac3c3ee85e50074fb7b7cad2f300ad2a",
               "normalizedInstructionsSha256": "f96551ea30a4203763772670be76118c81f8421a7f3c8f3a487b11a89ab4d586",
               "normalizedSliceSha256": "4552bfe2cb66c0948a9dbb8466aeacb709f0acfee0373406d4c149c4a4d43442",
-              "semanticWitnessSha256": "277b36abfceb12c8e7bdcf7dd82ee0bda6a82bf8a4a3ce83889f9f1ebc44bddf",
+              "semanticWitnessSha256": "d908306a6bed259ad11d1946f500fc62a246cb627bdf7f728a7374836ce7aa45",
               "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.PhantasmalGardener+<EnlargeMove>d__42::MoveNext sig:200001"
             },
             "sinkSymbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.PhantasmalGardener::set_CurrentScale sig:2001010c",
@@ -120267,6 +120267,32 @@
                       "valueType": "decimal"
                     },
                     {
+                      "arguments": [
+                        {
+                          "kind": "arithmetic",
+                          "operands": [
+                            {
+                              "expression": {
+                                "kind": "reference",
+                                "reference": "MegaCrit.Sts2.Core.Models.Monsters.PhantasmalGardener::get_EnlargeTriggers sig:200008",
+                                "valueType": "integer"
+                              },
+                              "fromType": "integer",
+                              "kind": "convert",
+                              "mode": "exact",
+                              "toType": "decimal",
+                              "valueType": "decimal"
+                            },
+                            {
+                              "kind": "constant",
+                              "value": "1.0",
+                              "valueType": "decimal"
+                            }
+                          ],
+                          "operator": "add",
+                          "valueType": "decimal"
+                        }
+                      ],
                       "kind": "reference",
                       "reference": "Godot.Mathf::Log sig:00010c0c",
                       "valueType": "decimal"
@@ -121382,7 +121408,7 @@
               "methodBodySha256": "444c540f3e23a3e13d6b2940943921f59616765108bca8b3775b2627f1e01bfc",
               "normalizedInstructionsSha256": "de0a93916559dfa084988052829e8724d3fda20bfca4fb6fa32721e84df57169",
               "normalizedSliceSha256": "73f008a155bba6e8f01a54e642215cdf14d2f3e24e5b1d258569802c08cdc290",
-              "semanticWitnessSha256": "844ea889ce79c8741f0f3d3d58e253552ab65120f1abc493d1b48e1e10b49a11",
+              "semanticWitnessSha256": "b234adb01f7051083e1de9f9497b7c647bcc276027609051d83ce4990e17c8e9",
               "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Queen+<BurnBrightForMeMove>d__43::MoveNext sig:200001"
             },
             "sinkSymbolSignature": "MegaCrit.Sts2.Core.Commands.PowerCmd::Apply sig:10010615128221011e0012a64c12a7e411844912a7e41288b802 generic:MegaCrit.Sts2.Core.Models.Powers.StrengthPower",
@@ -121390,8 +121416,18 @@
             "target": "iteratedCreature",
             "value": {
               "expression": {
-                "kind": "reference",
-                "reference": "MegaCrit.Sts2.Core.Helpers.AscensionHelper::GetValueIfAscension sig:00030811a8980808",
+                "atOrAbove": {
+                  "kind": "constant",
+                  "value": 1,
+                  "valueType": "integer"
+                },
+                "below": {
+                  "kind": "constant",
+                  "value": 1,
+                  "valueType": "integer"
+                },
+                "kind": "ascensionSelect",
+                "threshold": 9,
                 "valueType": "integer"
               },
               "fromType": "integer",

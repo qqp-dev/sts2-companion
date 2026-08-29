@@ -45,14 +45,21 @@ binary floating-point ambiguity.
 
 ### Typed expressions
 
-Every expression declares `valueType`.
+Every expression declares `valueType`. Parameterized numeric method
+references must carry one typed `arguments` expression per exact CLI signature
+parameter; a missing, extra, non-projectable, or incorrectly typed argument
+fails extraction and AST validation. The exact
+`AscensionHelper.GetValueIfAscension` call is normalized to `ascensionSelect`
+after all three stack arguments are resolved. Instance receivers are
+distinguished from signature parameters rather than being miscounted as
+arguments.
 
 | `kind` | Meaning |
 |---|---|
 | `constant` | Typed integer, Decimal string, or boolean literal |
 | `stateVariable` | Named external input with an explicit bounded domain |
 | `sourceField` | Exact compiler/source field symbol with a numeric type; evaluation requires an explicit supplied field context |
-| `reference` | Exact source method signature, optionally carrying a separately compiled expression |
+| `reference` | Exact source method signature; every metadata-signature parameter is retained in ordered `arguments`, and a separately compiled full result may be carried in `compiled` |
 | `combatQuery` | Typed runtime query input; the pure evaluator requires it to be supplied |
 | `ascensionSelect` | Select `below` or `atOrAbove` at an observed threshold |
 | `arithmetic` | Reviewed `add`, `subtract`, `multiply`, or `divide` operation |

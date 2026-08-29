@@ -593,6 +593,48 @@ class CilSemanticEvaluatorTests(unittest.TestCase):
         self.assertEqual(expression["expression"]["operator"], "multiply")
         self.assertEqual([row["value"] for row in expression["expression"]["operands"]], [2, 3])
 
+    def test_numeric_calls_preserve_parameters_and_compile_ascension_select(self):
+        ascension = "MegaCrit.Sts2.Core.Helpers.AscensionHelper::GetValueIfAscension sig:00030811a8980808"
+        _, calls = self.flow([
+            ("ldc.i4.s", 9), ("ldc.i4.4", None), ("ldc.i4.2", None),
+            ("call", ascension), ("call", "X::Sink sig:00010108"), ("ret", None),
+        ])
+        expression = value_expression(calls[4].arguments[0], field_name="amount", instruction_index=4)
+        self.assertEqual(expression, {
+            "kind": "ascensionSelect", "threshold": 9, "valueType": "integer",
+            "atOrAbove": {"kind": "constant", "value": 4, "valueType": "integer"},
+            "below": {"kind": "constant", "value": 2, "valueType": "integer"},
+        })
+
+        _, calls = self.flow([
+            ("ldc.r4", 2.5), ("call", "Godot.Mathf::Log sig:00010c0c"),
+            ("call", "X::Sink sig:0001010c"), ("ret", None),
+        ])
+        expression = value_expression(calls[2].arguments[0], field_name="scale", instruction_index=2)
+        self.assertEqual(expression["arguments"], [
+            {"kind": "constant", "value": "2.5", "valueType": "decimal"},
+        ])
+        self.assertEqual(validate_expression(expression), "decimal")
+        with self.assertRaisesRegex(SourceExtractionError, "required by parameterized method signature"):
+            validate_expression({
+                "kind": "reference", "reference": "Godot.Mathf::Log sig:00010c0c",
+                "valueType": "decimal",
+            })
+        with self.assertRaisesRegex(SourceExtractionError, "exactly 1 expressions"):
+            validate_expression({**expression, "arguments": []})
+        with self.assertRaisesRegex(SourceExtractionError, "must be decimal"):
+            validate_expression({**expression, "arguments": [
+                {"kind": "constant", "value": 2, "valueType": "integer"},
+            ]})
+
+    def test_numeric_call_with_unprojectable_parameter_fails_closed(self):
+        _, calls = self.flow([
+            ("ldarg.0", None), ("call", "X::Numeric sig:00010808"),
+            ("call", "X::Sink sig:00010108"), ("ret", None),
+        ])
+        with self.assertRaisesRegex(SourceExtractionError, "unresolved amount expression"):
+            value_expression(calls[2].arguments[0], field_name="amount", instruction_index=2)
+
     def test_equal_join_resolves_but_nonunique_join_fails_closed(self):
         def branch(right):
             rows = [

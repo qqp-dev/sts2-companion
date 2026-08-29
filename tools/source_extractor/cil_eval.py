@@ -18,6 +18,8 @@ MAX_INSTRUCTIONS = 4096
 MAX_WORK_STEPS = 200_000
 MAX_VALUE_DEPTH = 64
 
+_ASCENSION_VALUE = "MegaCrit.Sts2.Core.Helpers.AscensionHelper::GetValueIfAscension sig:00030811a8980808"
+
 
 def integer_constant(instruction: Mapping[str, Any]) -> int | None:
     opcode = instruction["opcode"]
@@ -593,7 +595,39 @@ def value_expression(value: SymbolicValue, *, field_name: str, instruction_index
                 # Getter signatures in the shipped assembly identify primitive
                 # return types exactly. A required nonnumeric call is not coerced.
                 raise SourceExtractionError(f"non-numeric {field_name} call at instruction {instruction_index}: {item.data}")
-            return {"kind":"reference","reference":item.data,"valueType":numeric}
+            signature=decode_method_signature(item.data)
+            expected_operands=len(signature.parameters)+(1 if signature.has_this else 0)
+            if len(item.operands)!=expected_operands:
+                raise SourceExtractionError(
+                    f"malformed {field_name} call operands at instruction {instruction_index}: "
+                    f"{item.data} has {len(item.operands)}, expected {expected_operands}"
+                )
+            arguments=item.operands[1:] if signature.has_this else item.operands
+            if item.data==_ASCENSION_VALUE:
+                if signature.has_this or len(arguments)!=3 or numeric not in {"integer","decimal"}:
+                    raise SourceExtractionError(
+                        f"unsupported {field_name} ascension call at instruction {instruction_index}: {item.data}"
+                    )
+                threshold=visit(arguments[0],depth+1,"integer")
+                at_or_above=visit(arguments[1],depth+1,numeric)
+                below=visit(arguments[2],depth+1,numeric)
+                if threshold.get("kind")!="constant" or threshold.get("valueType")!="integer":
+                    raise SourceExtractionError(
+                        f"dynamic {field_name} ascension threshold at instruction {instruction_index}: {item.data}"
+                    )
+                if at_or_above.get("valueType")!=numeric or below.get("valueType")!=numeric:
+                    raise SourceExtractionError(
+                        f"mismatched {field_name} ascension branches at instruction {instruction_index}: {item.data}"
+                    )
+                return {"kind":"ascensionSelect","threshold":threshold["value"],
+                        "atOrAbove":at_or_above,"below":below,"valueType":numeric}
+            result={"kind":"reference","reference":item.data,"valueType":numeric}
+            if arguments:
+                result["arguments"]=[
+                    visit(argument,depth+1,parameter.numeric)
+                    for argument,parameter in zip(arguments,signature.parameters,strict=True)
+                ]
+            return result
         if item.kind=="arithmetic" and len(item.operands)==2:
             if item.data not in {"add", "subtract", "multiply", "divide"}:
                 raise SourceExtractionError(
