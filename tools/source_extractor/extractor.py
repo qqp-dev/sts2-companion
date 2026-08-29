@@ -7,6 +7,9 @@ from typing import Any
 
 from . import EXTRACTOR_VERSION, SCHEMA_VERSION
 from .canonical import canonical_json_bytes, strict_json_bytes, witness_sha256
+from .behavior import extract_behavior
+from .ast import validate_operation
+from .combat_scaling import extract_combat_scaling
 from .encounters import extract_rosters
 from .errors import SourceExtractionError
 from .input_gate import VerifiedInputs
@@ -19,6 +22,10 @@ from .states import extract_state_facts
 from .world import extract_monster_world
 
 _ENCOUNTER_LOCALIZATION = "localization/eng/encounters.json"
+_MONSTER_LOCALIZATION = "localization/eng/monsters.json"
+_INTENT_LOCALIZATION = "localization/eng/intents.json"
+_POWER_LOCALIZATION = "localization/eng/powers.json"
+_CARD_LOCALIZATION = "localization/eng/cards.json"
 _DLL_PATH = "data_sts2_linuxbsd_x86_64/sts2.dll"
 _PCK_PATH = "SlayTheSpire2.pck"
 
@@ -32,6 +39,48 @@ def complete(numerator: int, denominator: int) -> dict[str, Any]:
 def not_extracted() -> dict[str, str]:
     return {"status": "notExtracted"}
 
+
+
+def _localization(verified: VerifiedInputs, path: str) -> tuple[dict[str, Any], dict[str, Any]]:
+    pck = verified.by_relative_path(_PCK_PATH)
+    data, entry, info = read_selected(pck.path, path)
+    value = strict_json_bytes(data, f"{_PCK_PATH}:{path}")
+    if not isinstance(value, dict):
+        raise SourceExtractionError(f"{path}: top level must be an object")
+    blob = {
+        "entryFlags": entry.flags, "entryMd5": entry.md5,
+        "entrySha256": hashlib.sha256(data).hexdigest(),
+        "pckDirectoryOffset": info.directory_offset, "pckFileCount": info.file_count,
+        "pckFormat": info.format, "pckGodotVersion": list(info.godot_version),
+        "pckPath": path, "pckSha256": pck.sha256,
+    }
+    return value, blob
+
+
+def _referenced_models(behavior: dict[str, Any], powers: dict[str, Any], cards: dict[str, Any],
+                       power_blob: dict[str, Any], card_blob: dict[str, Any]) -> dict[str, Any]:
+    refs = {op.get("model") for move in behavior["registrations"] for op in move["operations"] if op.get("model")}
+    power_refs = {x for x in refs if x.startswith("POWER.")}
+    power_refs.update(x["canonicalPower"] for x in behavior["scaling"]["power"]["optIns"])
+    power_refs.update(x["canonicalPower"] for x in behavior["scaling"]["power"]["overrides"])
+    card_refs = {x for x in refs if x.startswith("CARD.")}
+    def rows(items: set[str], localization: dict[str, Any], blob: dict[str, Any]) -> list[dict[str, Any]]:
+        output=[]
+        for canonical in sorted(items):
+            entry=canonical.split(".",1)[1]
+            title_key=entry+".title"; smart_key=entry+".smartDescription"
+            title=localization.get(title_key)
+            if not isinstance(title,str) or not title:
+                raise SourceExtractionError(f"missing referenced model localization {title_key}")
+            smart=localization.get(smart_key)
+            if smart is not None and (not isinstance(smart,str) or not smart):
+                raise SourceExtractionError(f"invalid referenced model localization {smart_key}")
+            output.append({"canonicalId":canonical,"englishTitle":title,
+                "smartDescription":({"classification":"localized","key":smart_key,"template":smart} if smart is not None else {"classification":"missingLocalization","key":smart_key}),
+                "provenance":{"blobSha256":blob["entrySha256"],"pckPath":blob["pckPath"],"pckSha256":blob["pckSha256"],
+                              "titleKey":title_key,"titleWitnessSha256":witness_sha256([title_key,title])}})
+        return output
+    return {"cards":rows(card_refs,cards,card_blob),"powers":rows(power_refs,powers,power_blob)}
 
 def _encounter_records(
     verified: VerifiedInputs,
@@ -129,6 +178,18 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
         )
         state_facts = extract_state_facts(dll.path, dll.sha256, assembly=assembly)
         hp_scaling = extract_hp_multiplayer_scaling(dll.path, dll.sha256, assembly=assembly)
+        monster_l10n, monster_l10n_blob = _localization(verified, _MONSTER_LOCALIZATION)
+        behavior = extract_behavior(assembly, dll.sha256, pck.sha256, world["concrete"],
+                                    rosters["ordinaryReachableModels"], monster_l10n,
+                                    monster_l10n_blob["entrySha256"])
+        behavior["scaling"] = extract_combat_scaling(assembly, dll.sha256)
+        for move in behavior["registrations"]:
+            for index, operation in enumerate(move["operations"]):
+                validate_operation(operation, path=f"$.behavior.registrations[{move['canonicalId']!r}].operations[{index}]")
+        intent_l10n, intent_l10n_blob = _localization(verified, _INTENT_LOCALIZATION)
+        power_l10n, power_l10n_blob = _localization(verified, _POWER_LOCALIZATION)
+        card_l10n, card_l10n_blob = _localization(verified, _CARD_LOCALIZATION)
+        referenced = _referenced_models(behavior, power_l10n, card_l10n, power_l10n_blob, card_l10n_blob)
     finally:
         assembly.close()
     reachable = set(rosters["reachableModels"])
@@ -165,8 +226,13 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
 
     artifact: dict[str, Any] = {
         "astGrammar": {
-            "expressionKinds": ["actRoomFactor", "arithmetic", "ascensionSelect", "compare", "conditional", "constant", "convert", "range", "stateVariable"],
+            "delegateBindingKinds": ["methodArgument", "null"],
+            "expressionKinds": ["actRoomFactor", "arithmetic", "ascensionSelect", "combatQuery", "compare", "conditional", "constant", "convert", "range", "reference", "sourceField", "stateVariable"],
+            "intentArgumentKinds": ["booleanConstant", "numericExpression", "sourceDelegate"],
+            "graphEdgeKinds": ["conditionalBranch", "followUp", "randomBranch"],
+            "graphNodeKinds": ["conditional", "move", "random"],
             "numericTypes": ["decimal", "integer", "integerRange"],
+            "operationKinds": ["addGeneratedCard", "addStatusCard", "applyPower", "attack", "attackHitCount", "escape", "gainBlock", "heal", "helperEffect", "kill", "removeCard", "removePower", "stateWrite", "summon", "transition"],
             "rosterKinds": ["filteredChoice", "fixed", "permutation", "repeat", "sequence", "uniformChoice", "weightedChoice"],
             "rules": "docs/source-world-model.md#normalized-ast-grammar",
         },
@@ -192,16 +258,30 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             "monsterIdentitiesCurrentReachable": complete(len(reachable), 108),
             "monsterNamesEnglishCurrentReachable": complete(name_data["joinedCount"], 108),
             "monsterNamespaceCensus": complete(121, 121),
-            "blockMultiplayerScaling": not_extracted(),
-            "moveIntents": not_extracted(),
-            "moveMultiplayerScaling": not_extracted(),
-            "moveOperations": not_extracted(),
-            "moveRegistrationsAndTitles": not_extracted(),
-            "moveSelectionGraphs": not_extracted(),
-            "patterns": not_extracted(),
-            "powerMultiplayerScaling": not_extracted(),
-            "powers": not_extracted(),
+            "blockMultiplayerScaling": complete(1, 1),
+            "moveActions": complete(behavior["summary"]["asyncActions"] + behavior["summary"]["synchronousNoOpActions"], 307),
+            "moveIntentArguments": complete(behavior["summary"]["resolvedIntentArguments"], behavior["summary"]["requiredIntentArguments"]),
+            "moveIntentClassification": complete(behavior["summary"]["resolvedIntentConstructorSites"], behavior["summary"]["intentConstructorSites"]),
+            "moveOperations": complete(len(behavior["registrations"]), 307),
+            "moveRegistrationCensus": complete(len(behavior["registrations"]), 307),
+            "moveSelectionGraphs": complete(len(behavior["graphs"]), 100),
+            "moveTitleClassification": complete(len(behavior["registrations"]), 307),
+            "moveTitlesEnglish": {"denominator": 307, "numerator": behavior["summary"]["localizedTitles"], "status": "classified", "unresolved": 18},
+            "invocationClassification": complete(behavior["invocationCensus"]["summary"]["resolved"], behavior["invocationCensus"]["summary"]["denominator"]),
+            "operationDirectSinks": complete(behavior["summary"]["directSinkSites"], 491),
+            "operationSemanticFields": complete(behavior["summary"]["resolvedSemanticFields"], behavior["summary"]["requiredSemanticFields"]),
+            "operationDirectSinksByKind": {
+                kind: complete(count, count)
+                for kind, count in behavior["summary"]["directSinkCounts"].items()
+            },
+            "powerCardReferencedModels": complete(len(referenced["powers"]) + len(referenced["cards"]), len(referenced["powers"]) + len(referenced["cards"])),
+            "powerMultiplayerOptIns": complete(len(behavior["scaling"]["power"]["optIns"]), 12),
+            "powerMultiplayerOverrides": complete(len(behavior["scaling"]["power"]["overrides"]), 5),
         },
+        "behavior": behavior,
+        "cards": referenced["cards"],
+        "intentLocalization": {"entries": intent_l10n, "provenance": intent_l10n_blob},
+        "powers": referenced["powers"],
         "encounterCensus": {
             "abstractTypes": census["abstractTypes"],
             "counts": {
@@ -240,12 +320,16 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             "hpGetterCensus": world["hpGetterCensus"],
         },
         "monsters": world["concrete"],
-        "multiplayerScaling": {"hp": hp_scaling},
+        "multiplayerScaling": {"block": behavior["scaling"]["block"], "hp": hp_scaling, "power": behavior["scaling"]["power"], "ordinaryMonsterAttack": behavior["scaling"]["ordinaryMonsterAttack"]},
         "provenance": {
             "assemblyRules": {"modelDb.typeToId.v0.111.0": census["modelIdRule"]},
             "localizationBlobs": {
                 "encountersEnglish": encounter_blob,
                 "monstersEnglish": name_data["localizationBlob"],
+                "moveMonstersEnglish": monster_l10n_blob,
+                "intentsEnglish": intent_l10n_blob,
+                "powersEnglish": power_l10n_blob,
+                "cardsEnglish": card_l10n_blob,
             },
             "titleRules": name_data["titleRules"],
             "witnessCanonicalization": "SHA-256 of UTF-8 RFC 8259 JSON with object keys sorted, no insignificant whitespace, and non-ASCII preserved",

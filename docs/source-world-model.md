@@ -3,15 +3,15 @@
 `data/game-v0.111.0-source.json` is a deterministic, presentation-independent
 world model for exact public-beta v0.111.0 inputs. It contains identities,
 localization joins, formulas, roster selections, membership sets, and state
-facts—not UI sentences or layout. Schema 2 is the Wave A boundary and remains
-runtime-incomplete until the behavior and cutover waves land.
+facts—not UI sentences or layout. Schema 4 is the Wave B boundary and remains
+runtime-incomplete until the runtime cutover wave lands.
 
 ## Three-wave boundary
 
 | Wave | Scope | Current status |
 |---|---|---|
 | A | Monster/state identity and names; HP/state formulas; HP multiplayer scaling; encounter roster/pool/production facts | Complete for explicit denominators |
-| B | Move registration/title/intent; operations and helpers; move/Power scaling; selection and phase graphs | `notExtracted` |
+| B | Move registration/title/intent; operations and helpers; move/Power scaling; selection and phase graphs | Complete for explicit denominators, with 18 classified missing titles |
 | C | Runtime/UI rendering, encounter scope correction, fact references and proof enforcement | Not started |
 
 The current app does not import this artifact and still displays the
@@ -45,12 +45,22 @@ binary floating-point ambiguity.
 
 ### Typed expressions
 
-Every expression declares `valueType`.
+Every expression declares `valueType`. Parameterized numeric method
+references must carry one typed `arguments` expression per exact CLI signature
+parameter; a missing, extra, non-projectable, or incorrectly typed argument
+fails extraction and AST validation. The exact
+`AscensionHelper.GetValueIfAscension` call is normalized to `ascensionSelect`
+after all three stack arguments are resolved. Instance receivers are
+distinguished from signature parameters rather than being miscounted as
+arguments.
 
 | `kind` | Meaning |
 |---|---|
 | `constant` | Typed integer, Decimal string, or boolean literal |
 | `stateVariable` | Named external input with an explicit bounded domain |
+| `sourceField` | Exact compiler/source field symbol with a numeric type; evaluation requires an explicit supplied field context |
+| `reference` | Exact source method signature; every metadata-signature parameter is retained in ordered `arguments`, and a separately compiled full result may be carried in `compiled` |
+| `combatQuery` | Typed runtime query input; the pure evaluator requires it to be supplied |
 | `ascensionSelect` | Select `below` or `atOrAbove` at an observed threshold |
 | `arithmetic` | Reviewed `add`, `subtract`, `multiply`, or `divide` operation |
 | `compare` | Typed comparison producing boolean |
@@ -194,3 +204,122 @@ These checks are discrepancy fixtures, never extraction inputs or source proof:
 
 A mismatch in these fixtures is surfaced for review. It cannot supply, replace,
 or override a missing raw fact.
+
+
+## Combat operations and graphs
+
+Wave B adds closed operation and graph grammars. Unknown operation kinds, graph
+node/edge kinds, helper names, or missing provenance fail validation.
+
+### Operations
+
+| `kind` | Meaning |
+|---|---|
+| `attack` | `DamageCmd.Attack` amount/target |
+| `attackHitCount` | `AttackCommand.WithHitCount` |
+| `applyPower` | `PowerCmd.Apply` with canonical Power |
+| `gainBlock` | `CreatureCmd.GainBlock` |
+| `addStatusCard` / `addGeneratedCard` | card pile sinks |
+| `summon` | `CreatureCmd.Add` |
+| `heal` / `escape` / `removeCard` | remaining reviewed command sinks |
+| `kill` | exact `CreatureCmd.Kill` target and play-death-effects argument |
+| `removePower` | generic canonical Power removal or an exact runtime-selected Power-instance contract |
+| `stateWrite` | typed monster property write with exact setter identity |
+| `helperEffect` | Reattach, Fabricator spawn, ChooseCurse, Tough Egg hatch, Waterfall pressure |
+| `transition` | explicit no-op or nonnumeric/state update |
+
+Amounts are typed expressions. A `reference` node retains an exact source method
+signature; a `sourceField` retains an exact typed compiler/source field without
+inventing a domain. The pure evaluator only evaluates either when a compiled
+expression or explicit context is supplied.
+
+Intent constructors use the same decoded-signature stack contract. The 387
+constructor sites contain 311 required arguments: numeric expressions, typed
+boolean constants, or the closed `sourceDelegate` shape. A source delegate keeps
+its `(object, nativeInt)` constructor signature, receiver binding, exact target
+method and body/slice hashes, and a normalized `resultExpression` derived from
+all reachable return stacks. Array indices and neighboring constants/getters are
+not constructor arguments. Unknown signatures, delegate bindings/targets,
+return stacks, or non-unique expressions fail extraction. The two complete
+coverage families separately count 387 classified constructors and 311 resolved
+arguments, so a site census cannot conceal an unresolved Func overload.
+
+Intent templates from `intents.json` are localization facts; their numerals are
+not effect authority.
+
+### Closed invocation classification
+
+Every one of the 6,332 direct `call`, `callvirt`, and `newobj` sites in the 301
+current `MoveNext` bodies, plus 351 unique sites in 29 recursively reached helper
+bodies, has an evidence-bearing census record and exactly one outcome:
+`normalizedGameplayOperation`, `traversedGameplayHelper`, or
+`provenNonGameplayPlumbing`; an unresolved fourth outcome aborts extraction and
+is never serialized as complete. The combined 6,683-site census contains 1,156 exact source symbols and resolves
+508 / 1,080 / 5,095 sites respectively; separate direct/helper denominators are
+retained (6,332 and 351). Exact command declarations
+form a closed boundary. A newly observed command method, unknown Godot/framework
+member, missing signature, or unsupported local side-effecting method receives a
+stable `UNRESOLVED.INVOCATION.<sha256>` identifier and fails the family.
+
+Local monster, Power, and card helpers resolve by exact owner/member/signature.
+Async helpers are followed through `AsyncStateMachineAttribute` to generated
+`MoveNext` bodies; abstract helper calls traverse every concrete CLI
+`InterfaceImpl`/override. Their nested calls are classified recursively, exposing
+helper-contained effects such as Stun, bot spawning and Minion application,
+card selection/Power application, HP reset/heal, deck-card removal, and gold
+loss. SFX, animation, waits, task awaiters, collections, and presentation nodes
+use narrow declaration/member recognizers and remain visible in the census; no
+unknown-prefix ignore can claim completeness.
+
+Schema 4 obtains every sink stack contract by decoding the exact ECMA-335
+signature, including static versus instance receivers and generic signatures.
+A bounded CFG abstract interpreter carries constants, arguments, locals,
+fields, getters, arithmetic, conversions, and fluent command receivers across
+branches and async resume plumbing. Equal joins collapse; unequal required
+values remain unresolved and abort generation. Unknown stack effects, call
+signatures, branch targets, target classes, or expression types likewise fail
+before atomic replacement. No positional instruction window or “last getter”/
+“last constant” fallback is used.
+
+Operation fields are closed by kind. In particular, attack amounts come from
+the sole `DamageCmd.Attack` argument, hit counts from the argument consumed by
+`WithHitCount`, Block from `GainBlock.amount` rather than its trailing props
+enum, and Power amount/target from the selected `Apply` overload. Summon,
+escape, and card removal do not receive dummy numeric values. `CreatureCmd.Kill`
+retains its exact creature and boolean arguments; the two explosion moves are
+source-monster self-kills with play-death-effects false. Generic `PowerCmd.Remove`
+retains canonical Power type arguments (including Soar, Adaptable, and Painful
+Stabs). The sole non-generic removal is explicitly a runtime-selected iterator
+Power instance rather than an invented model. Attack target
+classification is backed by a separately hashed slice of
+`AttackCommand.FromMonster -> TargetingAllOpponents`, producing
+`allOpponentsOfSourceMonster`; `FromMonster` attacker evidence by itself is not
+a target fact. Other observed targets remain distinct (`sourceMonster`,
+`registeredTargets`, `iteratedCreature`, teammates, or an awaited summoned
+creature), as do slot and card selections.
+
+### Graphs
+
+Nodes are `move`, `random`, or `conditional`. Edges are `followUp`,
+`randomBranch`, or `conditionalBranch`. Weights are emitted only from AddBranch
+integers. Predicate callbacks remain `reference` expressions unless a later
+wave compiles them. Branched initial states (Decimillipede `StarterMoveIdx % 3`,
+Axebot stock override, Chomper `_screamFirst`) are recorded as multiple proven
+initials rather than a guessed single start.
+
+Monster Block scaling and Power opt-in/override formulas are separate from
+ordinary `DamageCmd.Attack` amounts. Ordinary monster attacks do not inherit
+HP or Block multiplayer multipliers.
+
+The 6,683-site combined invocation census (6,332 direct plus 351 helper),
+491 direct-operation census, and each
+operation-kind denominator are reported separately from 1,081/1,081 required
+semantic fields. A physical site is not counted as
+semantic completion unless its required arguments, target/selection, model,
+expression type, and normalized slice resolve.
+
+18 move titles are classified `missingLocalization`. That is complete
+classification, not complete localized coverage, and is reserved for an
+explicit, visibly cited Wave C community fallback if useful. Wave B never
+imports community/wiki data into the raw artifact and makes no XML migration
+claim.

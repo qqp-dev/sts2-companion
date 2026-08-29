@@ -204,6 +204,55 @@ def validate_expression(node: Any, *, path: str = "$", expected_type: str | None
                 _fail(where, "range endpoints must be integer expressions")
             return "integerRange"
 
+        if kind == "sourceField":
+            obj = _object(value, where, {"kind", "symbol", "valueType"}, {"kind", "symbol", "valueType"})
+            if not isinstance(obj["symbol"], str) or "::" not in obj["symbol"]:
+                _fail(where + ".symbol", "must be a resolved field symbol")
+            if obj["valueType"] not in {"integer", "decimal", "boolean"}:
+                _fail(where + ".valueType", "unsupported source-field type")
+            return obj["valueType"]
+
+        if kind == "reference":
+            allowed = {"kind", "reference", "valueType", "compiled", "arguments"}
+            obj = _object(value, where, allowed, {"kind", "reference", "valueType"})
+            if not isinstance(obj["reference"], str) or "::" not in obj["reference"]:
+                _fail(where + ".reference", "must be a method symbol signature")
+            if obj["valueType"] not in {"integer", "decimal", "boolean", "integerRange"}:
+                _fail(where + ".valueType", "unsupported reference type")
+            # Import locally to keep the AST module's basic grammar independent
+            # while still enforcing the exact argument contract encoded by CIL.
+            from .cil_eval import decode_method_signature
+            signature = decode_method_signature(obj["reference"])
+            if signature.parameters:
+                if "arguments" not in obj:
+                    _fail(where + ".arguments", "required by parameterized method signature")
+                arguments = obj["arguments"]
+                if not isinstance(arguments, list) or len(arguments) != len(signature.parameters):
+                    _fail(where + ".arguments", f"must contain exactly {len(signature.parameters)} expressions")
+                for index, (argument, parameter) in enumerate(zip(arguments, signature.parameters, strict=True)):
+                    argument_type = visit(argument, f"{where}.arguments[{index}]", depth + 1)
+                    expected = parameter.numeric
+                    if expected is not None and argument_type != expected:
+                        _fail(f"{where}.arguments[{index}]", f"must be {expected}")
+            elif "arguments" in obj:
+                _fail(where + ".arguments", "not allowed for an argument-free method signature")
+            if "compiled" in obj:
+                compiled_type = visit(obj["compiled"], where + ".compiled", depth + 1)
+                if compiled_type != obj["valueType"]:
+                    _fail(where + ".compiled", "compiled type mismatch")
+            return obj["valueType"]
+
+        if kind == "combatQuery":
+            obj = _object(value, where, {"kind", "query", "arguments", "valueType"}, {"kind", "query", "valueType"})
+            if obj["query"] not in {"powerAmount", "playerCount", "field", "modelChoice"}:
+                _fail(where + ".query", "unsupported combat query")
+            if "arguments" in obj:
+                if not isinstance(obj["arguments"], list):
+                    _fail(where + ".arguments", "must be a list")
+                for i, item in enumerate(obj["arguments"]):
+                    visit(item, f"{where}.arguments[{i}]", depth + 1)
+            return obj["valueType"]
+
         _fail(where + ".kind", f"unsupported expression kind {kind!r}")
         raise AssertionError
 
@@ -275,6 +324,19 @@ def evaluate_expression(node: Any, state: Mapping[str, Any]) -> Any:
             if value["toType"] == "decimal": return Decimal(source)
             return int(source.to_integral_value(rounding=_ROUNDING[value["mode"]]))
         if kind == "range": return {"minimum": visit(value["minimum"]), "maximum": visit(value["maximum"])}
+        if kind == "sourceField":
+            name = "field:" + value["symbol"]
+            if name not in state:
+                raise SourceExtractionError(f"missing state input {name!r}")
+            return state[name]
+        if kind == "reference":
+            if "compiled" in value: return visit(value["compiled"])
+            raise SourceExtractionError(f"cannot evaluate unresolved method reference {value['reference']}")
+        if kind == "combatQuery":
+            name = "query:" + value["query"]
+            if name not in state:
+                raise SourceExtractionError(f"missing state input {name!r}")
+            return state[name]
         raise AssertionError(kind)
 
     return visit(node)
@@ -336,3 +398,117 @@ def validate_selection(node: Any, *, path: str = "$", known_models: set[str] | N
         raise AssertionError
 
     return visit(node, path, 0)
+
+
+OPERATION_KINDS = {
+    "attack", "attackHitCount", "applyPower", "gainBlock", "addStatusCard",
+    "addGeneratedCard", "summon", "escape", "heal", "removeCard",
+    "kill", "removePower", "stateWrite", "helperEffect", "transition",
+}
+
+GRAPH_NODE_KINDS = {"move", "random", "conditional"}
+
+
+def validate_operation(node: Any, *, path: str = "$") -> None:
+    if not isinstance(node, dict) or not isinstance(node.get("kind"), str):
+        _fail(path, "operation requires string kind")
+    kind = node["kind"]
+    if kind not in OPERATION_KINDS:
+        _fail(path + ".kind", f"unsupported operation kind {kind!r}")
+    common = {"kind", "operationId", "provenance"}
+    if kind == "transition":
+        _object(node, path, common | {"transition", "sourceOrder", "target"}, {"kind", "operationId", "transition", "provenance"})
+        if node["transition"] not in {"noOp", "nonnumericOrStateUpdate"}: _fail(path + ".transition", "unsupported transition")
+        return
+    if kind == "helperEffect":
+        obj = _object(node, path, common | {"helper", "helperSymbolSignature", "helperCallSites", "sourceOrder"}, {"kind", "operationId", "helper", "helperSymbolSignature", "helperCallSites", "provenance"})
+        if obj["helper"] not in {"reattach", "fabricate", "chooseCurse", "hatch", "pressureState"}: _fail(path + ".helper", "unsupported helper")
+        if not isinstance(obj["helperSymbolSignature"], str) or " sig:" not in obj["helperSymbolSignature"]: _fail(path + ".helperSymbolSignature", "must identify exact helper")
+        if not isinstance(obj["helperCallSites"], list) or not obj["helperCallSites"]: _fail(path + ".helperCallSites", "must be nonempty")
+        for index, call in enumerate(obj["helperCallSites"]):
+            call = _object(call, f"{path}.helperCallSites[{index}]", {"sourceOrder", "symbolSignature"}, {"sourceOrder", "symbolSignature"})
+            _integer(call["sourceOrder"], f"{path}.helperCallSites[{index}].sourceOrder", minimum=0)
+            if not isinstance(call["symbolSignature"], str) or " sig:" not in call["symbolSignature"]: _fail(f"{path}.helperCallSites[{index}].symbolSignature", "must identify exact helper call")
+        return
+    allowed = common | {"sinkSymbolSignature", "sourceOrder", "value", "model", "modelContract", "target", "destination", "selection", "targetProvenance", "playDeathEffects", "memberSymbolSignature"}
+    required_by_kind = {
+        "attack": {"value", "target", "targetProvenance"},
+        "attackHitCount": {"value"}, "applyPower": {"value", "target", "model"},
+        "gainBlock": {"value", "target"}, "addStatusCard": {"value", "target", "model"},
+        "addGeneratedCard": {"target", "destination", "model"},
+        "summon": {"target", "selection", "model"}, "escape": {"target"},
+        "heal": {"value", "target"}, "removeCard": {"target"},
+        "kill": {"target", "playDeathEffects"}, "removePower": {"target"},
+        "stateWrite": {"target", "value", "memberSymbolSignature"},
+    }
+    obj = _object(node, path, allowed, common | {"sinkSymbolSignature"} | required_by_kind[kind])
+    if "value" in obj: validate_expression(obj["value"], path=path + ".value")
+    target_kinds = {
+        "allOpponentsOfSourceMonster", "sourceMonster", "registeredTargets", "registeredTarget",
+        "iteratedCreature", "resolvedMonsterCreature", "awaitedSummonedCreature",
+        "sourceMonsterTeammates", "generatedCardCombatPile", "sourceMonsterCombatState",
+        "selectedCombatCard", "rngSelectedCombatCard", "runtimeSelectedPowerInstance",
+    }
+    if "target" in obj and obj["target"] not in target_kinds: _fail(path + ".target", "unsupported evidence-backed target")
+    if "model" in obj:
+        expected = {"applyPower":"POWER.", "removePower":"POWER.", "addStatusCard":"CARD.", "addGeneratedCard":"CARD.", "summon":"MONSTER."}.get(kind)
+        if expected is None or not isinstance(obj["model"], str) or not obj["model"].startswith(expected): _fail(path + ".model", "invalid operation model category")
+    if kind == "removePower":
+        if ("model" in obj) == ("modelContract" in obj):
+            _fail(path, "removePower requires exactly one of model or modelContract")
+        if "modelContract" in obj:
+            contract = _object(obj["modelContract"], path + ".modelContract",
+                               {"classification", "sourceKinds", "sourceSymbolSignature"},
+                               {"classification", "sourceKinds", "sourceSymbolSignature"})
+            if contract["classification"] != "runtimeSelectedPowerInstance":
+                _fail(path + ".modelContract.classification", "unsupported runtime Power contract")
+            if not isinstance(contract["sourceKinds"], list) or not contract["sourceKinds"] or any(not isinstance(x, str) or not x for x in contract["sourceKinds"]):
+                _fail(path + ".modelContract.sourceKinds", "must be a nonempty string list")
+            if not isinstance(contract["sourceSymbolSignature"], str) or "::get_Current sig:" not in contract["sourceSymbolSignature"]:
+                _fail(path + ".modelContract.sourceSymbolSignature", "must identify the exact iterator current getter")
+    if kind == "kill":
+        validate_expression(obj["playDeathEffects"], path=path + ".playDeathEffects", expected_type="boolean")
+    if kind == "stateWrite":
+        if not isinstance(obj["memberSymbolSignature"], str) or "::set_" not in obj["memberSymbolSignature"] or " sig:" not in obj["memberSymbolSignature"]:
+            _fail(path + ".memberSymbolSignature", "must identify an exact source setter")
+    if "destination" in obj:
+        destination=_object(obj["destination"],path+".destination",{"pileType"},{"pileType"})
+        validate_expression(destination["pileType"],path=path+".destination.pileType",expected_type="integer")
+    if "selection" in obj:
+        selection=_object(obj["selection"],path+".selection",{"slot"},{"slot"})
+        if selection["slot"] not in {"automaticCombatSlot","namedCombatSlot","nextOpenCombatSlot","selectedAvailableCombatSlot","selectedCombatSlot","stateCombatSlot"}: _fail(path+".selection.slot","unsupported slot selection")
+    if kind == "attack":
+        proof=_object(obj["targetProvenance"],path+".targetProvenance",{
+            "assemblySha256","cilInstructionsSha256","diagnosticMetadataToken","metadataSignature",
+            "methodBodySha256","normalizedInstructionsSha256","symbolSignature","normalizedSliceSha256","semanticWitnessSha256"},
+            {"assemblySha256","cilInstructionsSha256","metadataSignature","methodBodySha256","normalizedInstructionsSha256","symbolSignature","normalizedSliceSha256","semanticWitnessSha256"})
+        for key in ("assemblySha256","cilInstructionsSha256","methodBodySha256","normalizedInstructionsSha256","normalizedSliceSha256","semanticWitnessSha256"):
+            if not isinstance(proof[key],str) or len(proof[key])!=64 or any(c not in "0123456789abcdef" for c in proof[key]): _fail(path+".targetProvenance."+key,"must be SHA-256")
+
+
+def validate_graph(node: Any, *, known_moves: set[str] | None = None, path: str = "$") -> None:
+    obj = _object(node, path, {"canonicalMonster", "graphId", "sourceType", "topology", "provenance", "nodes", "edges", "initial"}, {"canonicalMonster", "graphId", "sourceType", "topology", "provenance"})
+    if "nodes" in obj:
+        if not isinstance(obj["nodes"], list) or not obj["nodes"]:
+            _fail(path + ".nodes", "must be nonempty")
+        ids = set()
+        for i, item in enumerate(obj["nodes"]):
+            n = _object(item, f"{path}.nodes[{i}]", {"kind", "nodeId", "stateId", "moveId", "mustPerformOnce", "provenance"}, {"kind", "nodeId"})
+            if n["kind"] not in GRAPH_NODE_KINDS:
+                _fail(f"{path}.nodes[{i}].kind", f"unsupported graph node {n['kind']!r}")
+            if n["nodeId"] in ids:
+                _fail(f"{path}.nodes[{i}].nodeId", "duplicate graph node")
+            ids.add(n["nodeId"])
+            if known_moves is not None and n["kind"] == "move" and n.get("moveId") not in known_moves:
+                _fail(f"{path}.nodes[{i}].moveId", "unresolved move")
+        if "initial" in obj and obj["initial"] not in ids:
+            _fail(path + ".initial", "unresolved initial node")
+        if "edges" in obj:
+            if not isinstance(obj["edges"], list):
+                _fail(path + ".edges", "must be a list")
+            for i, item in enumerate(obj["edges"]):
+                e = _object(item, f"{path}.edges[{i}]", {"kind", "from", "to", "weight", "predicate", "order", "provenance"}, {"kind", "from", "to"})
+                if e["kind"] not in {"followUp", "randomBranch", "conditionalBranch"}:
+                    _fail(f"{path}.edges[{i}].kind", "unsupported edge")
+                if e["from"] not in ids or e["to"] not in ids:
+                    _fail(f"{path}.edges[{i}]", "edge refers to unknown node")

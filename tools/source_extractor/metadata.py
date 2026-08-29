@@ -302,6 +302,11 @@ class AssemblyMetadata:
             operand = instruction.operand
             if hasattr(operand, "value"):
                 operand = self.resolve_token(operand)
+            elif isinstance(operand, (list, tuple)) and all(type(item) is int for item in operand):
+                # dncil exposes switch destinations as absolute IL offsets. Keep
+                # the bounded integer list so CFG analyzers can resolve it; a
+                # stringified list is diagnostic text, not control-flow data.
+                operand = list(operand)
             elif operand is not None and not isinstance(operand, (str, int, float, bytes)):
                 operand = str(operand)
             instructions.append({
