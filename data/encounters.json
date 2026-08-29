@@ -1,6 +1,6 @@
 {
   "meta": {
-    "source": "wiki.gg StS2 enemy/elite/boss article pages; Module:Enemies snapshots only as fallback",
+    "source": "wiki.gg StS2 enemy/elite/boss article pages; Module:Enemies snapshots as fallback; named game-audit overrides from v0.111.0 CIL",
     "wikiPages": [
       {
         "title": "Slay the Spire 2:Aeonglass",
@@ -500,7 +500,7 @@
           "displayName": "Axebot",
           "type": "Normal",
           "hpA8": [
-            78,
+            76,
             86
           ],
           "startsWithA9": "Stock 2",
@@ -524,6 +524,9 @@
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Axebot",
           "patchChecked": "v0.111.0 Enemies",
+          "sourceFlags": [
+            "GAME OVERRIDE: hpA8 article=[78, 86] game=[76, 86]"
+          ],
           "monsterId": "AXEBOT",
           "count": 1,
           "role": "live-body template",
@@ -574,7 +577,30 @@
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
           "monsterId": "BOWLBUG_ROCK",
-          "count": 1
+          "count": 1,
+          "pack": "1 Rock + 2 workers from Egg/Silk/Nectar"
+        },
+        {
+          "displayName": "Bowlbug (Egg)",
+          "type": "Normal",
+          "hpA8": [
+            23,
+            24
+          ],
+          "moves": [
+            {
+              "name": "Bite",
+              "textA9": "Deals 8 damage. Gains 8 Block."
+            }
+          ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Uses Bite every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
+          "monsterId": "BOWLBUG_EGG",
+          "count": 1,
+          "role": "worker pool"
         },
         {
           "displayName": "Bowlbug (Silk)",
@@ -599,7 +625,8 @@
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
           "monsterId": "BOWLBUG_SILK",
-          "count": 1
+          "count": 1,
+          "role": "worker pool"
         },
         {
           "displayName": "Bowlbug (Nectar)",
@@ -624,7 +651,8 @@
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
           "monsterId": "BOWLBUG_NECTAR",
-          "count": 1
+          "count": 1,
+          "role": "worker pool"
         }
       ],
       "name": "Bowlbugs",
@@ -659,7 +687,8 @@
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
           "monsterId": "BOWLBUG_ROCK",
-          "count": 1
+          "count": 1,
+          "pack": "1 Rock + 1 worker from Egg/Nectar"
         },
         {
           "displayName": "Bowlbug (Egg)",
@@ -680,7 +709,34 @@
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
           "monsterId": "BOWLBUG_EGG",
-          "count": 1
+          "count": 1,
+          "role": "worker pool"
+        },
+        {
+          "displayName": "Bowlbug (Nectar)",
+          "type": "Normal",
+          "hpA8": [
+            36,
+            39
+          ],
+          "moves": [
+            {
+              "name": "Thrash",
+              "textA9": "Deals 3 damage."
+            },
+            {
+              "name": "Buff",
+              "textA9": "Gains 16 Strength."
+            }
+          ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Opens with Thrash, then uses Buff once, then uses Thrash every turn after."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Bowlbugs",
+          "monsterId": "BOWLBUG_NECTAR",
+          "count": 1,
+          "role": "worker pool"
         }
       ],
       "name": "Bowlbugs",
@@ -797,7 +853,7 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "The Ceremonial Beast has two distinct phases. Phase 1: • Uses Stamp on the first turn, gaining Plow. • Then uses Plow every turn. When its HP drops to the Plow threshold (150, or 160), it immediately becomes Stunned and loses all Strength. Phase 2: After being stunned, repeats this three-move cycle: • Beast Cry • Stomp • Crush"
+            "text": "The Ceremonial Beast has two distinct phases. Phase 1: • Uses Stamp on the first turn, gaining Plow. • Then uses Plow every turn. When its HP drops to the Plow threshold (160), it immediately becomes Stunned and loses all Strength. Phase 2: After being stunned, repeats this three-move cycle: • Beast Cry • Stomp • Crush"
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ceremonial_Beast",
           "monsterId": "CEREMONIAL_BEAST",
@@ -1511,6 +1567,50 @@
           "monsterId": "ZAPBOT",
           "count": 1,
           "role": "summoned"
+        },
+        {
+          "displayName": "Stabbot",
+          "type": "Minion",
+          "hpA8": [
+            19,
+            24
+          ],
+          "moves": [
+            {
+              "name": "Stab",
+              "textA9": "Deals 12 damage. Applies 1 Frail."
+            }
+          ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Uses Stab every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fabricator",
+          "monsterId": "STABBOT",
+          "count": 1,
+          "role": "summoned"
+        },
+        {
+          "displayName": "Noisebot",
+          "type": "Minion",
+          "hpA8": [
+            19,
+            24
+          ],
+          "moves": [
+            {
+              "name": "Noise",
+              "textA9": "Shuffles 2 Dazed into the player's draw and discard piles."
+            }
+          ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Uses Noise every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Fabricator",
+          "monsterId": "NOISEBOT",
+          "count": 1,
+          "role": "summoned"
         }
       ],
       "name": "Fabricator",
@@ -1993,7 +2093,7 @@
             },
             {
               "name": "Radiate",
-              "textA9": "Deals 13 damage. Gains 18 Block."
+              "textA9": "Deals 13 damage. Gains 13 Block."
             },
             {
               "name": "Whirlwind",
@@ -2009,6 +2109,9 @@
             "text": "The Infested Prism repeats a fixed four-move cycle: • Jab • Radiate • Whirlwind • Pulsate"
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Infested_Prism",
+          "sourceFlags": [
+            "GAME OVERRIDE: Radiate article='Deals 13 damage. Gains 18 Block.' game='Deals 13 damage. Gains 13 Block.'"
+          ],
           "monsterId": "INFESTED_PRISM",
           "count": 1
         }
@@ -2806,7 +2909,7 @@
           "moves": [
             {
               "name": "Hatch",
-              "textA9": "Hatches into a Hatchling. Removes all powers except Minion."
+              "textA9": "Hatches into a Hatchling with 20-23 HP. Removes all powers except Minion."
             }
           ],
           "pattern": {
@@ -2818,6 +2921,29 @@
           "count": 1,
           "role": "summoned",
           "pack": "Lay Eggs summons 3 at a time; eggs hatch into live Hatchlings"
+        },
+        {
+          "displayName": "Hatchling",
+          "type": "Minion",
+          "hpA8": [
+            20,
+            23
+          ],
+          "startsWithA9": "Minion",
+          "moves": [
+            {
+              "name": "Nibble",
+              "textA9": "Deals 5 damage."
+            }
+          ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Uses Nibble every turn."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ovicopter",
+          "monsterId": "HATCHLING",
+          "count": 1,
+          "role": "summoned"
         }
       ],
       "name": "Ovicopter",
@@ -2828,7 +2954,7 @@
         "The Hatchling is a minion that spawns from a Tough Egg",
         "Hatch timer starts at 2 if summoned during the enemy turn, or 1 during the player turn.",
         "Ovicopter — Summons 3 Tough Eggs.",
-        "Tough Egg — Hatches into a Hatchling. Removes all powers except Minion."
+        "Tough Egg — Hatches into a Hatchling with 20-23 HP. Removes all powers except Minion."
       ],
       "timing": [
         "Hatch timer starts at 2 if summoned during the enemy turn, or 1 during the player turn."
@@ -2842,7 +2968,7 @@
           "displayName": "Owl Magistrate",
           "type": "Normal",
           "hpA8": [
-            243
+            247
           ],
           "moves": [
             {
@@ -2867,6 +2993,9 @@
             "text": "Follows a fixed 4-move cycle: Magistrate Scrutiny, Peck Assault, Judicial Flight, Verdict, then repeats."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Owl_Magistrate",
+          "sourceFlags": [
+            "GAME OVERRIDE: hpA8 article=[243] game=[247]"
+          ],
           "monsterId": "OWL_MAGISTRATE",
           "count": 1
         }
@@ -3070,7 +3199,7 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "The Queen's pattern depends on whether the Torch Head Amalgam is alive: Opening (always): • Puppet Strings • You're Mine While the Amalgam is alive: : Repeats Burn Bright for Me. After the Amalgam dies: : If the Queen is currently using Burn Bright for Me, she immediately switches to Enrage, then enters the enraged loop: • Off with Your Head • Execution • Enrage • Back to Off with Your Head • Keep in mind that Queen will have gained 2 Strength and that the player will likely be permanently Vulnerable from You're Mine, making these the actual damage amounts: • Off with Your Head: 7x5 / 9x5 • Execution: 25 / 30"
+            "text": "The Queen's pattern depends on whether the Torch Head Amalgam is alive: Opening (always): • Puppet Strings • You're Mine While the Amalgam is alive: : Repeats Burn Bright for Me. After the Amalgam dies: : If the Queen is currently using Burn Bright for Me, she immediately switches to Enrage, then enters the enraged loop: • Off with Your Head • Execution • Enrage • Back to Off with Your Head • Keep in mind that Queen will have gained 2 Strength and that the player will likely be permanently Vulnerable from You're Mine, making these the actual damage amounts: • Off with Your Head: 9×5 • Execution: 30"
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Queen",
           "monsterId": "QUEEN",
@@ -3145,7 +3274,9 @@
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ruby_Raiders",
           "monsterId": "ASSASSIN_RAIDER",
-          "count": 1
+          "count": 1,
+          "role": "raider pool",
+          "pack": "3 of 5 · chosen without duplicates"
         },
         {
           "displayName": "Axe Raider",
@@ -3170,7 +3301,34 @@
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ruby_Raiders",
           "monsterId": "AXE_RAIDER",
-          "count": 1
+          "count": 1,
+          "role": "raider pool"
+        },
+        {
+          "displayName": "Brute Raider",
+          "type": "Normal",
+          "hpA8": [
+            31,
+            34
+          ],
+          "moves": [
+            {
+              "name": "Beat",
+              "textA9": "Deals 8 damage."
+            },
+            {
+              "name": "Clap",
+              "textA9": "Gains 3 Strength."
+            }
+          ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Alternates between Beat and Clap, starting with Beat."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ruby_Raiders",
+          "monsterId": "BRUTE_RAIDER",
+          "count": 1,
+          "role": "raider pool"
         },
         {
           "displayName": "Crossbow Raider",
@@ -3195,7 +3353,34 @@
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ruby_Raiders",
           "monsterId": "CROSSBOW_RAIDER",
-          "count": 1
+          "count": 1,
+          "role": "raider pool"
+        },
+        {
+          "displayName": "Tracker Raider",
+          "type": "Normal",
+          "hpA8": [
+            22,
+            26
+          ],
+          "moves": [
+            {
+              "name": "Track",
+              "textA9": "Applies 2 Frail."
+            },
+            {
+              "name": "Unleash the Hounds",
+              "textA9": "Deals 1×9 damage."
+            }
+          ],
+          "pattern": {
+            "type": "cycle",
+            "text": "Opens with Track, then uses Unleash the Hounds every turn after."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Ruby_Raiders",
+          "monsterId": "TRACKER_RAIDER",
+          "count": 1,
+          "role": "raider pool"
         }
       ],
       "name": "Ruby Raiders",
@@ -3210,7 +3395,7 @@
           "displayName": "Scroll of Biting",
           "type": "Normal",
           "hpA8": [
-            32,
+            33,
             39
           ],
           "startsWithA9": "Paper Cuts 2",
@@ -3233,6 +3418,9 @@
             "text": "Start offsets (turn 1): the four-Scroll pack begins with staggered cycle steps. Cycle: Chomp → More Teeth → Chew. After Chew, randomly restart at Chomp (cannot repeat) or Chew (weight 2), then continue the cycle."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Scroll_of_Biting",
+          "sourceFlags": [
+            "GAME OVERRIDE: hpA8 article=[32, 39] game=[33, 39]"
+          ],
           "monsterId": "SCROLL_OF_BITING",
           "count": 4
         }
@@ -3251,7 +3439,7 @@
           "displayName": "Scroll of Biting",
           "type": "Normal",
           "hpA8": [
-            32,
+            33,
             39
           ],
           "startsWithA9": "Paper Cuts 2",
@@ -3274,6 +3462,9 @@
             "text": "Start offsets (turn 1): the three Scrolls each begin on a different cycle step. Cycle: Chomp → More Teeth → Chew. After Chew, randomly restart at Chomp (cannot repeat) or Chew (weight 2), then continue the cycle."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Scroll_of_Biting",
+          "sourceFlags": [
+            "GAME OVERRIDE: hpA8 article=[32, 39] game=[33, 39]"
+          ],
           "monsterId": "SCROLL_OF_BITING",
           "count": 3
         }
@@ -3503,7 +3694,7 @@
           "displayName": "Slimed Berserker",
           "type": "Normal",
           "hpA8": [
-            276
+            281
           ],
           "moves": [
             {
@@ -3528,6 +3719,9 @@
             "text": "Follows a fixed 4-move cycle: • Vomit Ichor • Furious Pummeling • Leeching Hug • Smother"
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimed_Berserker",
+          "sourceFlags": [
+            "GAME OVERRIDE: hpA8 article=[276] game=[281]"
+          ],
           "monsterId": "SLIMED_BERSERKER",
           "count": 1
         }
@@ -4120,7 +4314,7 @@
           ],
           "pattern": {
             "type": "cycle",
-            "text": "The Terror Eel alternates between Crash and Thrash, starting with Crash. When its HP drops to its Shriek threshold (70, or 75), it becomes Stunned and then uses Terror before resuming the Crash/Thrash cycle. • Terror applies 99 Vulnerable, which effectively makes the player take 50% more damage from attacks for the rest of the fight."
+            "text": "The Terror Eel alternates between Crash and Thrash, starting with Crash. When its HP drops to its Shriek threshold (75), it becomes Stunned and then uses Terror before resuming the Crash/Thrash cycle. • Terror applies 99 Vulnerable, which effectively makes the player take 50% more damage from attacks for the rest of the fight."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Terror_Eel",
           "monsterId": "TERROR_EEL",

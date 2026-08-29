@@ -167,6 +167,10 @@ def select_ascension(raw):
     marker = r"\x00ASC\d+\x00"
     text = re.sub(rf"\([^();]*;\s*({marker})\s*\)", r"\1", text)
     text = re.sub(rf"(?:\d+(?:[-x×/]\d+)*)\s*\(\s*({marker})\s*\)", r"\1", text)
+    # Pattern prose sometimes spells out both the base and an Ascension value
+    # (`N, or {{Asc2|...|M}}` / `N / {{Asc...|M}}`). Once the target marker is
+    # selected, retain only that A9 value rather than leaking both branches.
+    text = re.sub(rf"\d+(?:[-x×]\d+)*\s*(?:,\s*or|/)\s*({marker})", r"\1", text, flags=re.I)
     for index, value in markers.items():
         text = text.replace(f"\x00ASC{index}\x00", value)
     return text
@@ -217,6 +221,7 @@ def plain(raw):
     text = html.unescape(text)
     text = re.sub(r"\s*•\s*", " • ", text)
     text = re.sub(r"\s+", " ", text).strip(" ;•")
+    text = re.sub(r"(?<=\d)[xX](?=\d)", "×", text)
     text = re.sub(r"\bDeals?\s+(\d+)\s+damage\s+(\d+)\s+times\b", r"Deals \1×\2 damage", text, flags=re.I)
     text = re.sub(r"\bDeals?\s+(\d+)\s+damage\s*[x×]\s*(\d+)\b", r"Deals \1×\2 damage", text, flags=re.I)
     text = re.sub(r"\bDeals?\s+(\d+)\s*[x×]\s*(\d+)\s+damage\b", r"Deals \1×\2 damage", text, flags=re.I)
@@ -440,6 +445,16 @@ MODULE_BODIES = {}
 for module_path in MODULE_SOURCES.values():
     MODULE_BODIES.update(module_entries(module_path))
 
+# Hive.lua has Hatchling's Nibble/HP on Tough Egg rather than a standalone Lua
+# table. The checked-in Ovicopter article has a real `== Hatchling ==` record;
+# this documented fallback supplies its locator and the same module magnitudes
+# so merged_body can resolve that article section without inventing a snapshot.
+MODULE_BODIES["Hatchling"] = {
+    "displayName": "Hatchling", "type": "Minion", "hpA8": [20, 23],
+    "startsWithA9": "Minion", "moves": [{"name": "Nibble", "textA9": "Deals 5 damage."}],
+    "articleTitle": "Ovicopter", "articleSection": "Hatchling",
+}
+
 ARTICLE_BODIES = {}
 ARTICLE_PAGES = {}
 for title, page in SNAPSHOT["pages"].items():
@@ -462,6 +477,19 @@ PATCH_VALUES = {
     "Louse Progenitor": {"moves": {"Curl and Grow": "Gains 18 Block. Gains 7 Strength."}},
     "Soul Fysh": {"moves": {"De-Gas": "Deals 18 damage."}},
     "Entomancer": {"hpA8": [165]},
+}
+
+
+# First-party audit overrides are separate from PATCH_VALUES: these values come
+# from Steam public-beta v0.111.0 CIL (commit 41cef1ea, sts2.dll SHA-256
+# 2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f),
+# not from the wiki patch-note Enemies section.
+GAME_AUDIT_VALUES = {
+    "Axebot": {"hpA8": [76, 86]},
+    "Owl Magistrate": {"hpA8": [247]},
+    "Scroll of Biting": {"hpA8": [33, 39]},
+    "Slimed Berserker": {"hpA8": [281]},
+    "Infested Prism": {"moves": {"Radiate": "Deals 13 damage. Gains 13 Block."}},
 }
 
 
@@ -509,6 +537,31 @@ def apply_patch_override(name, body):
     return body
 
 
+def apply_game_audit_override(name, body):
+    audit = GAME_AUDIT_VALUES.get(name)
+    if not audit:
+        return body
+    conflicts = []
+    if "hpA8" in audit:
+        expected = audit["hpA8"]
+        actual = body.get("hpA8")
+        if actual != expected:
+            conflicts.append(f"hpA8 article={actual} game={expected}")
+        body["hpA8"] = expected
+    moves = {move["name"]: move for move in body.get("moves", [])}
+    for move_name, expected in audit.get("moves", {}).items():
+        actual = moves.get(move_name, {}).get("textA9")
+        if actual != expected:
+            conflicts.append(f"{move_name} article={actual!r} game={expected!r}")
+        if move_name in moves:
+            moves[move_name]["textA9"] = expected
+        else:
+            body.setdefault("moves", []).append({"name": move_name, "textA9": expected})
+    if conflicts:
+        body.setdefault("sourceFlags", []).extend(f"GAME OVERRIDE: {conflict}" for conflict in conflicts)
+    return body
+
+
 def merged_body(name):
     fallback = MODULE_BODIES.get(name)
     if not fallback:
@@ -531,7 +584,13 @@ def merged_body(name):
         merged["pattern"] = {"type": "unknown", "text": "Pattern prose could not be parsed from the wiki.gg article snapshot."}
     if fallback.get("partyNote"):
         merged["partyNote"] = fallback["partyNote"]
-    return apply_patch_override(name, merged)
+    # The article says only "with new HP"; Hive.lua supplies the A8 hatch HP.
+    if name == "Tough Egg":
+        module_hatch = next(move for move in fallback["moves"] if move["name"] == "Hatch")
+        article_hatch = next(move for move in merged["moves"] if move["name"] == "Hatch")
+        article_hatch["textA9"] = module_hatch["textA9"]
+    merged = apply_patch_override(name, merged)
+    return apply_game_audit_override(name, merged)
 
 
 # Count is used only for a stable number of equivalent live bodies. Fixed
@@ -570,7 +629,11 @@ add("Overgrowth", "hallway", {
  "FOGMOG_NORMAL":[L("Fogmog"),L("Eye With Teeth", role="summoned")], "INKLETS_NORMAL":[L("Inklet", 3, pattern=P("random-with-constraint", "Openers by position (turn 1): each outer Inklet uses Jab (most likely) or Windup Punch; the middle uses Windup Punch. Then cycle rules: after Jab, randomly use Piercing Gaze or Windup Punch; after either of those, use Jab."))],
  "SLIMES_NORMAL":[L("Twig Slime (M)"),L("Leaf Slime (M)"),L("Twig Slime (S)"),L("Leaf Slime (S)")],
  "SLITHERING_STRANGLER_NORMAL":[L("Slithering Strangler"),L("Leaf Slime (S)",2)], "SNAPPING_JAXFRUIT_NORMAL":[L("Snapping Jaxfruit"),L("Flyconid")],
- "RUBY_RAIDERS_NORMAL":[L("Assassin Raider"),L("Axe Raider"),L("Crossbow Raider")], "CUBEX_CONSTRUCT_NORMAL":[L("Cubex Construct")],
+ "RUBY_RAIDERS_NORMAL":[
+     L("Assassin Raider", role="raider pool", pack="3 of 5 · chosen without duplicates"),
+     L("Axe Raider", role="raider pool"), L("Brute Raider", role="raider pool"),
+     L("Crossbow Raider", role="raider pool"), L("Tracker Raider", role="raider pool"),
+ ], "CUBEX_CONSTRUCT_NORMAL":[L("Cubex Construct")],
  "OVERGROWTH_CRAWLERS":[L("Fuzzy Wurm Crawler"),L("Shrinker Beetle")],
 })
 add("Underdocks", "hallway", {
@@ -588,15 +651,22 @@ add("Underdocks", "hallway", {
  "SEAPUNK_NORMAL":[L("Seapunk"),L("Calcified Cultist")], "CULTISTS_NORMAL":[L("Calcified Cultist"),L("Damp Cultist")], "SEWER_CLAM_NORMAL":[L("Sewer Clam")],
 })
 add("Hive", "hallway", {
- "TUNNELER_WEAK":[L("Tunneler")], "THIEVING_HOPPER_WEAK":[L("Thieving Hopper")], "BOWLBUGS_WEAK":[L("Bowlbug (Rock)"),L("Bowlbug (Egg)")],
+ "TUNNELER_WEAK":[L("Tunneler")], "THIEVING_HOPPER_WEAK":[L("Thieving Hopper")], "BOWLBUGS_WEAK":[
+     L("Bowlbug (Rock)", pack="1 Rock + 1 worker from Egg/Nectar"),
+     L("Bowlbug (Egg)", role="worker pool"), L("Bowlbug (Nectar)", role="worker pool"),
+ ],
  "EXOSKELETONS_WEAK":[L("Exoskeleton", 3, pattern=P("random-with-constraint", f"Openers by position (turn 1): first — Skitter; second — Mandibles; third — Enrage. {EXOSKELETON_RULES}"))],
  "MYTES_NORMAL":[
      L("Myte", role="Toxic Cornucopia opener slot", pattern=P("cycle", f"Opener (turn 1): Toxic Cornucopia. {MYTE_CYCLE}")),
      L("Myte", role="Suck opener slot", pattern=P("cycle", f"Opener (turn 1): Suck. {MYTE_CYCLE}")),
- ], "BOWLBUGS_NORMAL":[L("Bowlbug (Rock)"),L("Bowlbug (Silk)"),L("Bowlbug (Nectar)")],
+ ], "BOWLBUGS_NORMAL":[
+     L("Bowlbug (Rock)", pack="1 Rock + 2 workers from Egg/Silk/Nectar"),
+     L("Bowlbug (Egg)", role="worker pool"), L("Bowlbug (Silk)", role="worker pool"),
+     L("Bowlbug (Nectar)", role="worker pool"),
+ ],
  "LOUSE_PROGENITOR_NORMAL":[L("Louse Progenitor")], "SPINY_TOAD_NORMAL":[L("Spiny Toad")], "THE_OBSCURA_NORMAL":[L("The Obscura"),L("Parafright", role="summoned")],
  "EXOSKELETONS_NORMAL":[L("Exoskeleton", 4, pattern=P("random-with-constraint", f"Openers by position (turn 1): first — Skitter; second — Mandibles; third — Enrage; fourth — randomly Skitter or Mandibles. {EXOSKELETON_RULES}"))],
- "OVICOPTER_NORMAL":[L("Ovicopter"),L("Tough Egg", role="summoned", pack="Lay Eggs summons 3 at a time; eggs hatch into live Hatchlings")], "SLUMBERING_BEETLE_NORMAL":[L("Slumbering Beetle"),L("Bowlbug (Rock)"),L("Bowlbug (Silk)")],
+ "OVICOPTER_NORMAL":[L("Ovicopter"),L("Tough Egg", role="summoned", pack="Lay Eggs summons 3 at a time; eggs hatch into live Hatchlings"),L("Hatchling", role="summoned")], "SLUMBERING_BEETLE_NORMAL":[L("Slumbering Beetle"),L("Bowlbug (Rock)"),L("Bowlbug (Silk)")],
  "HUNTER_KILLER_NORMAL":[L("Hunter Killer")],
  "CHOMPERS_NORMAL":[
      L("Chomper", role="Clamp opener slot", pattern=P("cycle", "Opener (turn 1): Clamp. Then continue the cycle: Screech → Clamp → repeat.")),
@@ -608,7 +678,7 @@ add("Glory", "hallway", {
  "TURRET_OPERATOR_WEAK":[L("Living Shield"),L("Turret Operator")], "OWL_MAGISTRATE_NORMAL":[L("Owl Magistrate")], "GLOBE_HEAD_NORMAL":[L("Globe Head")],
  "SLIMED_BERSERKER_NORMAL":[L("Slimed Berserker")], "CONSTRUCT_MENAGERIE_NORMAL":[L("Punch Construct"),L("Cubex Construct",2)],
  "THE_LOST_AND_FORGOTTEN_NORMAL":[L("The Lost"),L("The Forgotten")], "FROG_KNIGHT_NORMAL":[L("Frog Knight")],
- "FABRICATOR_NORMAL":[L("Fabricator"),L("Guardbot", role="summoned"),L("Zapbot", role="summoned")], "SCROLLS_OF_BITING_NORMAL":[L("Scroll of Biting", 4, pattern=P("random-with-constraint", "Start offsets (turn 1): the four-Scroll pack begins with staggered cycle steps. Cycle: Chomp → More Teeth → Chew. After Chew, randomly restart at Chomp (cannot repeat) or Chew (weight 2), then continue the cycle."))],
+ "FABRICATOR_NORMAL":[L("Fabricator"),L("Guardbot", role="summoned"),L("Zapbot", role="summoned"),L("Stabbot", role="summoned"),L("Noisebot", role="summoned")], "SCROLLS_OF_BITING_NORMAL":[L("Scroll of Biting", 4, pattern=P("random-with-constraint", "Start offsets (turn 1): the four-Scroll pack begins with staggered cycle steps. Cycle: Chomp → More Teeth → Chew. After Chew, randomly restart at Chomp (cannot repeat) or Chew (weight 2), then continue the cycle."))],
  "AXEBOTS_NORMAL":[L(
      "Axebot", role="live-body template", pack="1 initially · Stock respawns replace the defeated body",
      pattern=P("cycle", "Opener (turn 1): Hammer Uppercut. Then continue the cycle: The One-Two → Hammer Uppercut → repeat. Stock respawn opener: Boot Up (the second respawn uses its improved value), then enter the cycle at Hammer Uppercut."),
@@ -699,7 +769,7 @@ for title in used_titles:
 patch_page = SNAPSHOT["pages"][SNAPSHOT["meta"]["patchPage"]]
 output = {
     "meta": {
-        "source": "wiki.gg StS2 enemy/elite/boss article pages; Module:Enemies snapshots only as fallback",
+        "source": "wiki.gg StS2 enemy/elite/boss article pages; Module:Enemies snapshots as fallback; named game-audit overrides from v0.111.0 CIL",
         "wikiPages": page_meta,
         "patchPage": {
             "title": patch_page["title"], "url": patch_page["url"],

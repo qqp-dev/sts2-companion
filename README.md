@@ -2,7 +2,7 @@
 
 A phone-first, read-only encounter micro-HUD for **Slay the Spire 2**. The
 optional Cordis plugin mounts its own page at <http://127.0.0.1:3082/sts2> on
-the qq loopback web server. It shows an A10, two-player reference book for the
+the qq loopback web server. It shows an A9 / 2P reference book for the
 current fight, or the most recently completed fight between rooms. It does not
 show live HP or intents and never writes game input.
 
@@ -14,8 +14,9 @@ XDG data root, and the alternate Megacrit Flatpak root.
 
 Book data is local in `data/encounters.json` and targets Steam
 `public-beta` **v0.111.0**: A8 single-player HP and A9 move, block, and buff
-values are normalized from wiki.gg StS2 enemy article pages. The older
-`Module:Enemies/StS2 data/*` snapshots are fallback only. Runtime makes no wiki
+values are normalized from wiki.gg StS2 enemy article pages. Named disagreements
+are overridden and visibly flagged from the audited v0.111.0 game CIL. The
+older `Module:Enemies/StS2 data/*` snapshots are fallback only. Runtime makes no wiki
 or other network requests. It also compares the book target with the local
 game's `release_info.json` when that file is readable; a mismatch is shown on
 the page rather than silently serving the wrong book.

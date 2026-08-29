@@ -33,62 +33,110 @@ function scaleToken(token, factor) {
     .join("/");
 }
 
-// A9 already supplies combat-stat magnitudes. Multiplayer scaling has three
-// independent buckets: combat stats stay source-true like attacks, Block uses
-// player count only, and stored powers use the same players × HP factor as HP.
+// A9 already supplies attacks, combat stats, and powers that do not opt in
+// to multiplayer scaling. Opt-in powers use their v0.111.0 PowerAmount formula;
+// Block and produced HP are separate mechanics with their own formulas.
 export const scalingCategories = Object.freeze({
   combatStats: Object.freeze(["Strength", "Dexterity", "Vigor"]),
   block: Object.freeze(["Block"]),
-  storedPowers: Object.freeze(["Plating", "Curl Up", "Reattach", "Hardened Shell", "Vital Spark", "Plow", "Personal Hive", "Steam Eruption", "Enrage", "Ritual", "Intangible", "Thorns", "Shriek"]),
+  defaultPowers: Object.freeze(["Curl Up", "Flutter", "Hardened Shell", "Plow", "Rampart", "Reattach", "Regen", "Shriek"]),
+  artifact: Object.freeze(["Artifact"]),
+  plating: Object.freeze(["Plating"]),
+  skittish: Object.freeze(["Skittish"]),
+  slippery: Object.freeze(["Slippery"]),
 });
 const BLOCK = scalingCategories.block.join("|");
-const STORED_POWERS = scalingCategories.storedPowers.join("|");
+const MULTIPLAYER_POWERS = [
+  ...scalingCategories.defaultPowers,
+  ...scalingCategories.artifact,
+  ...scalingCategories.plating,
+  ...scalingCategories.skittish,
+  ...scalingCategories.slippery,
+];
+const MULTIPLAYER_POWER_PATTERN = MULTIPLAYER_POWERS.join("|");
 
-function scaleNamedStoredPowers(text, factor) {
+function powerFactor(power, options) {
+  const name = String(power).toLowerCase();
+  const inCategory = (category) => scalingCategories[category].some((candidate) => candidate.toLowerCase() === name);
+  if (inCategory("block")) {
+    const players = Number(options.players ?? 2);
+    return players <= 2 ? players : players * actScale(options);
+  }
+  if (inCategory("defaultPowers")) return Number(options.players ?? 2) * actScale(options);
+  if (inCategory("plating")) return 2 * (Number(options.players ?? 2) - 1) + 1;
+  if (inCategory("skittish")) return 1 + 0.5 * (Number(options.players ?? 2) - 1);
+  if (inCategory("slippery")) return Number(options.players ?? 2);
+  return null;
+}
+
+function scalePowerToken(value, power, options) {
+  const name = String(power).toLowerCase();
+  if (scalingCategories.artifact.some((candidate) => candidate.toLowerCase() === name)) {
+    const delta = Number(options.players ?? 2) - 1;
+    return String(value)
+      .split("/")
+      .map((alt) => alt.split("-").map((part) => String(Number(part) + delta)).join("–"))
+      .join("/");
+  }
+  const factor = powerFactor(power, options);
+  return factor == null ? String(value) : scaleToken(value, factor);
+}
+
+function scaleNamedMultiplayerPowers(text, options) {
   return String(text).replace(
-    new RegExp(String.raw`\b(${STORED_POWERS})\s+(\d+(?:[-/]\d+)*)\b`, "gi"),
-    (_, power, value) => `${power} ${scaleToken(value, factor)}`,
+    new RegExp(String.raw`\b(${MULTIPLAYER_POWER_PATTERN})\s+(\d+(?:[-/]\d+)*)\b`, "gi"),
+    (_, power, value) => `${power} ${scalePowerToken(value, power, options)}`,
   );
 }
 
 /**
- * Convert the source A9 mechanics sentence into its multiplayer rendering.
- * Attack clauses and applied debuff durations remain unchanged. Enemy block
- * scales only by players; stored powers and revive HP use players × actScale.
- * Strength, Dexterity, and Vigor remain at their A9 source magnitudes.
- * HP-threshold powers written as "Gains PowerName N" (Plow, Vital Spark) scale too.
+ * Convert source A9 mechanics prose into its multiplayer rendering. Attack,
+ * debuff-duration, summon/card-count, combat-stat, and non-opt-in power amounts
+ * stay source-true. Block uses player count; produced HP and default opt-in
+ * powers use players × actScale; special powers use their class formulas.
  */
 export function scaleMechanicsText(text, options = {}) {
   const players = Number(options.players ?? 2);
-  const general = players * actScale(options);
+  const hpFactor = players * actScale(options);
   const numericPower = new RegExp(
-    String.raw`\b(\d+(?:[-/]\d+)*)(\s*(?:\+\s*X\s*)?)\s+(${BLOCK}|${STORED_POWERS})\b`,
+    String.raw`\b(\d+(?:[-/]\d+)*)(\s*(?:\+\s*X\s*)?)\s+(${BLOCK}|${MULTIPLAYER_POWER_PATTERN})\b`,
     "gi",
   );
   let rendered = String(text ?? "").split(/(?<=\.)\s+/).map((sentence) => {
     const scaleAt = sentence.search(/\b(?:gains?|gained|gaining|gives?|gave|given|adds?|added|adding|starts?|begins?|opens?)\b/i);
     if (scaleAt < 0) return sentence;
     const prefix = sentence.slice(0, scaleAt);
-    let mechanics = sentence.slice(scaleAt).replace(numericPower, (_, value, addition, power) => {
-      const factor = scalingCategories.block.some((name) => name.toLowerCase() === power.toLowerCase()) ? players : general;
-      return `${scaleToken(value, factor)}${addition} ${power}`;
-    });
-    mechanics = scaleNamedStoredPowers(mechanics, general);
+    let mechanics = sentence.slice(scaleAt).replace(numericPower, (_, value, addition, power) => (
+      `${scalePowerToken(value, power, options)}${addition} ${power}`
+    ));
+    mechanics = scaleNamedMultiplayerPowers(mechanics, options);
     return prefix + mechanics;
   }).join(" ");
 
-  // Reattach/revive and explicit produced HP are HP scaling, not attacks.
+  // Reattach/revive, explicit produced HP, and Axebot's pre-scaling Max-HP
+  // increment use HP scaling rather than a named-power formula.
   rendered = rendered.replace(/\b(Revives? with|Reattaches? with|Hatches? into[^.]*? with)\s+(\d+(?:[-/]\d+)*)\s+HP\b/gi,
-    (_, lead, value) => `${lead} ${scaleToken(value, general)} HP`);
+    (_, lead, value) => `${lead} ${scaleToken(value, hpFactor)} HP`);
+  rendered = rendered.replace(/\+(\d+(?:[-/]\d+)*)\s+Max HP\b/gi,
+    (_, value) => `+${scaleToken(value, hpFactor)} Max HP`);
+
+  // Flutter stores the number of hits in descriptive prose rather than the
+  // usual "Power N" form. Limit this to sentences that explicitly name it.
+  rendered = rendered.split(/(?<=\.)\s+/).map((sentence) => {
+    if (!/\bFlutter\b/i.test(sentence)) return sentence;
+    return sentence.replace(/\b((?:must be\s+)?hit\s+)(\d+(?:[-/]\d+)*)(\s+times?\b)/gi,
+      (_, lead, value, tail) => `${lead}${scaleToken(value, hpFactor)}${tail}`);
+  }).join(" ");
   return rendered;
 }
 
 function scaledStartsWith(text, options) {
   if (!text) return null;
-  const players = Number(options.players ?? 2);
-  const general = players * actScale(options);
   const block = new RegExp(String.raw`\b(${BLOCK})\s+(\d+(?:[-/]\d+)*)\b`, "gi");
-  return scaleNamedStoredPowers(String(text).replace(block, (_, power, value) => `${power} ${scaleToken(value, players)}`), general);
+  return scaleNamedMultiplayerPowers(
+    String(text).replace(block, (_, power, value) => `${power} ${scalePowerToken(value, power, options)}`),
+    options,
+  );
 }
 
 function scaledPattern(pattern, options) {
@@ -131,8 +179,13 @@ export function scaledEncounter(encounter, options = {}) {
     timing: (encounter.timing ?? []).map((line) => scaleMechanicsText(line, scaling)),
     scale: {
       players: scaling.players,
-      hpAndStoredBuff: scaling.players * actScale(scaling),
-      block: scaling.players,
+      hp: scaling.players * actScale(scaling),
+      block: scaling.players <= 2 ? scaling.players : scaling.players * actScale(scaling),
+      plating: 2 * (scaling.players - 1) + 1,
+      artifactDelta: scaling.players - 1,
+      skittish: 1 + 0.5 * (scaling.players - 1),
+      slippery: scaling.players,
+      defaultPowers: scaling.players * actScale(scaling),
       attacks: 1,
       combatStats: 1,
     },

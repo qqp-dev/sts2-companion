@@ -116,8 +116,8 @@
     listSection(root, "timing", book.timing);
     const source = el("footer", "source");
     const scale = book.scale;
-    source.append(el("div", "scale-note", `hp & stored buffs ×${scale.hpAndStoredBuff.toFixed(1)} · block ×${scale.block} · attacks & combat stats unscaled`));
-    source.append(el("div", "", "source values · wiki.gg · a8 hp · a9 moves · rendered for a10 / 2p"));
+    source.append(el("div", "scale-note", `hp ×${scale.hp.toFixed(1)} · block ×${scale.block} · attacks & combat stats unscaled · mp powers by formula`));
+    source.append(el("div", "", "source values · wiki.gg · a8 hp · a9 moves · rendered for a9 / 2p"));
     root.append(source);
   }
   async function poll() {
