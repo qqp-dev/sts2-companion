@@ -92,7 +92,7 @@ function renderState(state, basePath) {
     content += `<div class="cards">${book.lineup.map((body) => renderBody(body)).join("")}</div>`;
     content += listSection("death & extra rules", book.rules);
     content += listSection("timing", book.timing);
-    content += `<footer class="source"><div class="scale-note">hp &amp; stored buffs ×${book.scale.hpAndStoredBuff.toFixed(1)} · block ×${book.scale.block} · attacks &amp; combat stats unscaled</div><div>source values · wiki.gg · a8 hp · a9 moves · rendered for a10 / 2p</div></footer>`;
+    content += `<footer class="source"><div class="scale-note">hp ×${book.scale.hp.toFixed(1)} · block ×${book.scale.block} · attacks &amp; combat stats unscaled · mp powers by formula</div><div>source values · wiki.gg · a8 hp · a9 moves · rendered for a9 / 2p</div></footer>`;
   }
   return `<main id="encounter" data-base-path="${escapeHtml(basePath)}" class="state state-${escapeHtml(state.status)}">${content}</main>`;
 }
@@ -167,7 +167,7 @@ body{margin:0;color:var(--text)}
 `;
 
 function page(state, basePath) {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#000"><title>sts2 companion</title><style>${CSS}</style></head><body><div class="shell"><div class="topbar"><span><i class="live-dot" aria-hidden="true"></i>sts2 companion</span><span>a10 · 2p</span></div>${renderState(state, basePath)}</div><script src="${escapeHtml(basePath)}/client.js" defer></script></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#000"><title>sts2 companion</title><style>${CSS}</style></head><body><div class="shell"><div class="topbar"><span><i class="live-dot" aria-hidden="true"></i>sts2 companion</span><span>a9 · 2p</span></div>${renderState(state, basePath)}</div><script src="${escapeHtml(basePath)}/client.js" defer></script></body></html>`;
 }
 
 function payload(reader, players) {
@@ -181,7 +181,7 @@ function payload(reader, players) {
     installed,
     matches: installed?.version ? normalizeVersion(installed.version) === normalizeVersion(bookMeta.targetVersion) : null,
   };
-  return { ...state, ascension: 10, players, version, encounter: bookForState(state, { players }) };
+  return { ...state, ascension: 9, players, version, encounter: bookForState(state, { players }) };
 }
 
 export function createSts2Handler(reader, options = {}) {
