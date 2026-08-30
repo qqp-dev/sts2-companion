@@ -1,4 +1,4 @@
-"""Pure builder for the compact E2c1 encounter projection."""
+"""Pure builder for the compact E2c2a encounter projection."""
 
 from __future__ import annotations
 
@@ -257,6 +257,53 @@ def _source_event_turn_behavior(source: dict[str, Any], facts: _Facts) -> dict[s
         "invocationSummary": deepcopy(behavior["eventTurnInvocationCensus"]["summary"]),
         "sourceDenominators": deepcopy(behavior["eventTurnSummary"]),
     }
+
+
+def _source_event_scripts(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
+    """Project compact E2c2a semantics; omit method/call proof bulk."""
+    raw=source["eventScripts"]
+    result={}
+    specs=(
+        ("owners","SOURCE.EVENT_SCRIPT_OWNER",lambda r:r["canonicalEvent"].removeprefix("EVENT.")),
+        ("options","SOURCE.EVENT_SCRIPT_OPTION",lambda r:r["optionId"].removeprefix("EVENT_OPTION.").replace("/",".")),
+        ("transitions","SOURCE.EVENT_SCRIPT_TRANSITION",lambda r:r["transitionId"].removeprefix("EVENT_TRANSITION.").replace("/",".")),
+        ("stateContracts","SOURCE.EVENT_SCRIPT_CONTRACT",lambda r:(r["eventId"].removeprefix("EVENT.")+"."+r["name"].replace(".","_"))),
+        ("effects","SOURCE.EVENT_SCRIPT_EFFECT",lambda r:r["effectId"].removeprefix("EVENT_EFFECT.").replace("/",".")),
+        ("nodes","SOURCE.EVENT_SCRIPT_NODE",lambda r:r["nodeId"].removeprefix("EVENT_NODE.").replace("/",".")),
+        ("edges","SOURCE.EVENT_SCRIPT_EDGE",lambda r:r["edgeId"].removeprefix("EVENT_EDGE.").replace("/",".")),
+        ("displayScaling","SOURCE.EVENT_SCRIPT_DISPLAY",lambda r:r["destination"].replace("event.dynamicVars.","").replace(".baseValue","")),
+        ("dependencies","SOURCE.EVENT_SCRIPT_DEPENDENCY",lambda r:r["dependencyId"].replace("/",".")),
+        ("outcomes","SOURCE.EVENT_SCRIPT_OUTCOME",lambda r:r["outcomeId"].removeprefix("EVENT_OUTCOME.").replace("/",".")),
+    )
+    for family,prefix,suffix in specs:
+        rows=[]
+        for index,row in enumerate(raw[family]):
+            fact_id=prefix+"."+suffix(row)
+            facts.add(fact_id,"source",f"EVIDENCE.{fact_id}","INPUT.SOURCE",[f"/eventScripts/{family}/{index}"])
+            compact=_without_provenance(row)
+            if family=="owners":
+                compact["e1EncounterLinkRefs"]=[x.replace("SOURCE.EVENT_LINK.ENCOUNTER.","SOURCE.EVENT_LINK.") for x in compact["e1EncounterLinkRefs"]]
+            elif family=="transitions":
+                compact["e1EventLinkRef"]=compact["e1EventLinkRef"].replace("SOURCE.EVENT_LINK.ENCOUNTER.","SOURCE.EVENT_LINK.")
+            # Proof methods remain represented by exact identity only; full
+            # hashes and CIL call sites stay in raw source data.
+            for key in ("method","constructionMethod","callbackMethod","resumeMethod","resumeBody"):
+                if isinstance(compact.get(key),dict):
+                    m=compact[key]; compact[key]={"methodBodySha256":m["methodBodySha256"],"symbolSignature":m["symbolSignature"]}
+            availability=compact.get("availability")
+            if isinstance(availability,dict) and isinstance(availability.get("method"),dict):
+                m=availability["method"];availability["method"]={"methodBodySha256":m["methodBodySha256"],"symbolSignature":m["symbolSignature"]}
+            compact["factId"]=fact_id;rows.append(compact)
+        result[family]=rows
+    dispatch_id="SOURCE.EVENT_SCRIPT.FOUL_POTION_DISPATCH"
+    facts.add(dispatch_id,"source",f"EVIDENCE.{dispatch_id}","INPUT.SOURCE",["/eventScripts/foulPotionDispatch"])
+    result["foulPotionDispatch"]={"classification":raw["foulPotionDispatch"]["classification"],"factId":dispatch_id,
+                                    "taskJoin":raw["foulPotionDispatch"]["taskJoin"]}
+    result["framework"]={"methodCount":raw["sourceDenominators"]["frameworkMethods"],
+                          "roles":sorted({x["edgeRole"] for x in raw["frameworkMethods"]})}
+    result["invocationSummary"]=deepcopy(raw["invocationCensus"]["summary"])
+    result["sourceDenominators"]=deepcopy(raw["sourceDenominators"])
+    return result
 
 
 def _source_placement(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
@@ -717,20 +764,22 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
         },
         {
             "affectedFactIds": [row["factId"] for row in source_facts["eventTurnBehavior"]["encounters"]]
-                               + [row["factId"] for row in source_facts["eventTurnBehavior"]["dependencies"]],
-            "detail": "All eight normal/inherited/no-op event turn machines are source-complete, but scripted event behavior and event lifecycle/timeout/result semantics remain unresolved dependencies.",
+                               + [row["factId"] for row in source_facts["eventTurnBehavior"]["dependencies"]]
+                               + [row["factId"] for row in source_facts["eventScripts"]["owners"]]
+                               + [row["factId"] for row in source_facts["eventScripts"]["outcomes"]],
+            "detail": "All eight event turn machines and the seven linked non-Architect start/option/transition/resume contracts are source-complete; Architect script and event lifecycle/result producers remain unresolved dependencies.",
             "reasonCode": "EVENT_BEHAVIOR_AGGREGATE_INCOMPLETE", "scope": "encounterCompanion", "status": "unresolved",
             "unknownId": "UNKNOWN.EVENT_BEHAVIOR",
         },
         {
             "affectedFactIds": [row["factId"] for row in source_facts["eventTurnBehavior"]["dependencies"] if row["kind"] == "scriptedEventSemantics"],
-            "detail": "The Architect's hidden no-op turn graph is not the externally scripted event state machine; dialogue, score, transition, and result semantics are reserved for E2c2.",
+            "detail": "The Architect's hidden no-op turn graph is not its terminal scripted state machine; Architect dialogue, score, transition, and terminal semantics remain reserved for E2c2b.",
             "reasonCode": "SCRIPTED_EVENT_BEHAVIOR_UNEXTRACTED", "scope": "encounterCompanion", "status": "unresolved",
             "unknownId": "UNKNOWN.EVENT_SCRIPTED_BEHAVIOR",
         },
         {
-            "affectedFactIds": [row["factId"] for row in source_facts["eventTurnBehavior"]["dependencies"] if row["kind"] == "eventLifecycleTimeoutResultSemantics"],
-            "detail": "Battle Friend timeout Power hooks, escape, event resume, and result semantics remain lifecycle dependencies; synchronous no-op moves are not complete encounters.",
+            "affectedFactIds": [row["factId"] for row in source_facts["eventScripts"]["dependencies"] if row["kind"] == "lifecycle"],
+            "detail": "Linked event resume/outcome contracts are complete, while the Battle timeout producer and escape, common event combat terminal result, and Architect run-end remain exact E2d2 lifecycle dependencies.",
             "reasonCode": "EVENT_LIFECYCLE_TIMEOUT_RESULT_UNEXTRACTED", "scope": "encounterCompanion", "status": "unresolved",
             "unknownId": "UNKNOWN.EVENT_LIFECYCLE",
         },
@@ -772,6 +821,13 @@ def _resolved_audits(source_facts: dict[str, Any]) -> list[dict[str, Any]]:
         "dependencyFactRefs": [row["factId"] for row in event_turn["dependencies"]],
         "family": "eventTurnMachines", "historicalStatus": "sourceComplete",
         "sourceDenominators": deepcopy(event_turn["sourceDenominators"]),
+    }, {
+        "auditId": "AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS",
+        "boundary": "Architect terminal script and lifecycle producers/results remain unresolved.",
+        "classificationFactRefs": [row["factId"] for row in source_facts["eventScripts"]["owners"]],
+        "dependencyFactRefs": [row["factId"] for row in source_facts["eventScripts"]["dependencies"]],
+        "family": "linkedEventStartOptionTransitionResume", "historicalStatus": "sourceComplete",
+        "sourceDenominators": deepcopy(source_facts["eventScripts"]["sourceDenominators"]),
     }, {
         "auditId": "AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING",
         "family": "hpAssignmentRounding",
@@ -822,7 +878,8 @@ def _readiness(known_unknowns: list[dict[str, Any]]) -> dict[str, Any]:
                     "eventEncounterLinkage", "observationIdentity", "behaviorApplicability",
                     "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure",
                     "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage",
-                    "eventTurnClassificationDependencies",
+                    "eventTurnClassificationDependencies", "eventScriptOwnerEncounterLink",
+                    "eventScriptOptionDelegate", "eventScriptTransitionArguments", "eventScriptOutcomeDependency",
                 ],
                 "status": "complete",
             },
@@ -840,6 +897,7 @@ def build_payload(source: dict[str, Any], legacy: dict[str, Any]) -> dict[str, A
     source_facts = {
         "behaviorOwners": owners, "encounters": encounters,
         "eventTurnBehavior": _source_event_turn_behavior(source, facts),
+        "eventScripts": _source_event_scripts(source, facts),
         "graphs": _source_graphs(source, facts), "models": models, "monsters": monsters, "moves": moves,
         "observationIdentities": _source_observation_identities(source, facts),
         "placement": _source_placement(source, facts), "scaling": _source_scaling(source, facts),

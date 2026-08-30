@@ -264,7 +264,7 @@ class EncounterProjectionTests(unittest.TestCase):
         unknowns = {row["unknownId"]: row for row in self.artifact["payload"]["knownUnknowns"]}
         self.assertIn(architect["factId"], unknowns["UNKNOWN.EVENT_BEHAVIOR"]["affectedFactIds"])
         self.assertEqual(len(unknowns["UNKNOWN.EVENT_SCRIPTED_BEHAVIOR"]["affectedFactIds"]), 1)
-        self.assertEqual(len(unknowns["UNKNOWN.EVENT_LIFECYCLE"]["affectedFactIds"]), 3)
+        self.assertEqual(len(unknowns["UNKNOWN.EVENT_LIFECYCLE"]["affectedFactIds"]), 4)
         audit = next(row for row in self.artifact["payload"]["resolvedAudits"] if row["auditId"] == "AUDIT.RESOLVED.EVENT_TURN_MACHINES")
         self.assertEqual((len(audit["classificationFactRefs"]), len(audit["dependencyFactRefs"])), (8, 4))
         self.assertIn("remain unresolved", audit["boundary"])
@@ -555,6 +555,52 @@ class EncounterProjectionTests(unittest.TestCase):
         for change, pattern in cases:
             with self.subTest(pattern=pattern):
                 assert_bad(change, pattern)
+
+    def test_e2c2a_compact_scripts_and_mutation_gates(self):
+        scripts = self.artifact["payload"]["sourceFacts"]["eventScripts"]
+        self.assertEqual(scripts["sourceDenominators"], {
+            "dependencies": 6, "displayScalingCalls": 3, "edges": 20, "effects": 10,
+            "encounterScripts": 7, "frameworkMethods": 53, "invocations": 1549,
+            "methods": 76, "nodes": 25, "options": 12, "outcomes": 7,
+            "owners": 5, "stateContracts": 10, "supportMethods": 14,
+        })
+        serialized = json.dumps(scripts)
+        self.assertNotIn('"invocationCensus"', serialized)
+        self.assertNotIn('"decisions"', serialized)
+        self.assertNotIn('"instructions"', serialized)
+        unknowns = {row["unknownId"]: row for row in self.artifact["payload"]["knownUnknowns"]}
+        self.assertEqual(len(unknowns["UNKNOWN.EVENT_SCRIPTED_BEHAVIOR"]["affectedFactIds"]), 1)
+        self.assertEqual(len(unknowns["UNKNOWN.EVENT_LIFECYCLE"]["affectedFactIds"]), 4)
+        self.assertFalse(self.artifact["payload"]["readiness"]["runtimeScopes"]["encounterCompanion"]["ready"])
+
+        cases = [
+            (lambda e: e["transitions"][0].__setitem__("canonicalEncounter", "ENCOUNTER.SWAPPED"), "transition/E1"),
+            (lambda e: e["transitions"][0]["resume"].__setitem__("shouldResume", "true"), "decoded Boolean"),
+            (lambda e: e["transitions"][4]["addedRewards"][0].__setitem__("rewardType", "UnknownReward"), "unknown reward constructor"),
+            (lambda e: e["options"][0]["callback"].__setitem__("target", "ambiguous"), "delegate receiver"),
+            (lambda e: e["owners"][1]["availability"].__setitem__("expression", {"kind": "constant", "value": 8}), "HpLoss was flattened"),
+            (lambda e: e["outcomes"].pop(), "expected 7"),
+            (lambda e: e["dependencies"].pop(), "expected 6"),
+            (lambda e: e["sourceDenominators"].__setitem__("edges", 19), "stale edges"),
+            (lambda e: e.__setitem__("invocationCensus", {"decisions": []}), "keys differ|unknown fields"),
+        ]
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern):
+                artifact = self.mutated(lambda a: change(a["payload"]["sourceFacts"]["eventScripts"]))
+                self.assert_invalid(artifact, pattern)
+
+    def test_e2c2a_raw_source_mutations_fail(self):
+        cases = [
+            (lambda e: e["sourceDenominators"].__setitem__("invocations", 1), "invocation denominator"),
+            (lambda e: e["transitions"][0]["resume"].__setitem__("shouldResume", None), "transition semantic arguments"),
+            (lambda e: e["owners"][1]["availability"].__setitem__("expression", {"kind": "constant", "value": 8}), "Dense HpLoss"),
+            (lambda e: e["outcomes"].pop(), "denominator outcomes|outcome closure"),
+        ]
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern):
+                source=deepcopy(self.source);change(source["eventScripts"])
+                with self.assertRaisesRegex(SourceExtractionError, pattern):
+                    validate_artifact(self.artifact, source=source, legacy=self.legacy)
 
     def test_metadata_manifest_payload_and_coverage_mutations_fail(self):
         cases = [

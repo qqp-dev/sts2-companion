@@ -32,8 +32,8 @@ const exactManifest = [
 
 test("source artifact is canonical, exactly pinned, partial, and raw-only", () => {
   assert.equal(artifactBytes.toString("utf8"), `${JSON.stringify(sortedValue(artifact), null, 2)}\n`);
-  assert.equal(artifact.schemaVersion, 8);
-  assert.equal(artifact.extractorVersion, "8.0.0");
+  assert.equal(artifact.schemaVersion, 9);
+  assert.equal(artifact.extractorVersion, "9.0.0");
   assert.equal(artifact.runtimeReady, false);
   assert.equal(artifact.status, "incomplete");
   assert.deepEqual(artifact.inputs, exactManifest);
@@ -70,6 +70,21 @@ test("coverage is denominator-based and current behavior families are complete o
     eventTurnPhysicalRegistrations: 8,
     eventTurnPhysicalTitlesEnglish: 8,
     eventTurnReuseInheritanceApplicability: 3,
+    eventScriptDependencyRefs: 6,
+    eventScriptDisplayScalingArguments: 3,
+    eventScriptEdges: 20,
+    eventScriptEffectiveMethods: 76,
+    eventScriptEncounterLinks: 7,
+    eventScriptFrameworkClosure: 53,
+    eventScriptInvocationClassification: 1549,
+    eventScriptNodes: 25,
+    eventScriptOptionDelegates: 12,
+    eventScriptOutcomes: 7,
+    eventScriptOwnerApplicability: 5,
+    eventScriptSemanticEffects: 10,
+    eventScriptStateRuntimeContracts: 10,
+    eventScriptSupportMethodClosure: 14,
+    eventScriptTransitionArguments: 7,
     moveRegistrationApplicability: 315,
     observableIdentityDomain: 108,
     observableResourceRepresentations: 108,
@@ -599,6 +614,72 @@ test("E2c1 event turn machines close all eight links without claiming script or 
   });
 });
 
+test("E2c2a linked event scripts preserve exact options, transition stacks, outcomes, and dependencies", () => {
+  const scripts = artifact.eventScripts;
+  assert.deepEqual(scripts.sourceDenominators, {
+    dependencies: 6, displayScalingCalls: 3, edges: 20, effects: 10,
+    encounterScripts: 7, frameworkMethods: 53, invocations: 1549,
+    methods: 76, nodes: 25, options: 12, outcomes: 7, owners: 5,
+    stateContracts: 10, supportMethods: 14,
+  });
+  assert.deepEqual(scripts.invocationCensus.summary, { denominator: 1549, resolved: 1549, unresolved: 0 });
+  assert.equal(scripts.owners.some((row) => row.canonicalEvent === "EVENT.THE_ARCHITECT"), false);
+  assert.deepEqual(scripts.owners.map((row) => row.canonicalEvent), [
+    "EVENT.BATTLEWORN_DUMMY", "EVENT.DENSE_VEGETATION", "EVENT.FAKE_MERCHANT",
+    "EVENT.PUNCH_OFF", "EVENT.THE_LANTERN_KEY",
+  ]);
+  const transitions = new Map(scripts.transitions.map((row) => [row.canonicalEncounter, row]));
+  assert.deepEqual([...transitions.keys()].sort(), [
+    "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER", "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+    "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER", "ENCOUNTER.DENSE_VEGETATION_EVENT_ENCOUNTER",
+    "ENCOUNTER.FAKE_MERCHANT_EVENT_ENCOUNTER", "ENCOUNTER.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+    "ENCOUNTER.PUNCH_OFF_EVENT_ENCOUNTER",
+  ]);
+  for (const version of [1, 2, 3]) {
+    const row = transitions.get(`ENCOUNTER.BATTLEWORN_DUMMY_EVENT_V${version}_ENCOUNTER`);
+    assert.equal(row.resume.shouldResume, true);
+    assert.deepEqual(row.addedRewards, []);
+    assert.equal(row.overload.genericEncounter, false);
+  }
+  for (const id of ["DENSE_VEGETATION_EVENT_ENCOUNTER", "FAKE_MERCHANT_EVENT_ENCOUNTER", "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER", "PUNCH_OFF_EVENT_ENCOUNTER"])
+    assert.equal(transitions.get(`ENCOUNTER.${id}`).resume.shouldResume, false);
+  assert.deepEqual(transitions.get("ENCOUNTER.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER").addedRewards.map((x) => [x.rewardType, x.model.sourceType]),
+    [["SpecialCardReward", "MegaCrit.Sts2.Core.Models.Cards.LanternKey"]]);
+  assert.deepEqual(transitions.get("ENCOUNTER.PUNCH_OFF_EVENT_ENCOUNTER").addedRewards.map((x) => x.rewardType), ["RelicReward", "PotionReward"]);
+  const fakeRewards = transitions.get("ENCOUNTER.FAKE_MERCHANT_EVENT_ENCOUNTER").addedRewards;
+  assert.equal(fakeRewards[0].model.sourceType, "MegaCrit.Sts2.Core.Models.Relics.FakeMerchantsRug");
+  assert.equal(fakeRewards[1].model.name, "event.inventory.unstockedRelic.model");
+  assert.equal(scripts.foulPotionDispatch.classification, "potionDrivenEventInstanceFanOut");
+  assert.equal(scripts.foulPotionDispatch.taskJoin, "Task.WhenAll");
+
+  const dense = scripts.owners.find((row) => row.canonicalEvent === "EVENT.DENSE_VEGETATION");
+  assert.match(JSON.stringify(dense.availability.expression), /event\.dynamicVars\.HpLoss\.baseValue/);
+  assert.equal(JSON.stringify(dense.availability.expression).includes('"value":8'), false);
+  const denseDamage = scripts.effects.find((row) => row.eventId === "EVENT.DENSE_VEGETATION" && row.kind === "damage");
+  assert.equal(denseDamage.amount.name, "event.dynamicVars.HpLoss.baseValue");
+  const edge = (from, to) => scripts.edges.some((row) => row.from === from && row.to === to);
+  assert.ok(edge("EVENT_NODE.DENSE_VEGETATION/REST", "EVENT_NODE.DENSE_VEGETATION/FIGHT"));
+  assert.ok(edge("EVENT_NODE.THE_LANTERN_KEY/KEEP_THE_KEY", "EVENT_NODE.THE_LANTERN_KEY/FIGHT"));
+  assert.ok(edge("EVENT_NODE.PUNCH_OFF/I_CAN_TAKE_THEM", "EVENT_NODE.PUNCH_OFF/FIGHT"));
+  assert.ok(edge("EVENT_NODE.FAKE_MERCHANT/FOUL_POTION_USE", "EVENT_NODE.FAKE_MERCHANT/FAKE_MERCHANT_EVENT_ENCOUNTER"));
+  const nabReward = scripts.effects.find((row) => row.eventId === "EVENT.PUNCH_OFF" && row.kind === "constructReward");
+  assert.equal(nabReward.reward.rewardType, "RelicReward");
+  assert.equal(nabReward.reward.model.kind, "runtimePull");
+
+  const battleOutcomes = scripts.outcomes.filter((row) => row.classification === "customRanOutOfTimeBranch");
+  assert.equal(battleOutcomes.length, 3);
+  assert.ok(battleOutcomes.every((row) => row.stateRead.name === "encounter.RanOutOfTime"));
+  assert.deepEqual(battleOutcomes.map((row) => row.success.versionEffect.kind), ["dynamicPotionReward", "upgradeCards", "dynamicRelicReward"]);
+  assert.deepEqual(scripts.displayScaling.map((row) => row.sourceMonsterType.split(".").at(-1)), ["BattleFriendV1", "BattleFriendV2", "BattleFriendV3"]);
+  assert.deepEqual(scripts.displayScaling.map((row) => row.sourceEncounterType.split(".").at(-1)),
+    ["BattlewornDummyEventV1Encounter", "BattlewornDummyEventV1Encounter", "BattlewornDummyEventV1Encounter"]);
+  assert.deepEqual(scripts.dependencies.filter((row) => row.kind === "lifecycle").map((row) => row.dependencyId), [
+    "LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END",
+    "LIFECYCLE.COMMAND.CREATURE_ESCAPE/BATTLE_FRIEND_OWNER", "LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT",
+    "LIFECYCLE.RUN.ARCHITECT_TERMINAL",
+  ]);
+});
+
 test("selection graphs preserve topology, Flyconid/Fabricator/Decimillipede fixtures, and referential integrity", () => {
   const topo = artifact.behavior.summary.topology;
   assert.deepEqual(topo, {
@@ -785,7 +866,7 @@ test("E2a selected Power hooks and runtime contracts are explicit", () => {
   assert.deepEqual(artifact.observationIdentities.aliases, []);
 });
 
-test("E2c1 README and world-model census claims match schema 8 summary and coverage", () => {
+test("E2c2a README and world-model census claims match schema 9 summary and coverage", () => {
   const markdown = (url) => readFileSync(new URL(url, import.meta.url), "utf8").replace(/\s+/g, " ").trim();
   const readme = markdown("../README.md");
   const worldModel = markdown("../docs/source-world-model.md");
@@ -855,7 +936,7 @@ test("E2c1 README and world-model census claims match schema 8 summary and cover
   has(readme, `deterministic schema ${JSON.parse(readFileSync(new URL("../data/encounter-facts-v0.111.0.json", import.meta.url))).schemaVersion} compact projection`);
   has(readme, `(schema ${artifact.schemaVersion} raw source facts)`);
 
-  has(worldModel, `Schema ${artifact.schemaVersion} is the E2c1 boundary`);
+  has(worldModel, `Schema ${artifact.schemaVersion} is the E2c2a boundary`);
   has(worldModel, `exact metadata inheritance closure for all ${topology.behaviorClasses} behavior graph owners`);
   has(worldModel, `The ${summary.intentConstructorSites} constructor sites contain ${summary.requiredIntentArguments} required arguments`);
   has(worldModel, `separately count ${summary.intentConstructorSites} classified constructors and ${summary.requiredIntentArguments} resolved arguments`);

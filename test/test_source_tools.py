@@ -28,6 +28,7 @@ from source_extractor.behavior import _canonical_for_type, _compile_graph, _inte
 from source_extractor.encounters import _compile_fixed_selection, _derive_fixed_slot_names
 from source_extractor.localization import require_localized_text
 from source_extractor.errors import SourceExtractionError
+from source_extractor.event_scripts import _validate_bounded_plumbing_vocabulary
 from source_extractor.input_gate import regenerate_after_gate
 from source_extractor.pck import read_selected
 
@@ -635,6 +636,15 @@ class CombatAstTests(unittest.TestCase):
             validate_graph({**graph, "nodes": [{"kind": "wikiPattern", "nodeId": "GRAPH.X/A"}]})
 
 
+class EventScriptInvocationGateTests(unittest.TestCase):
+    def test_arbitrary_framework_call_cannot_hide_in_residual_plumbing(self):
+        with self.assertRaisesRegex(SourceExtractionError, "vocabulary changed"):
+            _validate_bounded_plumbing_vocabulary([{
+                "classification": "sourceProvenFrameworkOrRuntimePlumbing",
+                "symbolSignature": "Arbitrary.Gameplay::Mutate sig:000001",
+            }])
+
+
 class CilSemanticEvaluatorTests(unittest.TestCase):
     @staticmethod
     def ins(opcode, operand=None, offset=None):
@@ -751,6 +761,18 @@ class CilSemanticEvaluatorTests(unittest.TestCase):
         _, calls = self.flow([("ldarg.0", None), ("call", "X::Sink sig:00010108"), ("ret", None)])
         with self.assertRaisesRegex(SourceExtractionError, "unresolved amount expression"):
             value_expression(calls[1].arguments[0], field_name="amount", instruction_index=1)
+
+    def test_managed_byref_store_is_narrow_and_fail_closed(self):
+        evaluator, calls = self.flow([
+            ("ldloca.s", "local(0x0000)"), ("ldnull", None),
+            ("stind.ref", None), ("ret", None),
+        ])
+        self.assertEqual(calls, {})
+        with self.assertRaisesRegex(SourceExtractionError, "not a managed byref"):
+            self.flow([
+                ("ldnull", None), ("ldnull", None),
+                ("stind.ref", None), ("ret", None),
+            ])
 
     def test_source_field_requires_supplied_context_and_trailing_enum_is_distinct(self):
         source = {"kind": "sourceField", "symbol": "X::counter", "valueType": "integer"}

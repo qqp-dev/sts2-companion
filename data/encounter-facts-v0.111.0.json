@@ -43,15 +43,15 @@
     },
     "generator": {
       "name": "sts2-encounter-facts",
-      "version": "5.0.0"
+      "version": "6.0.0"
     },
-    "payloadSha256": "db8f4dc780e0e9fc1f1a32f3e6c76d0354b9d43da77e15549a4e26eeed5246ae",
+    "payloadSha256": "63dd6c30dd490179c70b39cfc3622c68fef652007e7d6d76afd41df8855610a5",
     "projectionInputs": [
       {
         "id": "INPUT.SOURCE",
         "path": "data/game-v0.111.0-source.json",
-        "sha256": "dac3224f4318e7126d2dd3af199e90907582e8d62aa62d498b84deaaa76e536e",
-        "size": 12015887
+        "sha256": "055d571405330e207c8dda17418f3092fd1c548e5248e49541449baffb90944c",
+        "size": 12742768
       },
       {
         "id": "INPUT.LEGACY",
@@ -142,6 +142,111 @@
         "denominator": 8,
         "family": "eventEncounterLinkage",
         "numerator": 8,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 6,
+        "family": "eventScriptDependencyRefs",
+        "numerator": 6,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 3,
+        "family": "eventScriptDisplayScalingArguments",
+        "numerator": 3,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 20,
+        "family": "eventScriptEdges",
+        "numerator": 20,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 76,
+        "family": "eventScriptEffectiveMethods",
+        "numerator": 76,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 7,
+        "family": "eventScriptEncounterLinks",
+        "numerator": 7,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 53,
+        "family": "eventScriptFrameworkClosure",
+        "numerator": 53,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 1549,
+        "family": "eventScriptInvocationClassification",
+        "numerator": 1549,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 25,
+        "family": "eventScriptNodes",
+        "numerator": 25,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 12,
+        "family": "eventScriptOptionDelegates",
+        "numerator": 12,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 7,
+        "family": "eventScriptOutcomes",
+        "numerator": 7,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 5,
+        "family": "eventScriptOwnerApplicability",
+        "numerator": 5,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 10,
+        "family": "eventScriptSemanticEffects",
+        "numerator": 10,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 10,
+        "family": "eventScriptStateRuntimeContracts",
+        "numerator": 10,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 14,
+        "family": "eventScriptSupportMethodClosure",
+        "numerator": 14,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 7,
+        "family": "eventScriptTransitionArguments",
+        "numerator": 7,
         "status": "complete",
         "unresolved": 0
       },
@@ -601,8 +706,8 @@
         "unresolved": 0
       }
     ],
-    "sourceExtractorVersion": "8.0.0",
-    "sourceSchemaVersion": 8
+    "sourceExtractorVersion": "9.0.0",
+    "sourceSchemaVersion": 9
   },
   "payload": {
     "conflicts": [
@@ -6845,6 +6950,1172 @@
           {
             "jsonPointer": "/placement/eventLinkage/7",
             "valueSha256": "728b221b453443d55b25ae0fc539c35ec574d3e0cff97e2e9ba7223c7605b687"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT.FOUL_POTION_DISPATCH",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/foulPotionDispatch",
+            "valueSha256": "b23eb8be727852067696170198f85933de857a2f4dcd905faa585346d1559469"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.BATTLEWORN_DUMMY.encounter_RanOutOfTime",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/stateContracts/0",
+            "valueSha256": "780681165a56bef12b611349e3741afb027dc078391c8a96f97fbdd6b9686174"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.BATTLEWORN_DUMMY.event_displayHpScalingInputs",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/stateContracts/1",
+            "valueSha256": "9e49cc4d93c9fd746f6bfb29322334dc01d753bdee3a4507e239a74cc0c84b95"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.DENSE_VEGETATION.event_restHealInputs",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/stateContracts/2",
+            "valueSha256": "01788ee849bfed26e2d4d3e676614b45beb7b955596f9e36875200902d03947a"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.event_Inventory",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/stateContracts/4",
+            "valueSha256": "2e676e12638589a6e5c12d9fa55545740bf9be1451d811480bad04e8b3aa5a84"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.event_StartedFight",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/stateContracts/3",
+            "valueSha256": "6a0f6e01797e081b3892c8b1c61abfdcf8fba4bf32090f036944de0e696b7558"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.event_inventoryRngAndStock",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/stateContracts/5",
+            "valueSha256": "5a06de10b60d075f19b84dbfa416f98be9bc6b6fa935dc93e2ee783d57324d87"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.foulPotion_eventInstanceDispatch",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/stateContracts/7",
+            "valueSha256": "717e4483be1f28c070ad31d5dda04eb4eddfc5c47db5a22eb5b6f4d266275172"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.foulPotion_usabilityAndTarget",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/stateContracts/6",
+            "valueSha256": "e61be3e6e9916db283de9459e7d976fca0a80d934a58d4acbce2301763976136"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.PUNCH_OFF.event_presentationCancellation",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/stateContracts/8",
+            "valueSha256": "60fd2086b9d6eb24d3e122e1159672f1870d897e82d7cb87a0d3906a9136967c"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.PUNCH_OFF.event_presentationSubscription",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/stateContracts/9",
+            "valueSha256": "be70100fe3005655bc9b6f897163a0cb51435fd3c1b27ca4b4241e4b3fe41788"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_DEPENDENCY.FORMULA.HP_MULTIPLAYER_SCALE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/dependencies/5",
+            "valueSha256": "6235de5b267b50039ed92d4685ff500a7cd0276a0e42ae2544f371d76d9f1317"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_DEPENDENCY.FORMULA.REST_SITE_HEAL_AMOUNT",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/dependencies/4",
+            "valueSha256": "e1afedbfbab5d621499c8a7db3cdc8d3241b99ac8aaa42b12ed8ba5cde6b09fb"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/dependencies/2",
+            "valueSha256": "5a9c9bb0f05e1a2235209c113777c06951c2cc03d3345ac07d6565fbf6664f2b"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMMAND.CREATURE_ESCAPE.BATTLE_FRIEND_OWNER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/dependencies/1",
+            "valueSha256": "0e64cc48148c021fbaa19e1b999288e0e03ba80492633961bc97121f6c525eb7"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/dependencies/0",
+            "valueSha256": "e6e657d252db87afdc6740a71d736002e118a491565c487a31d9ffb3d9100c12"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.RUN.ARCHITECT_TERMINAL",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/dependencies/3",
+            "valueSha256": "d4c97e09f74411b85ece461bc258942a20d4ab71dadeb28ce2715eb4939a9d94"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_DISPLAY.Setting1Hp",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/displayScaling/0",
+            "valueSha256": "c4eec100defc8f187228946059e35ca2c5192bd57757537433e2d475b8fef1b0"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_DISPLAY.Setting2Hp",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/displayScaling/1",
+            "valueSha256": "0213ffeb88a1d08eead11add734d1b9638ac350ebedc0b81f2fcf9324dcd72f2"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_DISPLAY.Setting3Hp",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/displayScaling/2",
+            "valueSha256": "8ba0ed79c439fc334e3a4b6d9dd34bae7bfcb652e850ca067de0fd2357367988"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.000",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/0",
+            "valueSha256": "3fb171d12ff47e32555d6c72ed52f7844cb3d2aea9eec772b37b4c2c77260fcb"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.001",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/1",
+            "valueSha256": "52e891fd2df448f9733dcedc7363590b41596b4141227abfbd0eca611a77ca9e"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.002",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/2",
+            "valueSha256": "e01c7676931c3acf80eb03d0a88299d059edbe4b39f8ed56b4e09f9a788b8423"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.003",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/3",
+            "valueSha256": "ce1bdf65864cd96b87a0ed908c14975735ae839bbb541bb483c063b0bd4cc1da"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.004",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/4",
+            "valueSha256": "086dac204643f413e502a84b2224f1f4455abf0790805e2ca8b391d956e5bcaa"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.005",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/5",
+            "valueSha256": "754e267383a49e8fc9671abb4a56d3c9bfe42fd21a9b7d7280a42370cdf10de7"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.006",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/6",
+            "valueSha256": "26f536075103ce11ad6bf252382a6735c077523b24adbc61394e0a3a550e037e"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.007",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/7",
+            "valueSha256": "8a976f3f76c58b353d2cf1cf346f2e45f1fffea656d508055ada784990c84011"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.008",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/8",
+            "valueSha256": "58318ebc14cb9991bac9d906b8b1ab6e9eb63051be6d16ca7a616b8fd22b2a67"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.009",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/9",
+            "valueSha256": "475bdaf421ae3ba69acd60b36f07a426d3315ea958dbd72fba5e354a20b9f776"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.FAKE_MERCHANT.COMBAT",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/19",
+            "valueSha256": "b08779f3173a3ca83e01c71b9ec6a953d5981f5e394a3fc86b1e60bd90c96b95"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.FAKE_MERCHANT.FOUL_POTION",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/18",
+            "valueSha256": "b13320f6ac75cca0227a4ef0eadf53dcf7250d1215861ada2da8a92dfacbfb54"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.011",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/10",
+            "valueSha256": "08457a90eef150738df7d010b443f116d130f616e74d1c2a34ba8359981c62c3"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.012",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/11",
+            "valueSha256": "1ba332993f5228ca546f6a502c33652983c11ed87aa26f270ccdc444b27c6bb9"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.013",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/12",
+            "valueSha256": "79623924253769b3dff7f0fe69c53604fdb35e4e2d1afe6adaa8576f576a2c26"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.014",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/13",
+            "valueSha256": "c1074860e09cf91831f07f7e0f42086b793bb5e0b75f9c13bb8eb446146bf160"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.015",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/14",
+            "valueSha256": "e1da0527886803f96053b6496c71bc5a417bb94ed40d1be87c4b4936218ebc5e"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.016",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/15",
+            "valueSha256": "2322757020910d8747485826c35d498547e165630a0c4244fe4ace23c71ab0fb"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.017",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/16",
+            "valueSha256": "c19c0659586fd011d2dac3b2a365d43ab5bb3ae30228bc9977595ebfa52dbc06"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.018",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/edges/17",
+            "valueSha256": "a453fe8b62e1bdc1a079f7c5f78d304ffb67cb588c2fa50dd95b8a94a03d8486"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.BATTLEWORN_DUMMY.000",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/effects/0",
+            "valueSha256": "fba9c257b4ff43473c82a180691033bc347c432427885f66ded5c715dca1e97d"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.BATTLEWORN_DUMMY.001",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/effects/1",
+            "valueSha256": "ca8505b44746dd58af776daa13101d4ccbc78a755c51cd169b6116fb7b5a43e9"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.DENSE_VEGETATION.000",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/effects/2",
+            "valueSha256": "ad6fc5a5fc013d32d73b87f01f6e0159af70079b7fa1449c205dacfba04e13d2"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.DENSE_VEGETATION.001",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/effects/3",
+            "valueSha256": "295431dbbee605efda0738d750e9f508aa86ce3f06f8493d0ce3a5044ebb3de2"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.DENSE_VEGETATION.002",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/effects/4",
+            "valueSha256": "e2018494c16ac82501514024163fee19d67989ba4bffc63a769956141e72d68a"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.FAKE_MERCHANT.000",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/effects/5",
+            "valueSha256": "96de4b03283e1213a9761c81600dcc68af1ad8756019ddc0b6b850d48895e087"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.PUNCH_OFF.000",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/effects/6",
+            "valueSha256": "4fbff3bfd85900770afcac5166b740cc30f7f81ba3458858c72408e9e6626788"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.PUNCH_OFF.001",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/effects/7",
+            "valueSha256": "38dd9838b217edd314303a6990da75b529cbaf687001efb8b614750f8f4d0ffb"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.PUNCH_OFF.002",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/effects/8",
+            "valueSha256": "22464c0c97b5aea50c1550f5ac384d668499d0f530a361ebe8613f842635d30f"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.THE_LANTERN_KEY.000",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/effects/9",
+            "valueSha256": "6a7dfc9c886914c49b8dee25b05517eb8b485b6d24346b35cfa486cedae43a29"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/4",
+            "valueSha256": "d14526b92db2aaa2fdfc83e4222b022987c2cff310d94566668ad99e36aaf233"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/5",
+            "valueSha256": "59209dc00f39e539bab919b824cf3ab5b62d2416f7779953ba081f903f228705"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/6",
+            "valueSha256": "06889c1c6f1de1f93a879e75805117d516d7e970bd1e44356313bc2cc8afdb2c"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.SETTING_1",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/1",
+            "valueSha256": "4b3a60e09bd5c470df996eaf617c89701a6c700915f0ba4a9241fa073bb69052"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.SETTING_2",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/2",
+            "valueSha256": "ebdaa683f3273a451a2b522f1791908cad560637aa16361eb6f9a0bfefb93eeb"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.SETTING_3",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/3",
+            "valueSha256": "216e112eb1e5a28a4778b0e9f06b4f2fccbee5b7b10f60dc9292c73ceba32199"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.START",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/0",
+            "valueSha256": "b0f1e0983092e117c4ba5eb879ae5311b4831f12ec0368ac3c54d9f09f448a5a"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/11",
+            "valueSha256": "43710a5f3dc979bfe1db7e7d7b841ed67f1ac06a256bb753f49211da5b4afee1"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.FIGHT",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/8",
+            "valueSha256": "24453fce2eb5249a8538b89607e08158b4b3164fa1c46d906bb9201bffab7b20"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.REST",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/10",
+            "valueSha256": "f74414f3b10d21199e170687fb0dd0e2d865e9474536f31380817515cd7d0cc9"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.START",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/7",
+            "valueSha256": "3d487321715d0d67c0951d23a27540d735343326d45099ae4d1e047e38735771"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.TRUDGE_ON",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/9",
+            "valueSha256": "444f31da8bf4ea7e899c43b643492f39cdfca864ba45c27b8957658f849c0d2f"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/13",
+            "valueSha256": "d1472ec0f73546b00888bbb3ae44a318217e9655ecd4bbd2602f98464c102355"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.FAKE_MERCHANT.FOUL_POTION_USE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/24",
+            "valueSha256": "92f53b8e01002606d93b5dc4d363afc579c85f3881900da124b1dd16a67497e6"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.FAKE_MERCHANT.START",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/12",
+            "valueSha256": "48b36429a9920233a0d77f166083f27e77b2b050b86a9c4648be1bf3bee4c9fb"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.FIGHT",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/17",
+            "valueSha256": "9138ef1613d56f5f0a7c7e79b5068cfe55ff30e8889ec68bf69213165b2ef53d"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.I_CAN_TAKE_THEM",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/16",
+            "valueSha256": "78ed841979bd287b8c07b0b1acb4e884fcf0977f080afa0cb72bc2e2832cf702"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.NAB",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/15",
+            "valueSha256": "1883e07d91c1ad89a32023ba2433c8cafd5306517837d0efe1560a9ef8fb90cc"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/18",
+            "valueSha256": "64be68524f85b54b3930ade898efe587eb1772e50560f5514d31024fbe16e2c7"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.START",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/14",
+            "valueSha256": "605fdf2bcb93d04cfdbc606d234ece03c99d5d08ee3db2bba441041591dc365a"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.FIGHT",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/22",
+            "valueSha256": "60effc66dbacd53c84e6a60b78aac9cf4447e1246d42d0b7a4d97aff22e1ac50"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.KEEP_THE_KEY",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/21",
+            "valueSha256": "a1400671afd2ecb1356a612c8e67e7a03278e4325fd75588614f49ecebce38d7"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/23",
+            "valueSha256": "8fe5a4216b2292d3800b240e3d234ea6d206c3d7df76c31e3700c309c34c2090"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.RETURN_THE_KEY",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/20",
+            "valueSha256": "02968d910212e121973d92e4d57ce0cbca9d73814509e547970686dc6a03c753"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.START",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/nodes/19",
+            "valueSha256": "1658fab3d60ab7b7be0c41122da63990097c17f319a4d00d00a68362b6cd0eb1"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.BATTLEWORN_DUMMY.SETTING_1",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/options/0",
+            "valueSha256": "85475ac9d794ae586a5806df1765bdce8d192e5cd74e7525fddd0a3167b32471"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.BATTLEWORN_DUMMY.SETTING_2",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/options/1",
+            "valueSha256": "5f2cc3283d126fff2ef2f3016386542a7afd2df17425336fd9f1bb061b4d00a2"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.BATTLEWORN_DUMMY.SETTING_3",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/options/2",
+            "valueSha256": "452efeb03eac7df0097fc7ba5c0f6f0f83dca6087cad41b99b96f09a986b65ea"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.DENSE_VEGETATION.FIGHT",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/options/3",
+            "valueSha256": "5d54e44d79e8163c68be5fd55ee474003d0f1ba3b3efd69cc4436f6e7e590d2c"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.DENSE_VEGETATION.REST",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/options/5",
+            "valueSha256": "c31d4d01c3607be93deb905a487847794489d815fc923654f51b76268f15b632"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.DENSE_VEGETATION.TRUDGE_ON",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/options/4",
+            "valueSha256": "8c2d1bd76f1063e399a3ac75cbbe85e3c682276cf55279330bd9793e3465c51f"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.PUNCH_OFF.FIGHT",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/options/8",
+            "valueSha256": "6b11e0bab7afbf02cd7b8c5ee422bb236b4ce99d29cc19aa9f628545d6b52023"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.PUNCH_OFF.I_CAN_TAKE_THEM",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/options/7",
+            "valueSha256": "fd80ac8471784c705e0b06454dceb0119906feaa79041aff04dfd4e8ed869f50"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.PUNCH_OFF.NAB",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/options/6",
+            "valueSha256": "9c125466c664b57e98a42bbf96f4523a42358b2f4af74a3f2823910427631fec"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.THE_LANTERN_KEY.FIGHT",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/options/11",
+            "valueSha256": "4e6bda555f5f8b08ca599af16ca619fb96a9c337558357d79e5c301e801e7c3a"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.THE_LANTERN_KEY.KEEP_THE_KEY",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/options/10",
+            "valueSha256": "c1ee2a955dba449177289fc87cb354898af7a30c137a9ad4304b0d3c4c278dd6"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.THE_LANTERN_KEY.RETURN_THE_KEY",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/options/9",
+            "valueSha256": "e31d241096e17c1e0c0e4e2d1eaa81d91fbb7bdfd5c1384a1cf634a2558c9317"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/outcomes/0",
+            "valueSha256": "bde247d3bb06f99884f648d69eb0bf515e378cf729b90a7fd8ecb443d34af3c6"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/outcomes/1",
+            "valueSha256": "6c7d3cc39f600e67b1b547586860244a0b880556a98c76312186f2bd04196345"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/outcomes/2",
+            "valueSha256": "346f33cddb0beb6258a137aa18a327fe4171eca88605aae02477cb1408a7857e"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/outcomes/3",
+            "valueSha256": "2ee76621d5e0f02301fa8f79e0a0072fef1b89067117afbc3c011d88930b786a"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/outcomes/4",
+            "valueSha256": "29294a39a261ddb2eaa69ae049649958d9235c1928583a75f5cebd03e2f76970"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/outcomes/5",
+            "valueSha256": "2c2b57b2089382b03d8aa19770ea40284d215b96e0b04a445fac6862e5bcb01f"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/outcomes/6",
+            "valueSha256": "773052f758aa77b8fcdd297232a6d3f671408fe77c0ed0f4ed45aef8a6b5f3a9"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OWNER.BATTLEWORN_DUMMY",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/owners/0",
+            "valueSha256": "5d3f99dc11e0d8bbbafeeb129782f8294c248de8dcd14de4664273e49c12af77"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OWNER.DENSE_VEGETATION",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/owners/1",
+            "valueSha256": "746123cddd4fd52fb2a8f15e8863e7ec83b8481ce9d64bb97d6824b623032cf7"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OWNER.FAKE_MERCHANT",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/owners/2",
+            "valueSha256": "9275f1b96e656a05352da52755a64e077cd4a438ac4e19b15c39605ad76ba432"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OWNER.PUNCH_OFF",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/owners/3",
+            "valueSha256": "9b5b5352d380bf3f01101d7d22c16903598b97fa81a3879353e56f18e30b8597"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_OWNER.THE_LANTERN_KEY",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/owners/4",
+            "valueSha256": "ac1286a64e82da1322cff8f57d18754c229f2493f2aee6bf5a43d9a4e5c5683d"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/transitions/0",
+            "valueSha256": "f626b1ecbc88bff94328d2c003f2b6329f1d204eead7a2f25fb2ec53cc36ce39"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/transitions/1",
+            "valueSha256": "edb9384098808d8bf1655cb3507d6443dc6868c3b32c321c62b751d2603fc153"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/transitions/2",
+            "valueSha256": "1706ae3c1ff89025dbd55df29a9b18e82e15d42a8b5c69ddd87cab3c9417b906"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/transitions/3",
+            "valueSha256": "9dac50e237939237f5c5e47e0e0c1b38eba5e78f40a376bbb83d7e6b0eaafe7a"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/transitions/4",
+            "valueSha256": "25fb05b613d71127b9505c2b06dc91d1503b6a9e9697cad574e659c3118ef8c7"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/transitions/5",
+            "valueSha256": "bf3e0f233ae3497b3951c9a73a19e78dc0757bf56e85b6256e811ba256a70d81"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/eventScripts/transitions/6",
+            "valueSha256": "f6b1270b2283de5093f6459693d350c34aefb73db2bd77b25bd53c5c2ad5f0a3"
           }
         ]
       },
@@ -24630,6 +25901,748 @@
       },
       {
         "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT.FOUL_POTION_DISPATCH"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT.FOUL_POTION_DISPATCH",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.BATTLEWORN_DUMMY.encounter_RanOutOfTime"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.BATTLEWORN_DUMMY.encounter_RanOutOfTime",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.BATTLEWORN_DUMMY.event_displayHpScalingInputs"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.BATTLEWORN_DUMMY.event_displayHpScalingInputs",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.DENSE_VEGETATION.event_restHealInputs"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.DENSE_VEGETATION.event_restHealInputs",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.event_Inventory"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.event_Inventory",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.event_StartedFight"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.event_StartedFight",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.event_inventoryRngAndStock"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.event_inventoryRngAndStock",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.foulPotion_eventInstanceDispatch"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.foulPotion_eventInstanceDispatch",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.foulPotion_usabilityAndTarget"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.foulPotion_usabilityAndTarget",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.PUNCH_OFF.event_presentationCancellation"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.PUNCH_OFF.event_presentationCancellation",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_CONTRACT.PUNCH_OFF.event_presentationSubscription"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.PUNCH_OFF.event_presentationSubscription",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_DEPENDENCY.FORMULA.HP_MULTIPLAYER_SCALE"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.FORMULA.HP_MULTIPLAYER_SCALE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_DEPENDENCY.FORMULA.REST_SITE_HEAL_AMOUNT"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.FORMULA.REST_SITE_HEAL_AMOUNT",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMMAND.CREATURE_ESCAPE.BATTLE_FRIEND_OWNER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMMAND.CREATURE_ESCAPE.BATTLE_FRIEND_OWNER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.RUN.ARCHITECT_TERMINAL"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.RUN.ARCHITECT_TERMINAL",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_DISPLAY.Setting1Hp"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_DISPLAY.Setting1Hp",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_DISPLAY.Setting2Hp"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_DISPLAY.Setting2Hp",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_DISPLAY.Setting3Hp"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_DISPLAY.Setting3Hp",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.000"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.000",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.001"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.001",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.002"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.002",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.003"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.003",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.004"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.004",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.005"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.005",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.006"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.006",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.007"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.007",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.008"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.008",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.009"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.009",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.FAKE_MERCHANT.COMBAT"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.FAKE_MERCHANT.COMBAT",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.FAKE_MERCHANT.FOUL_POTION"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.FAKE_MERCHANT.FOUL_POTION",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.011"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.011",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.012"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.012",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.013"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.013",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.014"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.014",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.015"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.015",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.016"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.016",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.017"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.017",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.018"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.018",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.BATTLEWORN_DUMMY.000"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EFFECT.BATTLEWORN_DUMMY.000",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.BATTLEWORN_DUMMY.001"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EFFECT.BATTLEWORN_DUMMY.001",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.DENSE_VEGETATION.000"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EFFECT.DENSE_VEGETATION.000",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.DENSE_VEGETATION.001"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EFFECT.DENSE_VEGETATION.001",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.DENSE_VEGETATION.002"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EFFECT.DENSE_VEGETATION.002",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.FAKE_MERCHANT.000"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EFFECT.FAKE_MERCHANT.000",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.PUNCH_OFF.000"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EFFECT.PUNCH_OFF.000",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.PUNCH_OFF.001"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EFFECT.PUNCH_OFF.001",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.PUNCH_OFF.002"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EFFECT.PUNCH_OFF.002",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_EFFECT.THE_LANTERN_KEY.000"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_EFFECT.THE_LANTERN_KEY.000",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.SETTING_1"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.SETTING_1",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.SETTING_2"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.SETTING_2",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.SETTING_3"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.SETTING_3",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.START"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.START",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.FIGHT"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.FIGHT",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.REST"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.REST",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.START"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.START",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.TRUDGE_ON"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.TRUDGE_ON",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.FAKE_MERCHANT.FOUL_POTION_USE"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.FAKE_MERCHANT.FOUL_POTION_USE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.FAKE_MERCHANT.START"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.FAKE_MERCHANT.START",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.FIGHT"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.FIGHT",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.I_CAN_TAKE_THEM"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.I_CAN_TAKE_THEM",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.NAB"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.NAB",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.START"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.START",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.FIGHT"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.FIGHT",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.KEEP_THE_KEY"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.KEEP_THE_KEY",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.RETURN_THE_KEY"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.RETURN_THE_KEY",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.START"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.START",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.BATTLEWORN_DUMMY.SETTING_1"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OPTION.BATTLEWORN_DUMMY.SETTING_1",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.BATTLEWORN_DUMMY.SETTING_2"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OPTION.BATTLEWORN_DUMMY.SETTING_2",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.BATTLEWORN_DUMMY.SETTING_3"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OPTION.BATTLEWORN_DUMMY.SETTING_3",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.DENSE_VEGETATION.FIGHT"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OPTION.DENSE_VEGETATION.FIGHT",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.DENSE_VEGETATION.REST"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OPTION.DENSE_VEGETATION.REST",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.DENSE_VEGETATION.TRUDGE_ON"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OPTION.DENSE_VEGETATION.TRUDGE_ON",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.PUNCH_OFF.FIGHT"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OPTION.PUNCH_OFF.FIGHT",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.PUNCH_OFF.I_CAN_TAKE_THEM"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OPTION.PUNCH_OFF.I_CAN_TAKE_THEM",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.PUNCH_OFF.NAB"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OPTION.PUNCH_OFF.NAB",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.THE_LANTERN_KEY.FIGHT"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OPTION.THE_LANTERN_KEY.FIGHT",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.THE_LANTERN_KEY.KEEP_THE_KEY"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OPTION.THE_LANTERN_KEY.KEEP_THE_KEY",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OPTION.THE_LANTERN_KEY.RETURN_THE_KEY"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OPTION.THE_LANTERN_KEY.RETURN_THE_KEY",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OUTCOME.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OWNER.BATTLEWORN_DUMMY"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OWNER.BATTLEWORN_DUMMY",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OWNER.DENSE_VEGETATION"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OWNER.DENSE_VEGETATION",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OWNER.FAKE_MERCHANT"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OWNER.FAKE_MERCHANT",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OWNER.PUNCH_OFF"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OWNER.PUNCH_OFF",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_OWNER.THE_LANTERN_KEY"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_OWNER.THE_LANTERN_KEY",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.EVENT_SCRIPT_TRANSITION.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"
+        ],
+        "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
           "EVIDENCE.SOURCE.EVENT_TURN.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER"
         ],
         "factId": "SOURCE.EVENT_TURN.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
@@ -33751,9 +35764,21 @@
           "SOURCE.EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
           "SOURCE.EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
           "SOURCE.EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
-          "SOURCE.EVENT_DEPENDENCY.SCRIPTED.THE_ARCHITECT_EVENT_ENCOUNTER"
+          "SOURCE.EVENT_DEPENDENCY.SCRIPTED.THE_ARCHITECT_EVENT_ENCOUNTER",
+          "SOURCE.EVENT_SCRIPT_OWNER.BATTLEWORN_DUMMY",
+          "SOURCE.EVENT_SCRIPT_OWNER.DENSE_VEGETATION",
+          "SOURCE.EVENT_SCRIPT_OWNER.FAKE_MERCHANT",
+          "SOURCE.EVENT_SCRIPT_OWNER.PUNCH_OFF",
+          "SOURCE.EVENT_SCRIPT_OWNER.THE_LANTERN_KEY",
+          "SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+          "SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+          "SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+          "SOURCE.EVENT_SCRIPT_OUTCOME.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER",
+          "SOURCE.EVENT_SCRIPT_OUTCOME.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER",
+          "SOURCE.EVENT_SCRIPT_OUTCOME.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER",
+          "SOURCE.EVENT_SCRIPT_OUTCOME.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"
         ],
-        "detail": "All eight normal/inherited/no-op event turn machines are source-complete, but scripted event behavior and event lifecycle/timeout/result semantics remain unresolved dependencies.",
+        "detail": "All eight event turn machines and the seven linked non-Architect start/option/transition/resume contracts are source-complete; Architect script and event lifecycle/result producers remain unresolved dependencies.",
         "reasonCode": "EVENT_BEHAVIOR_AGGREGATE_INCOMPLETE",
         "scope": "encounterCompanion",
         "status": "unresolved",
@@ -33763,7 +35788,7 @@
         "affectedFactIds": [
           "SOURCE.EVENT_DEPENDENCY.SCRIPTED.THE_ARCHITECT_EVENT_ENCOUNTER"
         ],
-        "detail": "The Architect's hidden no-op turn graph is not the externally scripted event state machine; dialogue, score, transition, and result semantics are reserved for E2c2.",
+        "detail": "The Architect's hidden no-op turn graph is not its terminal scripted state machine; Architect dialogue, score, transition, and terminal semantics remain reserved for E2c2b.",
         "reasonCode": "SCRIPTED_EVENT_BEHAVIOR_UNEXTRACTED",
         "scope": "encounterCompanion",
         "status": "unresolved",
@@ -33771,11 +35796,12 @@
       },
       {
         "affectedFactIds": [
-          "SOURCE.EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
-          "SOURCE.EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
-          "SOURCE.EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER"
+          "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END",
+          "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMMAND.CREATURE_ESCAPE.BATTLE_FRIEND_OWNER",
+          "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT",
+          "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.RUN.ARCHITECT_TERMINAL"
         ],
-        "detail": "Battle Friend timeout Power hooks, escape, event resume, and result semantics remain lifecycle dependencies; synchronous no-op moves are not complete encounters.",
+        "detail": "Linked event resume/outcome contracts are complete, while the Battle timeout producer and escape, common event combat terminal result, and Architect run-end remain exact E2d2 lifecycle dependencies.",
         "reasonCode": "EVENT_LIFECYCLE_TIMEOUT_RESULT_UNEXTRACTED",
         "scope": "encounterCompanion",
         "status": "unresolved",
@@ -54955,6 +56981,21 @@
             "encounterRosters",
             "encounterTitlesEnglish",
             "eventEncounterLinkage",
+            "eventScriptDependencyRefs",
+            "eventScriptDisplayScalingArguments",
+            "eventScriptEdges",
+            "eventScriptEffectiveMethods",
+            "eventScriptEncounterLinks",
+            "eventScriptFrameworkClosure",
+            "eventScriptInvocationClassification",
+            "eventScriptNodes",
+            "eventScriptOptionDelegates",
+            "eventScriptOutcomes",
+            "eventScriptOwnerApplicability",
+            "eventScriptSemanticEffects",
+            "eventScriptStateRuntimeContracts",
+            "eventScriptSupportMethodClosure",
+            "eventScriptTransitionArguments",
             "eventTurnClassifications",
             "eventTurnDependencyClassifications",
             "eventTurnDirectOperations",
@@ -55038,7 +57079,11 @@
             "initialPowerHookClosure",
             "initialStateLegacyComparisons",
             "hpArithmeticAssignmentStorage",
-            "eventTurnClassificationDependencies"
+            "eventTurnClassificationDependencies",
+            "eventScriptOwnerEncounterLink",
+            "eventScriptOptionDelegate",
+            "eventScriptTransitionArguments",
+            "eventScriptOutcomeDependency"
           ],
           "status": "complete"
         }
@@ -55077,6 +57122,43 @@
           "physicalRegistrations": 8,
           "physicalTitles": 8,
           "reuseOrInheritanceApplicability": 3
+        }
+      },
+      {
+        "auditId": "AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS",
+        "boundary": "Architect terminal script and lifecycle producers/results remain unresolved.",
+        "classificationFactRefs": [
+          "SOURCE.EVENT_SCRIPT_OWNER.BATTLEWORN_DUMMY",
+          "SOURCE.EVENT_SCRIPT_OWNER.DENSE_VEGETATION",
+          "SOURCE.EVENT_SCRIPT_OWNER.FAKE_MERCHANT",
+          "SOURCE.EVENT_SCRIPT_OWNER.PUNCH_OFF",
+          "SOURCE.EVENT_SCRIPT_OWNER.THE_LANTERN_KEY"
+        ],
+        "dependencyFactRefs": [
+          "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END",
+          "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMMAND.CREATURE_ESCAPE.BATTLE_FRIEND_OWNER",
+          "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT",
+          "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.RUN.ARCHITECT_TERMINAL",
+          "SOURCE.EVENT_SCRIPT_DEPENDENCY.FORMULA.REST_SITE_HEAL_AMOUNT",
+          "SOURCE.EVENT_SCRIPT_DEPENDENCY.FORMULA.HP_MULTIPLAYER_SCALE"
+        ],
+        "family": "linkedEventStartOptionTransitionResume",
+        "historicalStatus": "sourceComplete",
+        "sourceDenominators": {
+          "dependencies": 6,
+          "displayScalingCalls": 3,
+          "edges": 20,
+          "effects": 10,
+          "encounterScripts": 7,
+          "frameworkMethods": 53,
+          "invocations": 1549,
+          "methods": 76,
+          "nodes": 25,
+          "options": 12,
+          "outcomes": 7,
+          "owners": 5,
+          "stateContracts": 10,
+          "supportMethods": 14
         }
       },
       {
@@ -59337,6 +61419,1780 @@
             "productionPools": [],
             "sourceType": "MegaCrit.Sts2.Core.Models.Encounters.WaterfallGiantBoss",
             "title": "Waterfall Giant"
+          }
+        ]
+      },
+      "eventScripts": {
+        "dependencies": [
+          {
+            "dependencyId": "LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END",
+            "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END",
+            "kind": "lifecycle",
+            "status": "pendingE2d2"
+          },
+          {
+            "dependencyId": "LIFECYCLE.COMMAND.CREATURE_ESCAPE/BATTLE_FRIEND_OWNER",
+            "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMMAND.CREATURE_ESCAPE.BATTLE_FRIEND_OWNER",
+            "kind": "lifecycle",
+            "status": "pendingE2d2"
+          },
+          {
+            "dependencyId": "LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT",
+            "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT",
+            "kind": "lifecycle",
+            "status": "pendingE2d2"
+          },
+          {
+            "dependencyId": "LIFECYCLE.RUN.ARCHITECT_TERMINAL",
+            "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.RUN.ARCHITECT_TERMINAL",
+            "kind": "lifecycle",
+            "status": "pendingE2d2"
+          },
+          {
+            "dependencyId": "FORMULA.REST_SITE_HEAL_AMOUNT",
+            "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.FORMULA.REST_SITE_HEAL_AMOUNT",
+            "kind": "formula",
+            "status": "pendingE2e"
+          },
+          {
+            "dependencyId": "FORMULA.HP_MULTIPLAYER_SCALE",
+            "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.FORMULA.HP_MULTIPLAYER_SCALE",
+            "kind": "formula",
+            "status": "sourceRefE2b"
+          }
+        ],
+        "displayScaling": [
+          {
+            "destination": "event.dynamicVars.Setting1Hp.baseValue",
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_DISPLAY.Setting1Hp",
+            "formulaRef": "FORMULA.HP_MULTIPLAYER_SCALE",
+            "instructionIndex": 31,
+            "sourceEncounterType": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventV1Encounter",
+            "sourceMonsterType": "MegaCrit.Sts2.Core.Models.Monsters.BattleFriendV1"
+          },
+          {
+            "destination": "event.dynamicVars.Setting2Hp.baseValue",
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_DISPLAY.Setting2Hp",
+            "formulaRef": "FORMULA.HP_MULTIPLAYER_SCALE",
+            "instructionIndex": 43,
+            "sourceEncounterType": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventV1Encounter",
+            "sourceMonsterType": "MegaCrit.Sts2.Core.Models.Monsters.BattleFriendV2"
+          },
+          {
+            "destination": "event.dynamicVars.Setting3Hp.baseValue",
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_DISPLAY.Setting3Hp",
+            "formulaRef": "FORMULA.HP_MULTIPLAYER_SCALE",
+            "instructionIndex": 55,
+            "sourceEncounterType": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventV1Encounter",
+            "sourceMonsterType": "MegaCrit.Sts2.Core.Models.Monsters.BattleFriendV3"
+          }
+        ],
+        "edges": [
+          {
+            "edgeId": "EVENT_EDGE.BATTLEWORN_DUMMY/000",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.000",
+            "from": "EVENT_NODE.BATTLEWORN_DUMMY/START",
+            "kind": "optionAvailableAfterSuccess",
+            "order": 0,
+            "to": "EVENT_NODE.BATTLEWORN_DUMMY/SETTING_1"
+          },
+          {
+            "edgeId": "EVENT_EDGE.BATTLEWORN_DUMMY/001",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.001",
+            "from": "EVENT_NODE.BATTLEWORN_DUMMY/START",
+            "kind": "optionAvailableAfterSuccess",
+            "order": 1,
+            "to": "EVENT_NODE.BATTLEWORN_DUMMY/SETTING_2"
+          },
+          {
+            "edgeId": "EVENT_EDGE.BATTLEWORN_DUMMY/002",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.002",
+            "from": "EVENT_NODE.BATTLEWORN_DUMMY/START",
+            "kind": "optionAvailableAfterSuccess",
+            "order": 2,
+            "to": "EVENT_NODE.BATTLEWORN_DUMMY/SETTING_3"
+          },
+          {
+            "edgeId": "EVENT_EDGE.BATTLEWORN_DUMMY/003",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.003",
+            "from": "EVENT_NODE.BATTLEWORN_DUMMY/SETTING_1",
+            "kind": "combatTransition",
+            "order": 0,
+            "to": "EVENT_NODE.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER"
+          },
+          {
+            "edgeId": "EVENT_EDGE.BATTLEWORN_DUMMY/004",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.004",
+            "from": "EVENT_NODE.BATTLEWORN_DUMMY/SETTING_2",
+            "kind": "combatTransition",
+            "order": 0,
+            "to": "EVENT_NODE.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER"
+          },
+          {
+            "edgeId": "EVENT_EDGE.BATTLEWORN_DUMMY/005",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.BATTLEWORN_DUMMY.005",
+            "from": "EVENT_NODE.BATTLEWORN_DUMMY/SETTING_3",
+            "kind": "combatTransition",
+            "order": 0,
+            "to": "EVENT_NODE.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER"
+          },
+          {
+            "edgeId": "EVENT_EDGE.DENSE_VEGETATION/006",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.006",
+            "from": "EVENT_NODE.DENSE_VEGETATION/REST",
+            "kind": "optionAvailableAfterSuccess",
+            "order": 0,
+            "to": "EVENT_NODE.DENSE_VEGETATION/FIGHT"
+          },
+          {
+            "edgeId": "EVENT_EDGE.DENSE_VEGETATION/007",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.007",
+            "from": "EVENT_NODE.DENSE_VEGETATION/START",
+            "kind": "optionAvailableAfterSuccess",
+            "order": 0,
+            "to": "EVENT_NODE.DENSE_VEGETATION/TRUDGE_ON"
+          },
+          {
+            "edgeId": "EVENT_EDGE.DENSE_VEGETATION/008",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.008",
+            "from": "EVENT_NODE.DENSE_VEGETATION/START",
+            "kind": "optionAvailableAfterSuccess",
+            "order": 1,
+            "to": "EVENT_NODE.DENSE_VEGETATION/REST"
+          },
+          {
+            "edgeId": "EVENT_EDGE.DENSE_VEGETATION/009",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.DENSE_VEGETATION.009",
+            "from": "EVENT_NODE.DENSE_VEGETATION/FIGHT",
+            "kind": "combatTransition",
+            "order": 0,
+            "to": "EVENT_NODE.DENSE_VEGETATION/DENSE_VEGETATION_EVENT_ENCOUNTER"
+          },
+          {
+            "edgeId": "EVENT_EDGE.PUNCH_OFF/011",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.011",
+            "from": "EVENT_NODE.PUNCH_OFF/START",
+            "kind": "optionAvailableAfterSuccess",
+            "order": 0,
+            "to": "EVENT_NODE.PUNCH_OFF/NAB"
+          },
+          {
+            "edgeId": "EVENT_EDGE.PUNCH_OFF/012",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.012",
+            "from": "EVENT_NODE.PUNCH_OFF/START",
+            "kind": "optionAvailableAfterSuccess",
+            "order": 1,
+            "to": "EVENT_NODE.PUNCH_OFF/I_CAN_TAKE_THEM"
+          },
+          {
+            "edgeId": "EVENT_EDGE.PUNCH_OFF/013",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.013",
+            "from": "EVENT_NODE.PUNCH_OFF/I_CAN_TAKE_THEM",
+            "kind": "optionAvailableAfterSuccess",
+            "order": 0,
+            "to": "EVENT_NODE.PUNCH_OFF/FIGHT"
+          },
+          {
+            "edgeId": "EVENT_EDGE.PUNCH_OFF/014",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.PUNCH_OFF.014",
+            "from": "EVENT_NODE.PUNCH_OFF/FIGHT",
+            "kind": "combatTransition",
+            "order": 0,
+            "to": "EVENT_NODE.PUNCH_OFF/PUNCH_OFF_EVENT_ENCOUNTER"
+          },
+          {
+            "edgeId": "EVENT_EDGE.THE_LANTERN_KEY/015",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.015",
+            "from": "EVENT_NODE.THE_LANTERN_KEY/START",
+            "kind": "optionAvailableAfterSuccess",
+            "order": 0,
+            "to": "EVENT_NODE.THE_LANTERN_KEY/RETURN_THE_KEY"
+          },
+          {
+            "edgeId": "EVENT_EDGE.THE_LANTERN_KEY/016",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.016",
+            "from": "EVENT_NODE.THE_LANTERN_KEY/START",
+            "kind": "optionAvailableAfterSuccess",
+            "order": 1,
+            "to": "EVENT_NODE.THE_LANTERN_KEY/KEEP_THE_KEY"
+          },
+          {
+            "edgeId": "EVENT_EDGE.THE_LANTERN_KEY/017",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.017",
+            "from": "EVENT_NODE.THE_LANTERN_KEY/KEEP_THE_KEY",
+            "kind": "optionAvailableAfterSuccess",
+            "order": 0,
+            "to": "EVENT_NODE.THE_LANTERN_KEY/FIGHT"
+          },
+          {
+            "edgeId": "EVENT_EDGE.THE_LANTERN_KEY/018",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.THE_LANTERN_KEY.018",
+            "from": "EVENT_NODE.THE_LANTERN_KEY/FIGHT",
+            "kind": "combatTransition",
+            "order": 0,
+            "to": "EVENT_NODE.THE_LANTERN_KEY/MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"
+          },
+          {
+            "edgeId": "EVENT_EDGE.FAKE_MERCHANT/FOUL_POTION",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.FAKE_MERCHANT.FOUL_POTION",
+            "from": "EVENT_NODE.FAKE_MERCHANT/START",
+            "kind": "foulPotionUse",
+            "order": 0,
+            "to": "EVENT_NODE.FAKE_MERCHANT/FOUL_POTION_USE"
+          },
+          {
+            "edgeId": "EVENT_EDGE.FAKE_MERCHANT/COMBAT",
+            "factId": "SOURCE.EVENT_SCRIPT_EDGE.FAKE_MERCHANT.COMBAT",
+            "from": "EVENT_NODE.FAKE_MERCHANT/FOUL_POTION_USE",
+            "kind": "eventInstanceFanOutThenCombat",
+            "order": 0,
+            "to": "EVENT_NODE.FAKE_MERCHANT/FAKE_MERCHANT_EVENT_ENCOUNTER"
+          }
+        ],
+        "effects": [
+          {
+            "effectId": "EVENT_EFFECT.BATTLEWORN_DUMMY/000",
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_EFFECT.BATTLEWORN_DUMMY.000",
+            "instructionIndex": 105,
+            "kind": "upgradeCard",
+            "maximum": 2,
+            "method": {
+              "methodBodySha256": "4a3bfcd679d99bca669a6a497a1ae48862c18c9f33d2573e951aea2473244100",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy+<Resume>d__11::MoveNext sig:200001"
+            },
+            "previewStyle": 1,
+            "recipient": "runtimeSelectedUpgradableCards",
+            "sourceSymbol": "MegaCrit.Sts2.Core.Commands.CardCmd::Upgrade sig:0002011288b811b5c8"
+          },
+          {
+            "condition": "rewardListNonEmpty",
+            "effectId": "EVENT_EFFECT.BATTLEWORN_DUMMY/001",
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_EFFECT.BATTLEWORN_DUMMY.001",
+            "instructionIndex": 151,
+            "kind": "offerRewards",
+            "method": {
+              "methodBodySha256": "4a3bfcd679d99bca669a6a497a1ae48862c18c9f33d2573e951aea2473244100",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy+<Resume>d__11::MoveNext sig:200001"
+            },
+            "recipient": "event.owner",
+            "sourceSymbol": "MegaCrit.Sts2.Core.Commands.RewardsCmd::OfferCustom sig:000212812112a74c1512809901128528"
+          },
+          {
+            "effectId": "EVENT_EFFECT.DENSE_VEGETATION/000",
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "factId": "SOURCE.EVENT_SCRIPT_EFFECT.DENSE_VEGETATION.000",
+            "formulaRef": "FORMULA.REST_SITE_HEAL_AMOUNT",
+            "instructionIndex": 14,
+            "kind": "restSiteHeal",
+            "method": {
+              "methodBodySha256": "8d6cd1db6fa170d83074ec09f4923bd9807d6d6d3b6650acad933be6ea181d76",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.DenseVegetation+<Rest>d__8::MoveNext sig:200001"
+            },
+            "mimicRestFlag": false,
+            "recipient": "event.owner",
+            "sourceSymbol": "MegaCrit.Sts2.Core.Commands.PlayerCmd::MimicRestSiteHeal sig:000212812112a74c02"
+          },
+          {
+            "amount": {
+              "kind": "runtimeInput",
+              "name": "event.dynamicVars.HpLoss.baseValue",
+              "valueType": "decimal"
+            },
+            "effectId": "EVENT_EFFECT.DENSE_VEGETATION/001",
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "factId": "SOURCE.EVENT_SCRIPT_EFFECT.DENSE_VEGETATION.001",
+            "instructionIndex": 152,
+            "kind": "damage",
+            "method": {
+              "methodBodySha256": "a939d24f83919567ade8070c4d2409ef0789673aa6a457e062930401923541ed",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.DenseVegetation+<TrudgeOn>d__7::MoveNext sig:200001"
+            },
+            "recipient": "event.owner.creature",
+            "sourceSymbol": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Damage sig:00061512822101151281f50112a7e812a64c12a7e41184491180a81288b812a82c"
+          },
+          {
+            "amount": {
+              "kind": "runtimeInput",
+              "name": "event.dynamicVars.Gold.baseValue",
+              "valueType": "decimal"
+            },
+            "effectId": "EVENT_EFFECT.DENSE_VEGETATION/002",
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "factId": "SOURCE.EVENT_SCRIPT_EFFECT.DENSE_VEGETATION.002",
+            "instructionIndex": 193,
+            "kind": "gainGold",
+            "method": {
+              "methodBodySha256": "a939d24f83919567ade8070c4d2409ef0789673aa6a457e062930401923541ed",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.DenseVegetation+<TrudgeOn>d__7::MoveNext sig:200001"
+            },
+            "recipient": "event.owner",
+            "sourceSymbol": "MegaCrit.Sts2.Core.Commands.PlayerCmd::GainGold sig:000312812111844912a74c02"
+          },
+          {
+            "effectId": "EVENT_EFFECT.FAKE_MERCHANT/000",
+            "eventId": "EVENT.FAKE_MERCHANT",
+            "factId": "SOURCE.EVENT_SCRIPT_EFFECT.FAKE_MERCHANT.000",
+            "instructionIndex": 53,
+            "kind": "stateWrite",
+            "method": {
+              "methodBodySha256": "2ad54b0926dcc5b413c542913d4190f07c516a5a086efd3155ee78a11209c9c7",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.FakeMerchant+<FoulPotionThrown>d__23::MoveNext sig:200001"
+            },
+            "recipient": "eventInstance",
+            "sourceSymbol": "MegaCrit.Sts2.Core.Models.Events.FakeMerchant::set_StartedFight sig:20010102",
+            "value": true
+          },
+          {
+            "effectId": "EVENT_EFFECT.PUNCH_OFF/000",
+            "eventId": "EVENT.PUNCH_OFF",
+            "factId": "SOURCE.EVENT_SCRIPT_EFFECT.PUNCH_OFF.000",
+            "instructionIndex": 10,
+            "kind": "addCurseToDeck",
+            "method": {
+              "methodBodySha256": "df80185b410ae174f6aba0dc289e69964ce565361df5949225de30afabed3325",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.PunchOff+<Nab>d__14::MoveNext sig:200001"
+            },
+            "model": "CARD.INJURY",
+            "recipient": "event.owner",
+            "sourceSymbol": "MegaCrit.Sts2.Core.Commands.CardPileCmd::AddCurseToDeck sig:10010115128221011288b812a74c generic:MegaCrit.Sts2.Core.Models.Cards.Injury"
+          },
+          {
+            "effectId": "EVENT_EFFECT.PUNCH_OFF/001",
+            "eventId": "EVENT.PUNCH_OFF",
+            "factId": "SOURCE.EVENT_SCRIPT_EFFECT.PUNCH_OFF.001",
+            "instructionIndex": 103,
+            "kind": "constructReward",
+            "method": {
+              "methodBodySha256": "df80185b410ae174f6aba0dc289e69964ce565361df5949225de30afabed3325",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.PunchOff+<Nab>d__14::MoveNext sig:200001"
+            },
+            "recipient": "event.owner",
+            "reward": {
+              "model": {
+                "kind": "runtimePull",
+                "rewardKind": "RelicReward"
+              },
+              "rewardType": "RelicReward"
+            },
+            "sourceSymbol": "MegaCrit.Sts2.Core.Rewards.RelicReward::.ctor sig:20010112a74c"
+          },
+          {
+            "condition": "rewardListNonEmpty",
+            "effectId": "EVENT_EFFECT.PUNCH_OFF/002",
+            "eventId": "EVENT.PUNCH_OFF",
+            "factId": "SOURCE.EVENT_SCRIPT_EFFECT.PUNCH_OFF.002",
+            "instructionIndex": 105,
+            "kind": "offerRewards",
+            "method": {
+              "methodBodySha256": "df80185b410ae174f6aba0dc289e69964ce565361df5949225de30afabed3325",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.PunchOff+<Nab>d__14::MoveNext sig:200001"
+            },
+            "recipient": "event.owner",
+            "sourceSymbol": "MegaCrit.Sts2.Core.Commands.RewardsCmd::OfferCustom sig:000212812112a74c1512809901128528"
+          },
+          {
+            "amount": {
+              "kind": "runtimeInput",
+              "name": "event.dynamicVars.Gold.baseValue",
+              "valueType": "decimal"
+            },
+            "effectId": "EVENT_EFFECT.THE_LANTERN_KEY/000",
+            "eventId": "EVENT.THE_LANTERN_KEY",
+            "factId": "SOURCE.EVENT_SCRIPT_EFFECT.THE_LANTERN_KEY.000",
+            "instructionIndex": 15,
+            "kind": "gainGold",
+            "method": {
+              "methodBodySha256": "9610ace1ffd6814dc1b0d715418f896de037314219e7e59e565648a5f25cd46a",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.TheLanternKey+<ReturnTheKey>d__9::MoveNext sig:200001"
+            },
+            "recipient": "event.owner",
+            "sourceSymbol": "MegaCrit.Sts2.Core.Commands.PlayerCmd::GainGold sig:000312812111844912a74c02"
+          }
+        ],
+        "foulPotionDispatch": {
+          "classification": "potionDrivenEventInstanceFanOut",
+          "factId": "SOURCE.EVENT_SCRIPT.FOUL_POTION_DISPATCH",
+          "taskJoin": "Task.WhenAll"
+        },
+        "framework": {
+          "methodCount": 53,
+          "roles": [
+            "AfterEventStarted",
+            "AwaitPendingOptionTasks",
+            "AwaitPendingOptionTasksAsyncBody",
+            "BeforeEventStarted",
+            "BeforeExitingRoom",
+            "BeforeOptionChosen",
+            "BeforeOptionChosenAsyncBody",
+            "BeforeSharedOptionChosen",
+            "BeforeSharedOptionChosenAsyncBody",
+            "BeginEvent",
+            "BeginEventAsyncBody",
+            "ChooseLocalOption",
+            "ChooseOptionForEvent",
+            "ChooseOptionForSharedEvent",
+            "ChooseSharedEventOption",
+            "Chosen",
+            "ChosenAsyncBody",
+            "ClearPlayerVotes",
+            "EnsureCleanup",
+            "EnterCombat",
+            "EnterCombatWithoutExitingEvent",
+            "EnterInternal",
+            "EnterInternalAsyncBody",
+            "Exit",
+            "ExitAsyncBody",
+            "GenerateInitialOptionsWrapper",
+            "HandleEventOptionChosenMessage",
+            "HandleSharedEventOptionChosenMessage",
+            "HandleVotedForSharedEventOptionMessage",
+            "InitializeForEvent",
+            "OnEnteringEventCombat",
+            "OptionButtonClicked",
+            "PlayerVotedForSharedOptionIndex",
+            "Proceed",
+            "ProceedFromTerminalRewardsScreen",
+            "ProceedFromTerminalRewardsScreenAsyncBody",
+            "ReadyToEnterCombat",
+            "ResetState",
+            "Resume",
+            "ResumeEvents",
+            "SaveEventOptionToHistory",
+            "SetCombatRoomNode",
+            "SetEvent",
+            "SetEventFinished",
+            "SetEventState",
+            "SetInitialEventState",
+            "SetOptions",
+            "SetupLayout",
+            "SetupLayoutAsyncBody",
+            "set_IsFinished"
+          ]
+        },
+        "invocationSummary": {
+          "denominator": 1549,
+          "resolved": 1549,
+          "unresolved": 0
+        },
+        "nodes": [
+          {
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.START",
+            "kind": "stage",
+            "nodeId": "EVENT_NODE.BATTLEWORN_DUMMY/START",
+            "order": 0
+          },
+          {
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "exceptionSemantics": "propagateNoSuccessEdge",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.SETTING_1",
+            "kind": "optionCallback",
+            "nodeId": "EVENT_NODE.BATTLEWORN_DUMMY/SETTING_1",
+            "order": 1,
+            "successSemantics": "taskCompletionOnly"
+          },
+          {
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "exceptionSemantics": "propagateNoSuccessEdge",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.SETTING_2",
+            "kind": "optionCallback",
+            "nodeId": "EVENT_NODE.BATTLEWORN_DUMMY/SETTING_2",
+            "order": 2,
+            "successSemantics": "taskCompletionOnly"
+          },
+          {
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "exceptionSemantics": "propagateNoSuccessEdge",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.SETTING_3",
+            "kind": "optionCallback",
+            "nodeId": "EVENT_NODE.BATTLEWORN_DUMMY/SETTING_3",
+            "order": 3,
+            "successSemantics": "taskCompletionOnly"
+          },
+          {
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+            "kind": "combatTransition",
+            "nodeId": "EVENT_NODE.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+            "order": 4
+          },
+          {
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+            "kind": "combatTransition",
+            "nodeId": "EVENT_NODE.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+            "order": 5
+          },
+          {
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+            "kind": "combatTransition",
+            "nodeId": "EVENT_NODE.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+            "order": 6
+          },
+          {
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.START",
+            "kind": "stage",
+            "nodeId": "EVENT_NODE.DENSE_VEGETATION/START",
+            "order": 0
+          },
+          {
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "exceptionSemantics": "propagateNoSuccessEdge",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.FIGHT",
+            "kind": "optionCallback",
+            "nodeId": "EVENT_NODE.DENSE_VEGETATION/FIGHT",
+            "order": 1,
+            "successSemantics": "taskCompletionOnly"
+          },
+          {
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "exceptionSemantics": "propagateNoSuccessEdge",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.TRUDGE_ON",
+            "kind": "optionCallback",
+            "nodeId": "EVENT_NODE.DENSE_VEGETATION/TRUDGE_ON",
+            "order": 2,
+            "successSemantics": "taskCompletionOnly"
+          },
+          {
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "exceptionSemantics": "propagateNoSuccessEdge",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.REST",
+            "kind": "optionCallback",
+            "nodeId": "EVENT_NODE.DENSE_VEGETATION/REST",
+            "order": 3,
+            "successSemantics": "taskCompletionOnly"
+          },
+          {
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER",
+            "kind": "combatTransition",
+            "nodeId": "EVENT_NODE.DENSE_VEGETATION/DENSE_VEGETATION_EVENT_ENCOUNTER",
+            "order": 11
+          },
+          {
+            "eventId": "EVENT.FAKE_MERCHANT",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.FAKE_MERCHANT.START",
+            "kind": "stage",
+            "nodeId": "EVENT_NODE.FAKE_MERCHANT/START",
+            "order": 0
+          },
+          {
+            "eventId": "EVENT.FAKE_MERCHANT",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER",
+            "kind": "combatTransition",
+            "nodeId": "EVENT_NODE.FAKE_MERCHANT/FAKE_MERCHANT_EVENT_ENCOUNTER",
+            "order": 13
+          },
+          {
+            "eventId": "EVENT.PUNCH_OFF",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.START",
+            "kind": "stage",
+            "nodeId": "EVENT_NODE.PUNCH_OFF/START",
+            "order": 0
+          },
+          {
+            "eventId": "EVENT.PUNCH_OFF",
+            "exceptionSemantics": "propagateNoSuccessEdge",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.NAB",
+            "kind": "optionCallback",
+            "nodeId": "EVENT_NODE.PUNCH_OFF/NAB",
+            "order": 1,
+            "successSemantics": "taskCompletionOnly"
+          },
+          {
+            "eventId": "EVENT.PUNCH_OFF",
+            "exceptionSemantics": "propagateNoSuccessEdge",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.I_CAN_TAKE_THEM",
+            "kind": "optionCallback",
+            "nodeId": "EVENT_NODE.PUNCH_OFF/I_CAN_TAKE_THEM",
+            "order": 2,
+            "successSemantics": "taskCompletionOnly"
+          },
+          {
+            "eventId": "EVENT.PUNCH_OFF",
+            "exceptionSemantics": "propagateNoSuccessEdge",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.FIGHT",
+            "kind": "optionCallback",
+            "nodeId": "EVENT_NODE.PUNCH_OFF/FIGHT",
+            "order": 3,
+            "successSemantics": "taskCompletionOnly"
+          },
+          {
+            "eventId": "EVENT.PUNCH_OFF",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER",
+            "kind": "combatTransition",
+            "nodeId": "EVENT_NODE.PUNCH_OFF/PUNCH_OFF_EVENT_ENCOUNTER",
+            "order": 18
+          },
+          {
+            "eventId": "EVENT.THE_LANTERN_KEY",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.START",
+            "kind": "stage",
+            "nodeId": "EVENT_NODE.THE_LANTERN_KEY/START",
+            "order": 0
+          },
+          {
+            "eventId": "EVENT.THE_LANTERN_KEY",
+            "exceptionSemantics": "propagateNoSuccessEdge",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.RETURN_THE_KEY",
+            "kind": "optionCallback",
+            "nodeId": "EVENT_NODE.THE_LANTERN_KEY/RETURN_THE_KEY",
+            "order": 1,
+            "successSemantics": "taskCompletionOnly"
+          },
+          {
+            "eventId": "EVENT.THE_LANTERN_KEY",
+            "exceptionSemantics": "propagateNoSuccessEdge",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.KEEP_THE_KEY",
+            "kind": "optionCallback",
+            "nodeId": "EVENT_NODE.THE_LANTERN_KEY/KEEP_THE_KEY",
+            "order": 2,
+            "successSemantics": "taskCompletionOnly"
+          },
+          {
+            "eventId": "EVENT.THE_LANTERN_KEY",
+            "exceptionSemantics": "propagateNoSuccessEdge",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.FIGHT",
+            "kind": "optionCallback",
+            "nodeId": "EVENT_NODE.THE_LANTERN_KEY/FIGHT",
+            "order": 3,
+            "successSemantics": "taskCompletionOnly"
+          },
+          {
+            "eventId": "EVENT.THE_LANTERN_KEY",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+            "kind": "combatTransition",
+            "nodeId": "EVENT_NODE.THE_LANTERN_KEY/MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+            "order": 23
+          },
+          {
+            "eventId": "EVENT.FAKE_MERCHANT",
+            "exceptionSemantics": "propagateNoTransition",
+            "factId": "SOURCE.EVENT_SCRIPT_NODE.FAKE_MERCHANT.FOUL_POTION_USE",
+            "kind": "potionDispatch",
+            "nodeId": "EVENT_NODE.FAKE_MERCHANT/FOUL_POTION_USE",
+            "order": 1,
+            "successSemantics": "Task.WhenAll completion"
+          }
+        ],
+        "options": [
+          {
+            "callback": {
+              "receiver": "eventInstance",
+              "signature": "2000128121",
+              "target": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::Setting1 sig:2000128121"
+            },
+            "constructionIndex": 67,
+            "constructionMethod": {
+              "methodBodySha256": "a6a09684f75afcad0f6eaa7778d587fa0fd8e887636452cd5927917807602f62",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::GenerateInitialOptions sig:2000151281fd0112a68c"
+            },
+            "enabledWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            },
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_OPTION.BATTLEWORN_DUMMY.SETTING_1",
+            "localizationKey": "BATTLEWORN_DUMMY.pages.INITIAL.options.SETTING_1",
+            "optionId": "EVENT_OPTION.BATTLEWORN_DUMMY/SETTING_1",
+            "orderInMethod": 0,
+            "stage": "INITIAL",
+            "visibleWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            }
+          },
+          {
+            "callback": {
+              "receiver": "eventInstance",
+              "signature": "2000128121",
+              "target": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::Setting2 sig:2000128121"
+            },
+            "constructionIndex": 77,
+            "constructionMethod": {
+              "methodBodySha256": "a6a09684f75afcad0f6eaa7778d587fa0fd8e887636452cd5927917807602f62",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::GenerateInitialOptions sig:2000151281fd0112a68c"
+            },
+            "enabledWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            },
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_OPTION.BATTLEWORN_DUMMY.SETTING_2",
+            "localizationKey": "BATTLEWORN_DUMMY.pages.INITIAL.options.SETTING_2",
+            "optionId": "EVENT_OPTION.BATTLEWORN_DUMMY/SETTING_2",
+            "orderInMethod": 1,
+            "stage": "INITIAL",
+            "visibleWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            }
+          },
+          {
+            "callback": {
+              "receiver": "eventInstance",
+              "signature": "2000128121",
+              "target": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::Setting3 sig:2000128121"
+            },
+            "constructionIndex": 87,
+            "constructionMethod": {
+              "methodBodySha256": "a6a09684f75afcad0f6eaa7778d587fa0fd8e887636452cd5927917807602f62",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::GenerateInitialOptions sig:2000151281fd0112a68c"
+            },
+            "enabledWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            },
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_OPTION.BATTLEWORN_DUMMY.SETTING_3",
+            "localizationKey": "BATTLEWORN_DUMMY.pages.INITIAL.options.SETTING_3",
+            "optionId": "EVENT_OPTION.BATTLEWORN_DUMMY/SETTING_3",
+            "orderInMethod": 2,
+            "stage": "INITIAL",
+            "visibleWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            }
+          },
+          {
+            "callback": {
+              "receiver": "eventInstance",
+              "signature": "2000128121",
+              "target": "MegaCrit.Sts2.Core.Models.Events.DenseVegetation::Fight sig:2000128121"
+            },
+            "constructionIndex": 123,
+            "constructionMethod": {
+              "methodBodySha256": "8d6cd1db6fa170d83074ec09f4923bd9807d6d6d3b6650acad933be6ea181d76",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.DenseVegetation+<Rest>d__8::MoveNext sig:200001"
+            },
+            "enabledWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            },
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "factId": "SOURCE.EVENT_SCRIPT_OPTION.DENSE_VEGETATION.FIGHT",
+            "localizationKey": "DENSE_VEGETATION.pages.REST.options.FIGHT",
+            "optionId": "EVENT_OPTION.DENSE_VEGETATION/FIGHT",
+            "orderInMethod": 0,
+            "stage": "REST",
+            "visibleWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            }
+          },
+          {
+            "callback": {
+              "receiver": "eventInstance",
+              "signature": "2000128121",
+              "target": "MegaCrit.Sts2.Core.Models.Events.DenseVegetation::TrudgeOn sig:2000128121"
+            },
+            "constructionIndex": 10,
+            "constructionMethod": {
+              "methodBodySha256": "64c839dfb6b9c5c22ce21c19f7272a5e1f2bff123e0caa92d308c147977e898c",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.DenseVegetation::GenerateInitialOptions sig:2000151281fd0112a68c"
+            },
+            "displayEffect": {
+              "amount": {
+                "kind": "runtimeInput",
+                "name": "event.dynamicVars.HpLoss.baseValue",
+                "valueType": "decimal"
+              },
+              "kind": "damagePreview"
+            },
+            "enabledWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            },
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "factId": "SOURCE.EVENT_SCRIPT_OPTION.DENSE_VEGETATION.TRUDGE_ON",
+            "localizationKey": "DENSE_VEGETATION.pages.INITIAL.options.TRUDGE_ON",
+            "optionId": "EVENT_OPTION.DENSE_VEGETATION/TRUDGE_ON",
+            "orderInMethod": 0,
+            "stage": "INITIAL",
+            "visibleWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            }
+          },
+          {
+            "callback": {
+              "receiver": "eventInstance",
+              "signature": "2000128121",
+              "target": "MegaCrit.Sts2.Core.Models.Events.DenseVegetation::Rest sig:2000128121"
+            },
+            "constructionIndex": 25,
+            "constructionMethod": {
+              "methodBodySha256": "64c839dfb6b9c5c22ce21c19f7272a5e1f2bff123e0caa92d308c147977e898c",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.DenseVegetation::GenerateInitialOptions sig:2000151281fd0112a68c"
+            },
+            "enabledWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            },
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "factId": "SOURCE.EVENT_SCRIPT_OPTION.DENSE_VEGETATION.REST",
+            "localizationKey": "DENSE_VEGETATION.pages.INITIAL.options.REST",
+            "optionId": "EVENT_OPTION.DENSE_VEGETATION/REST",
+            "orderInMethod": 1,
+            "stage": "INITIAL",
+            "visibleWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            }
+          },
+          {
+            "callback": {
+              "receiver": "eventInstance",
+              "signature": "2000128121",
+              "target": "MegaCrit.Sts2.Core.Models.Events.PunchOff::Nab sig:2000128121"
+            },
+            "constructionIndex": 11,
+            "constructionMethod": {
+              "methodBodySha256": "0bf7d0fb95e79e4c5eb8bf71a0137225abe59523cf9492da7fd1bbbbbe9948cb",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.PunchOff::GenerateInitialOptions sig:2000151281fd0112a68c"
+            },
+            "enabledWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            },
+            "eventId": "EVENT.PUNCH_OFF",
+            "factId": "SOURCE.EVENT_SCRIPT_OPTION.PUNCH_OFF.NAB",
+            "localizationKey": "PUNCH_OFF.pages.INITIAL.options.NAB",
+            "optionId": "EVENT_OPTION.PUNCH_OFF/NAB",
+            "orderInMethod": 0,
+            "stage": "INITIAL",
+            "visibleWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            }
+          },
+          {
+            "callback": {
+              "receiver": "eventInstance",
+              "signature": "2000128121",
+              "target": "MegaCrit.Sts2.Core.Models.Events.PunchOff::TakeThem sig:2000128121"
+            },
+            "constructionIndex": 21,
+            "constructionMethod": {
+              "methodBodySha256": "0bf7d0fb95e79e4c5eb8bf71a0137225abe59523cf9492da7fd1bbbbbe9948cb",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.PunchOff::GenerateInitialOptions sig:2000151281fd0112a68c"
+            },
+            "enabledWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            },
+            "eventId": "EVENT.PUNCH_OFF",
+            "factId": "SOURCE.EVENT_SCRIPT_OPTION.PUNCH_OFF.I_CAN_TAKE_THEM",
+            "localizationKey": "PUNCH_OFF.pages.INITIAL.options.I_CAN_TAKE_THEM",
+            "optionId": "EVENT_OPTION.PUNCH_OFF/I_CAN_TAKE_THEM",
+            "orderInMethod": 1,
+            "stage": "INITIAL",
+            "visibleWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            }
+          },
+          {
+            "callback": {
+              "receiver": "eventInstance",
+              "signature": "2000128121",
+              "target": "MegaCrit.Sts2.Core.Models.Events.PunchOff::Fight sig:2000128121"
+            },
+            "constructionIndex": 17,
+            "constructionMethod": {
+              "methodBodySha256": "d424221ee93af3505f6dfd19018a8f7a7d7415619506a34f722e4e3321de1ee9",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.PunchOff::TakeThem sig:2000128121"
+            },
+            "enabledWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            },
+            "eventId": "EVENT.PUNCH_OFF",
+            "factId": "SOURCE.EVENT_SCRIPT_OPTION.PUNCH_OFF.FIGHT",
+            "localizationKey": "PUNCH_OFF.pages.I_CAN_TAKE_THEM.options.FIGHT",
+            "optionId": "EVENT_OPTION.PUNCH_OFF/FIGHT",
+            "orderInMethod": 0,
+            "stage": "I_CAN_TAKE_THEM",
+            "visibleWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            }
+          },
+          {
+            "callback": {
+              "receiver": "eventInstance",
+              "signature": "2000128121",
+              "target": "MegaCrit.Sts2.Core.Models.Events.TheLanternKey::ReturnTheKey sig:2000128121"
+            },
+            "constructionIndex": 10,
+            "constructionMethod": {
+              "methodBodySha256": "f87ed7b5ec2a74a0300d0368d6c9bd355bd35ccbe0e5b714193c236d119f5ada",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.TheLanternKey::GenerateInitialOptions sig:2000151281fd0112a68c"
+            },
+            "enabledWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            },
+            "eventId": "EVENT.THE_LANTERN_KEY",
+            "factId": "SOURCE.EVENT_SCRIPT_OPTION.THE_LANTERN_KEY.RETURN_THE_KEY",
+            "localizationKey": "THE_LANTERN_KEY.pages.INITIAL.options.RETURN_THE_KEY",
+            "optionId": "EVENT_OPTION.THE_LANTERN_KEY/RETURN_THE_KEY",
+            "orderInMethod": 0,
+            "stage": "INITIAL",
+            "visibleWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            }
+          },
+          {
+            "callback": {
+              "receiver": "eventInstance",
+              "signature": "2000128121",
+              "target": "MegaCrit.Sts2.Core.Models.Events.TheLanternKey::KeepTheKey sig:2000128121"
+            },
+            "constructionIndex": 20,
+            "constructionMethod": {
+              "methodBodySha256": "f87ed7b5ec2a74a0300d0368d6c9bd355bd35ccbe0e5b714193c236d119f5ada",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.TheLanternKey::GenerateInitialOptions sig:2000151281fd0112a68c"
+            },
+            "enabledWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            },
+            "eventId": "EVENT.THE_LANTERN_KEY",
+            "factId": "SOURCE.EVENT_SCRIPT_OPTION.THE_LANTERN_KEY.KEEP_THE_KEY",
+            "localizationKey": "THE_LANTERN_KEY.pages.INITIAL.options.KEEP_THE_KEY",
+            "optionId": "EVENT_OPTION.THE_LANTERN_KEY/KEEP_THE_KEY",
+            "orderInMethod": 1,
+            "stage": "INITIAL",
+            "visibleWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            }
+          },
+          {
+            "callback": {
+              "receiver": "eventInstance",
+              "signature": "2000128121",
+              "target": "MegaCrit.Sts2.Core.Models.Events.TheLanternKey::Fight sig:2000128121"
+            },
+            "constructionIndex": 10,
+            "constructionMethod": {
+              "methodBodySha256": "2c5ba328c870a374985338e336df9e387460419ac0da5df1b02a58dd19ce4f1d",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.TheLanternKey::KeepTheKey sig:2000128121"
+            },
+            "enabledWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            },
+            "eventId": "EVENT.THE_LANTERN_KEY",
+            "factId": "SOURCE.EVENT_SCRIPT_OPTION.THE_LANTERN_KEY.FIGHT",
+            "localizationKey": "THE_LANTERN_KEY.pages.KEEP_THE_KEY.options.FIGHT",
+            "optionId": "EVENT_OPTION.THE_LANTERN_KEY/FIGHT",
+            "orderInMethod": 0,
+            "stage": "KEEP_THE_KEY",
+            "visibleWhen": {
+              "kind": "constant",
+              "value": true,
+              "valueType": "boolean"
+            }
+          }
+        ],
+        "outcomes": [
+          {
+            "classification": "customRanOutOfTimeBranch",
+            "dependencyRefs": [
+              "LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END",
+              "LIFECYCLE.COMMAND.CREATURE_ESCAPE/BATTLE_FRIEND_OWNER",
+              "LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT"
+            ],
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+            "outcomeId": "EVENT_OUTCOME.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+            "resumeBody": {
+              "methodBodySha256": "4a3bfcd679d99bca669a6a497a1ae48862c18c9f33d2573e951aea2473244100",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy+<Resume>d__11::MoveNext sig:200001"
+            },
+            "resumeMethod": {
+              "methodBodySha256": "102ad0b30a547f1662da4bd329fb604c421c6d472836fd20ccea61cbb0ba7073",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::Resume sig:2001128121128494"
+            },
+            "stateRead": {
+              "name": "encounter.RanOutOfTime",
+              "valueType": "boolean"
+            },
+            "success": {
+              "eventPage": "VICTORY",
+              "extraRewards": {
+                "condition": "resultingListNonEmpty",
+                "source": "combatRoom.ExtraRewards[event.owner]"
+              },
+              "versionEffect": {
+                "kind": "dynamicPotionReward",
+                "selection": {
+                  "kind": "runtimeRng",
+                  "name": "owner.playerRng.rewards",
+                  "pool": "characterUnlockedPlusSharedUnlocked"
+                }
+              }
+            },
+            "timeout": {
+              "effects": [],
+              "eventPage": "DEFEAT"
+            },
+            "transitionRef": "EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER"
+          },
+          {
+            "classification": "customRanOutOfTimeBranch",
+            "dependencyRefs": [
+              "LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END",
+              "LIFECYCLE.COMMAND.CREATURE_ESCAPE/BATTLE_FRIEND_OWNER",
+              "LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT"
+            ],
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+            "outcomeId": "EVENT_OUTCOME.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+            "resumeBody": {
+              "methodBodySha256": "4a3bfcd679d99bca669a6a497a1ae48862c18c9f33d2573e951aea2473244100",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy+<Resume>d__11::MoveNext sig:200001"
+            },
+            "resumeMethod": {
+              "methodBodySha256": "102ad0b30a547f1662da4bd329fb604c421c6d472836fd20ccea61cbb0ba7073",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::Resume sig:2001128121128494"
+            },
+            "stateRead": {
+              "name": "encounter.RanOutOfTime",
+              "valueType": "boolean"
+            },
+            "success": {
+              "eventPage": "VICTORY",
+              "extraRewards": {
+                "condition": "resultingListNonEmpty",
+                "source": "combatRoom.ExtraRewards[event.owner]"
+              },
+              "versionEffect": {
+                "kind": "upgradeCards",
+                "previewStyle": 1,
+                "selection": {
+                  "kind": "runtimeSelection",
+                  "maximum": 2,
+                  "name": "owner.drawPile.upgradableStableShuffleTake"
+                }
+              }
+            },
+            "timeout": {
+              "effects": [],
+              "eventPage": "DEFEAT"
+            },
+            "transitionRef": "EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER"
+          },
+          {
+            "classification": "customRanOutOfTimeBranch",
+            "dependencyRefs": [
+              "LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END",
+              "LIFECYCLE.COMMAND.CREATURE_ESCAPE/BATTLE_FRIEND_OWNER",
+              "LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT"
+            ],
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+            "outcomeId": "EVENT_OUTCOME.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+            "resumeBody": {
+              "methodBodySha256": "4a3bfcd679d99bca669a6a497a1ae48862c18c9f33d2573e951aea2473244100",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy+<Resume>d__11::MoveNext sig:200001"
+            },
+            "resumeMethod": {
+              "methodBodySha256": "102ad0b30a547f1662da4bd329fb604c421c6d472836fd20ccea61cbb0ba7073",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::Resume sig:2001128121128494"
+            },
+            "stateRead": {
+              "name": "encounter.RanOutOfTime",
+              "valueType": "boolean"
+            },
+            "success": {
+              "eventPage": "VICTORY",
+              "extraRewards": {
+                "condition": "resultingListNonEmpty",
+                "source": "combatRoom.ExtraRewards[event.owner]"
+              },
+              "versionEffect": {
+                "kind": "dynamicRelicReward",
+                "selection": {
+                  "kind": "runtimePull",
+                  "name": "RelicFactory.PullNextRelicFromFront(owner)"
+                }
+              }
+            },
+            "timeout": {
+              "effects": [],
+              "eventPage": "DEFEAT"
+            },
+            "transitionRef": "EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER"
+          },
+          {
+            "classification": "standardCombatOutcomeBoundary",
+            "dependencyRefs": [
+              "LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT"
+            ],
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER",
+            "outcomeId": "EVENT_OUTCOME.DENSE_VEGETATION/DENSE_VEGETATION_EVENT_ENCOUNTER",
+            "transitionRef": "EVENT_TRANSITION.DENSE_VEGETATION/DENSE_VEGETATION_EVENT_ENCOUNTER"
+          },
+          {
+            "classification": "standardCombatOutcomeBoundary",
+            "dependencyRefs": [
+              "LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT"
+            ],
+            "eventId": "EVENT.FAKE_MERCHANT",
+            "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER",
+            "outcomeId": "EVENT_OUTCOME.FAKE_MERCHANT/FAKE_MERCHANT_EVENT_ENCOUNTER",
+            "transitionRef": "EVENT_TRANSITION.FAKE_MERCHANT/FAKE_MERCHANT_EVENT_ENCOUNTER"
+          },
+          {
+            "classification": "standardCombatOutcomeBoundary",
+            "dependencyRefs": [
+              "LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT"
+            ],
+            "eventId": "EVENT.PUNCH_OFF",
+            "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER",
+            "outcomeId": "EVENT_OUTCOME.PUNCH_OFF/PUNCH_OFF_EVENT_ENCOUNTER",
+            "transitionRef": "EVENT_TRANSITION.PUNCH_OFF/PUNCH_OFF_EVENT_ENCOUNTER"
+          },
+          {
+            "classification": "standardCombatOutcomeBoundary",
+            "dependencyRefs": [
+              "LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT"
+            ],
+            "eventId": "EVENT.THE_LANTERN_KEY",
+            "factId": "SOURCE.EVENT_SCRIPT_OUTCOME.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+            "outcomeId": "EVENT_OUTCOME.THE_LANTERN_KEY/MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+            "transitionRef": "EVENT_TRANSITION.THE_LANTERN_KEY/MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"
+          }
+        ],
+        "owners": [
+          {
+            "availability": {
+              "eventId": "EVENT.BATTLEWORN_DUMMY",
+              "expression": {
+                "kind": "sourcePredicate",
+                "methodBodySha256": "b067e5b062baca1d4308a7becd68a73068d1754d05d78bd9a9c43492da8fca4a",
+                "valueType": "boolean"
+              },
+              "method": {
+                "methodBodySha256": "b067e5b062baca1d4308a7becd68a73068d1754d05d78bd9a9c43492da8fca4a",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.EventModel::IsAllowed sig:20010212841c"
+              },
+              "physicalOwner": "MegaCrit.Sts2.Core.Models.EventModel"
+            },
+            "canonicalEvent": "EVENT.BATTLEWORN_DUMMY",
+            "e1EncounterLinkRefs": [
+              "SOURCE.EVENT_LINK.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+              "SOURCE.EVENT_LINK.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+              "SOURCE.EVENT_LINK.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER"
+            ],
+            "eventSourceType": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy",
+            "factId": "SOURCE.EVENT_SCRIPT_OWNER.BATTLEWORN_DUMMY",
+            "optionIds": [
+              "EVENT_OPTION.BATTLEWORN_DUMMY/SETTING_1",
+              "EVENT_OPTION.BATTLEWORN_DUMMY/SETTING_2",
+              "EVENT_OPTION.BATTLEWORN_DUMMY/SETTING_3"
+            ],
+            "transitionIds": [
+              "EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+              "EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+              "EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER"
+            ]
+          },
+          {
+            "availability": {
+              "eventId": "EVENT.DENSE_VEGETATION",
+              "expression": {
+                "kind": "anyOf",
+                "operands": [
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "run.playerCount",
+                      "valueType": "integer"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": 1,
+                      "valueType": "integer"
+                    },
+                    "valueType": "boolean"
+                  },
+                  {
+                    "kind": "allPlayers",
+                    "predicate": {
+                      "kind": "comparison",
+                      "left": {
+                        "kind": "runtimeInput",
+                        "name": "player.currentHp",
+                        "valueType": "integer"
+                      },
+                      "operator": "greaterThan",
+                      "right": {
+                        "kind": "runtimeInput",
+                        "name": "event.dynamicVars.HpLoss.baseValue",
+                        "valueType": "decimal"
+                      },
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  }
+                ],
+                "valueType": "boolean"
+              },
+              "method": {
+                "methodBodySha256": "db20e930bc536b4a98aac2d7a54dbc2f7b41a9f23d91e41a40170cf1f2971f00",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.DenseVegetation::IsAllowed sig:20010212841c"
+              },
+              "physicalOwner": "MegaCrit.Sts2.Core.Models.Events.DenseVegetation"
+            },
+            "canonicalEvent": "EVENT.DENSE_VEGETATION",
+            "e1EncounterLinkRefs": [
+              "SOURCE.EVENT_LINK.DENSE_VEGETATION_EVENT_ENCOUNTER"
+            ],
+            "eventSourceType": "MegaCrit.Sts2.Core.Models.Events.DenseVegetation",
+            "factId": "SOURCE.EVENT_SCRIPT_OWNER.DENSE_VEGETATION",
+            "optionIds": [
+              "EVENT_OPTION.DENSE_VEGETATION/FIGHT",
+              "EVENT_OPTION.DENSE_VEGETATION/TRUDGE_ON",
+              "EVENT_OPTION.DENSE_VEGETATION/REST"
+            ],
+            "transitionIds": [
+              "EVENT_TRANSITION.DENSE_VEGETATION/DENSE_VEGETATION_EVENT_ENCOUNTER"
+            ]
+          },
+          {
+            "availability": {
+              "eventId": "EVENT.FAKE_MERCHANT",
+              "expression": {
+                "kind": "allOf",
+                "operands": [
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "run.currentActIndex",
+                      "valueType": "integer"
+                    },
+                    "operator": "greaterThanOrEqual",
+                    "right": {
+                      "kind": "constant",
+                      "value": 1,
+                      "valueType": "integer"
+                    },
+                    "valueType": "boolean"
+                  },
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "run.playerCount",
+                      "valueType": "integer"
+                    },
+                    "operator": "lessThanOrEqual",
+                    "right": {
+                      "kind": "constant",
+                      "value": 1,
+                      "valueType": "integer"
+                    },
+                    "valueType": "boolean"
+                  },
+                  {
+                    "kind": "allPlayers",
+                    "predicate": {
+                      "kind": "anyOf",
+                      "operands": [
+                        {
+                          "kind": "comparison",
+                          "left": {
+                            "kind": "runtimeInput",
+                            "name": "player.gold",
+                            "valueType": "integer"
+                          },
+                          "operator": "greaterThanOrEqual",
+                          "right": {
+                            "kind": "constant",
+                            "value": 100,
+                            "valueType": "integer"
+                          },
+                          "valueType": "boolean"
+                        },
+                        {
+                          "kind": "anyPotion",
+                          "predicate": {
+                            "input": {
+                              "kind": "runtimeInput",
+                              "name": "player.potion",
+                              "valueType": "object"
+                            },
+                            "kind": "typeTest",
+                            "sourceType": "MegaCrit.Sts2.Core.Models.Potions.FoulPotion",
+                            "valueType": "boolean"
+                          },
+                          "valueType": "boolean"
+                        }
+                      ],
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  }
+                ],
+                "valueType": "boolean"
+              },
+              "method": {
+                "methodBodySha256": "0c9e99afacb34cb5a26affe921864b10995c3289f58bde43beecf0888453c1be",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.FakeMerchant::IsAllowed sig:20010212841c"
+              },
+              "physicalOwner": "MegaCrit.Sts2.Core.Models.Events.FakeMerchant"
+            },
+            "canonicalEvent": "EVENT.FAKE_MERCHANT",
+            "e1EncounterLinkRefs": [
+              "SOURCE.EVENT_LINK.FAKE_MERCHANT_EVENT_ENCOUNTER"
+            ],
+            "eventSourceType": "MegaCrit.Sts2.Core.Models.Events.FakeMerchant",
+            "factId": "SOURCE.EVENT_SCRIPT_OWNER.FAKE_MERCHANT",
+            "optionIds": [],
+            "transitionIds": [
+              "EVENT_TRANSITION.FAKE_MERCHANT/FAKE_MERCHANT_EVENT_ENCOUNTER"
+            ]
+          },
+          {
+            "availability": {
+              "eventId": "EVENT.PUNCH_OFF",
+              "expression": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "run.totalFloor",
+                  "valueType": "integer"
+                },
+                "operator": "greaterThanOrEqual",
+                "right": {
+                  "kind": "constant",
+                  "value": 6,
+                  "valueType": "integer"
+                },
+                "valueType": "boolean"
+              },
+              "method": {
+                "methodBodySha256": "19c43a06518595ece63e8080bbe01a1bb770d6db7d975beaa899bf027d348b26",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.PunchOff::IsAllowed sig:20010212841c"
+              },
+              "physicalOwner": "MegaCrit.Sts2.Core.Models.Events.PunchOff"
+            },
+            "canonicalEvent": "EVENT.PUNCH_OFF",
+            "e1EncounterLinkRefs": [
+              "SOURCE.EVENT_LINK.PUNCH_OFF_EVENT_ENCOUNTER"
+            ],
+            "eventSourceType": "MegaCrit.Sts2.Core.Models.Events.PunchOff",
+            "factId": "SOURCE.EVENT_SCRIPT_OWNER.PUNCH_OFF",
+            "optionIds": [
+              "EVENT_OPTION.PUNCH_OFF/NAB",
+              "EVENT_OPTION.PUNCH_OFF/I_CAN_TAKE_THEM",
+              "EVENT_OPTION.PUNCH_OFF/FIGHT"
+            ],
+            "transitionIds": [
+              "EVENT_TRANSITION.PUNCH_OFF/PUNCH_OFF_EVENT_ENCOUNTER"
+            ]
+          },
+          {
+            "availability": {
+              "eventId": "EVENT.THE_LANTERN_KEY",
+              "expression": {
+                "kind": "sourcePredicate",
+                "methodBodySha256": "b067e5b062baca1d4308a7becd68a73068d1754d05d78bd9a9c43492da8fca4a",
+                "valueType": "boolean"
+              },
+              "method": {
+                "methodBodySha256": "b067e5b062baca1d4308a7becd68a73068d1754d05d78bd9a9c43492da8fca4a",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.EventModel::IsAllowed sig:20010212841c"
+              },
+              "physicalOwner": "MegaCrit.Sts2.Core.Models.EventModel"
+            },
+            "canonicalEvent": "EVENT.THE_LANTERN_KEY",
+            "e1EncounterLinkRefs": [
+              "SOURCE.EVENT_LINK.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"
+            ],
+            "eventSourceType": "MegaCrit.Sts2.Core.Models.Events.TheLanternKey",
+            "factId": "SOURCE.EVENT_SCRIPT_OWNER.THE_LANTERN_KEY",
+            "optionIds": [
+              "EVENT_OPTION.THE_LANTERN_KEY/RETURN_THE_KEY",
+              "EVENT_OPTION.THE_LANTERN_KEY/KEEP_THE_KEY",
+              "EVENT_OPTION.THE_LANTERN_KEY/FIGHT"
+            ],
+            "transitionIds": [
+              "EVENT_TRANSITION.THE_LANTERN_KEY/MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"
+            ]
+          }
+        ],
+        "sourceDenominators": {
+          "dependencies": 6,
+          "displayScalingCalls": 3,
+          "edges": 20,
+          "effects": 10,
+          "encounterScripts": 7,
+          "frameworkMethods": 53,
+          "invocations": 1549,
+          "methods": 76,
+          "nodes": 25,
+          "options": 12,
+          "outcomes": 7,
+          "owners": 5,
+          "stateContracts": 10,
+          "supportMethods": 14
+        },
+        "stateContracts": [
+          {
+            "domain": [
+              false,
+              true
+            ],
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.BATTLEWORN_DUMMY.encounter_RanOutOfTime",
+            "name": "encounter.RanOutOfTime",
+            "valueType": "boolean"
+          },
+          {
+            "domain": "sourceEncounterAndMonsterHpAtRuntime",
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.BATTLEWORN_DUMMY.event_displayHpScalingInputs",
+            "formulaRef": "FORMULA.HP_MULTIPLAYER_SCALE",
+            "name": "event.displayHpScalingInputs",
+            "valueType": "runtimeContract"
+          },
+          {
+            "domain": "ownerAndFalseRestFlag",
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.DENSE_VEGETATION.event_restHealInputs",
+            "formulaRef": "FORMULA.REST_SITE_HEAL_AMOUNT",
+            "name": "event.restHealInputs",
+            "valueType": "runtimeContract"
+          },
+          {
+            "domain": [
+              false,
+              true
+            ],
+            "eventId": "EVENT.FAKE_MERCHANT",
+            "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.event_StartedFight",
+            "name": "event.StartedFight",
+            "valueType": "boolean"
+          },
+          {
+            "domain": "runtimeMerchantInventory",
+            "eventId": "EVENT.FAKE_MERCHANT",
+            "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.event_Inventory",
+            "name": "event.Inventory",
+            "valueType": "object"
+          },
+          {
+            "domain": "eventRngShuffleTakeAndStockState",
+            "eventId": "EVENT.FAKE_MERCHANT",
+            "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.event_inventoryRngAndStock",
+            "name": "event.inventoryRngAndStock",
+            "valueType": "runtimeContract"
+          },
+          {
+            "domain": "combatOrMerchantOrFakeMerchantRoomWithOpenTargetNode",
+            "eventId": "EVENT.FAKE_MERCHANT",
+            "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.foulPotion_usabilityAndTarget",
+            "name": "foulPotion.usabilityAndTarget",
+            "valueType": "runtimeContract"
+          },
+          {
+            "domain": "everyRunPlayerMutableFakeMerchantEvent",
+            "eventId": "EVENT.FAKE_MERCHANT",
+            "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.FAKE_MERCHANT.foulPotion_eventInstanceDispatch",
+            "name": "foulPotion.eventInstanceDispatch",
+            "valueType": "runtimeContract"
+          },
+          {
+            "domain": "activeOrCancelled",
+            "eventId": "EVENT.PUNCH_OFF",
+            "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.PUNCH_OFF.event_presentationCancellation",
+            "name": "event.presentationCancellation",
+            "valueType": "state"
+          },
+          {
+            "domain": "subscribedUntilRoomExitOrCancellation",
+            "eventId": "EVENT.PUNCH_OFF",
+            "factId": "SOURCE.EVENT_SCRIPT_CONTRACT.PUNCH_OFF.event_presentationSubscription",
+            "name": "event.presentationSubscription",
+            "valueType": "runtimeContract"
+          }
+        ],
+        "transitions": [
+          {
+            "addedRewards": [],
+            "callbackMethod": {
+              "methodBodySha256": "e69e6dca07dcf4cae2e698d2d33fc184265de18b5b2198e1fa756f01bb703f79",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::Setting1 sig:2000128121"
+            },
+            "canonicalEncounter": "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+            "e1EventLinkRef": "SOURCE.EVENT_LINK.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+            "instructionIndex": 4,
+            "overload": {
+              "genericEncounter": false,
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.EventModel::EnterCombatWithoutExitingEvent sig:2003011288c8151281fd0112852802"
+            },
+            "resume": {
+              "mode": "resumeParentEvent",
+              "shouldResume": true
+            },
+            "transitionId": "EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER"
+          },
+          {
+            "addedRewards": [],
+            "callbackMethod": {
+              "methodBodySha256": "07167585097ca593628082aa53250dedc6a9153b2548071e65c4cd6e6d5a0276",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::Setting2 sig:2000128121"
+            },
+            "canonicalEncounter": "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+            "e1EventLinkRef": "SOURCE.EVENT_LINK.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+            "instructionIndex": 4,
+            "overload": {
+              "genericEncounter": false,
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.EventModel::EnterCombatWithoutExitingEvent sig:2003011288c8151281fd0112852802"
+            },
+            "resume": {
+              "mode": "resumeParentEvent",
+              "shouldResume": true
+            },
+            "transitionId": "EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER"
+          },
+          {
+            "addedRewards": [],
+            "callbackMethod": {
+              "methodBodySha256": "79877524745cba2e38350e9f8681f7cd63d21cbef0854d411bece9aa9aa04fc8",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::Setting3 sig:2000128121"
+            },
+            "canonicalEncounter": "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+            "e1EventLinkRef": "SOURCE.EVENT_LINK.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+            "eventId": "EVENT.BATTLEWORN_DUMMY",
+            "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+            "instructionIndex": 4,
+            "overload": {
+              "genericEncounter": false,
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.EventModel::EnterCombatWithoutExitingEvent sig:2003011288c8151281fd0112852802"
+            },
+            "resume": {
+              "mode": "resumeParentEvent",
+              "shouldResume": true
+            },
+            "transitionId": "EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER"
+          },
+          {
+            "addedRewards": [],
+            "callbackMethod": {
+              "methodBodySha256": "2ca7bd4097bbabdc0d556f5c96db54e1d720a860f37c38fb264a5426f7e47e90",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.DenseVegetation::Fight sig:2000128121"
+            },
+            "canonicalEncounter": "ENCOUNTER.DENSE_VEGETATION_EVENT_ENCOUNTER",
+            "e1EventLinkRef": "SOURCE.EVENT_LINK.DENSE_VEGETATION_EVENT_ENCOUNTER",
+            "eventId": "EVENT.DENSE_VEGETATION",
+            "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER",
+            "instructionIndex": 3,
+            "overload": {
+              "genericEncounter": true,
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.EventModel::EnterCombatWithoutExitingEvent sig:30010201151281fd0112852802 generic:MegaCrit.Sts2.Core.Models.Encounters.DenseVegetationEventEncounter"
+            },
+            "resume": {
+              "mode": "proceedToMapAfterCombat",
+              "shouldResume": false
+            },
+            "transitionId": "EVENT_TRANSITION.DENSE_VEGETATION/DENSE_VEGETATION_EVENT_ENCOUNTER"
+          },
+          {
+            "addedRewards": [
+              {
+                "condition": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "constructionIndex": 61,
+                "model": {
+                  "kind": "fixedModel",
+                  "sourceType": "MegaCrit.Sts2.Core.Models.Relics.FakeMerchantsRug"
+                },
+                "rewardType": "RelicReward"
+              },
+              {
+                "condition": {
+                  "kind": "allOf",
+                  "operands": [
+                    {
+                      "kind": "comparison",
+                      "left": {
+                        "kind": "runtimeInput",
+                        "name": "run.playerCount",
+                        "valueType": "integer"
+                      },
+                      "operator": "greaterThan",
+                      "right": {
+                        "kind": "constant",
+                        "value": 1,
+                        "valueType": "integer"
+                      },
+                      "valueType": "boolean"
+                    },
+                    {
+                      "kind": "runtimeInput",
+                      "name": "event.inventory.entry.isUnstocked",
+                      "valueType": "boolean"
+                    }
+                  ],
+                  "valueType": "boolean"
+                },
+                "constructionIndex": 94,
+                "model": {
+                  "kind": "runtimeModel",
+                  "name": "event.inventory.unstockedRelic.model"
+                },
+                "rewardType": "RelicReward"
+              }
+            ],
+            "callbackMethod": {
+              "methodBodySha256": "2ad54b0926dcc5b413c542913d4190f07c516a5a086efd3155ee78a11209c9c7",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.FakeMerchant+<FoulPotionThrown>d__23::MoveNext sig:200001"
+            },
+            "canonicalEncounter": "ENCOUNTER.FAKE_MERCHANT_EVENT_ENCOUNTER",
+            "e1EventLinkRef": "SOURCE.EVENT_LINK.FAKE_MERCHANT_EVENT_ENCOUNTER",
+            "eventId": "EVENT.FAKE_MERCHANT",
+            "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER",
+            "instructionIndex": 111,
+            "overload": {
+              "genericEncounter": true,
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.EventModel::EnterCombatWithoutExitingEvent sig:30010201151281fd0112852802 generic:MegaCrit.Sts2.Core.Models.Encounters.FakeMerchantEventEncounter"
+            },
+            "resume": {
+              "mode": "proceedToMapAfterCombat",
+              "shouldResume": false
+            },
+            "transitionId": "EVENT_TRANSITION.FAKE_MERCHANT/FAKE_MERCHANT_EVENT_ENCOUNTER"
+          },
+          {
+            "addedRewards": [
+              {
+                "condition": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "constructionIndex": 17,
+                "model": {
+                  "kind": "runtimePull",
+                  "rewardKind": "RelicReward"
+                },
+                "rewardType": "RelicReward"
+              },
+              {
+                "condition": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "constructionIndex": 28,
+                "model": {
+                  "kind": "runtimePull",
+                  "rewardKind": "PotionReward"
+                },
+                "rewardType": "PotionReward"
+              }
+            ],
+            "callbackMethod": {
+              "methodBodySha256": "f7232cff94c5d2d994dd1ece9ef5dfa00bd3e17426f1a9ab4a18fa6cf2836612",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.PunchOff::Fight sig:2000128121"
+            },
+            "canonicalEncounter": "ENCOUNTER.PUNCH_OFF_EVENT_ENCOUNTER",
+            "e1EventLinkRef": "SOURCE.EVENT_LINK.PUNCH_OFF_EVENT_ENCOUNTER",
+            "eventId": "EVENT.PUNCH_OFF",
+            "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER",
+            "instructionIndex": 34,
+            "overload": {
+              "genericEncounter": true,
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.EventModel::EnterCombatWithoutExitingEvent sig:30010201151281fd0112852802 generic:MegaCrit.Sts2.Core.Models.Encounters.PunchOffEventEncounter"
+            },
+            "resume": {
+              "mode": "proceedToMapAfterCombat",
+              "shouldResume": false
+            },
+            "transitionId": "EVENT_TRANSITION.PUNCH_OFF/PUNCH_OFF_EVENT_ENCOUNTER"
+          },
+          {
+            "addedRewards": [
+              {
+                "condition": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "constructionIndex": 23,
+                "model": {
+                  "kind": "fixedModel",
+                  "sourceType": "MegaCrit.Sts2.Core.Models.Cards.LanternKey"
+                },
+                "rewardType": "SpecialCardReward"
+              }
+            ],
+            "callbackMethod": {
+              "methodBodySha256": "d5012c1b321ae651e2391c6265a79ffeec142234d90931b070582303f56f6876",
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.Events.TheLanternKey::Fight sig:2000128121"
+            },
+            "canonicalEncounter": "ENCOUNTER.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+            "e1EventLinkRef": "SOURCE.EVENT_LINK.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+            "eventId": "EVENT.THE_LANTERN_KEY",
+            "factId": "SOURCE.EVENT_SCRIPT_TRANSITION.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+            "instructionIndex": 29,
+            "overload": {
+              "genericEncounter": true,
+              "symbolSignature": "MegaCrit.Sts2.Core.Models.EventModel::EnterCombatWithoutExitingEvent sig:30010201151281fd0112852802 generic:MegaCrit.Sts2.Core.Models.Encounters.MysteriousKnightEventEncounter"
+            },
+            "resume": {
+              "mode": "proceedToMapAfterCombat",
+              "shouldResume": false
+            },
+            "transitionId": "EVENT_TRANSITION.THE_LANTERN_KEY/MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"
           }
         ]
       },
@@ -118137,5 +121993,5 @@
       ]
     }
   },
-  "schemaVersion": 5
+  "schemaVersion": 6
 }

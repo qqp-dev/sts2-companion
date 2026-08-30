@@ -413,6 +413,24 @@ class CilDataFlow:
             self._pop(frame, index, "store field receiver")
             if not isinstance(operand, str): raise SourceExtractionError(f"unresolved field at instruction {index}")
             frame.fields[operand] = value.with_origins(origin); return frame
+        if opcode == "stind.ref":
+            # C# collection expressions use CollectionsMarshal.AsSpan/get_Item
+            # followed by stind.ref.  Consume this only when metadata proves a
+            # managed by-reference destination; accepting a plain object would
+            # hide a malformed stack or changed compiler shape.
+            value = self._pop(frame, index, "indirect store value")
+            address = self._pop(frame, index, "indirect store address")
+            if address.cil_type is None or address.cil_type.kind != "byref":
+                raise SourceExtractionError(
+                    f"stind.ref destination is not a managed byref at instruction {index}: {address.kind}"
+                )
+            if address.kind == "address":
+                kind, name = address.data
+                if kind == "local": frame.locals[name] = value.with_origins(origin)
+                elif kind == "field": frame.fields[name] = value.with_origins(origin)
+                elif kind != "argument":
+                    raise SourceExtractionError(f"unsupported stind.ref address kind {kind!r} at instruction {index}")
+            return frame
         if opcode == "ldsfld":
             if not isinstance(operand, str): raise SourceExtractionError(f"unresolved static field at instruction {index}")
             if operand.startswith("System.Decimal::One"):

@@ -11,6 +11,7 @@ from source_extractor.ast import (
 )
 from source_extractor.canonical import witness_sha256
 from source_extractor.errors import SourceExtractionError
+from source_extractor.event_scripts import validate_event_scripts
 from source_extractor.identity import validate_observation_identities
 from source_extractor.hp_pipeline import validate_hp_pipeline
 from source_extractor.placement import validate_placement
@@ -197,6 +198,10 @@ def _validate_source_document(source: dict[str, Any]) -> None:
         validate_hp_pipeline(source.get("hpPipeline"), path="source.hpPipeline")
     except SourceExtractionError as exc:
         _fail("source.hpPipeline", str(exc))
+    try:
+        validate_event_scripts(source.get("eventScripts"))
+    except SourceExtractionError as exc:
+        _fail("source.eventScripts", str(exc))
 
     encounters = source.get("encounters", {})
     if set(encounters) != {"ordinary", "event"} or len(encounters["ordinary"]) != 81 or len(encounters["event"]) != 8:
@@ -1060,11 +1065,100 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
     if any(key in event_behavior for key in {"decisionRefs", "eventTurnInvocationCensus", "sourceRoots"}):
         _fail("payload.sourceFacts.eventTurnBehavior", "event proof/call bulk leaked")
 
+    event_scripts = _object(sf["eventScripts"], "payload.sourceFacts.eventScripts", {
+        "dependencies", "displayScaling", "edges", "effects", "foulPotionDispatch", "framework",
+        "invocationSummary", "nodes", "options", "outcomes", "owners", "sourceDenominators",
+        "stateContracts", "transitions",
+    })
+    expected_counts={"owners":5,"options":12,"transitions":7,"stateContracts":10,"effects":10,
+                     "nodes":25,"edges":20,"displayScaling":3,"dependencies":6,"outcomes":7}
+    event_script_fact_ids=set()
+    event_ids=set();option_ids=set();transition_ids=set();node_ids=set();dependency_ids=set()
+    for family,count in expected_counts.items():
+        rows=_list(event_scripts[family],f"payload.sourceFacts.eventScripts.{family}")
+        if len(rows)!=count:_fail(f"payload.sourceFacts.eventScripts.{family}",f"expected {count} source-discovered rows")
+        ids=_unique(rows,"factId",f"payload.sourceFacts.eventScripts.{family}")
+        if event_script_fact_ids & ids:_fail(f"payload.sourceFacts.eventScripts.{family}","duplicate cross-family fact ID")
+        event_script_fact_ids |= ids
+    for i,row in enumerate(event_scripts["owners"]):
+        path=f"payload.sourceFacts.eventScripts.owners[{i}]";event_ids.add(_string(row.get("canonicalEvent"),path+".canonicalEvent",prefix="EVENT."))
+        if row.get("eventSourceType") is None or row.get("availability") is None:_fail(path,"owner identity/availability missing")
+        refs=set(_list(row.get("e1EncounterLinkRefs"),path+".e1EncounterLinkRefs"))
+        if not refs or not refs <= placement_fact_ids:_fail(path+".e1EncounterLinkRefs","broken E1 event linkage refs")
+    if len(event_ids)!=5 or "EVENT.THE_ARCHITECT" in event_ids:_fail("payload.sourceFacts.eventScripts.owners","E2c2a owner slice mismatch")
+    dense=next(x for x in event_scripts["owners"] if x["canonicalEvent"]=="EVENT.DENSE_VEGETATION")
+    if "event.dynamicVars.HpLoss.baseValue" not in repr(dense["availability"]["expression"]):
+        _fail("payload.sourceFacts.eventScripts.owners","Dense dynamic HpLoss was flattened")
+    for i,row in enumerate(event_scripts["options"]):
+        path=f"payload.sourceFacts.eventScripts.options[{i}]";oid=_string(row.get("optionId"),path+".optionId",prefix="EVENT_OPTION.")
+        if oid in option_ids:
+            _fail(path+".optionId","duplicate option")
+        option_ids.add(oid)
+        callback=_object(row.get("callback"),path+".callback",{"receiver","signature","target"})
+        if callback["receiver"]!="eventInstance" or "::" not in callback["target"] or not callback["signature"]:
+            _fail(path+".callback","delegate receiver/target/signature unresolved")
+        if row.get("eventId") not in event_ids:_fail(path+".eventId","unknown owner")
+    link_by_fact={"SOURCE.EVENT_LINK."+x["canonicalEncounter"].removeprefix("ENCOUNTER."):x for x in sf["placement"]["eventLinkage"]}
+    # The builder's placement fact IDs include no doubled ENCOUNTER segment.
+    link_by_fact={x["factId"]:x for x in sf["placement"]["eventLinkage"]}
+    for i,row in enumerate(event_scripts["transitions"]):
+        path=f"payload.sourceFacts.eventScripts.transitions[{i}]";tid=_string(row.get("transitionId"),path+".transitionId",prefix="EVENT_TRANSITION.")
+        if tid in transition_ids:
+            _fail(path+".transitionId","duplicate transition")
+        transition_ids.add(tid)
+        ref=row.get("e1EventLinkRef");link=link_by_fact.get(ref)
+        if link is None or link["canonicalEncounter"]!=row.get("canonicalEncounter") or link["canonicalEvent"]!=row.get("eventId"):
+            _fail(path+".e1EventLinkRef","transition/E1 owner/encounter join mismatch")
+        resume=_object(row.get("resume"),path+".resume",{"mode","shouldResume"})
+        if type(resume["shouldResume"]) is not bool:_fail(path+".resume.shouldResume","must be exact decoded Boolean")
+        overload=_object(row.get("overload"),path+".overload",{"genericEncounter","symbolSignature"})
+        if "EnterCombatWithoutExitingEvent" not in overload["symbolSignature"]:_fail(path+".overload","wrong transition overload")
+        rewards=row.get("addedRewards")
+        if not isinstance(rewards,list):_fail(path+".addedRewards","reward argument not normalized")
+        for reward_index,reward in enumerate(rewards):
+            rp=f"{path}.addedRewards[{reward_index}]"
+            reward_obj=_object(reward,rp,{"condition","constructionIndex","model","rewardType"})
+            if reward_obj["rewardType"] not in {"PotionReward","RelicReward","SpecialCardReward"}:
+                _fail(rp+".rewardType","unknown reward constructor")
+            model=_object(reward_obj["model"],rp+".model",{"kind","name","rewardKind","sourceType"},{"kind"})
+            if model["kind"] not in {"fixedModel","runtimeModel","runtimePull"}:
+                _fail(rp+".model.kind","unknown reward model contract")
+            if model["kind"]=="fixedModel" and not model.get("sourceType"):
+                _fail(rp+".model.sourceType","fixed reward model missing")
+            if model["kind"]=="runtimeModel" and not model.get("name"):
+                _fail(rp+".model.name","runtime reward model missing")
+    for row in event_scripts["nodes"]:node_ids.add(row["nodeId"])
+    if len(node_ids)!=25:_fail("payload.sourceFacts.eventScripts.nodes","duplicate node identity")
+    for i,row in enumerate(event_scripts["edges"]):
+        if row.get("from") not in node_ids or row.get("to") not in node_ids:_fail(f"payload.sourceFacts.eventScripts.edges[{i}]","edge endpoint missing")
+    for row in event_scripts["dependencies"]:dependency_ids.add(row["dependencyId"])
+    if len(dependency_ids)!=6 or not any(x.startswith("LIFECYCLE.") for x in dependency_ids) or not any(x.startswith("FORMULA.") for x in dependency_ids):
+        _fail("payload.sourceFacts.eventScripts.dependencies","lifecycle/formula dependency closure missing")
+    outcomes=event_scripts["outcomes"]
+    if {x.get("transitionRef") for x in outcomes}!=transition_ids:_fail("payload.sourceFacts.eventScripts.outcomes","transition outcome closure mismatch")
+    for i,row in enumerate(outcomes):
+        if not set(row.get("dependencyRefs",[])) <= dependency_ids:_fail(f"payload.sourceFacts.eventScripts.outcomes[{i}].dependencyRefs","unknown dependency")
+    if event_scripts["invocationSummary"]!={"denominator":1549,"resolved":1549,"unresolved":0}:
+        _fail("payload.sourceFacts.eventScripts.invocationSummary","closed invocation denominator drift")
+    den=event_scripts["sourceDenominators"]
+    for family,count in {**expected_counts,"encounterScripts":7,"displayScalingCalls":3,"invocations":1549,
+                         "methods":76,"frameworkMethods":53,"supportMethods":14}.items():
+        key={"transitions":"encounterScripts","displayScaling":"displayScalingCalls"}.get(family,family)
+        if den.get(key)!=count:_fail("payload.sourceFacts.eventScripts.sourceDenominators",f"stale {key} denominator")
+    if event_scripts["framework"].get("methodCount")!=53 or not event_scripts["framework"].get("roles"):
+        _fail("payload.sourceFacts.eventScripts.framework","common framework closure missing")
+    dispatch=event_scripts["foulPotionDispatch"]
+    event_script_fact_ids.add(_string(dispatch.get("factId"),"payload.sourceFacts.eventScripts.foulPotionDispatch.factId",prefix="SOURCE.EVENT_SCRIPT."))
+    if dispatch.get("classification")!="potionDrivenEventInstanceFanOut" or dispatch.get("taskJoin")!="Task.WhenAll":
+        _fail("payload.sourceFacts.eventScripts.foulPotionDispatch","Fake Merchant selector/dispatch changed")
+    if any(key in event_scripts for key in {"methods","frameworkMethods","invocationCensus","decisions"}):
+        _fail("payload.sourceFacts.eventScripts","event method/call proof bulk leaked into compact projection")
+
     all_source_facts = (
         encounter_fact_ids | monster_fact_ids | state_fact_ids | referenced_fact_ids |
         owner_fact_ids | move_fact_ids | graph_fact_ids | scaling_fact_ids | placement_fact_ids |
         identity_fact_ids | initial_fact_ids | initial_owner_fact_ids | runtime_fact_ids |
-        initial_comparison_fact_ids | event_dependency_fact_ids | event_turn_fact_ids |
+        initial_comparison_fact_ids | event_dependency_fact_ids | event_turn_fact_ids | event_script_fact_ids |
         {state_rules["factId"], hp_pipeline_fact_id}
     )
     return {
@@ -1255,10 +1349,10 @@ def _validate_evidence_and_refs(payload: dict[str, Any], source: dict[str, Any],
 
 def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts: set[str]) -> None:
     audits = _list(payload["resolvedAudits"], "payload.resolvedAudits")
-    if len(audits) != 2:
-        _fail("payload.resolvedAudits", "expected HP and event-turn resolved audits")
+    if len(audits) != 3:
+        _fail("payload.resolvedAudits", "expected HP, event-turn, and linked-event resolved audits")
     audit_ids = _unique(audits, "auditId", "payload.resolvedAudits")
-    if audit_ids != {"AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING", "AUDIT.RESOLVED.EVENT_TURN_MACHINES"}:
+    if audit_ids != {"AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING", "AUDIT.RESOLVED.EVENT_TURN_MACHINES", "AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS"}:
         _fail("payload.resolvedAudits", "resolved audit identity set drift")
     by_id = {row["auditId"]: row for row in audits}
     hp_audit = _object(by_id["AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING"], "payload.resolvedAudits[HP]", {"auditId", "family", "historicalStatus", "lanes", "resolution"})
@@ -1298,6 +1392,16 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     }
     if event_audit["sourceDenominators"] != expected_event_denominators:
         _fail("payload.resolvedAudits[eventTurn].sourceDenominators", "event turn audit source denominators drift")
+    script_audit = _object(by_id["AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS"], "payload.resolvedAudits[eventScripts]",
+                           {"auditId", "boundary", "classificationFactRefs", "dependencyFactRefs", "family", "historicalStatus", "sourceDenominators"})
+    if script_audit["family"] != "linkedEventStartOptionTransitionResume" or script_audit["historicalStatus"] != "sourceComplete":
+        _fail("payload.resolvedAudits[eventScripts]", "linked event audit status drift")
+    script_facts={row["factId"] for row in payload["sourceFacts"]["eventScripts"]["owners"]}
+    script_dependencies={row["factId"] for row in payload["sourceFacts"]["eventScripts"]["dependencies"]}
+    if set(script_audit["classificationFactRefs"])!=script_facts or set(script_audit["dependencyFactRefs"])!=script_dependencies:
+        _fail("payload.resolvedAudits[eventScripts]", "linked event audit fact refs drift")
+    if script_audit["sourceDenominators"]!=payload["sourceFacts"]["eventScripts"]["sourceDenominators"]:
+        _fail("payload.resolvedAudits[eventScripts].sourceDenominators", "linked event denominator drift")
 
     comparisons = _list(payload["laneComparisons"], "payload.laneComparisons")
     comparison_ids = _unique(comparisons, "comparisonId", "payload.laneComparisons")
@@ -1389,7 +1493,7 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
         _fail("payload.readiness.runtimeScopes.encounterProjection", "independent projection section should be complete")
     if projected["requiredCoverageFamilies"] != [row["family"] for row in coverage_rows()]:
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredCoverageFamilies", "coverage gate mismatch")
-    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage", "eventTurnClassificationDependencies"}
+    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage", "eventTurnClassificationDependencies", "eventScriptOwnerEncounterLink", "eventScriptOptionDelegate", "eventScriptTransitionArguments", "eventScriptOutcomeDependency"}
     if set(projected["requiredJoins"]) != expected_joins or len(projected["requiredJoins"]) != len(expected_joins):
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredJoins", "join gate mismatch")
 
