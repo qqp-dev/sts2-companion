@@ -40,7 +40,11 @@ This design therefore separates:
 
 The projection is not:
 
-- a card, target, or line recommendation, an optimizer, or an autoplay API;
+- a card-line recommendation, optimizer, autoplay API, static enemy role label,
+  or context-free target tier list. It MAY compare target-removal scenarios,
+  prove horizon-qualified mechanical dominance, or apply an explicit
+  user-selected policy; that is useful tactical analysis, not permission to hide
+  preference weights or claim a universal best target;
 - a claim that live turn prediction is implementable from current observations;
 - a new source extractor or a replacement for the checked source/evidence
   artifacts;
@@ -70,7 +74,7 @@ may wrap, but the order and meaning remain stable:
 |---|---|---|
 | `NOW` | What observation cut makes these claims valid? | Only required observation context, parameters, freshness, and state ambiguity. Absent in a static capsule. |
 | `IN` | What happens before I can decide again under the baseline? | Source-ordered raw/net threat and non-damage consequences, including cards, Powers, summons, state, and lifecycle. |
-| `BREAK` | Which counterfactual boundary changes that result? | Kill, Block, strip, or interrupt thresholds and their consequence deltas. These are levers, not recommendations. |
+| `BREAK` | Which counterfactual boundary changes that result? | Kill, Block, strip, or interrupt thresholds and their consequence deltas; in a decision-sensitive multi-enemy state this anchors the optional `FOCUS` removal-frontier expansion. These are mechanical levers and scenarios, not presumed card lines. |
 | `OUT/NEXT` | Where does the baseline leave the fight, and what follows? | Post-turn deltas and the next consequence envelope, expressed as effect signatures with conditions or branch structure. |
 | `CLOCK` | Which timer/window changes the fight? | Escalation, phase, spawn, escape, revive, recurrence, and expiring opportunity clocks. |
 | `?` | What unresolved fact could change a decision? | Hidden, stale, random, conflicting, unsupported, or unobserved inputs, named rather than guessed. |
@@ -91,16 +95,21 @@ renderer MUST NOT fall back to a move ID or title as if the name explained the
 missing semantics.
 
 `IN` and `OUT` may render as separate rows when space allows. Otherwise
-`OUT/NEXT` is one chunk. A renderer SHOULD prefer one baseline, at most the few
-non-dominated decision-sensitive breakpoints, and an effect-signature branch
-envelope over an action catalog. It MUST NOT remove uncertainty merely to meet
-the viewport budget. Overflow becomes a tap-through layer, not silent omission.
+`OUT/NEXT` is one chunk. `FOCUS` is a conditional expansion of `BREAK`/fight
+detail, not a seventh always-present chunk: when its frontier changes a live
+multi-enemy decision, the collapsed renderer MAY label that slot `FOCUS` or show
+an expansion affordance; otherwise it is absent. A renderer SHOULD prefer one
+baseline, at most the few non-dominated decision-sensitive breakpoints or focus
+rows, and an effect-signature branch envelope over an action catalog. It MUST NOT
+remove uncertainty merely to meet the viewport budget. Overflow becomes a
+tap-through layer, not silent omission.
 
 Information is progressively disclosed:
 
 1. **Decision surface:** the six chunks, consequence-first and terse.
 2. **Fight expansion:** race only under a declared policy; otherwise windows,
-   clocks, removal consequences, recurrence, and persistent/irreversible costs.
+   clocks, a horizon-qualified removal frontier, recurrence, and persistent or
+   irreversible costs.
 3. **Exact detail:** ordered operations, formulas, branch conditions, missing
    inputs, rule/input references, and any action ID/title needed for source joins
    or trace disambiguation for each displayed claim.
@@ -214,6 +223,139 @@ turn counts is permitted only when a named player policy, its input observations
 and all relevant enemy production/lifecycle behavior are explicit. “Assume
 average damage” and hidden default inputs are forbidden.
 
+### Multi-enemy focus: counterfactual removal frontier
+
+In a realized multi-enemy state, the highest-utility question is often “who, if
+anyone, should be removed first?” The projection answers with a
+**counterfactual removal frontier**, never a static role label or context-free
+priority. It compares auditable scenario consequences from the same belief state
+and observation cut. `remove A first`, `remove B first`, `do not split`, and
+`no-focus` are scenario names, not presumed card recommendations.
+
+A focus analysis exists only when all of the following hold:
+
+- at least two targetable enemy bodies or removable states are realized, not
+  merely possible or produced by the encounter grammar;
+- at least two removal/non-removal scenarios are legal or their feasibility is a
+  decision-changing unknown; and
+- their consequence deltas, costs, windows, feasibility, or truth gaps differ
+  under the relevance predicate.
+
+Otherwise `FOCUS` is omitted. Omission means “not decision-sensitive at this
+cut,” not “all targets are equivalent.”
+
+#### Baseline and horizons
+
+Every frontier starts from the frame's exact belief state and **END NOW**
+baseline. It declares each boundary, rather than relying on a bare turn number:
+
+- `H1` normally ends at the next player decision and supplies **NOW**, the
+  current-turn consequence removed or triggered by the earliest cut;
+- `H2` and `H3` may mean end of enemy turn 2/3, but only when that boundary and
+  turn owner are explicit; and
+- `HN` names an explicit ordinal/boundary, encounter completion, or the next
+  forced event. It never means “eventually.”
+
+For horizons beyond the next decision, the baseline and every counterfactual use
+the same declared continuation/intervention policy and player-throughput inputs.
+`END NOW at every player decision` is a legal, explicit causal baseline;
+“typical play” and assumed average damage are not. If future player choices or
+throughput can change a delta and no policy closes them, affected `H2/H3/HN`
+coordinates remain a branch set or unknown. Optional utility profiles such as
+`survival-first` or `minimize deck pollution` must be user-selected, named, and
+shown; there is no hidden default profile.
+
+#### A removal cut is a lifecycle cut
+
+Removal MUST NOT be modeled as `HP = 0` or as naïve subtraction. A legal
+`RemovalCut` identifies:
+
+1. the exact candidate body/state and intervention class;
+2. the earliest source-legal insertion boundary, such as before a creature's
+   operation, after an atomic hit, or after an interrupt;
+3. the lethal, control, state-exit, or encounter-completion operation;
+4. every ordered on-damage, between-hit, death, revive, replacement, phase,
+   survivor, summon, cross-body, and encounter-completion hook it triggers; and
+5. the settled boundary after those hooks at which the body/state is actually
+   absent, transformed, replaced, revived, or the encounter has completed.
+
+“Before act” is valid only if the declared intervention can reach a legal cut
+before that operation. A source-atomic multi-hit cannot be interrupted between
+hits unless authoritative rules permit it. A revive or replacement may require
+more than one removal event; invulnerability, Block, forced overkill, control
+immunity, and replacement bodies contribute to the cut's cost rather than
+silently disappearing. When any affected lifecycle edge, timing rule, or current
+state is unresolved, the row says `removal delta unknown`; it does not infer that
+a lethal threshold cancels an effect or ends the encounter.
+
+#### Scenario deltas and row vocabulary
+
+For each candidate first-removal order/cut and each declared non-removal policy,
+the compiler pairs a counterfactual trace with the same baseline branch and
+reports **deltas**, not raw totals. The full vector contains at least:
+
+- per-player cumulative HP loss, lethal margin, and hostile damage prevented by
+  each horizon, retaining target and hit structure;
+- Block, healing, buffs/debuffs, scaling, and Power changes for every enemy;
+- generated/status cards by card identity, destination zone, count, and rotation,
+  plus draw/hand/discard/Exhaust/deck mutation;
+- summons, body count, revive/replacement/transform/phase state, and encounter
+  completion;
+- cross-enemy control and state transitions such as one death stunning,
+  enraging, healing, transforming, or summoning another body;
+- persistent/irreversible HP, deck, resource, and production costs; and
+- the effective damage, control, timing, and resource requirements of reaching
+  the settled removal cut.
+
+A compact target row is a projection of that vector and answers:
+
+- **NOW:** what current-turn consequence disappears or is triggered at the cut;
+- **H2/H3/HN:** cumulative typed deltas by each selected horizon;
+- **LINK:** effects on other bodies and encounter completion;
+- **COST:** the full removal requirement, including Block, invulnerability,
+  revive/replacement, control immunity, overkill, and resource use;
+- **WINDOW:** how the delta or cost expires, grows, or changes when the cut is
+  delayed to later legal boundaries; and
+- **TRUTH:** the observation, RNG, lifecycle, formula, player-throughput, or
+  source gap that could change the comparison.
+
+“Effective HP” may be rendered as a scalar only when all cost components reduce
+to closed damage under the declared cut. Otherwise the cost remains a typed
+vector. Impact and feasibility are separate: a large hypothetical delta is not
+an actionable focus conclusion when its cut is unreachable. Such a row is
+marked `unreachable` or `feasibility unknown` and excluded from a feasible
+frontier, while its impact may remain visible when that distinction matters.
+
+#### Dominance, Pareto tradeoffs, and no focus
+
+The frame declares the horizon set, feasible scenario set, and a partial outcome
+ordering (for example, minimize per-player HP loss and hostile status cards;
+maximize lethal margin). It assigns no cross-coordinate scalar weights.
+Scenario A **mechanically dominates** B only when lifecycle and inputs are closed
+enough to prove, for every retained correlated branch through those horizons,
+that A is no worse on every declared coordinate (including cost) and better on
+at least one. Incomparable state transitions, an unresolved coordinate, an
+unpaired branch, or an unknown feasibility result blocks a dominance claim.
+Dominance is therefore horizon- and assumption-qualified, never a universal
+“best enemy” label. A static `threat / HP`, role, or additive priority scalar is
+forbidden: deadlines and removal thresholds are discontinuous, while death
+links, survivor rules, branch correlations, and lifecycle transitions are
+non-additive.
+
+When no scenario dominates, the renderer shows the two or three most
+decision-sensitive nondominated rows as a **Pareto frontier** and retains the
+rest in exact detail. It may explain “survival-first favors A” or “clean deck
+favors B” only after applying the visibly named user-selected policy. Without
+that policy it says `no strict winner`, not `best target`.
+
+A `no-focus` result is also first-class. It is emitted when a declared feasible
+AoE, setup, defense, split-damage, or waiting scenario mechanically dominates
+all immediate first-removal scenarios through the selected horizons, or when no
+removal cut is reachable. A nondominated non-removal scenario may instead appear
+as a tradeoff row; its presence alone does not justify the stronger `no-focus`
+conclusion. `do not split` is likewise an explicit allocation scenario whose
+cost and throughput are declared, not generic advice.
+
 ### Relevance predicate
 
 A fact or trace distinction survives the collapsed reducer only when, before the
@@ -302,6 +444,119 @@ ConsequenceEnvelope = {
                 "signature": EffectSignature }[]
 }
 
+HorizonSpec = {
+  "horizonId": "H1" | "H2" | "H3" | "HN" | string,
+  "boundary": string,         // exact phase/event boundary, never "eventually"
+  "ordinal": integer | null
+}
+
+EntityStateRef = { "entityId": string, "stateId": string | null }
+
+PolicySpec = {
+  "policyId": string,
+  "description": string,
+  "selectedBy": "mechanical-baseline" | "user",
+  "throughput": Value<Throughput>,
+  "assumptions": string[]
+}
+
+RemovalCut = {
+  "candidate": EntityStateRef,
+  "interventionClass": string,
+  "interventionBoundary": Timing,
+  "triggeringOperation": string,
+  "settledBoundary": Timing,
+  "orderedLifecycleEffects": EffectSignature,
+  "result": "absent" | "state-exited" | "transformed" | "replaced" |
+            "revived" | "encounter-complete",
+  "orderingConstraints": string[]
+}
+
+// Unless named otherwise, each *Delta is scenario minus paired END NOW baseline.
+FocusDelta = {
+  "playerHpLossDelta": { "playerId": string, "value": EffectNumber }[],
+  "lethalMarginDelta": { "playerId": string, "value": EffectNumber }[],
+  "hostileDamagePrevented": EffectNumber, // baseline minus scenario; positive prevents
+  "enemyStateDeltas": { "entityId": string, "coordinate":
+      "block" | "heal" | "buff" | "debuff" | "scaling" | "power",
+      "effect": OrderedEffect }[],
+  "cardDeltas": { "cardId": string | null, "zone": string,
+      "countDelta": Value<integer>, "perRotationDelta": Value<number> | null }[],
+  "bodyAndLifecycleDeltas": { "coordinate":
+      "summons" | "body-count" | "revives" | "replacements" |
+      "transforms" | "phase" | "encounter-completion",
+      "value": Value<number | string | boolean> }[],
+  "crossEnemyEffects": OrderedEffect[],
+  "persistentCostDeltas": { "resource": string, "zone": string | null,
+                             "value": EffectNumber }[]
+}
+
+RemovalCost = {
+  "effectiveDamageRequired": EffectNumber,
+  "absorbedByBlock": EffectNumber,
+  "forcedOverkill": EffectNumber,
+  "invulnerabilityWindows": Value<integer>,
+  "controlRequired": OrderedEffect[],
+  "resourceRequirements": { "resource": string, "value": EffectNumber }[],
+  "removalEventsRequired": Value<integer> // includes revive/replacement chain
+}
+
+Feasibility = {
+  "status": "reachable" | "unreachable" | "unknown",
+  "byBoundary": Timing,
+  "throughputPolicyRef": string,
+  "missingInputs": string[]
+}
+
+RemovalWindow = {
+  "earliestCut": Timing,
+  "delayedCuts": { "boundary": Timing,
+                    "deltaFromEarliest": Value<FocusDelta> }[],
+  "expiresAt": Timing | null,
+  "trend": "grows" | "shrinks" | "mixed" | "flat" | "unknown"
+}
+
+RemovalScenario = {
+  "scenarioId": string,
+  "kind": "remove-first" | "do-not-split" | "aoe" | "setup" |
+          "defense" | "split-damage" | "wait",
+  "removalOrder": EntityStateRef[],
+  "cut": Claim<RemovalCut> | null,
+  "deltas": { "horizonId": string, "delta": Claim<FocusDelta> }[],
+  "links": Claim<OrderedEffect[]>[],
+  "cost": Claim<RemovalCost>,
+  "window": Claim<RemovalWindow>,
+  "feasibility": Claim<Feasibility>,
+  "truth": Claim<string>[]
+}
+
+OutcomeOrdering = {
+  "coordinate": string,
+  "direction": "minimize" | "maximize" | "partial-order",
+  "rule": string
+}
+
+FocusComparison = {
+  "kind": "dominance" | "pareto" | "no-focus" | "unknown",
+  "horizonIds": string[],
+  "feasibleScenarioIds": string[],
+  "dominanceEdges": { "dominant": string, "dominated": string }[],
+  "nondominatedScenarioIds": string[],
+  "policyConclusion": null | {
+    "policyId": string, "selectedBy": "user", "scenarioId": string
+  },
+  "reason": string
+}
+
+FocusFrontier = {
+  "baselineClaimIds": string[],
+  "horizons": HorizonSpec[],
+  "continuationPolicy": PolicySpec,
+  "outcomeOrdering": OutcomeOrdering[], // partial order; no scalar weights
+  "scenarios": RemovalScenario[],
+  "comparison": Claim<FocusComparison>
+}
+
 DecisionFrame = {
   "schemaVersion": integer,
   "kind": "decision-frame",
@@ -321,6 +576,7 @@ DecisionFrame = {
               "unresolved": string[] },
   "baseline": Claim<ConsequenceVector>,
   "breakpoints": Breakpoint[],
+  "focus": FocusFrontier | null, // only for decision-sensitive realized lineups
   "next": Claim<ConsequenceEnvelope>,
   "clocks": Claim<Clock>[],
   "unknowns": Claim<string>[]
@@ -329,7 +585,10 @@ DecisionFrame = {
 
 Ranges may be used only when intermediate values are all possible and
 correlation does not matter. Otherwise a set of tuples or conditional cases is
-required. `probability` is intentionally absent from the base branch type; a
+required. This applies especially to a `FocusDelta`: correlated HP loss, card,
+body, and cross-enemy results stay together in the outer `Claim` branch rather
+than becoming independent coordinate ranges. `probability` is intentionally
+absent from the base branch type; a
 probability field is legal only in the closed-weight case described in
 [Uncertainty and provenance](#8-uncertainty-provenance-and-fail-closed-rules).
 
@@ -462,6 +721,7 @@ lifecycle closure would be required for an authoritative equivalent.
       }
     }
   ],
+  "focus": null,
   "next": {
     "claimId": "FRAME.FIXTURE.NEXT",
     "labels": ["derived"],
@@ -567,10 +827,58 @@ CLOCK    Stock 2 observed; replacement/self: 15 Block + Strength 4/8 window is l
 the baseline delta. A real screen should omit any visible value that does not do
 such explanatory work.
 
+### Future multi-enemy `FOCUS` expansion
+
+These are separate fictional render fixtures, not current output. `A`, `B`, and
+`C` are stable observed body labels, not move names. The collapsed row exposes
+the selected horizon and decisive deltas; tapping it opens the complete
+`NOW/H2/H3/HN · LINK · COST · WINDOW · TRUTH` table and support refs.
+
+A nondominated tradeoff can render:
+
+```text
+FOCUS H2=end enemy turn 2 · feasible cuts only
+      remove A before act → −28 team dmg by H2; +0 statuses; cost 34 effective HP
+      remove B by H2       → −6 team dmg; −6 Wounds to draw pile/rotation; cost 19 effective HP
+      LINK remove C → stun A next turn
+      no strict winner · user policy: survival-first favors A; clean-deck favors B
+```
+
+The two policy conclusions appear only when those profiles were explicitly
+selected. Without one, the final line stops at `no strict winner`. Exact detail
+retains `remove A first`, `remove B first`, and any decision-sensitive `do not
+split` allocation as separate scenarios, with per-player lethal margin, future
+Block/heal/scaling, body count, and persistent resource deltas even when the
+collapsed lines omit equivalent coordinates.
+
+Closed inputs can prove dominance, but only for the displayed scope:
+
+```text
+FOCUS H3=end enemy turn 3 · reachable cuts · declared mechanical ordering
+      A dominates through H3: −31 hostile dmg, −3 Wounds to discard, same removal cost
+```
+
+A non-removal policy can win the comparison without being disguised as a target:
+
+```text
+FOCUS no-focus through H2: reachable AoE scenario dominates every remove-first cut
+      −18 team dmg, same status pollution, 7 less resource; removes A+B at H2
+```
+
+And incomplete lifecycle authority fails closed:
+
+```text
+FOCUS removal delta unknown · C death hook/replacement and survivor rule unresolved
+```
+
+None of these rows names an enemy action. Every number expands to its paired END
+NOW trace, legal settled cut, observation/policy inputs, and source/lane support.
+
 ## 7. Compiler and reducer pipeline
 
 The pipeline is deterministic for a fixed authority manifest, observation set,
-parameters, horizon, reducer version, and renderer version.
+parameters, horizons, continuation/utility policy, throughput inputs, reducer
+version, and renderer version.
 
 ### 7.1 Ingest and gate lanes
 
@@ -652,8 +960,10 @@ Simulate from each belief state through the declared horizon. Preserve:
 
 The default turn bound stops at the next player decision. A fight bound must be
 explicit and must stop at an unresolved lifecycle edge rather than treating the
-edge as a no-op. Trace-count/depth exhaustion produces a named truncation
-unknown; it never silently drops branches.
+edge as a no-op. Counterfactual interventions may enter only at source-legal
+operation boundaries; a removal trace continues through its complete ordered
+lifecycle to the settled cut before projection. Trace-count/depth exhaustion
+produces a named truncation unknown; it never silently drops branches.
 
 ### 7.6 Project consequence vectors and aggregate
 
@@ -681,21 +991,67 @@ closure rules below pass.
 5. Remove dominated duplicate breakpoints while retaining any distinct
    consequence, clock, persistence, or removal behavior.
 
-The reducer does not choose a breakpoint. “Kill,” “Block,” “strip,” and
-“interrupt” are counterfactual dimensions, not recommendations.
+The reducer does not choose a breakpoint through hidden utility. “Kill,”
+“Block,” “strip,” and “interrupt” are counterfactual dimensions, not card
+recommendations; a later focus comparison may still prove mechanical dominance
+between their fully simulated removal scenarios.
 
-### 7.8 Apply the relevance predicate
+### 7.8 Build the counterfactual removal frontier
+
+This stage runs only for a realized decision-sensitive multi-enemy belief state:
+
+1. Reuse the exact observation cut, belief set, END NOW baseline, authority
+   manifest, and parameter bindings. Declare precise `H1/H2/H3/HN` boundaries,
+   continuation policy, throughput inputs, feasibility set, and partial outcome
+   ordering.
+2. Enumerate each currently removable enemy body/state and only those candidate
+   first-removal orders, `do-not-split` allocations, and non-removal intervention
+   classes that can change a relevant coordinate. This bounds mechanical
+   scenarios; it does not enumerate card sequences.
+3. Locate the earliest legal intervention boundary for each candidate. Simulate
+   the triggering operation and all on-damage, death, control, cross-body,
+   replacement, survivor, phase, summon, and encounter-completion hooks until the
+   cut settles. Never implement the cut by mutating HP directly.
+4. Pair every counterfactual with its END NOW baseline branch and carry the same
+   exogenous random choice/history where authoritative coupling permits. If the
+   intervention changes eligibility or branch topology, retain the resulting
+   correlated conditional/set structure; do not force a pair, take independent
+   extrema, or manufacture a probability.
+5. At every selected horizon project the paired delta across per-player HP loss
+   and lethal margin, hostile damage, enemy Block/heal/Powers/scaling,
+   card identity/zone/rotation, summons/body count, state/lifecycle/completion,
+   cross-enemy effects, and persistent costs.
+6. Compute removal cost and timing separately from value. Include current and
+   generated Block, invulnerability, control immunity, required overkill,
+   revive/replacement chains, resources, target legality, and observed or
+   policy-declared throughput. Mark the cut `reachable`, `unreachable`, or
+   `unknown` without promoting hypothetical impact to actionable value.
+7. Re-simulate later legal cuts needed to establish `WINDOW`; do not extrapolate
+   linear damage or status rates across a deadline, phase, or branch boundary.
+8. Compare only feasible scenarios. Prove a dominance edge branch-wise over all
+   declared coordinates/horizons or retain the nondominated Pareto rows. Apply a
+   utility conclusion only from a visible user-selected policy. Emit `no-focus`
+   or `unknown` only under the rules above.
+
+Every scenario delta, cut, cost, link, window, feasibility result, and comparison
+is a derived claim with exact rule/input/lane support. Candidate/action IDs and
+titles remain exact-detail join metadata and cannot become focus explanations.
+
+### 7.9 Apply the relevance predicate
 
 Apply the five tests in [Relevance predicate](#relevance-predicate). Relevance is
 state- and horizon-dependent and must be recomputed after every observation cut.
 Facts used only to establish a displayed derivation remain available in its
 tap-through support even if they are not rendered as their own row.
 
-### 7.9 Render and retain audit paths
+### 7.10 Render and retain audit paths
 
-Render the stable six chunks from typed claims. The renderer may abbreviate
-effect notation and combine equivalent rows, but cannot calculate new outcomes,
-collapse uncertainty, introduce enemy move IDs/titles, or change labels. Every
+Render the stable six chunks from typed claims. In a decision-sensitive
+multi-enemy frame, the `BREAK` slot may collapse to `FOCUS`; the deeper horizon
+matrix remains tap-through rather than displacing the one-viewport budget. The
+renderer may abbreviate effect notation and combine equivalent rows, but cannot
+calculate new outcomes, scalarize the frontier, collapse uncertainty, introduce
+enemy move IDs/titles, or change labels. Every
 derived surface claim links to exact rule/input refs; every lane badge links to
 lane facts; conflicts link to both sides. Raw facts are the final audit layer.
 
@@ -759,8 +1115,12 @@ source probability.
 | Empty belief set | Contradiction diagnostic and no derived prediction. |
 | Trace limit reached | Explicit truncated/symbolic remainder; never renormalize surviving traces. |
 | Missing state/phase behind a known model ID | Set of possible states or unknown; model ID is not a state alias. |
-| Removal lifecycle incomplete | No “kill cancels move/ends fight” claim; show removal delta unknown. |
-| Hand/energy/timing absent | Mechanical threshold may remain, but feasibility is `unknown`. |
+| Removal lifecycle incomplete | No “kill cancels move/ends fight” claim and no priority/dominance edge; show `removal delta unknown` at the affected cut. |
+| Cross-enemy/death/survivor hook unresolved | Preserve the known cut/candidate, stop the paired traces at the hook, and mark `LINK` plus downstream horizons unknown. |
+| Future continuation policy or throughput absent | H1 may remain mechanical; affected H2/H3/HN deltas, costs, and feasibility are conditional or unknown, never extrapolated. |
+| Hand/energy/target/timing absent | Mechanical impact may remain, but feasibility is `unknown` and the scenario cannot become an actionable dominance conclusion. |
+| Removal cut known unreachable | Keep decision-sensitive impact visibly `unreachable`; exclude it from the feasible frontier. |
+| Outcome coordinate incomparable or unknown | Preserve Pareto/unknown output; do not emit “best target” or synthesize a scalar score. |
 
 Unknown is not zero damage, “probably no effect,” an empty list, or an enemy
 move name presented as explanation. Conditions, targets, hit structure, ordering,
@@ -791,9 +1151,37 @@ A future implementation is acceptable only when automated fixtures establish:
 12. correlated branches do not become independent numeric ranges;
 13. probabilities appear only under the five closure conditions;
 14. stale, contradictory, unsupported, and trace-truncated inputs fail closed;
-15. every derived claim resolves all rule/input/lane refs; and
+15. every derived claim resolves all rule/input/lane refs;
 16. ascension, player count, act, and room parameters alter frames only through
-    cited formulas/rules, with no hidden defaults.
+    cited formulas/rules, with no hidden defaults;
+17. a focus candidate is drawn only from the realized lineup and its legal cut
+    includes atomic-hit boundaries plus all ordered death, replacement, survivor,
+    cross-body, and encounter-completion hooks;
+18. H1/H2/H3/HN focus rows compare paired scenario-minus-baseline deltas and keep
+    cumulative per-player HP/lethal, damage, card zone/rotation, Power/scaling,
+    body/lifecycle, cross-enemy, and persistent-cost coordinates;
+19. a fixture where removing C stuns A changes A's later branch and `LINK`, while
+    a revive/replacement fixture charges every required removal event to `COST`;
+20. invulnerability, Block, overkill, control immunity, target legality, and
+    observed/policy throughput can independently make cost or feasibility differ;
+21. delaying a cut across an act, spawn, scaling, or status-production boundary
+    recomputes `WINDOW` rather than linearly extrapolating the earliest delta;
+22. mechanical dominance appears only for the declared horizons, feasible set,
+    partial outcome ordering, and branch-wise closed comparison—never from an
+    additive threat/HP score;
+23. incomparable reachable scenarios remain a Pareto frontier; “best target” is
+    absent unless dominance is proven or a visible user-selected policy is
+    applied;
+24. a declared AoE/setup/defense/split/wait scenario can produce `no-focus` only
+    when it dominates every immediate removal scenario, while a nondominated
+    non-removal case remains a tradeoff row;
+25. high hypothetical impact plus unknown/unreachable throughput never becomes
+    an actionable focus conclusion;
+26. unknown state, formula, branch coupling, lifecycle, or survivor behavior
+    blocks only affected deltas/comparisons and names the truth gap; and
+27. `FOCUS` replaces or expands `BREAK` only for a decision-sensitive realized
+    multi-enemy frame and its collapsed/tap-through render never introduces an
+    enemy move ID/title.
 
 Closed trace fixtures should be compared with an independently reviewed oracle
 or captured deterministic game traces only after the observation and E2 source
@@ -804,9 +1192,15 @@ contracts permit that comparison. Empirical traces are time-stamped
 
 Schema validation MUST reject unknown value shapes/labels, unlabeled legacy
 support, a derived claim without support, probability without closure evidence,
-and current wording in a capsule. Property tests SHOULD verify that adding a
-previously unknown belief branch cannot make the displayed envelope narrower
-unless a cited observation/rule excludes that branch.
+current wording in a capsule, a focus horizon without an exact boundary, a
+removal cut without a settled lifecycle boundary, and a dominance/policy
+conclusion without its feasibility set, outcome ordering, and policy provenance.
+Property tests SHOULD verify that adding a previously unknown belief branch
+cannot make the displayed envelope narrower or create a new dominance edge
+unless a cited observation/rule excludes that branch. They SHOULD also verify
+that every focus delta is paired to the same END NOW baseline cut and that
+permuting enemy action titles cannot change grouping, frontier membership, or
+rendered focus text.
 
 Golden tests SHOULD lock the reducer and renderer separately. A renderer golden
 cannot substitute for trace correctness; a correct trace dump cannot substitute
@@ -821,15 +1215,23 @@ player should be able to:
 - read each target, hit count, condition, and next consequence without enemy move
   titles;
 - find the smallest displayed breakpoint and its delta without reading move ASTs;
+- in a decision-sensitive multi-enemy state, compare the two or three frontier
+  rows, selected horizon, removal cost, feasibility, and decisive `LINK` without
+  reading a static priority label;
+- distinguish mechanical dominance from a Pareto tradeoff or user-selected
+  preference, and recognize a valid `no-focus` result;
 - distinguish a condition/random set from a prediction;
-- identify the one or two missing facts that can change the immediate decision;
+- identify the one or two `TRUTH` gaps that can change the immediate decision;
 - inspect fight clocks/windows/removal consequences without encountering a fake
   TTK; and
-- tap from a derived number to its rule, observed inputs, lane, and raw evidence.
+- tap from a derived number to its full horizon table, legal cut, rule, observed
+  inputs, policy, lane, and raw evidence.
 
-The collapsed view should fit roughly one viewport and six chunks. This is not a
-license to conceal a seventh decision-changing unknown: combine or abbreviate
-presentation, or expose a clear overflow indicator. Tests with experienced and
+The collapsed view should fit roughly one viewport and six chunks. `FOCUS` uses
+the `BREAK` slot or its expansion affordance; its H2/H3/HN matrix does not become
+an always-visible seventh chunk. This is not a license to conceal a seventh
+decision-changing unknown: combine or abbreviate presentation, or expose a clear
+overflow indicator. Tests with experienced and
 new players should measure answer correctness first and speed/scrolling second.
 A surface that is terse but causes possibility to be read as prediction fails.
 
@@ -847,8 +1249,8 @@ ownership.
   formulas that actually close, and explicit known unknowns.
 - Keep exact legacy prose/values visibly in `legacyAnnotations`; do not use them
   to pass readiness gates.
-- Do not expose a decision frame, live thresholds, or current intent. Do not
-  import the projection into `/sts2`.
+- Do not expose a decision frame, live thresholds, current intent, or `FOCUS`.
+  Do not import the projection into `/sts2`.
 
 ### E2 source gates
 
@@ -860,38 +1262,45 @@ make the whole frame ready.
    Stock. Until then, starts and hook-dependent consequences stay conditional or
    unknown.
 2. **E2b — HP chain:** close runtime HP/scaling/rounding and current HP semantics
-   before authoritative lethal and HP-race thresholds.
+   before authoritative lethal, removal-cost, and HP-race thresholds.
 3. **E2c — event graphs/lifecycle:** enable event encounter traces only for
    covered graphs and lifecycle edges.
 4. **E2d — production and lifecycle:** enable spawn/replacement/survivor/removal
-   consequences only when operation-through-lifecycle chains close.
+   consequences and cross-enemy `LINK` deltas only when the complete
+   operation-through-settled-cut chains close.
 5. **E2e — remaining formulas/runtime contracts:** enable exact consequence
    arithmetic only for expressions whose runtime inputs and observation
    contracts close.
 
 Each stage adds capability flags at the family/claim level. There is no single
-“mostly ready” fallback that guesses uncovered semantics.
+“mostly ready” fallback that guesses uncovered semantics. A focus coordinate may
+be enabled only when all source families on both its baseline and counterfactual
+traces are green; an unrelated closed damage formula cannot close status-card,
+Power, summon, or lifecycle deltas.
 
 ### Observation gate for live frames
 
 E2 static authority is necessary but not sufficient. A live `DecisionFrame`
 also waits for a reviewed observer contract that supplies an atomic or ordered,
 time-stamped cut for every input used by a claim: turn/decision phase, HP, Block,
-Powers, intents, move history, counters, hand/deck when feasibility matters,
-model states/phases, bodies/survivors, and relevant lifecycle events. Partial
-observation yields partial symbolic claims or a capsule; it does not trigger
-state inference from screen conventions or model IDs.
+Powers, intents, move history, counters, hand/deck/resource and target legality
+when feasibility matters, model states/phases, bodies/survivors, and relevant
+lifecycle events. Horizons, continuation/utility policies, and throughput
+assumptions are explicit user/compiler inputs, not facts inferred by the
+observer. Partial observation yields partial symbolic claims or a capsule; it
+does not trigger state inference from screen conventions or model IDs.
 
 ### C1/C2/C3 consumer gates
 
 - **C1 shadow:** run capsule/frame compilation only in the migration architect's
-  approved shadow path, compare structured outputs and fail-closed reasons, and
-  collect no unsupported confidence/probability metric. Stable output remains
-  unchanged.
+  approved shadow path, compare structured outputs, paired removal traces,
+  frontier classifications, and fail-closed reasons, and collect no unsupported
+  confidence/probability metric. Stable output remains unchanged.
 - **C2 staged source-first UI:** render only claim families whose E2 and
-  observation gates are green; retain immediate rollback and visible legacy
-  lane boundaries.
-- **C3/default switch:** require semantic fixtures, trace-oracle validation,
+  observation gates are green; a partially green frontier exposes typed unknowns,
+  not a priority. Retain immediate rollback and visible legacy lane boundaries.
+- **C3/default switch:** require semantic fixtures (including dominance, Pareto,
+  no-focus, infeasible, and lifecycle-unknown cases), trace-oracle validation,
   phone usability results, version/mismatch behavior, and QA approval before any
   default change.
 
