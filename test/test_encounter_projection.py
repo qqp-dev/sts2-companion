@@ -8,14 +8,16 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 TOOLS = Path(__file__).resolve().parents[1] / "tools"
 if str(TOOLS) not in sys.path:
     sys.path.insert(0, str(TOOLS))
 
+import encounter_projection.builder as projection_builder
 from encounter_projection.builder import build_artifact, regenerate
 from encounter_projection.validator import validate_artifact
-from source_extractor.canonical import witness_sha256
+from source_extractor.canonical import canonical_json_bytes, witness_sha256
 from source_extractor.errors import SourceExtractionError
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -62,7 +64,7 @@ class EncounterProjectionTests(unittest.TestCase):
         source = payload["sourceFacts"]
         legacy = payload["legacyAnnotations"]
         self.assertEqual((len(source["encounters"]["ordinary"]), len(source["encounters"]["event"])), (81, 8))
-        self.assertEqual((len(source["monsters"]), len(source["moves"]), len(source["graphs"])), (108, 307, 100))
+        self.assertEqual((len(source["monsters"]), len(source["moves"]), len(source["graphs"])), (108, 315, 105))
         self.assertEqual(len(legacy["current"]), 81)
         event_ids = {row["canonicalId"] for row in source["encounters"]["event"]}
         legacy_current_ids = {row["legacyEncounterId"] for row in legacy["current"]}
@@ -128,7 +130,7 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertTrue(all(row["resolution"] == "unresolved" for row in payload["conflicts"]))
         self.assertTrue(any(row["conflictId"] == "CONFLICT.MONSTER_TITLE.FOGMOG_NORMAL.1" for row in payload["conflicts"]))
         self.assertFalse(any(row["reasonCode"] == "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT" for row in unknowns))
-        audit = payload["resolvedAudits"][0]
+        audit = next(row for row in payload["resolvedAudits"] if row["auditId"] == "AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING")
         self.assertEqual(audit["auditId"], "AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING")
         self.assertEqual([row["lane"] for row in audit["lanes"]], ["rawSourceHelper", "rawSourceAssignment", "stableLegacyConsumer"])
         self.assertEqual(audit["resolution"]["classification"], "agreementForNonNegativeFinalAssignedHp")
@@ -212,15 +214,114 @@ class EncounterProjectionTests(unittest.TestCase):
     def test_e1_all_graphs_and_registrations_have_concrete_applicability(self):
         sf = self.artifact["payload"]["sourceFacts"]
         owners = {row["canonicalMonster"]: row for row in sf["behaviorOwners"]}
-        self.assertEqual(len(owners), 100)
+        self.assertEqual(len(owners), 105)
         self.assertTrue(all(row["applicableConcreteModels"] for row in owners.values()))
-        self.assertEqual(len(sf["graphs"]), 100)
-        self.assertEqual(len(sf["moves"]), 307)
+        self.assertEqual(len(sf["graphs"]), 105)
+        self.assertEqual(len(sf["moves"]), 315)
         for row in sf["graphs"] + sf["moves"]:
             self.assertEqual(row["applicableConcreteModels"], owners[row["canonicalMonster"]]["applicableConcreteModels"])
         decimilli_moves = [row for row in sf["moves"] if row["canonicalMonster"] == "MONSTER.DECIMILLIPEDE_SEGMENT"]
         self.assertEqual(len(decimilli_moves), 5)
         self.assertTrue(all(len(row["applicableConcreteModels"]) == 3 for row in decimilli_moves))
+        flail = owners["MONSTER.FLAIL_KNIGHT"]
+        self.assertEqual(flail["applicabilityKind"], "directModelWithInheritedApplicability")
+        self.assertEqual(flail["applicableConcreteModels"], ["MONSTER.FLAIL_KNIGHT", "MONSTER.MYSTERIOUS_KNIGHT"])
+        self.assertNotIn("MONSTER.MYSTERIOUS_KNIGHT", owners)
+
+    def test_e2c1_compact_event_turn_facts_and_boundaries(self):
+        sf = self.artifact["payload"]["sourceFacts"]
+        event = sf["eventTurnBehavior"]
+        rows = {row["canonicalEncounter"]: row for row in event["encounters"]}
+        self.assertEqual(len(rows), 8)
+        self.assertEqual(event["sourceDenominators"], {
+            "classifications": 8, "eventIntentArguments": 5, "eventIntentConstructorSites": 6,
+            "eventTurnDirectOperations": 6, "eventTurnOperationsIncludingNoOpProofs": 10,
+            "noOpProofs": 4, "physicalOwners": 5, "physicalRegistrations": 8,
+            "physicalTitles": 8, "reuseOrInheritanceApplicability": 3,
+        })
+        for version in (1, 2, 3):
+            row = rows[f"BATTLEWORN_DUMMY_EVENT_V{version}_ENCOUNTER"]
+            self.assertEqual(row["behaviorClassification"], "noOpTurnMachineWithLifecycle")
+            self.assertEqual((len(row["dependencyRefs"]), len(row["initialStateFactRefs"])), (1, 1))
+            graph = next(item for item in sf["graphs"] if item["factId"] == row["graphRef"])
+            self.assertEqual(graph["stateCollection"]["kind"], "readOnlySingle")
+            move = next(item for item in sf["moves"] if item["factId"] == row["registrationRefs"][0])
+            self.assertEqual((move["action"]["executionKind"], move["operations"][0]["transition"]), ("synchronousNoOp", "noOp"))
+        fake = rows["FAKE_MERCHANT_EVENT_ENCOUNTER"]
+        self.assertEqual(fake["behaviorClassification"], "normalTurnMachine")
+        self.assertEqual(len(fake["registrationRefs"]), 4)
+        fake_moves = [next(item for item in sf["moves"] if item["factId"] == ref) for ref in fake["registrationRefs"]]
+        self.assertEqual(sum(len(item["intents"]) for item in fake_moves), 5)
+        self.assertEqual([op["kind"] for item in fake_moves for op in item["operations"]], ["attack", "attack", "attackHitCount", "attack", "applyPower", "applyPower"])
+        mysterious = rows["MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"]
+        self.assertEqual((mysterious["behaviorClassification"], mysterious["behaviorOwner"], mysterious["applicability"]), ("inheritedTurnMachine", "MONSTER.FLAIL_KNIGHT", "inherited"))
+        self.assertEqual([item["title"]["localizationRoot"] for item in mysterious["titles"]], ["MYSTERIOUS_KNIGHT"] * 3)
+        self.assertEqual(rows["DENSE_VEGETATION_EVENT_ENCOUNTER"]["graphId"], "GRAPH.WRIGGLER")
+        self.assertEqual(rows["PUNCH_OFF_EVENT_ENCOUNTER"]["graphId"], "GRAPH.PUNCH_CONSTRUCT")
+        architect = rows["THE_ARCHITECT_EVENT_ENCOUNTER"]
+        self.assertEqual(architect["behaviorClassification"], "scriptedNonTurnCombat")
+        self.assertEqual(len(architect["dependencyRefs"]), 1)
+        unknowns = {row["unknownId"]: row for row in self.artifact["payload"]["knownUnknowns"]}
+        self.assertIn(architect["factId"], unknowns["UNKNOWN.EVENT_BEHAVIOR"]["affectedFactIds"])
+        self.assertEqual(len(unknowns["UNKNOWN.EVENT_SCRIPTED_BEHAVIOR"]["affectedFactIds"]), 1)
+        self.assertEqual(len(unknowns["UNKNOWN.EVENT_LIFECYCLE"]["affectedFactIds"]), 3)
+        audit = next(row for row in self.artifact["payload"]["resolvedAudits"] if row["auditId"] == "AUDIT.RESOLVED.EVENT_TURN_MACHINES")
+        self.assertEqual((len(audit["classificationFactRefs"]), len(audit["dependencyFactRefs"])), (8, 4))
+        self.assertIn("remain unresolved", audit["boundary"])
+        serialized = json.dumps(event)
+        self.assertNotIn("decisionRefs", serialized)
+        self.assertNotIn("eventTurnInvocationCensus", serialized)
+        self.assertNotIn("sourceRoots", serialized)
+
+    def test_e2c1_event_mutations_fail_closed(self):
+        def event(a): return a["payload"]["sourceFacts"]["eventTurnBehavior"]
+        def row(a, encounter): return next(item for item in event(a)["encounters"] if item["canonicalEncounter"] == encounter)
+        cases = [
+            (lambda a: row(a, "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER").__setitem__("applicability", "direct"), "inherited applicability"),
+            (lambda a: row(a, "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER")["titles"][0]["title"].__setitem__("localizationRoot", "FLAIL_KNIGHT"), "title-root"),
+            (lambda a: row(a, "THE_ARCHITECT_EVENT_ENCOUNTER").__setitem__("behaviorClassification", "normalTurnMachine"), "dependency cardinality"),
+            (lambda a: row(a, "THE_ARCHITECT_EVENT_ENCOUNTER")["dependencyRefs"].clear(), "dependency cardinality"),
+            (lambda a: row(a, "BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER").__setitem__("behaviorClassification", "normalTurnMachine"), "dependency cardinality"),
+            (lambda a: row(a, "FAKE_MERCHANT_EVENT_ENCOUNTER")["registrationRefs"].pop(), "title/registration"),
+            (lambda a: row(a, "DENSE_VEGETATION_EVENT_ENCOUNTER").__setitem__("graphRef", "SOURCE.GRAPH.FAKE_MERCHANT_MONSTER"), "join mismatch|applicability"),
+            (lambda a: event(a)["sourceDenominators"].__setitem__("physicalRegistrations", 7), "denominator"),
+            (lambda a: event(a)["dependencies"].pop(), "four dependency"),
+            (lambda a: next(item for item in a["payload"]["sourceFacts"]["graphs"] if item["graphId"] == "GRAPH.BATTLE_FRIEND_V1")["stateCollection"].__setitem__("cardinality", 2), "cardinality"),
+            (lambda a: next(item for item in a["payload"]["sourceFacts"]["graphs"] if item["graphId"] == "GRAPH.BATTLE_FRIEND_V1")["stateCollection"].__setitem__("elementType", "NamedLikeMoveState"), "element type"),
+            (lambda a: next(item for item in a["payload"]["sourceFacts"]["moves"] if item["canonicalId"] == "MONSTER.BATTLE_FRIEND_V1#NOTHING_MOVE")["operations"][0].__setitem__("transition", "nonnumericOrStateUpdate"), "source-inspected"),
+            (lambda a: next(item for item in a["payload"]["sourceFacts"]["graphs"] if item["graphId"] == "GRAPH.FAKE_MERCHANT_MONSTER")["stateCollection"]["orderedNodes"].reverse(), "deterministic two-lane derivation|evidence value digest"),
+        ]
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern):
+                self.assert_invalid(self.mutated(change), pattern)
+
+    def test_e2c1_raw_event_mutations_fail_closed(self):
+        def assert_bad(change, pattern):
+            source = deepcopy(self.source)
+            change(source)
+            with self.assertRaisesRegex(SourceExtractionError, pattern):
+                validate_artifact(self.artifact, source=source, legacy=self.legacy)
+        def fake_registration(source, state="SWIPE_MOVE"):
+            return next(row for row in source["behavior"]["registrations"] if row["canonicalId"] == f"MONSTER.FAKE_MERCHANT_MONSTER#{state}")
+        def mysterious(source):
+            return next(row for row in source["behavior"]["eventTurnMachines"] if row["canonicalEncounter"] == "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER")
+        cases = [
+            (lambda source: source["behavior"]["eventTurnMachines"].pop(), "one classification for every event"),
+            (lambda source: source["behavior"]["eventDependencies"].pop(), "four explicit"),
+            (lambda source: source["behavior"]["registrations"].pop(), "315 registrations"),
+            (lambda source: fake_registration(source)["intents"].pop(), "intent/action/title denominator"),
+            (lambda source: fake_registration(source)["operations"].clear(), "operation closure|sink denominator"),
+            (lambda source: source["behavior"]["invocationCensus"]["decisions"].pop(), "closed invocation denominator"),
+            (lambda source: source["behavior"]["eventTurnInvocationCensus"]["decisionRefs"].pop(), "event helper invocation"),
+            (lambda source: mysterious(source)["titles"][0]["title"].__setitem__("localizationRoot", "FLAIL_KNIGHT"), "localization root"),
+            (lambda source: next(row for row in source["behavior"]["applicability"] if row["behaviorOwnerSourceType"].endswith(".FlailKnight"))["applicableConcreteModels"].pop(), "applicability"),
+            (lambda source: next(row for row in source["behavior"]["graphs"] if row["graphId"] == "GRAPH.BATTLE_FRIEND_V1")["stateCollection"].__setitem__("constructor", "<TypeSpec:bad>::.ctor sig:2001011300"), "constructor/overload"),
+            (lambda source: source["behavior"]["eventDependencies"][0]["sourceRoots"].clear(), "source roots"),
+            (lambda source: source["coverage"]["eventTurnClassifications"].__setitem__("denominator", 7), "eventTurnClassifications"),
+        ]
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern):
+                assert_bad(change, pattern)
 
     def test_e1_placement_identity_and_applicability_mutations_fail(self):
         def unknown_pool(a):
@@ -318,12 +419,14 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertIn("UNKNOWN.LIFECYCLE_COVERAGE", unknowns)
         self.assertIn("UNKNOWN.FORMULA_RUNTIME_CONTRACTS", unknowns)
         self.assertIn("UNKNOWN.EVENT_BEHAVIOR", unknowns)
+        self.assertIn("UNKNOWN.EVENT_SCRIPTED_BEHAVIOR", unknowns)
+        self.assertIn("UNKNOWN.EVENT_LIFECYCLE", unknowns)
         self.assertNotIn("UNKNOWN.HP_ROUNDING_CONFLICT", unknowns)
         companion = payload["readiness"]["runtimeScopes"]["encounterCompanion"]
         self.assertEqual((companion["ready"], companion["status"]), (False, "incomplete"))
         self.assertEqual(set(companion["reasonRefs"]), {
             "UNKNOWN.LIFECYCLE_COVERAGE", "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
-            "UNKNOWN.EVENT_BEHAVIOR",
+            "UNKNOWN.EVENT_BEHAVIOR", "UNKNOWN.EVENT_SCRIPTED_BEHAVIOR", "UNKNOWN.EVENT_LIFECYCLE",
         })
 
     def test_e2a_compact_mutations_fail_closed(self):
@@ -423,8 +526,8 @@ class EncounterProjectionTests(unittest.TestCase):
             (projected(lambda row: row["commandWrappers"][3]["joins"].reverse()), "deterministic"),
             (projected(lambda row: row["specialCallPaths"].pop()), "deterministic"),
             (projected(lambda row: row["baseSelection"].__setitem__("fallback", "none")), "deterministic"),
-            (lambda a: a["payload"]["resolvedAudits"][0]["resolution"].__setitem__("precedenceSelected", True), "without precedence"),
-            (lambda a: a["payload"]["resolvedAudits"][0]["lanes"].pop(), "authority lanes"),
+            (lambda a: next(row for row in a["payload"]["resolvedAudits"] if row["auditId"] == "AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING")["resolution"].__setitem__("precedenceSelected", True), "without precedence"),
+            (lambda a: next(row for row in a["payload"]["resolvedAudits"] if row["auditId"] == "AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING")["lanes"].pop(), "authority lanes"),
         ]
         for change, pattern in cases:
             with self.subTest(pattern=pattern):
@@ -584,6 +687,17 @@ class EncounterProjectionTests(unittest.TestCase):
             bad_source.write_bytes(damaged)
             with self.assertRaisesRegex(SourceExtractionError, "SHA-256 mismatch"):
                 regenerate(bad_source, LEGACY_PATH, output)
+            self.assertEqual(output.read_bytes(), b"KEEP")
+
+            semantic_source = deepcopy(self.source)
+            semantic_source["behavior"]["eventTurnSummary"]["physicalOwners"] = 4
+            semantic_bytes = canonical_json_bytes(semantic_source)
+            bad_source.write_bytes(semantic_bytes)
+            authorized = {**projection_builder.SOURCE_ARTIFACT,
+                          "sha256": hashlib.sha256(semantic_bytes).hexdigest(), "size": len(semantic_bytes)}
+            with patch.object(projection_builder, "SOURCE_ARTIFACT", authorized):
+                with self.assertRaisesRegex(SourceExtractionError, "event turn source denominator"):
+                    regenerate(bad_source, LEGACY_PATH, output)
             self.assertEqual(output.read_bytes(), b"KEEP")
 
             regenerate(SOURCE_PATH, LEGACY_PATH, output)

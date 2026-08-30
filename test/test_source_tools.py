@@ -24,7 +24,7 @@ from source_extractor.hp_pipeline import _require_exact_opcodes, _require_order,
 from source_extractor.inheritance import attach_behavior_applicability, resolve_behavior_applicability
 from source_extractor.identity import resolve_observed_identity, validate_observation_identities
 from source_extractor.placement import decode_factory_collection, validate_placement
-from source_extractor.behavior import _canonical_for_type, _intent_records
+from source_extractor.behavior import _canonical_for_type, _compile_graph, _intent_records
 from source_extractor.encounters import _compile_fixed_selection, _derive_fixed_slot_names
 from source_extractor.localization import require_localized_text
 from source_extractor.errors import SourceExtractionError
@@ -1274,6 +1274,64 @@ class BehaviorInheritanceTests(unittest.TestCase):
             )
 
 
+class BehaviorGraphCollectionTests(unittest.TestCase):
+    MOVE = "MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.MoveState::.ctor sig:2003010e151281c102151281fd0112a7e41281211d128854"
+    FOLLOW = "MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.MoveState::set_FollowUpState sig:200101128848"
+    MACHINE = "MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.MonsterMoveStateMachine::.ctor sig:200201151281f501128848128848"
+    DELEGATE = "<TypeSpec:151281c102151281fd0112a7e4128121>::.ctor sig:2002011c18"
+    EMPTY_INTENTS = "System.Array::Empty sig:1001001d1e00 generic:MegaCrit.Sts2.Core.MonsterMoves.Intents.AbstractIntent"
+    READ_ONLY = "<TypeSpec:1512b75001128848>::.ctor sig:2001011300"
+
+    @staticmethod
+    def record(rows):
+        return {
+            "assemblySha256": "a" * 64, "cilInstructionsSha256": "b" * 64,
+            "diagnosticMetadataToken": "0x06000001", "instructions": rows,
+            "metadataSignature": "2000128844", "methodBodySha256": "c" * 64,
+            "normalizedInstructionsSha256": "d" * 64,
+            "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fixture::GenerateMoveStateMachine sig:2000128844",
+        }
+
+    @classmethod
+    def rows(cls):
+        raw = [
+            ("ldstr", "string:NOTHING_MOVE"), ("ldarg.0", None),
+            ("ldftn", "MegaCrit.Sts2.Core.Models.Monsters.Fixture::NothingMove sig:2001128121151281fd0112a7e4"),
+            ("newobj", cls.DELEGATE), ("call", cls.EMPTY_INTENTS), ("newobj", cls.MOVE),
+            ("stloc.0", None), ("ldloc.0", None), ("ldloc.0", None), ("callvirt", cls.FOLLOW),
+            ("ldloc.0", None), ("newobj", cls.READ_ONLY), ("ldloc.0", None),
+            ("newobj", cls.MACHINE), ("ret", None),
+        ]
+        return [{"offsetDiagnostic": index, "opcode": opcode, "operand": operand}
+                for index, (opcode, operand) in enumerate(raw)]
+
+    def test_read_only_move_state_collection_preserves_exact_shape(self):
+        graph = _compile_graph(self.record(self.rows()), "MONSTER.FIXTURE", "GRAPH.FIXTURE",
+                               "MegaCrit.Sts2.Core.Models.Monsters.Fixture")
+        self.assertEqual(graph["stateCollection"], {
+            "cardinality": 1, "constructor": self.READ_ONLY, "elementType": "MoveState",
+            "kind": "readOnlySingle", "orderedNodes": ["GRAPH.FIXTURE/NOTHING_MOVE"],
+        })
+        self.assertEqual(graph["initial"], "GRAPH.FIXTURE/NOTHING_MOVE")
+        self.assertEqual(graph["edges"], [{
+            "from": "GRAPH.FIXTURE/NOTHING_MOVE", "kind": "followUp",
+            "to": "GRAPH.FIXTURE/NOTHING_MOVE",
+        }])
+
+    def test_read_only_collection_overload_element_and_join_mutations_fail(self):
+        mutations = []
+        changed_overload = deepcopy(self.rows()); changed_overload[11]["operand"] = self.READ_ONLY.replace("2001011300", "20020113001300")
+        mutations.append((changed_overload, "overload|unknown call"))
+        changed_element = deepcopy(self.rows()); changed_element[11]["operand"] = self.READ_ONLY.replace("128848", "128849")
+        mutations.append((changed_element, "unknown call"))
+        changed_join = deepcopy(self.rows()); changed_join[10] = {"offsetDiagnostic": 10, "opcode": "ldstr", "operand": "string:NOT_A_NODE"}
+        mutations.append((changed_join, "element join"))
+        for rows, pattern in mutations:
+            with self.subTest(pattern=pattern), self.assertRaisesRegex(SourceExtractionError, pattern):
+                _compile_graph(self.record(rows), "MONSTER.FIXTURE", "GRAPH.FIXTURE",
+                               "MegaCrit.Sts2.Core.Models.Monsters.Fixture")
+
+
 class ClosedWorldInvocationTests(unittest.TestCase):
     @staticmethod
     def ins(opcode, operand, offset):
@@ -1340,6 +1398,31 @@ class ClosedWorldInvocationTests(unittest.TestCase):
         self.assertEqual(decision["role"], "presentation")
         self.assertEqual(audit.summary()["denominator"], 1)
         self.assertEqual(audit.summary()["unresolved"], 0)
+
+    def test_string_concat_is_only_dialogue_key_plumbing_in_exact_context(self):
+        concat = "System.String::Concat sig:00040e0e0e0e0e"
+        rows = [
+            self.ins("ldarg.0", None, 0),
+            self.ins("call", "MegaCrit.Sts2.Core.Models.AbstractModel::get_Id sig:20001288dc", 1),
+            self.ins("callvirt", "MegaCrit.Sts2.Core.Models.ModelId::get_Entry sig:20000e", 2),
+            self.ins("ldstr", "string:.moves.", 3), self.ins("ldarg.1", None, 4),
+            self.ins("ldstr", "string:.speakLine", 5), self.ins("call", concat, 6),
+            self.ins("ret", None, 7),
+        ]
+        exact_symbol = "MegaCrit.Sts2.Core.Models.Monsters.FakeMerchantMonster::GetLinesForMove sig:2001151281f50112a4480e"
+        decision = ClosedWorldInvocationAudit(self.EmptyAssembly(), "a" * 64, {}).classify(
+            self.invocation(rows, 6), self.record(exact_symbol, rows), "MONSTER.FAKE#MOVE"
+        )
+        self.assertEqual((decision["classification"], decision["role"]),
+                         ("provenNonGameplayPlumbing", "dialogueLocalizationKeyConstruction"))
+        for changed_rows, symbol in [
+            (rows, "MegaCrit.Sts2.Core.Models.Monsters.Other::GetLinesForMove sig:2001151281f50112a4480e"),
+            ([*rows[:5], self.ins("ldstr", "string:.other", 5), *rows[6:]], exact_symbol),
+        ]:
+            with self.subTest(symbol=symbol), self.assertRaisesRegex(SourceExtractionError, "unclassified invocation"):
+                ClosedWorldInvocationAudit(self.EmptyAssembly(), "a" * 64, {}).classify(
+                    self.invocation(changed_rows, 6), self.record(symbol, changed_rows), "MONSTER.FAKE#MOVE"
+                )
 
     def helper_assembly(self, nested_symbol):
         owner = "MegaCrit.Sts2.Core.Models.Monsters.FixtureMonster"

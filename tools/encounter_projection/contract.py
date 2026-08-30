@@ -1,18 +1,18 @@
-"""Closed E1 encounter projection contract and pinned v0.111.0 identities."""
+"""Closed E2c1 encounter projection contract and pinned v0.111.0 identities."""
 
 from __future__ import annotations
 
 from typing import Any
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 GENERATOR_NAME = "sts2-encounter-facts"
-GENERATOR_VERSION = "4.0.0"
-SOURCE_SCHEMA_VERSION = 7
-SOURCE_EXTRACTOR_VERSION = "7.0.0"
+GENERATOR_VERSION = "5.0.0"
+SOURCE_SCHEMA_VERSION = 8
+SOURCE_EXTRACTOR_VERSION = "8.0.0"
 
 SOURCE_ARTIFACT = {
     "id": "INPUT.SOURCE", "path": "data/game-v0.111.0-source.json",
-    "sha256": "5afd3335100c2c4edfe306ece5e407fc5a977a22eb66a8bfdcc9997d91b8ea0a", "size": 11798482,
+    "sha256": "dac3224f4318e7126d2dd3af199e90907582e8d62aa62d498b84deaaa76e536e", "size": 12015887,
 }
 LEGACY_ARTIFACT = {
     "id": "INPUT.LEGACY", "path": "data/encounters.json",
@@ -45,12 +45,24 @@ AUTHORITY = {
 # never values learned from the document being validated.
 REQUIRED_COVERAGE: dict[str, tuple[str, int, int, int]] = {
     "actCensus": ("complete", 4, 4, 0),
-    "behaviorGraphApplicability": ("complete", 100, 100, 0),
-    "behaviorOwnerApplicability": ("complete", 100, 100, 0),
+    "behaviorGraphApplicability": ("complete", 105, 105, 0),
+    "behaviorOwnerApplicability": ("complete", 105, 105, 0),
     "blockMultiplayerScaling": ("complete", 1, 1, 0),
     "encounterPlacement": ("complete", 89, 89, 0),
     "eventEncounterLinkage": ("complete", 8, 8, 0),
-    "moveRegistrationApplicability": ("complete", 307, 307, 0),
+    "eventTurnClassifications": ("complete", 8, 8, 0),
+    "eventTurnDependencyClassifications": ("complete", 4, 4, 0),
+    "eventTurnDirectOperations": ("complete", 6, 6, 0),
+    "eventTurnIntentArguments": ("complete", 5, 5, 0),
+    "eventTurnIntentClassification": ("complete", 6, 6, 0),
+    "eventTurnInvocationClassification": ("complete", 103, 103, 0),
+    "eventTurnNoOpProofs": ("complete", 4, 4, 0),
+    "eventTurnOperations": ("complete", 10, 10, 0),
+    "eventTurnPhysicalOwners": ("complete", 5, 5, 0),
+    "eventTurnPhysicalRegistrations": ("complete", 8, 8, 0),
+    "eventTurnPhysicalTitlesEnglish": ("complete", 8, 8, 0),
+    "eventTurnReuseInheritanceApplicability": ("complete", 3, 3, 0),
+    "moveRegistrationApplicability": ("complete", 315, 315, 0),
     "observableIdentityDomain": ("complete", 108, 108, 0),
     "observableResourceRepresentations": ("complete", 108, 108, 0),
     "observableStateContracts": ("complete", 8, 8, 0),
@@ -80,38 +92,38 @@ REQUIRED_COVERAGE: dict[str, tuple[str, int, int, int]] = {
     "initialStatePowerHookClosure": ("complete", 41, 41, 0),
     "initialExternalHookBoundary": ("complete", 29, 29, 0),
     "initialStateSemanticFields": ("complete", 1554, 1554, 0),
-    "invocationClassification": ("complete", 6683, 6683, 0),
+    "invocationClassification": ("complete", 6786, 6786, 0),
     "monsterIdentitiesCurrentReachable": ("complete", 108, 108, 0),
     "monsterNamesEnglishCurrentReachable": ("complete", 108, 108, 0),
-    "moveActions": ("complete", 307, 307, 0),
-    "moveIntentArguments": ("complete", 311, 311, 0),
-    "moveIntentClassification": ("complete", 387, 387, 0),
-    "moveOperations": ("complete", 307, 307, 0),
-    "moveRegistrationCensus": ("complete", 307, 307, 0),
-    "moveSelectionGraphs": ("complete", 100, 100, 0),
-    "moveTitleClassification": ("complete", 307, 307, 0),
-    "moveTitlesEnglish": ("classified", 307, 289, 18),
-    "operationDirectSinks": ("complete", 491, 491, 0),
-    "operationSemanticFields": ("complete", 1081, 1081, 0),
+    "moveActions": ("complete", 315, 315, 0),
+    "moveIntentArguments": ("complete", 316, 316, 0),
+    "moveIntentClassification": ("complete", 393, 393, 0),
+    "moveOperations": ("complete", 315, 315, 0),
+    "moveRegistrationCensus": ("complete", 315, 315, 0),
+    "moveSelectionGraphs": ("complete", 105, 105, 0),
+    "moveTitleClassification": ("complete", 315, 315, 0),
+    "moveTitlesEnglish": ("classified", 315, 297, 18),
+    "operationDirectSinks": ("complete", 497, 497, 0),
+    "operationSemanticFields": ("complete", 1094, 1094, 0),
     "powerCardReferencedModels": ("complete", 78, 78, 0),
     "powerMultiplayerOptIns": ("complete", 12, 12, 0),
     "powerMultiplayerOverrides": ("complete", 5, 5, 0),
 }
 for _kind, _count in {
-    "addGeneratedCard": 6, "addStatusCard": 14, "applyPower": 126, "attack": 204,
-    "attackHitCount": 49, "escape": 2, "gainBlock": 23, "heal": 2, "kill": 2,
+    "addGeneratedCard": 6, "addStatusCard": 14, "applyPower": 128, "attack": 207,
+    "attackHitCount": 50, "escape": 2, "gainBlock": 23, "heal": 2, "kill": 2,
     "removeCard": 1, "removePower": 6, "stateWrite": 51, "summon": 5,
 }.items():
     REQUIRED_COVERAGE[f"operationDirectSinksByKind.{_kind}"] = ("complete", _count, _count, 0)
 
-INTENT_KINDS = {"attack", "block", "buff", "cardDebuff", "deathBlow", "debuff", "escape", "heal", "sleep", "status", "stun", "summon"}
+INTENT_KINDS = {"attack", "block", "buff", "cardDebuff", "deathBlow", "debuff", "escape", "heal", "hidden", "sleep", "status", "stun", "summon"}
 ROOT_KEYS = {"authority", "metadata", "payload", "schemaVersion"}
 METADATA_KEYS = {
     "embeddedSourceInputManifest", "embeddedSourceInputManifestSha256", "game", "generator",
     "payloadSha256", "projectionInputs", "requiredCoverage", "sourceExtractorVersion", "sourceSchemaVersion",
 }
 PAYLOAD_KEYS = {"conflicts", "evidence", "factReferences", "knownUnknowns", "laneComparisons", "legacyAnnotations", "readiness", "resolvedAudits", "sourceFacts"}
-SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states", "initialState", "hpPipeline"}
+SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states", "initialState", "hpPipeline", "eventTurnBehavior"}
 
 
 def coverage_rows() -> list[dict[str, Any]]:

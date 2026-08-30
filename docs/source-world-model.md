@@ -3,7 +3,7 @@
 `data/game-v0.111.0-source.json` is a deterministic, presentation-independent
 world model for exact public-beta v0.111.0 inputs. It contains identities,
 localization joins, formulas, roster selections, membership sets, and state
-facts—not UI sentences or layout. Schema 7 is the E2b boundary and remains
+facts—not UI sentences or layout. Schema 8 is the E2c1 boundary and remains
 runtime-incomplete until independently gated later E2 and consumer waves land.
 
 ## Three-wave boundary
@@ -15,6 +15,7 @@ runtime-incomplete until independently gated later E2 and consumer waves land.
 | C0/E1 | Compact fact references plus source placement, observation identity, and behavior applicability | Landed; no runtime consumer change |
 | E2a | Initial generator/constructor state, effective addition hooks, intrinsic Power hooks, runtime contracts, and 57 lane comparisons | Complete for exact denominators; no runtime consumer change |
 | E2b | Integer HP selection, Decimal multiplayer arithmetic, explicit assignment conversion/cap/clamp, special callers, Int32 storage and network wire joins | Complete for exact denominators; no runtime consumer change |
+| E2c1 | Event-inclusive physical turn graphs, inherited/reused applicability, event titles/intents/operations/no-op proofs, and helper-call closure | Complete for exact turn-machine denominators; scripted event and lifecycle dependencies remain |
 
 The current app does not import this artifact or the compact projection and still displays the
 wiki-derived book. Source extraction changes no routes, renderer output, event display, or
@@ -69,11 +70,13 @@ alias table. `resourceRepresentations` separately records the 108 exact
 `MonsterModel.VisualsPath` values derived by `ModelId.Entry.ToLowerInvariant` and
 `SceneHelper.GetScenePath`; resource paths are never accepted by model-ID lookup.
 
-`behavior.applicability` is the exact metadata inheritance closure for all 100
+`behavior.applicability` is the exact metadata inheritance closure for all 105
 behavior graph owners. Every graph and registration repeats the resulting
 canonical model list for referential validation. The abstract
-`DecimillipedeSegment` owner has three concrete descendants; unrelated names do
-not join.
+`DecimillipedeSegment` owner has three concrete descendants. The concrete
+`FlailKnight` owner has direct applicability to itself plus inherited applicability
+to exact descendant `MysteriousKnight`; this remains one physical graph. Unrelated
+names do not join.
 
 ## Normalized AST grammar
 
@@ -274,15 +277,15 @@ signature; a `sourceField` retains an exact typed compiler/source field without
 inventing a domain. The pure evaluator only evaluates either when a compiled
 expression or explicit context is supplied.
 
-Intent constructors use the same decoded-signature stack contract. The 387
-constructor sites contain 311 required arguments: numeric expressions, typed
+Intent constructors use the same decoded-signature stack contract. The 393
+constructor sites contain 316 required arguments: numeric expressions, typed
 boolean constants, or the closed `sourceDelegate` shape. A source delegate keeps
 its `(object, nativeInt)` constructor signature, receiver binding, exact target
 method and body/slice hashes, and a normalized `resultExpression` derived from
 all reachable return stacks. Array indices and neighboring constants/getters are
 not constructor arguments. Unknown signatures, delegate bindings/targets,
 return stacks, or non-unique expressions fail extraction. The two complete
-coverage families separately count 387 classified constructors and 311 resolved
+coverage families separately count 393 classified constructors and 316 resolved
 arguments, so a site census cannot conceal an unresolved Func overload.
 
 Intent templates from `intents.json` are localization facts; their numerals are
@@ -290,14 +293,14 @@ not effect authority.
 
 ### Closed invocation classification
 
-Every one of the 6,332 direct `call`, `callvirt`, and `newobj` sites in the 301
-current `MoveNext` bodies, plus 351 unique sites in 29 recursively reached helper
-bodies, has an evidence-bearing census record and exactly one outcome:
+Every one of the 6,418 direct `call`, `callvirt`, and `newobj` sites in the 305
+current `MoveNext` bodies, plus 368 unique recursively reached helper
+sites, has an evidence-bearing census record and exactly one outcome:
 `normalizedGameplayOperation`, `traversedGameplayHelper`, or
 `provenNonGameplayPlumbing`; an unresolved fourth outcome aborts extraction and
-is never serialized as complete. The combined 6,683-site census contains 1,156 exact source symbols and resolves
-508 / 1,080 / 5,095 sites respectively; separate direct/helper denominators are
-retained (6,332 and 351). Exact command declarations
+is never serialized as complete. The combined 6,786-site census contains 1,172 exact source symbols and resolves
+514 / 1,101 / 5,171 sites respectively; separate direct/helper denominators are
+retained (6,418 and 368). Exact command declarations
 form a closed boundary. A newly observed command method, unknown Godot/framework
 member, missing signature, or unsupported local side-effecting method receives a
 stable `UNRESOLVED.INVOCATION.<sha256>` identifier and fails the family.
@@ -352,9 +355,9 @@ Monster Block scaling and Power opt-in/override formulas are separate from
 ordinary `DamageCmd.Attack` amounts. Ordinary monster attacks do not inherit
 HP or Block multiplayer multipliers.
 
-The 6,683-site combined invocation census (6,332 direct plus 351 helper),
-491 direct-operation census, and each
-operation-kind denominator are reported separately from 1,081/1,081 required
+The 6,786-site combined invocation census (6,418 direct plus 368 helper),
+497 direct-operation census, and each
+operation-kind denominator are reported separately from 1,094/1,094 required
 semantic fields. A physical site is not counted as
 semantic completion unless its required arguments, target/selection, model,
 expression type, and normalized slice resolve.
@@ -476,10 +479,48 @@ legacy consumer's `Math.floor` remain separate lanes in
 non-negative final assigned HP without selecting precedence, erasing history, or
 generalizing floor equivalence to negative values.
 
+## E2c1 event-turn behavior schema
+
+`behavior.eventTurnMachines` is enumerated from all eight source event encounters,
+their exact roster model, E1 event link, and the single applicable behavior owner.
+The physical domain is 105 owners/graphs and 315 registrations. Five owners and
+eight registrations are event additions; Mysterious Knight inherits the existing
+Flail Knight owner/graph/three registrations. Dense Vegetation and Punch Off reuse
+Wriggler and Punch Construct. No behavior is inferred from a model or encounter ID.
+
+The closed classifications are `normalTurnMachine`, `inheritedTurnMachine`,
+`noOpTurnMachineWithLifecycle`, and `scriptedNonTurnCombat`. Three Battle Friends
+have one read-only-collection `NOTHING_MOVE` self-loop each and exact
+`Task.CompletedTask` no-op proof. Their initial timeout Power facts and exact
+`BattlewornDummyTimeLimitPower.AfterSideTurnEnd` root are retained as unresolved
+lifecycle dependencies. Architect has one hidden no-op self-loop, but exact
+`TheArchitect.OnRoomEnter`, `AdvanceDialogue`, and `WinRun` roots remain an
+unresolved scripted dependency. These graphs are never represented as complete
+event semantics.
+
+Fake Merchant contributes four localized moves, two random nodes/seven random
+branches, five intent sites/five arguments, three attacks, one attack hit-count,
+Frail, and Strength. Recursive helper closure reaches `GetLinesForMove`.
+`System.String.Concat` is accepted only for the exact four-argument dialogue
+localization-key construction context; any other context remains unclassified and
+fails extraction. The event subset classifies 103 calls (six gameplay, 21 traversed
+helpers, 76 narrow non-gameplay plumbing). Generic graph collection state records
+the exact constructor, `MoveState` element type, source order, and cardinality;
+unknown constructors, overloads, types, elements, or joins fail.
+
+The compact `eventTurnBehavior` projects eight classification facts, four unresolved
+dependency facts, title/applicability/graph/registration/initial-state refs, event
+source denominators, and the invocation summary. It omits method proof and decision
+bulk. `AUDIT.RESOLVED.EVENT_TURN_MACHINES` marks only this physical turn component
+source-complete. The aggregate `UNKNOWN.EVENT_BEHAVIOR` remains alongside explicit
+`UNKNOWN.EVENT_SCRIPTED_BEHAVIOR` and `UNKNOWN.EVENT_LIFECYCLE`. E2c2 must extract
+scripted transitions/results; later lifecycle work must close timeout/escape/result
+semantics before the aggregate blocker can be removed.
+
 ## E2 projection boundary
 
 The checked source artifact above remains the full static evidence artifact.
-C0 introduced, E1 extended, and E2a/E2b extend `data/encounter-facts-v0.111.0.json`, built by
+C0 introduced, E1 extended, and E2a/E2b/E2c1 extend `data/encounter-facts-v0.111.0.json`, built by
 `tools/generate-encounter-facts.py` from that artifact and
 `data/encounters.json` only. It is a projection, not a replacement extractor
 and not a runtime consumer input.
@@ -506,12 +547,13 @@ known-unknowns.
 The payload digest excludes all metadata and hashes compact canonical JSON of
 `payload`; the embedded source-input-manifest digest hashes compact canonical
 JSON of the exact manifest list. Evidence stores stable JSON pointers and
-pointed-value hashes instead of repeating CIL proof or the 6,683-invocation
+pointed-value hashes instead of repeating CIL proof or the 6,786-invocation
 census. This makes the projection substantially smaller while retaining an
 auditable path to the full checked source artifact.
 
-E2b declares only the bounded encounter projection complete. The encounter
-companion remains hard-false/incomplete pending event behavior, lifecycle
-closure, and companion-wide formula/runtime contracts. Global readiness also remains false
+E2c1 declares only the bounded encounter projection complete. The encounter
+companion remains hard-false/incomplete: event turn machines are source-complete,
+but scripted event behavior, event lifecycle/timeout/result semantics, broader lifecycle
+closure, and companion-wide formula/runtime contracts remain blockers. Global readiness also remains false
 pending the independent product-family source waves. No `src/` file imports the projection,
 so `/sts2` continues to use byte-identical `data/encounters.json`.

@@ -292,7 +292,7 @@ def validate_observation_identities(value: Any, *, reachable_models: set[str]) -
     if aliases != []:
         # Future schemas may add aliases only with a separate, fully validated
         # source target/provenance contract. Schema 5 has no such declarations.
-        raise SourceExtractionError("schema 5 current wire contract has no source-declared aliases")
+        raise SourceExtractionError("current wire contract has no source-declared aliases")
     policy = value["matchingPolicy"]
     if set(policy) != {"caseSensitive", "fuzzyMatching", "prefixStripping", "wirePrefixes"}:
         raise SourceExtractionError("malformed identity matching policy")
