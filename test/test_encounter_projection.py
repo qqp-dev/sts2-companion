@@ -263,8 +263,8 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual(len(architect["dependencyRefs"]), 1)
         unknowns = {row["unknownId"]: row for row in self.artifact["payload"]["knownUnknowns"]}
         self.assertIn(architect["factId"], unknowns["UNKNOWN.EVENT_BEHAVIOR"]["affectedFactIds"])
-        self.assertEqual(len(unknowns["UNKNOWN.EVENT_SCRIPTED_BEHAVIOR"]["affectedFactIds"]), 1)
-        self.assertEqual(len(unknowns["UNKNOWN.EVENT_LIFECYCLE"]["affectedFactIds"]), 4)
+        self.assertNotIn("UNKNOWN.EVENT_SCRIPTED_BEHAVIOR", unknowns)
+        self.assertEqual(len(unknowns["UNKNOWN.EVENT_LIFECYCLE"]["affectedFactIds"]), 11)
         audit = next(row for row in self.artifact["payload"]["resolvedAudits"] if row["auditId"] == "AUDIT.RESOLVED.EVENT_TURN_MACHINES")
         self.assertEqual((len(audit["classificationFactRefs"]), len(audit["dependencyFactRefs"])), (8, 4))
         self.assertIn("remain unresolved", audit["boundary"])
@@ -419,14 +419,14 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertIn("UNKNOWN.LIFECYCLE_COVERAGE", unknowns)
         self.assertIn("UNKNOWN.FORMULA_RUNTIME_CONTRACTS", unknowns)
         self.assertIn("UNKNOWN.EVENT_BEHAVIOR", unknowns)
-        self.assertIn("UNKNOWN.EVENT_SCRIPTED_BEHAVIOR", unknowns)
+        self.assertNotIn("UNKNOWN.EVENT_SCRIPTED_BEHAVIOR", unknowns)
         self.assertIn("UNKNOWN.EVENT_LIFECYCLE", unknowns)
         self.assertNotIn("UNKNOWN.HP_ROUNDING_CONFLICT", unknowns)
         companion = payload["readiness"]["runtimeScopes"]["encounterCompanion"]
         self.assertEqual((companion["ready"], companion["status"]), (False, "incomplete"))
         self.assertEqual(set(companion["reasonRefs"]), {
             "UNKNOWN.LIFECYCLE_COVERAGE", "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
-            "UNKNOWN.EVENT_BEHAVIOR", "UNKNOWN.EVENT_SCRIPTED_BEHAVIOR", "UNKNOWN.EVENT_LIFECYCLE",
+            "UNKNOWN.EVENT_BEHAVIOR", "UNKNOWN.EVENT_LIFECYCLE",
         })
 
     def test_e2a_compact_mutations_fail_closed(self):
@@ -569,8 +569,8 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertNotIn('"decisions"', serialized)
         self.assertNotIn('"instructions"', serialized)
         unknowns = {row["unknownId"]: row for row in self.artifact["payload"]["knownUnknowns"]}
-        self.assertEqual(len(unknowns["UNKNOWN.EVENT_SCRIPTED_BEHAVIOR"]["affectedFactIds"]), 1)
-        self.assertEqual(len(unknowns["UNKNOWN.EVENT_LIFECYCLE"]["affectedFactIds"]), 4)
+        self.assertNotIn("UNKNOWN.EVENT_SCRIPTED_BEHAVIOR", unknowns)
+        self.assertEqual(len(unknowns["UNKNOWN.EVENT_LIFECYCLE"]["affectedFactIds"]), 11)
         self.assertFalse(self.artifact["payload"]["readiness"]["runtimeScopes"]["encounterCompanion"]["ready"])
 
         cases = [
@@ -588,6 +588,79 @@ class EncounterProjectionTests(unittest.TestCase):
             with self.subTest(pattern=pattern):
                 artifact = self.mutated(lambda a: change(a["payload"]["sourceFacts"]["eventScripts"]))
                 self.assert_invalid(artifact, pattern)
+
+    def test_e2c2b_architect_compact_facts_and_mutation_gates(self):
+        scripts = self.artifact["payload"]["sourceFacts"]["eventScripts"]
+        architect = scripts["architect"]
+        self.assertEqual(architect["sourceDenominators"], {
+            "dependencies": 5, "edges": 39, "invocations": 715, "lines": 39,
+            "localizationKeys": 64, "methods": 96, "nodes": 39, "options": 2,
+            "presentationMethods": 13, "runtimeContracts": 8, "semanticEffects": 6,
+            "templates": 17,
+        })
+        self.assertEqual((len(architect["dialogue"]["templates"]),
+                          sum(len(row["lines"]) for row in architect["dialogue"]["templates"])), (17, 39))
+        serialized = json.dumps(architect)
+        self.assertNotIn("methods", architect)
+        self.assertNotIn('"invocationCensus"', serialized)
+        self.assertNotIn('"decisions"', serialized)
+        self.assertNotIn('"instructions"', serialized)
+        self.assertNotRegex(serialized, r'"(?:value|text|prose|template)":')
+        self.assertEqual(architect["visualOnlyCombat"]["classification"], "notActiveCombat")
+        self.assertEqual(architect["visualOnlyCombat"]["roomMode"], "VisualOnly")
+        self.assertFalse(architect["presentation"]["completeSliceHasGameplayDamage"])
+        self.assertEqual(architect["roomEntry"]["scoreReference"]["arguments"], ["event.owner.runState", True])
+        self.assertTrue(architect["terminal"]["localOwnerGuarded"])
+        self.assertFalse(architect["terminal"]["eventCombatTransition"])
+        unknowns = {row["unknownId"]: row for row in self.artifact["payload"]["knownUnknowns"]}
+        self.assertNotIn("UNKNOWN.EVENT_SCRIPTED_BEHAVIOR", unknowns)
+        self.assertIn("UNKNOWN.EVENT_BEHAVIOR", unknowns)
+        self.assertIn("UNKNOWN.EVENT_LIFECYCLE", unknowns)
+        audit = next(row for row in self.artifact["payload"]["resolvedAudits"]
+                     if row["auditId"] == "AUDIT.RESOLVED.ARCHITECT_SCRIPT")
+        self.assertEqual(audit["historicalStatus"], "sourceComplete")
+        self.assertEqual(audit["sourceDenominators"], architect["sourceDenominators"])
+
+        cases = [
+            (lambda a: a["dialogue"]["selection"].__setitem__("concreteTemplate", {"kind": "constant", "valueType": "AncientDialogue"}), "dynamic template"),
+            (lambda a: a["dialogue"]["selection"].__setitem__("rngInput", "none"), "RNG input"),
+            (lambda a: a["dialogue"]["templates"][0]["lines"][0].__setitem__("speaker", "Wrong"), "speaker"),
+            (lambda a: a["dialogue"]["templates"][0]["lines"].reverse(), "line count/order"),
+            (lambda a: a["localization"].__setitem__("prose", "copied"), "prose"),
+            (lambda a: a["localization"]["keyValueWitnesses"][0].__setitem__("valueSha256", "0" * 64), "digests"),
+            (lambda a: a["initialState"].__setitem__("lineIndexInitialization", 1), "line-zero"),
+            (lambda a: a["initialState"]["options"][0]["callback"].__setitem__("target", "ambiguous"), "option target"),
+            (lambda a: a["visualOnlyCombat"].__setitem__("roomMode", "Normal"), "active-combat"),
+            (lambda a: a["visualOnlyCombat"].__setitem__("classification", "activeCombat"), "active-combat"),
+            (lambda a: a["visualOnlyCombat"].__setitem__("hiddenTurnFactRole", "sufficient"), "hidden-no-op"),
+            (lambda a: a["presentation"].__setitem__("completeSliceHasGameplayDamage", True), "damage"),
+            (lambda a: a["presentation"]["scoreSplit"].__setitem__("renderDeterministically", True), "score split"),
+            (lambda a: a["roomEntry"]["scoreReference"]["arguments"].__setitem__(1, False), "score overload/argument"),
+            (lambda a: a["terminal"]["orderedControl"].reverse(), "WinRun order"),
+            (lambda a: a["terminal"].__setitem__("localOwnerGuarded", False), "local-owner"),
+            (lambda a: a["terminal"]["runManagerBoundary"].__setitem__("onEndedArgument", False), "lifecycle dependency"),
+            (lambda a: a["lineControl"]["edges"].pop(), "graph closure"),
+            (lambda a: a["dependencies"].pop(), "dependency refs"),
+            (lambda a: a["sourceDenominators"].__setitem__("templates", 16), "denominator"),
+        ]
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern):
+                artifact = self.mutated(lambda root: change(root["payload"]["sourceFacts"]["eventScripts"]["architect"]))
+                self.assert_invalid(artifact, pattern)
+
+    def test_e2c2b_raw_architect_mutations_fail(self):
+        cases = [
+            (lambda a: a["presentation"].__setitem__("completeSliceHasGameplayDamage", True), "presentation/gameplay"),
+            (lambda a: a["visualOnlyCombat"].__setitem__("classification", "activeCombat"), "visual-only|active combat"),
+            (lambda a: a["terminal"]["orderedControl"].reverse(), "reordered"),
+            (lambda a: a["terminal"]["runManagerBoundary"].__setitem__("onEndedArgument", False), "lifecycle"),
+            (lambda a: a["invocationCensus"]["decisions"][0].__setitem__("symbolSignature", "MegaCrit.Sts2.Core.Commands.CreatureCmd::Damage sig:bad"), "damage/attack"),
+        ]
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern):
+                source = deepcopy(self.source); change(source["eventScripts"]["architect"])
+                with self.assertRaisesRegex(SourceExtractionError, pattern):
+                    validate_artifact(self.artifact, source=source, legacy=self.legacy)
 
     def test_e2c2a_raw_source_mutations_fail(self):
         cases = [

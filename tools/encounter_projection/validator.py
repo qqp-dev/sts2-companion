@@ -1,4 +1,4 @@
-"""Fail-closed validation for source input and compact C0 projection schema."""
+"""Fail-closed validation for source input and compact E2c2b projection schema."""
 
 from __future__ import annotations
 
@@ -320,10 +320,15 @@ def _validate_source_document(source: dict[str, Any]) -> None:
     initial_source_fact_ids = {row["factId"] for row in source["initialState"]["initialStateFacts"]}
     for index, dependency in enumerate(dependencies):
         path = f"source.behavior.eventDependencies[{index}]"
-        obj = _object(dependency, path, {"dependencyId", "initialStateFactRefs", "kind", "sourceRoots", "sourceType", "status"},
+        obj = _object(dependency, path, {"dependencyId", "initialStateFactRefs", "kind", "resolvedComponentRef", "sourceRoots", "sourceType", "status"},
                       {"dependencyId", "kind", "sourceRoots", "sourceType", "status"})
-        if obj["kind"] not in {"scriptedEventSemantics", "eventLifecycleTimeoutResultSemantics"} or obj["status"] != "unresolved":
-            _fail(path, "event dependency kind/status is not explicit")
+        if obj["kind"] not in {"scriptedEventSemantics", "eventLifecycleTimeoutResultSemantics"}:
+            _fail(path, "event dependency kind is not explicit")
+        if obj["kind"] == "scriptedEventSemantics":
+            if obj["status"] != "sourceComplete" or obj.get("resolvedComponentRef") != "EVENT_SCRIPT_COMPONENT.THE_ARCHITECT":
+                _fail(path, "Architect scripted dependency is not resolved by the extracted component")
+        elif obj["status"] != "unresolved" or "resolvedComponentRef" in obj:
+            _fail(path, "event lifecycle dependency was silently resolved")
         roots = _list(obj["sourceRoots"], path + ".sourceRoots")
         if not roots or any(not isinstance(root.get("methodBodySha256"), str) or not isinstance(root.get("symbolSignature"), str) for root in roots):
             _fail(path + ".sourceRoots", "event dependency source roots/provenance missing")
@@ -596,6 +601,163 @@ def _validate_title(value: Any, path: str) -> None:
     for key in ("localizationKey", "localizationRoot", "requestedLocalizationKey"):
         _string(obj[key], path + f".{key}")
 
+
+
+def _validate_compact_architect(value: Any, placement_fact_ids: set[str]) -> set[str]:
+    path="payload.sourceFacts.eventScripts.architect"
+    required={"applicability","dependencies","dialogue","initialState","lineControl","localization","placement",
+              "presentation","roomEntry","runtimeContracts","semanticEffects","sourceDenominators","terminal","visualOnlyCombat"}
+    architect=_object(value,path,required)
+    forbidden_nested={"decisions","instructions"}
+    if {"methods","invocationCensus"} & set(architect):
+        _fail(path,"Architect method/call proof bulk leaked into compact projection")
+    fact_ids=[]
+    def walk(node:Any,current:str)->None:
+        if isinstance(node,dict):
+            if forbidden_nested & set(node):_fail(current,"Architect method/call proof bulk leaked into compact projection")
+            if "factId" in node:fact_ids.append(_string(node["factId"],current+".factId",prefix="SOURCE.ARCHITECT."))
+            for key,child in node.items():
+                if key in {"value","text","prose","template"}:_fail(current+"."+key,"localized dialogue prose was copied")
+                walk(child,current+"."+str(key))
+        elif isinstance(node,list):
+            for index,child in enumerate(node):walk(child,f"{current}[{index}]")
+    walk(architect,path)
+    if len(fact_ids)!=len(set(fact_ids)):_fail(path,"duplicate Architect fact identity")
+
+    applicability=architect["applicability"]
+    if applicability.get("canonicalEvent")!="EVENT.THE_ARCHITECT" or applicability.get("canonicalEncounter")!="ENCOUNTER.THE_ARCHITECT_EVENT_ENCOUNTER":
+        _fail(path+".applicability","Architect owner/encounter identity changed")
+    if applicability.get("e1EventLinkRef") not in placement_fact_ids or applicability.get("ownerMultiplicity")!="perMutablePlayerEventInstance":
+        _fail(path+".applicability","Architect E1 link/applicability is broken")
+
+    den=architect["sourceDenominators"]
+    expected_den={"dependencies":5,"edges":39,"invocations":715,"lines":39,"localizationKeys":64,
+                  "methods":96,"nodes":39,"options":2,"presentationMethods":13,
+                  "runtimeContracts":8,"semanticEffects":6,"templates":17}
+    if den!=expected_den:_fail(path+".sourceDenominators","source-discovered Architect denominator drift")
+
+    dialogue=architect["dialogue"]
+    selection=dialogue.get("selection",{})
+    if selection.get("agnosticCandidatesIncluded") is not False or selection.get("candidateOrder")!=[
+        "exactNullableVisitEqualsCharacterWins","repeatingVisitAtMostCharacterWinsWhenNoExact"]:
+        _fail(path+".dialogue.selection","exact/repeating selection order or agnostic flag changed")
+    if selection.get("characterWinsInput")!="progress.characterStats.totalWinsOrZeroWhenMissing" or selection.get("globalProgressInput")!="progress.wins" or "event.rng.nextItem" not in str(selection.get("rngInput")):
+        _fail(path+".dialogue.selection","runtime wins/progress/RNG input was lost")
+    if selection.get("concreteTemplate")!={"kind":"runtimeSelection","valueType":"AncientDialogue"}:
+        _fail(path+".dialogue.selection","dynamic template selection was collapsed")
+    templates=_list(dialogue.get("templates"),path+".dialogue.templates")
+    if len(templates)!=den["templates"]:_fail(path+".dialogue.templates","template census mismatch")
+    template_ids=set();line_ids=set();speakers=set();attackers=set();line_count=0;next_count=0
+    for ti,template in enumerate(templates):
+        tp=f"{path}.dialogue.templates[{ti}]"
+        expected_template_fields={"characterKey","characterOrder","characterSourceType","endAttackers","factId","lineCount","lines","repeating","sourceOrder","startAttackers","templateId","visitIndex"}
+        if set(template)!=expected_template_fields:_fail(tp,"template contains missing/unknown fields or copied prose")
+        tid=_string(template.get("templateId"),tp+".templateId",prefix="ARCHITECT_DIALOGUE.")
+        if tid in template_ids:_fail(tp+".templateId","duplicate template")
+        template_ids.add(tid);attackers|={template.get("startAttackers"),template.get("endAttackers")}
+        if template.get("startAttackers") not in {"None","Player","Architect","Both"} or template.get("endAttackers") not in {"None","Player","Architect","Both"}:
+            _fail(tp,"unknown attacker enum")
+        lines=_list(template.get("lines"),tp+".lines")
+        if len(lines)!=template.get("lineCount") or [row.get("index") for row in lines]!=list(range(len(lines))):
+            _fail(tp+".lines","line count/order mismatch")
+        if type(template.get("repeating")) is not bool:_fail(tp+".repeating","repetition selector is not Boolean")
+        for li,line in enumerate(lines):
+            lp=f"{tp}.lines[{li}]";has_next="nextButtonLocalization" in line
+            expected_line_fields={"factId","index","lineId","lineLocalization","speaker"}|({"nextButtonLocalization"} if has_next else set())
+            if set(line)!=expected_line_fields:_fail(lp,"line contains missing/unknown fields or copied prose")
+            lid=_string(line.get("lineId"),lp+".lineId",prefix=tid+".LINE.")
+            if lid in line_ids:_fail(lp+".lineId","duplicate line")
+            line_ids.add(lid);speakers.add(line.get("speaker"));line_count+=1
+            loc=line.get("lineLocalization",{})
+            if set(loc)!={"key","keyValueWitnessSha256","valueSha256"} or not str(loc.get("key","")).startswith("THE_ARCHITECT.talk."):
+                _fail(lp+".lineLocalization","line key/digest provenance malformed")
+            if has_next!=(li<len(lines)-1):_fail(lp,"continuation/terminal key order mismatch")
+            if has_next:
+                nxt=line["nextButtonLocalization"];next_count+=1
+                if set(nxt)!={"key","keyValueWitnessSha256","valueSha256"} or not str(nxt.get("key","")).endswith(".next"):
+                    _fail(lp+".nextButtonLocalization","button key/digest provenance malformed")
+    if line_count!=den["lines"] or next_count!=22 or speakers!={"Ancient","Character"}:
+        _fail(path+".dialogue.templates","line/continuation/speaker closure mismatch")
+    if attackers!={"None","Player","Architect","Both"}:
+        _fail(path+".dialogue.templates","all source-discovered attacker variants are not represented")
+
+    localization=architect["localization"]
+    witnesses=_list(localization.get("keyValueWitnesses"),path+".localization.keyValueWitnesses")
+    if localization.get("proseEmitted") is not False or localization.get("table")!="ancients" or len(witnesses)!=den["localizationKeys"]:
+        _fail(path+".localization","structural localization boundary/count changed")
+    witness_keys=[]
+    for wi,row in enumerate(witnesses):
+        if set(row)!={"key","keyValueWitnessSha256","valueSha256"}:_fail(f"{path}.localization.keyValueWitnesses[{wi}]","malformed key/value digest")
+        witness_keys.append(row.get("key"))
+    if len(witness_keys)!=len(set(witness_keys)) or localization.get("semanticWitnessSha256")!=witness_sha256(witnesses):
+        _fail(path+".localization","duplicate/bad localization refs/digests")
+    witness_by_key={row["key"]:row for row in witnesses}
+    selected_refs=[]
+    for template in templates:
+        for line in template["lines"]:
+            selected_refs.append(line["lineLocalization"])
+            if "nextButtonLocalization" in line:selected_refs.append(line["nextButtonLocalization"])
+    selected_refs.extend(localization.get("controlKeys",[]))
+    if {row.get("key") for row in selected_refs}!=set(witness_keys) or any(witness_by_key.get(row.get("key"))!=row for row in selected_refs):
+        _fail(path+".localization","line/button/control refs do not join selected key/value digests")
+    provenance=localization.get("provenance",{})
+    if provenance.get("pckPath")!="localization/eng/ancients.json" or provenance.get("pckSha256")!=EMBEDDED_SOURCE_INPUTS[0]["sha256"] or provenance.get("entrySha256")!="cd0d1c321f5c42db844b22178abf88297ba3942d557402537bef7437c9c41593":
+        _fail(path+".localization.provenance","selected PCK entry/path/hash mismatch")
+
+    options=_list(architect["initialState"].get("options"),path+".initialState.options")
+    targets=set()
+    for oi,row in enumerate(options):
+        callback=row.get("callback",{});targets.add(callback.get("target"))
+        if callback.get("receiver")!="eventInstance" or not callback.get("signature"):_fail(f"{path}.initialState.options[{oi}]","delegate receiver/signature ambiguity")
+    if targets!={"MegaCrit.Sts2.Core.Models.Events.TheArchitect::AdvanceDialogue sig:2000128121",
+                 "MegaCrit.Sts2.Core.Models.Events.TheArchitect::WinRun sig:2000128121"}:
+        _fail(path+".initialState.options","option target closure changed")
+    if architect["initialState"].get("lineIndexInitialization")!=0 or architect["initialState"].get("missingOrEmptyDialogueBranch")!="createProceedOption":
+        _fail(path+".initialState","line-zero/missing-dialogue branch changed")
+
+    control=architect["lineControl"];nodes=_list(control.get("nodes"),path+".lineControl.nodes");edges=_list(control.get("edges"),path+".lineControl.edges")
+    node_ids={row.get("nodeId") for row in nodes}
+    if len(nodes)!=den["nodes"] or node_ids!=line_ids or len(edges)!=den["edges"] or {row.get("from") for row in edges}!=line_ids:
+        _fail(path+".lineControl","line node/edge graph closure mismatch")
+    for edge in edges:
+        if edge.get("kind")=="continuation" and edge.get("to") not in node_ids:_fail(path+".lineControl.edges","continuation endpoint missing")
+        if edge.get("kind")=="terminalProceed" and edge.get("to")!="ARCHITECT_NODE.TERMINAL_PROCEED":_fail(path+".lineControl.edges","terminal endpoint changed")
+        if edge.get("kind") not in {"continuation","terminalProceed"}:_fail(path+".lineControl.edges","unknown edge kind")
+    if control.get("asyncExceptionSemantics")!="SetExceptionNotSuccess" or "missingSpeakerEntityEarlyReturn" not in control.get("branches",[]):
+        _fail(path+".lineControl","failure/exception branch closure incomplete")
+
+    visual=architect["visualOnlyCombat"]
+    if visual.get("roomMode")!="VisualOnly" or visual.get("roomModeValue")!=2 or visual.get("classification")!="notActiveCombat" or visual.get("hiddenTurnFactRole")!="referencedNoOpTurnFactNotScriptCompleteness":
+        _fail(path+".visualOnlyCombat","active-combat or hidden-no-op sufficiency was claimed")
+    score=architect["roomEntry"].get("scoreReference",{})
+    if score.get("arguments")!=["event.owner.runState",True] or score.get("formulaRef")!="FORMULA.SCORE_UTILITY.CALCULATE_SCORE" or "sig:00020812841c02" not in score.get("symbolSignature",""):
+        _fail(path+".roomEntry.scoreReference","wrong score overload/argument")
+    presentation=architect["presentation"]
+    if presentation.get("completeSliceHasGameplayDamage") is not False or presentation.get("apparentDamageClassification")!="damageNumberVfxNotHpDamage" or presentation.get("scoreSplit",{}).get("renderDeterministically") is not False:
+        _fail(path+".presentation","real/apparent damage or score split classification changed")
+    terminal=architect["terminal"]
+    if terminal.get("orderedControl")!=["animatePlayerEndAttackers","animateArchitectEndAttackers","localOwnerRunManagerWinRun","awaitWinRun","setEmptyOptionsFinishedState"] or terminal.get("localOwnerGuarded") is not True:
+        _fail(path+".terminal","WinRun order/local-owner branch changed")
+    if terminal.get("eventCombatTransition") is not False or terminal.get("noResume") is not True or terminal.get("noRewardPage") is not True or terminal.get("finishedState")!="emptyOptionCollection":
+        _fail(path+".terminal","reward/resume/active-combat claim introduced")
+    if terminal.get("cleanupBoundary") != {"classification":"commonEventFrameworkIfExitReached","frameworkRole":"EnsureCleanup"}:
+        _fail(path+".terminal.cleanupBoundary","common cleanup boundary changed")
+    boundary=terminal.get("runManagerBoundary",{})
+    if boundary.get("onEndedArgument") is not True or boundary.get("order")!=["OnEnded(true)","GuaranteeKillAllPlayers"] or boundary.get("missingRunState")!="returnWithoutOnEndedOrForcedKills":
+        _fail(path+".terminal.runManagerBoundary","lifecycle dependency argument/order changed")
+
+    dependencies=_list(architect["dependencies"],path+".dependencies")
+    dependency_ids={row.get("dependencyId") for row in dependencies}
+    if dependency_ids!={"FORMULA.SCORE_UTILITY.CALCULATE_SCORE","LIFECYCLE.RUN.ON_ENDED_TRUE",
+                        "LIFECYCLE.RUN.GUARANTEE_KILL_ALL_PLAYERS","LIFECYCLE.RUN.SERIALIZED_SCORE_STATS_HISTORY",
+                        "LIFECYCLE.RUN.ARCHITECT_TERMINAL_ORDER"}:
+        _fail(path+".dependencies","score/formula/lifecycle dependency refs incomplete")
+    contracts=_list(architect["runtimeContracts"],path+".runtimeContracts")
+    if len(contracts)!=den["runtimeContracts"] or len({row.get("name") for row in contracts})!=len(contracts):_fail(path+".runtimeContracts","state/runtime contract closure mismatch")
+    effects=_list(architect["semanticEffects"],path+".semanticEffects")
+    if len(effects)!=den["semanticEffects"] or len({row.get("effectId") for row in effects})!=len(effects):_fail(path+".semanticEffects","semantic effect closure mismatch")
+    if any(row.get("kind") in {"damage","attack","kill"} for row in effects):_fail(path+".semanticEffects","forced kill/dialogue VFX represented as dialogue damage")
+    return set(fact_ids)
 
 def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
     sf = _object(source_facts, "payload.sourceFacts", SOURCE_FACT_KEYS)
@@ -977,9 +1139,15 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
     dependency_by_fact = {}
     for index, row in enumerate(dependency_rows):
         path = f"payload.sourceFacts.eventTurnBehavior.dependencies[{index}]"
-        obj = _object(row, path, {"dependencyId", "factId", "initialStateFactRefs", "kind", "sourceRootSymbols", "sourceType", "status"})
-        if obj["factId"] != "SOURCE." + obj["dependencyId"] or obj["kind"] not in {"scriptedEventSemantics", "eventLifecycleTimeoutResultSemantics"} or obj["status"] != "unresolved":
-            _fail(path, "event dependency identity/kind/status mismatch")
+        obj = _object(row, path, {"dependencyId", "factId", "initialStateFactRefs", "kind", "resolvedComponentRef", "sourceRootSymbols", "sourceType", "status"},
+                      {"dependencyId", "factId", "initialStateFactRefs", "kind", "sourceRootSymbols", "sourceType", "status"})
+        if obj["factId"] != "SOURCE." + obj["dependencyId"] or obj["kind"] not in {"scriptedEventSemantics", "eventLifecycleTimeoutResultSemantics"}:
+            _fail(path, "event dependency identity/kind mismatch")
+        if obj["kind"] == "scriptedEventSemantics":
+            if obj["status"] != "sourceComplete" or obj.get("resolvedComponentRef") != "EVENT_SCRIPT_COMPONENT.THE_ARCHITECT":
+                _fail(path, "Architect scripted component ref unresolved")
+        elif obj["status"] != "unresolved" or "resolvedComponentRef" in obj:
+            _fail(path, "event lifecycle dependency silently resolved")
         roots = _list(obj["sourceRootSymbols"], path + ".sourceRootSymbols")
         if not roots or any(not isinstance(root, str) or "::" not in root or " sig:" not in root for root in roots):
             _fail(path + ".sourceRootSymbols", "event dependency roots missing")
@@ -1066,7 +1234,7 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
         _fail("payload.sourceFacts.eventTurnBehavior", "event proof/call bulk leaked")
 
     event_scripts = _object(sf["eventScripts"], "payload.sourceFacts.eventScripts", {
-        "dependencies", "displayScaling", "edges", "effects", "foulPotionDispatch", "framework",
+        "architect", "dependencies", "displayScaling", "edges", "effects", "foulPotionDispatch", "framework",
         "invocationSummary", "nodes", "options", "outcomes", "owners", "sourceDenominators",
         "stateContracts", "transitions",
     })
@@ -1153,6 +1321,8 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
         _fail("payload.sourceFacts.eventScripts.foulPotionDispatch","Fake Merchant selector/dispatch changed")
     if any(key in event_scripts for key in {"methods","frameworkMethods","invocationCensus","decisions"}):
         _fail("payload.sourceFacts.eventScripts","event method/call proof bulk leaked into compact projection")
+    architect_fact_ids=_validate_compact_architect(event_scripts["architect"],placement_fact_ids)
+    event_script_fact_ids |= architect_fact_ids
 
     all_source_facts = (
         encounter_fact_ids | monster_fact_ids | state_fact_ids | referenced_fact_ids |
@@ -1349,10 +1519,10 @@ def _validate_evidence_and_refs(payload: dict[str, Any], source: dict[str, Any],
 
 def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts: set[str]) -> None:
     audits = _list(payload["resolvedAudits"], "payload.resolvedAudits")
-    if len(audits) != 3:
-        _fail("payload.resolvedAudits", "expected HP, event-turn, and linked-event resolved audits")
+    if len(audits) != 4:
+        _fail("payload.resolvedAudits", "expected HP, event-turn, linked-event, and Architect resolved audits")
     audit_ids = _unique(audits, "auditId", "payload.resolvedAudits")
-    if audit_ids != {"AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING", "AUDIT.RESOLVED.EVENT_TURN_MACHINES", "AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS"}:
+    if audit_ids != {"AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING", "AUDIT.RESOLVED.EVENT_TURN_MACHINES", "AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS", "AUDIT.RESOLVED.ARCHITECT_SCRIPT"}:
         _fail("payload.resolvedAudits", "resolved audit identity set drift")
     by_id = {row["auditId"]: row for row in audits}
     hp_audit = _object(by_id["AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING"], "payload.resolvedAudits[HP]", {"auditId", "family", "historicalStatus", "lanes", "resolution"})
@@ -1377,7 +1547,7 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     event_audit = _object(by_id["AUDIT.RESOLVED.EVENT_TURN_MACHINES"], "payload.resolvedAudits[eventTurn]",
                           {"auditId", "boundary", "classificationFactRefs", "dependencyFactRefs", "family", "historicalStatus", "sourceDenominators"})
     if (event_audit["family"], event_audit["historicalStatus"], event_audit["boundary"]) != (
-        "eventTurnMachines", "sourceComplete", "Scripted event behavior and lifecycle/timeout/result dependencies remain unresolved."
+        "eventTurnMachines", "sourceComplete", "Architect scripting is separately source-complete; lifecycle/timeout/result dependencies remain unresolved."
     ):
         _fail("payload.resolvedAudits[eventTurn]", "event turn completion/boundary drift")
     if len(event_audit["classificationFactRefs"]) != 8 or len(event_audit["dependencyFactRefs"]) != 4:
@@ -1394,14 +1564,31 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
         _fail("payload.resolvedAudits[eventTurn].sourceDenominators", "event turn audit source denominators drift")
     script_audit = _object(by_id["AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS"], "payload.resolvedAudits[eventScripts]",
                            {"auditId", "boundary", "classificationFactRefs", "dependencyFactRefs", "family", "historicalStatus", "sourceDenominators"})
-    if script_audit["family"] != "linkedEventStartOptionTransitionResume" or script_audit["historicalStatus"] != "sourceComplete":
-        _fail("payload.resolvedAudits[eventScripts]", "linked event audit status drift")
+    if (script_audit["family"], script_audit["historicalStatus"], script_audit["boundary"]) != (
+            "linkedEventStartOptionTransitionResume", "sourceComplete",
+            "The non-Architect scripts are source-complete; Architect is a separate resolved component and lifecycle producers/results remain unresolved."):
+        _fail("payload.resolvedAudits[eventScripts]", "linked event audit status/boundary drift")
     script_facts={row["factId"] for row in payload["sourceFacts"]["eventScripts"]["owners"]}
     script_dependencies={row["factId"] for row in payload["sourceFacts"]["eventScripts"]["dependencies"]}
     if set(script_audit["classificationFactRefs"])!=script_facts or set(script_audit["dependencyFactRefs"])!=script_dependencies:
         _fail("payload.resolvedAudits[eventScripts]", "linked event audit fact refs drift")
     if script_audit["sourceDenominators"]!=payload["sourceFacts"]["eventScripts"]["sourceDenominators"]:
         _fail("payload.resolvedAudits[eventScripts].sourceDenominators", "linked event denominator drift")
+
+    architect_audit = _object(by_id["AUDIT.RESOLVED.ARCHITECT_SCRIPT"], "payload.resolvedAudits[architect]",
+                              {"auditId", "boundary", "classificationFactRefs", "dependencyFactRefs", "family", "historicalStatus", "sourceDenominators"})
+    architect = payload["sourceFacts"]["eventScripts"]["architect"]
+    expected_architect_classifications = {architect[name]["factId"] for name in ("applicability", "placement", "localization", "initialState", "lineControl", "presentation", "roomEntry", "terminal", "visualOnlyCombat")}
+    expected_architect_classifications |= {row["factId"] for row in architect["dialogue"]["templates"]}
+    expected_architect_dependencies = {row["factId"] for row in architect["dependencies"]}
+    if (architect_audit["family"], architect_audit["historicalStatus"]) != ("architectTerminalScript", "sourceComplete"):
+        _fail("payload.resolvedAudits[architect]", "Architect audit identity/status drift")
+    if set(architect_audit["classificationFactRefs"]) != expected_architect_classifications or set(architect_audit["dependencyFactRefs"]) != expected_architect_dependencies:
+        _fail("payload.resolvedAudits[architect]", "Architect audit refs drift")
+    if architect_audit["sourceDenominators"] != architect["sourceDenominators"] or not set(architect_audit["classificationFactRefs"] + architect_audit["dependencyFactRefs"]) <= all_facts:
+        _fail("payload.resolvedAudits[architect]", "Architect audit denominators/refs are invalid")
+    if "score formula values" not in architect_audit["boundary"] or "lifecycle ordering remain dependencies" not in architect_audit["boundary"]:
+        _fail("payload.resolvedAudits[architect]", "Architect audit boundary overclaims formula/lifecycle closure")
 
     comparisons = _list(payload["laneComparisons"], "payload.laneComparisons")
     comparison_ids = _unique(comparisons, "comparisonId", "payload.laneComparisons")
@@ -1468,12 +1655,12 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
         _fail("payload.knownUnknowns", "all 18 missing source move titles must be individually classified")
     required_reasons = {
         "LIFECYCLE_COVERAGE_ABSENT", "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE",
-        "EVENT_BEHAVIOR_AGGREGATE_INCOMPLETE", "SCRIPTED_EVENT_BEHAVIOR_UNEXTRACTED",
+        "EVENT_BEHAVIOR_AGGREGATE_INCOMPLETE",
         "EVENT_LIFECYCLE_TIMEOUT_RESULT_UNEXTRACTED", "LEGACY_PER_FACT_PROVENANCE_INCOMPLETE",
         "BROADER_WORLD_MODEL_FAMILIES_ABSENT",
     }
     actual_reasons = {row["reasonCode"] for row in unknowns}
-    retired_e1_reasons = {"SOURCE_ACT_PLACEMENT_ABSENT", "SOURCE_ROOM_CLASS_PLACEMENT_ABSENT", "OBSERVED_IDENTITY_ALIAS_JOIN_ABSENT", "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT", "INITIAL_STATE_COVERAGE_ABSENT", "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT"}
+    retired_e1_reasons = {"SCRIPTED_EVENT_BEHAVIOR_UNEXTRACTED", "SOURCE_ACT_PLACEMENT_ABSENT", "SOURCE_ROOM_CLASS_PLACEMENT_ABSENT", "OBSERVED_IDENTITY_ALIAS_JOIN_ABSENT", "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT", "INITIAL_STATE_COVERAGE_ABSENT", "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT"}
     if actual_reasons & retired_e1_reasons:
         _fail("payload.knownUnknowns", "resolved E1 absence reason was retained")
     if not required_reasons <= actual_reasons:
@@ -1487,13 +1674,13 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     scopes = _object(readiness["runtimeScopes"], "payload.readiness.runtimeScopes", {"encounterCompanion", "encounterProjection"})
     companion = _object(scopes["encounterCompanion"], "payload.readiness.runtimeScopes.encounterCompanion", {"ready", "reasonRefs", "status"})
     if companion["ready"] is not False or companion["status"] != "incomplete" or not companion["reasonRefs"]:
-        _fail("payload.readiness.runtimeScopes.encounterCompanion", "E2a companion scope cannot be ready")
+        _fail("payload.readiness.runtimeScopes.encounterCompanion", "encounter companion scope cannot be ready")
     projected = _object(scopes["encounterProjection"], "payload.readiness.runtimeScopes.encounterProjection", {"ready", "requiredCoverageFamilies", "requiredJoins", "status"})
     if projected["ready"] is not True or projected["status"] != "complete":
         _fail("payload.readiness.runtimeScopes.encounterProjection", "independent projection section should be complete")
     if projected["requiredCoverageFamilies"] != [row["family"] for row in coverage_rows()]:
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredCoverageFamilies", "coverage gate mismatch")
-    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage", "eventTurnClassificationDependencies", "eventScriptOwnerEncounterLink", "eventScriptOptionDelegate", "eventScriptTransitionArguments", "eventScriptOutcomeDependency"}
+    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage", "eventTurnClassificationDependencies", "eventScriptOwnerEncounterLink", "eventScriptOptionDelegate", "eventScriptTransitionArguments", "eventScriptOutcomeDependency", "architectOwnerPlacementApplicability", "architectLocalizationStructure", "architectDialogueLineGraph", "architectOptionDelegates", "architectVisualOnlyLayout", "architectPresentationGameplayBoundary", "architectTerminalOrder", "architectDependencyRefs"}
     if set(projected["requiredJoins"]) != expected_joins or len(projected["requiredJoins"]) != len(expected_joins):
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredJoins", "join gate mismatch")
 

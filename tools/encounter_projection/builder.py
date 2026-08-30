@@ -1,4 +1,4 @@
-"""Pure builder for the compact E2c2a encounter projection."""
+"""Pure builder for the compact E2c2b encounter projection."""
 
 from __future__ import annotations
 
@@ -226,6 +226,8 @@ def _source_event_turn_behavior(source: dict[str, Any], facts: _Facts) -> dict[s
             "sourceType": row["sourceType"], "status": row["status"],
             "initialStateFactRefs": ["SOURCE." + ref for ref in row.get("initialStateFactRefs", [])],
         }
+        if "resolvedComponentRef" in row:
+            compact["resolvedComponentRef"] = row["resolvedComponentRef"]
         dependencies.append(compact)
 
     encounters = []
@@ -260,7 +262,7 @@ def _source_event_turn_behavior(source: dict[str, Any], facts: _Facts) -> dict[s
 
 
 def _source_event_scripts(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
-    """Project compact E2c2a semantics; omit method/call proof bulk."""
+    """Project compact E2c2 semantics; omit method/call proof bulk."""
     raw=source["eventScripts"]
     result={}
     specs=(
@@ -303,6 +305,48 @@ def _source_event_scripts(source: dict[str, Any], facts: _Facts) -> dict[str, An
                           "roles":sorted({x["edgeRole"] for x in raw["frameworkMethods"]})}
     result["invocationSummary"]=deepcopy(raw["invocationCensus"]["summary"])
     result["sourceDenominators"]=deepcopy(raw["sourceDenominators"])
+
+    # Architect is an independent source-closed component. Keep structural
+    # localization/control facts and omit its 96 method/715 call proof bulk.
+    architect=deepcopy(raw["architect"])
+    architect.pop("methods");architect.pop("invocationCensus")
+    def compact_methods(value):
+        if isinstance(value,dict):
+            if "symbolSignature" in value and "methodBodySha256" in value and "metadataSignature" in value:
+                return {"methodBodySha256":value["methodBodySha256"],"symbolSignature":value["symbolSignature"]}
+            return {key:compact_methods(child) for key,child in value.items()}
+        if isinstance(value,list):return [compact_methods(child) for child in value]
+        return value
+    architect=compact_methods(architect)
+    def architect_fact(fact_id,pointer):
+        facts.add(fact_id,"source",f"EVIDENCE.{fact_id}","INPUT.SOURCE",[pointer]);return fact_id
+    for family in ("applicability","placement","localization","presentation","roomEntry","terminal","visualOnlyCombat"):
+        fact_id=architect_fact("SOURCE.ARCHITECT."+family.upper(),f"/eventScripts/architect/{family}")
+        architect[family]["factId"]=fact_id
+    selection=architect["dialogue"]["selection"]
+    selection["factId"]=architect_fact("SOURCE.ARCHITECT.DIALOGUE_SELECTION","/eventScripts/architect/dialogue/selection")
+    for ti,template in enumerate(architect["dialogue"]["templates"]):
+        suffix=template["templateId"].removeprefix("ARCHITECT_DIALOGUE.")
+        template["factId"]=architect_fact("SOURCE.ARCHITECT.TEMPLATE."+suffix,f"/eventScripts/architect/dialogue/templates/{ti}")
+        for li,line in enumerate(template["lines"]):
+            line["factId"]=architect_fact("SOURCE.ARCHITECT.LINE."+suffix+f".{li}",f"/eventScripts/architect/dialogue/templates/{ti}/lines/{li}")
+    for family,prefix,id_key in (("dependencies","SOURCE.ARCHITECT.DEPENDENCY","dependencyId"),
+                                 ("runtimeContracts","SOURCE.ARCHITECT.CONTRACT","name"),
+                                 ("semanticEffects","SOURCE.ARCHITECT.EFFECT","effectId")):
+        for index,row in enumerate(architect[family]):
+            suffix=row[id_key].replace("/",".")
+            row["factId"]=architect_fact(prefix+"."+suffix,f"/eventScripts/architect/{family}/{index}")
+    for index,row in enumerate(architect["initialState"]["options"]):
+        suffix=row["optionId"].removeprefix("EVENT_OPTION.").replace("/",".")
+        row["factId"]=architect_fact("SOURCE.ARCHITECT.OPTION."+suffix,f"/eventScripts/architect/initialState/options/{index}")
+    for family,prefix in (("nodes","SOURCE.ARCHITECT.NODE"),("edges","SOURCE.ARCHITECT.EDGE")):
+        for index,row in enumerate(architect["lineControl"][family]):
+            source_id=row["nodeId"] if family=="nodes" else row["edgeId"]
+            row["factId"]=architect_fact(prefix+"."+source_id.replace("/","."),f"/eventScripts/architect/lineControl/{family}/{index}")
+    architect["initialState"]["factId"]=architect_fact("SOURCE.ARCHITECT.INITIAL_STATE","/eventScripts/architect/initialState")
+    architect["lineControl"]["factId"]=architect_fact("SOURCE.ARCHITECT.LINE_CONTROL","/eventScripts/architect/lineControl")
+    architect["applicability"]["e1EventLinkRef"]=architect["applicability"]["e1EventLinkRef"].replace("SOURCE.EVENT_LINK.ENCOUNTER.","SOURCE.EVENT_LINK.")
+    result["architect"]=architect
     return result
 
 
@@ -757,8 +801,10 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
             "unknownId": "UNKNOWN.LIFECYCLE_COVERAGE",
         },
         {
-            "affectedFactIds": [row["factId"] for row in source_facts["initialState"]["runtimeStateContracts"]],
-            "detail": "E2a preserves required initial runtime inputs, but companion-wide getter/delegate formula inlining and runtime-state contracts remain incomplete.",
+            "affectedFactIds": [row["factId"] for row in source_facts["initialState"]["runtimeStateContracts"]]
+                               + [row["factId"] for row in source_facts["eventScripts"]["architect"]["runtimeContracts"]]
+                               + [row["factId"] for row in source_facts["eventScripts"]["architect"]["dependencies"] if row["kind"] == "formula"],
+            "detail": "Initial and Architect runtime inputs are preserved, but companion-wide getter/delegate formula inlining, including ScoreUtility.CalculateScore, remains incomplete.",
             "reasonCode": "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE", "scope": "encounterCompanion", "status": "unresolved",
             "unknownId": "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
         },
@@ -766,20 +812,17 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
             "affectedFactIds": [row["factId"] for row in source_facts["eventTurnBehavior"]["encounters"]]
                                + [row["factId"] for row in source_facts["eventTurnBehavior"]["dependencies"]]
                                + [row["factId"] for row in source_facts["eventScripts"]["owners"]]
-                               + [row["factId"] for row in source_facts["eventScripts"]["outcomes"]],
-            "detail": "All eight event turn machines and the seven linked non-Architect start/option/transition/resume contracts are source-complete; Architect script and event lifecycle/result producers remain unresolved dependencies.",
+                               + [row["factId"] for row in source_facts["eventScripts"]["outcomes"]]
+                               + [source_facts["eventScripts"]["architect"][name]["factId"] for name in ("applicability", "terminal", "visualOnlyCombat")],
+            "detail": "All eight event turn machines, seven linked non-Architect scripts, and the Architect terminal dialogue script are source-complete; referenced event lifecycle/result and formula producers keep aggregate event behavior unresolved.",
             "reasonCode": "EVENT_BEHAVIOR_AGGREGATE_INCOMPLETE", "scope": "encounterCompanion", "status": "unresolved",
             "unknownId": "UNKNOWN.EVENT_BEHAVIOR",
         },
         {
-            "affectedFactIds": [row["factId"] for row in source_facts["eventTurnBehavior"]["dependencies"] if row["kind"] == "scriptedEventSemantics"],
-            "detail": "The Architect's hidden no-op turn graph is not its terminal scripted state machine; Architect dialogue, score, transition, and terminal semantics remain reserved for E2c2b.",
-            "reasonCode": "SCRIPTED_EVENT_BEHAVIOR_UNEXTRACTED", "scope": "encounterCompanion", "status": "unresolved",
-            "unknownId": "UNKNOWN.EVENT_SCRIPTED_BEHAVIOR",
-        },
-        {
-            "affectedFactIds": [row["factId"] for row in source_facts["eventScripts"]["dependencies"] if row["kind"] == "lifecycle"],
-            "detail": "Linked event resume/outcome contracts are complete, while the Battle timeout producer and escape, common event combat terminal result, and Architect run-end remain exact E2d2 lifecycle dependencies.",
+            "affectedFactIds": [row["factId"] for row in source_facts["eventScripts"]["dependencies"] if row["kind"] == "lifecycle"]
+                               + [row["factId"] for row in source_facts["eventScripts"]["architect"]["dependencies"] if row["kind"] == "lifecycle"]
+                               + [row["factId"] for row in source_facts["eventTurnBehavior"]["dependencies"] if row["kind"] == "eventLifecycleTimeoutResultSemantics"],
+            "detail": "Scripts are complete, while Battle timeout/escape/common event terminal results and Architect OnEnded(true), forced-kill, and run-end ordering remain exact E2d2 lifecycle dependencies.",
             "reasonCode": "EVENT_LIFECYCLE_TIMEOUT_RESULT_UNEXTRACTED", "scope": "encounterCompanion", "status": "unresolved",
             "unknownId": "UNKNOWN.EVENT_LIFECYCLE",
         },
@@ -816,18 +859,26 @@ def _resolved_audits(source_facts: dict[str, Any]) -> list[dict[str, Any]]:
     event_turn = source_facts["eventTurnBehavior"]
     return [{
         "auditId": "AUDIT.RESOLVED.EVENT_TURN_MACHINES",
-        "boundary": "Scripted event behavior and lifecycle/timeout/result dependencies remain unresolved.",
+        "boundary": "Architect scripting is separately source-complete; lifecycle/timeout/result dependencies remain unresolved.",
         "classificationFactRefs": [row["factId"] for row in event_turn["encounters"]],
         "dependencyFactRefs": [row["factId"] for row in event_turn["dependencies"]],
         "family": "eventTurnMachines", "historicalStatus": "sourceComplete",
         "sourceDenominators": deepcopy(event_turn["sourceDenominators"]),
     }, {
         "auditId": "AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS",
-        "boundary": "Architect terminal script and lifecycle producers/results remain unresolved.",
+        "boundary": "The non-Architect scripts are source-complete; Architect is a separate resolved component and lifecycle producers/results remain unresolved.",
         "classificationFactRefs": [row["factId"] for row in source_facts["eventScripts"]["owners"]],
         "dependencyFactRefs": [row["factId"] for row in source_facts["eventScripts"]["dependencies"]],
         "family": "linkedEventStartOptionTransitionResume", "historicalStatus": "sourceComplete",
         "sourceDenominators": deepcopy(source_facts["eventScripts"]["sourceDenominators"]),
+    }, {
+        "auditId": "AUDIT.RESOLVED.ARCHITECT_SCRIPT",
+        "boundary": "Dialogue/control/presentation/terminal calls are source-complete; score formula values and RunManager OnEnded/forced-kill lifecycle ordering remain dependencies.",
+        "classificationFactRefs": [source_facts["eventScripts"]["architect"][name]["factId"] for name in ("applicability", "placement", "localization", "initialState", "lineControl", "presentation", "roomEntry", "terminal", "visualOnlyCombat")]
+                                  + [row["factId"] for row in source_facts["eventScripts"]["architect"]["dialogue"]["templates"]],
+        "dependencyFactRefs": [row["factId"] for row in source_facts["eventScripts"]["architect"]["dependencies"]],
+        "family": "architectTerminalScript", "historicalStatus": "sourceComplete",
+        "sourceDenominators": deepcopy(source_facts["eventScripts"]["architect"]["sourceDenominators"]),
     }, {
         "auditId": "AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING",
         "family": "hpAssignmentRounding",
@@ -880,6 +931,9 @@ def _readiness(known_unknowns: list[dict[str, Any]]) -> dict[str, Any]:
                     "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage",
                     "eventTurnClassificationDependencies", "eventScriptOwnerEncounterLink",
                     "eventScriptOptionDelegate", "eventScriptTransitionArguments", "eventScriptOutcomeDependency",
+                    "architectOwnerPlacementApplicability", "architectLocalizationStructure",
+                    "architectDialogueLineGraph", "architectOptionDelegates", "architectVisualOnlyLayout",
+                    "architectPresentationGameplayBoundary", "architectTerminalOrder", "architectDependencyRefs",
                 ],
                 "status": "complete",
             },

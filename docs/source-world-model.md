@@ -3,7 +3,7 @@
 `data/game-v0.111.0-source.json` is a deterministic, presentation-independent
 world model for exact public-beta v0.111.0 inputs. It contains identities,
 localization joins, formulas, roster selections, membership sets, and state
-facts—not UI sentences or layout. Schema 9 is the E2c2a boundary and remains
+facts—not UI sentences or layout. Schema 10 is the E2c2b boundary and remains
 runtime-incomplete until independently gated later E2 and consumer waves land.
 
 ## Three-wave boundary
@@ -16,7 +16,8 @@ runtime-incomplete until independently gated later E2 and consumer waves land.
 | E2a | Initial generator/constructor state, effective addition hooks, intrinsic Power hooks, runtime contracts, and 57 lane comparisons | Complete for exact denominators; no runtime consumer change |
 | E2b | Integer HP selection, Decimal multiplayer arithmetic, explicit assignment conversion/cap/clamp, special callers, Int32 storage and network wire joins | Complete for exact denominators; no runtime consumer change |
 | E2c1 | Event-inclusive physical turn graphs, inherited/reused applicability, event titles/intents/operations/no-op proofs, and helper-call closure | Complete for exact turn-machine denominators; scripted event and lifecycle dependencies remain |
-| E2c2a | Five linked event owners, 12 option/delegate constructions, seven exact combat transitions/outcomes, Foul Potion dispatch, and common framework closure | Complete for the non-Architect linked slice; Architect, lifecycle producers/results, and formulas remain |
+| E2c2a | Five linked event owners, 12 option/delegate constructions, seven exact combat transitions/outcomes, Foul Potion dispatch, and common framework closure | Complete for the non-Architect linked slice |
+| E2c2b | Architect placement, dialogue selection/line graph, structural localization, visual-only layout, presentation closure, and terminal sink/order | Script component complete; lifecycle producers/order and formulas remain dependencies |
 
 The current app does not import this artifact or the compact projection and still displays the
 wiki-derived book. Source extraction changes no routes, renderer output, event display, or
@@ -494,10 +495,11 @@ The closed classifications are `normalTurnMachine`, `inheritedTurnMachine`,
 have one read-only-collection `NOTHING_MOVE` self-loop each and exact
 `Task.CompletedTask` no-op proof. Their initial timeout Power facts and exact
 `BattlewornDummyTimeLimitPower.AfterSideTurnEnd` root are retained as unresolved
-lifecycle dependencies. Architect has one hidden no-op self-loop, but exact
-`TheArchitect.OnRoomEnter`, `AdvanceDialogue`, and `WinRun` roots remain an
-unresolved scripted dependency. These graphs are never represented as complete
-event semantics.
+lifecycle dependencies. Architect has one hidden no-op self-loop. At E2c1 its exact
+`TheArchitect.OnRoomEnter`, `AdvanceDialogue`, and `WinRun` roots were an unresolved
+scripted dependency; schema 10 resolves that dependency only through the separate
+E2c2b component. The no-op graph itself is never represented as complete event
+semantics.
 
 Fake Merchant contributes four localized moves, two random nodes/seven random
 branches, five intent sites/five arguments, three attacks, one attack hit-count,
@@ -509,14 +511,13 @@ helpers, 76 narrow non-gameplay plumbing). Generic graph collection state record
 the exact constructor, `MoveState` element type, source order, and cardinality;
 unknown constructors, overloads, types, elements, or joins fail.
 
-The compact `eventTurnBehavior` projects eight classification facts, four unresolved
-dependency facts, title/applicability/graph/registration/initial-state refs, event
+The compact `eventTurnBehavior` projects eight classification facts, three unresolved lifecycle dependency facts and one source-complete Architect component ref, title/applicability/graph/registration/initial-state refs, event
 source denominators, and the invocation summary. It omits method proof and decision
 bulk. `AUDIT.RESOLVED.EVENT_TURN_MACHINES` marks only this physical turn component
-source-complete. The aggregate `UNKNOWN.EVENT_BEHAVIOR` remains alongside explicit
-`UNKNOWN.EVENT_SCRIPTED_BEHAVIOR` and `UNKNOWN.EVENT_LIFECYCLE`. E2c2 must extract
-scripted transitions/results; later lifecycle work must close timeout/escape/result
-semantics before the aggregate blocker can be removed.
+source-complete. Schema 10 retires `UNKNOWN.EVENT_SCRIPTED_BEHAVIOR` through the
+separate Architect audit. The aggregate `UNKNOWN.EVENT_BEHAVIOR` remains alongside
+`UNKNOWN.EVENT_LIFECYCLE`; later lifecycle work must close timeout/escape/result and
+run-end ordering before the aggregate blocker can be removed.
 
 ## E2c2a linked-event script schema
 
@@ -541,21 +542,66 @@ decrement/removal, escape, and terminal combat result remain lifecycle refs. Exa
 stack extraction shows the three Battle display calls use monster V1/V2/V3 and the
 V1 encounter argument at each site; no expected polarity or argument was seeded.
 
-The schema 6 compact projection includes semantic owners/options/transitions/outcomes/
+The schema 7 compact projection includes semantic owners/options/transitions/outcomes/
 nodes/edges/effects/contracts/dependencies and fact evidence, but excludes raw method
 censuses and the 1,549 call decisions. Its linked-event component is complete.
-Architect remains `UNKNOWN.EVENT_SCRIPTED_BEHAVIOR`; the four exact lifecycle refs
-remain `UNKNOWN.EVENT_LIFECYCLE`; aggregate and global blockers remain. No readiness
-outside the bounded projection is changed.
+At the E2c2a boundary Architect remained `UNKNOWN.EVENT_SCRIPTED_BEHAVIOR`. E2c2b
+retires that blocker, while Battle timeout/escape/common terminal and Architect
+OnEnded/forced-kill/order refs remain `UNKNOWN.EVENT_LIFECYCLE`; aggregate and global
+blockers remain. No readiness outside the bounded projection is changed.
 
 Evidence grade: exact pinned CLI metadata and CIL for all normalized script facts;
 explicit unresolved refs for lifecycle/formula contracts; no runtime observation or
 community fallback is silently merged.
 
+
+## E2c2b Architect scripted component
+
+Raw `eventScripts.architect` starts from the exact E1 non-pool owner/link and discovers
+its own source denominators before regression pins. For pinned v0.111.0 those
+distributions are five character groups, 17 templates, 39 lines/control nodes, 39
+outgoing line edges (22 continuation and 17 terminal-proceed), two option/delegate
+sites, 96 deduplicated methods, 715 classified invocations, 13 presentation-closure
+methods, eight runtime contracts, six semantic effects, and five dependency refs.
+These values are discovered output, not an input table.
+
+`DefineDialogues` supplies generic character identities, visit indices, line-array
+cardinalities, and all source attacker enum variants. `PopulateLocKeys` and
+`PopulateLines` define repetition, line order, speaker suffix, and continuation-key
+control. The extractor reads only the exact pinned `localization/eng/ancients.json`
+entry and emits 64 selected structural key records with entry/path/PCK and per-key/value
+digests. It emits no localized line or button values. Missing/duplicate keys, unknown
+speaker/suffix, inconsistent repetition, wrong order, malformed values, or a PCK digest
+mismatch fails before replacement.
+
+Selection is a typed runtime contract over character ID, per-character wins or the
+source zero branch, global progress wins, exact-match candidates, repeating fallback,
+and event RNG choice. A selected template is never flattened to a constant.
+`NCombatEventLayout.SetEvent` passes source enum value 2 (`VisualOnly`) to
+`NCombatRoom.Create`; the component classifies this as `notActiveCombat` and references
+the hidden no-op turn fact without treating it as sufficient.
+
+Room entry records `ScoreUtility.CalculateScore(event.owner.runState, true)` by exact
+overload/arguments and leaves its formula/value to E2e. Line control retains local,
+null dialogue, index, line, speaker, node, and animation early-return branches plus
+separate async success/exception edges. The presentation closure contains animation,
+Talk, wait, TriggerAnim, hit/fire and damage-number VFX; exact closure contains no
+HP/gameplay damage. `DivideWildly` retains score/count/RNG inputs and is never rendered
+as a deterministic split.
+
+Terminal order is player animation, Architect animation, locally guarded
+`RunManager.WinRun`, await, then empty-option finished state. No reward, resume, or
+active event-combat transition is claimed. `RunManager.OnEnded(true)`, forced player
+kills, serialization/stat/history work, and run-end ordering remain E2d2 dependency
+refs rather than duplicated dialogue effects. `AUDIT.RESOLVED.ARCHITECT_SCRIPT` closes
+the script component; aggregate event, event lifecycle, global lifecycle,
+formula/runtime-contract, title/provenance, and broader-world gaps remain. All global,
+root, encounter-companion, and source runtime readiness remains false.
+
 ## E2 projection boundary
 
 The checked source artifact above remains the full static evidence artifact.
-C0 introduced, E1 extended, and E2a/E2b/E2c1 extend `data/encounter-facts-v0.111.0.json`, built by
+C0 introduced, E1 extended, and E2a/E2b/E2c1/E2c2a/E2c2b extend `data/encounter-facts-v0.111.0.json`, built by
 `tools/generate-encounter-facts.py` from that artifact and
 `data/encounters.json` only. It is a projection, not a replacement extractor
 and not a runtime consumer input.

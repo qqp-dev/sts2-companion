@@ -32,8 +32,8 @@ const exactManifest = [
 
 test("source artifact is canonical, exactly pinned, partial, and raw-only", () => {
   assert.equal(artifactBytes.toString("utf8"), `${JSON.stringify(sortedValue(artifact), null, 2)}\n`);
-  assert.equal(artifact.schemaVersion, 9);
-  assert.equal(artifact.extractorVersion, "9.0.0");
+  assert.equal(artifact.schemaVersion, 10);
+  assert.equal(artifact.extractorVersion, "10.0.0");
   assert.equal(artifact.runtimeReady, false);
   assert.equal(artifact.status, "incomplete");
   assert.deepEqual(artifact.inputs, exactManifest);
@@ -53,6 +53,20 @@ test("source artifact is canonical, exactly pinned, partial, and raw-only", () =
 
 test("coverage is denominator-based and current behavior families are complete or honestly classified", () => {
   const complete = {
+    architectDependencyRefs: 5,
+    architectDialogueLineCensus: 39,
+    architectDialogueTemplateCensus: 17,
+    architectInvocationClassification: 715,
+    architectLineControlEdges: 39,
+    architectLineControlNodes: 39,
+    architectLocalizationStructuralClosure: 64,
+    architectOptionDelegateClosure: 2,
+    architectOwnerLinkPlacementApplicability: 1,
+    architectPresentationOnlyClosure: 13,
+    architectSemanticEffects: 6,
+    architectStateRuntimeInputContracts: 8,
+    architectTerminalSinkOrder: 1,
+    architectVisualOnlyLayoutProof: 1,
     actCensus: 4,
     behaviorGraphApplicability: 105,
     behaviorOwnerApplicability: 105,
@@ -680,6 +694,62 @@ test("E2c2a linked event scripts preserve exact options, transition stacks, outc
   ]);
 });
 
+test("E2c2b Architect terminal script is source-derived, dynamic, visual-only, and prose-free", () => {
+  const architect = artifact.eventScripts.architect;
+  assert.deepEqual(architect.sourceDenominators, {
+    dependencies: 5, edges: 39, invocations: 715, lines: 39, localizationKeys: 64,
+    methods: 96, nodes: 39, options: 2, presentationMethods: 13,
+    runtimeContracts: 8, semanticEffects: 6, templates: 17,
+  });
+  const templates = architect.dialogue.templates;
+  assert.equal(templates.length, 17);
+  assert.equal(templates.reduce((sum, row) => sum + row.lineCount, 0), 39);
+  assert.deepEqual([...new Set(templates.map((row) => row.characterKey))].sort(),
+    ["DEFECT", "IRONCLAD", "NECROBINDER", "REGENT", "SILENT"]);
+  assert.deepEqual(new Set(templates.flatMap((row) => [row.startAttackers, row.endAttackers])),
+    new Set(["None", "Player", "Architect", "Both"]));
+  assert.equal(templates.filter((row) => row.repeating).length, 15);
+  assert.deepEqual(templates.flatMap((row) => row.lines).reduce((counts, line) =>
+    ({ ...counts, [line.speaker]: (counts[line.speaker] ?? 0) + 1 }), {}), { Ancient: 22, Character: 17 });
+  assert.deepEqual(architect.dialogue.selection.candidateOrder,
+    ["exactNullableVisitEqualsCharacterWins", "repeatingVisitAtMostCharacterWinsWhenNoExact"]);
+  assert.equal(architect.dialogue.selection.agnosticCandidatesIncluded, false);
+  assert.equal(architect.dialogue.selection.concreteTemplate.kind, "runtimeSelection");
+  assert.match(architect.dialogue.selection.rngInput, /event\.rng\.nextItem/);
+  assert.equal(architect.initialState.lineIndexInitialization, 0);
+  assert.deepEqual(architect.initialState.options.map((row) => row.callback.target).sort(), [
+    "MegaCrit.Sts2.Core.Models.Events.TheArchitect::AdvanceDialogue sig:2000128121",
+    "MegaCrit.Sts2.Core.Models.Events.TheArchitect::WinRun sig:2000128121",
+  ]);
+  assert.equal(architect.visualOnlyCombat.roomMode, "VisualOnly");
+  assert.equal(architect.visualOnlyCombat.classification, "notActiveCombat");
+  assert.equal(architect.roomEntry.scoreReference.arguments[1], true);
+  assert.match(architect.roomEntry.scoreReference.symbolSignature, /sig:00020812841c02$/);
+  assert.equal(architect.presentation.completeSliceHasGameplayDamage, false);
+  assert.equal(architect.presentation.apparentDamageClassification, "damageNumberVfxNotHpDamage");
+  assert.equal(architect.presentation.scoreSplit.renderDeterministically, false);
+  assert.deepEqual(architect.terminal.orderedControl,
+    ["animatePlayerEndAttackers", "animateArchitectEndAttackers", "localOwnerRunManagerWinRun", "awaitWinRun", "setEmptyOptionsFinishedState"]);
+  assert.equal(architect.terminal.localOwnerGuarded, true);
+  assert.equal(architect.terminal.eventCombatTransition, false);
+  assert.equal(architect.terminal.noResume, true);
+  assert.equal(architect.terminal.noRewardPage, true);
+  assert.deepEqual(architect.terminal.runManagerBoundary.order, ["OnEnded(true)", "GuaranteeKillAllPlayers"]);
+  assert.equal(architect.terminal.runManagerBoundary.missingRunState, "returnWithoutOnEndedOrForcedKills");
+  assert.equal(architect.localization.proseEmitted, false);
+  assert.equal(architect.localization.provenance.entrySha256, "cd0d1c321f5c42db844b22178abf88297ba3942d557402537bef7437c9c41593");
+  assert.equal(architect.localization.keyValueWitnesses.length, 64);
+  assert.doesNotMatch(JSON.stringify(architect.localization), /"(?:value|text|prose|template)":/);
+  assert.deepEqual(architect.invocationCensus.summary, { denominator: 715, resolved: 715, unresolved: 0 });
+  assert.deepEqual(architect.invocationCensus.residualVocabulary,
+    { sha256: "7aac765fd42a8282414bed67181b4a066deff87a9cef9fc322aaf3037011df7a", size: 174 });
+  assert.ok(architect.dependencies.some((row) => row.dependencyId === "FORMULA.SCORE_UTILITY.CALCULATE_SCORE"));
+  assert.equal(architect.dependencies.filter((row) => row.kind === "lifecycle").length, 4);
+  const scripted = artifact.behavior.eventDependencies.find((row) => row.kind === "scriptedEventSemantics");
+  assert.equal(scripted.status, "sourceComplete");
+  assert.equal(scripted.resolvedComponentRef, "EVENT_SCRIPT_COMPONENT.THE_ARCHITECT");
+});
+
 test("selection graphs preserve topology, Flyconid/Fabricator/Decimillipede fixtures, and referential integrity", () => {
   const topo = artifact.behavior.summary.topology;
   assert.deepEqual(topo, {
@@ -866,7 +936,7 @@ test("E2a selected Power hooks and runtime contracts are explicit", () => {
   assert.deepEqual(artifact.observationIdentities.aliases, []);
 });
 
-test("E2c2a README and world-model census claims match schema 9 summary and coverage", () => {
+test("README and world-model census claims match schema 10 summary and coverage", () => {
   const markdown = (url) => readFileSync(new URL(url, import.meta.url), "utf8").replace(/\s+/g, " ").trim();
   const readme = markdown("../README.md");
   const worldModel = markdown("../docs/source-world-model.md");
@@ -936,7 +1006,7 @@ test("E2c2a README and world-model census claims match schema 9 summary and cove
   has(readme, `deterministic schema ${JSON.parse(readFileSync(new URL("../data/encounter-facts-v0.111.0.json", import.meta.url))).schemaVersion} compact projection`);
   has(readme, `(schema ${artifact.schemaVersion} raw source facts)`);
 
-  has(worldModel, `Schema ${artifact.schemaVersion} is the E2c2a boundary`);
+  has(worldModel, `Schema ${artifact.schemaVersion} is the E2c2b boundary`);
   has(worldModel, `exact metadata inheritance closure for all ${topology.behaviorClasses} behavior graph owners`);
   has(worldModel, `The ${summary.intentConstructorSites} constructor sites contain ${summary.requiredIntentArguments} required arguments`);
   has(worldModel, `separately count ${summary.intentConstructorSites} classified constructors and ${summary.requiredIntentArguments} resolved arguments`);
@@ -947,6 +1017,6 @@ test("E2c2a README and world-model census claims match schema 9 summary and cove
   has(worldModel, `The physical domain is ${topology.behaviorClasses} owners/graphs and ${topology.moveConstructors} registrations. ${word(eventSummary.physicalOwners)[0].toUpperCase()}${word(eventSummary.physicalOwners).slice(1)} owners and ${word(eventSummary.physicalRegistrations)} registrations are event additions`);
   has(worldModel, `Fake Merchant contributes ${word(fake.registrationIds.length)} localized moves, ${word(fakeGraph.topology.randomNodes)} random nodes/${word(fakeGraph.topology.randomBranches)} random branches, ${word(fakeMoves.flatMap((row) => row.intents).length)} intent sites/${word(eventSummary.eventIntentArguments)} arguments, ${word(operationCount("attack"))} attacks, ${word(operationCount("attackHitCount"))} attack hit-count, Frail, and Strength.`);
   has(worldModel, `The event subset classifies ${eventInvocations.denominator} calls (${word(eventInvocations.classificationCounts.normalizedGameplayOperation)} gameplay, ${eventInvocations.classificationCounts.traversedGameplayHelper} traversed helpers, ${eventInvocations.classificationCounts.provenNonGameplayPlumbing} narrow non-gameplay plumbing)`);
-  has(worldModel, `projects ${word(eventSummary.classifications)} classification facts, ${word(behavior.eventDependencies.length)} unresolved dependency facts`);
+  has(worldModel, `projects ${word(eventSummary.classifications)} classification facts, ${word(behavior.eventDependencies.filter((row) => row.status === "unresolved").length)} unresolved lifecycle dependency facts`);
   has(worldModel, `the ${count(invocations.denominator)}-invocation census`);
 });
