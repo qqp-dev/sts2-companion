@@ -268,6 +268,20 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual((len(initial["owners"]), len(initial["facts"]), len(initial["runtimeStateContracts"])), (108, 111, 47))
         self.assertEqual(len(initial["powerHookClosure"]), 41)
         self.assertEqual(sum(len(row["declarations"]) for row in initial["externalHookBoundary"]), 29)
+        hatch = next(
+            row for row in initial["facts"]
+            if row["factId"] == "SOURCE.INITIAL.MONSTER.TOUGH_EGG.AFTERADDEDTOROOM.000.APPLYPOWER"
+        )["baseValue"]["expression"]
+        self.assertEqual(hatch["condition"]["operator"], "equal")
+        self.assertEqual(hatch["condition"]["right"], {"kind": "constant", "value": 2, "valueType": "integer"})
+        self.assertEqual(hatch["condition"]["left"]["domain"], {"minimum": 0, "maximum": 2})
+        self.assertEqual(hatch["whenTrue"]["expression"]["value"], 2)
+        self.assertEqual(hatch["whenFalse"]["expression"]["value"], 1)
+        current_side = next(
+            row for row in initial["runtimeStateContracts"]
+            if row["contractId"] == "RUNTIME.COMBAT.CURRENT_SIDE"
+        )
+        self.assertEqual(current_side["domain"], {"minimum": 0, "maximum": 2})
         self.assertNotIn("invocationDecisions", initial)
         self.assertNotIn("constructorDecisions", initial)
         self.assertNotIn("encounterInitializerDecisions", initial)
@@ -309,6 +323,11 @@ class EncounterProjectionTests(unittest.TestCase):
 
     def test_e2a_compact_mutations_fail_closed(self):
         def initial(a): return a["payload"]["sourceFacts"]["initialState"]
+        def tough_hatch(a):
+            return next(
+                row for row in initial(a)["facts"]
+                if row["factId"] == "SOURCE.INITIAL.MONSTER.TOUGH_EGG.AFTERADDEDTOROOM.000.APPLYPOWER"
+            )["baseValue"]["expression"]
         cases = [
             (lambda a: initial(a)["owners"].pop(), "all 108 owners"),
             (lambda a: initial(a)["facts"].pop(), "111 compact facts"),
@@ -320,6 +339,9 @@ class EncounterProjectionTests(unittest.TestCase):
             (lambda a: initial(a)["legacyComparisonFacts"].pop(), "all 57|expected all 57"),
             (lambda a: initial(a)["facts"][0].__setitem__("condition", {"kind": "guessedCondition"}), "unsupported initial condition"),
             (lambda a: initial(a).__setitem__("invocationDecisions", []), "unknown fields|proof bulk"),
+            (lambda a: tough_hatch(a)["condition"]["right"].__setitem__("value", 0), "evidence value digest|deterministic two-lane derivation"),
+            (lambda a: tough_hatch(a)["condition"]["left"]["domain"].__setitem__("maximum", 1), "evidence value digest|deterministic two-lane derivation"),
+            (lambda a: tough_hatch(a)["whenTrue"]["expression"].__setitem__("value", 1), "evidence value digest|deterministic two-lane derivation"),
         ]
         base_noop = next(i for i, row in enumerate(self.artifact["payload"]["sourceFacts"]["initialState"]["owners"])
                          if row["classification"] == "sourceProvenNoOp")

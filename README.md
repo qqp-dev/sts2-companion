@@ -269,8 +269,9 @@ initially reachable Power models across `BeforeApplied`, `AfterApplied`, and
 Named source facts include Aeonglass's custom Withering Presence target plus
 Artifact; Lagavulin Matriarch's `Sleep` helper; Cubex Construct's Block,
 Artifact, HP subscription, and state; the shared three-model Decimillipede hook;
-Punch Off HP reduction; Tough Egg's current-side Hatch branch and restored
-hatched branch; Mysterious Knight; and all three Battle Friends. Illusion's
+Punch Off HP reduction; Tough Egg's exact
+`(CurrentSide == 2) ? Hatch 2 : Hatch 1` branch and restored hatched branch;
+Mysterious Knight; and all three Battle Friends. Illusion's
 secondary Minion, Plating's player-count variable, and Galvanic/Vital Spark card
 afflictions are intrinsic Power-hook facts. The 19 relic `BeforeCombatStart`
 listeners and other run-owned listeners remain explicit external-runtime

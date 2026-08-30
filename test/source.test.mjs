@@ -586,7 +586,19 @@ test("E2a addition effects, helpers, relationships, and restored branches stay o
   const tough = factsFor("MONSTER.TOUGH_EGG");
   const hatch = tough.find((row) => row.effect.model === "POWER.HATCH_POWER");
   assert.equal(hatch.baseValue.expression.kind, "conditional");
-  assert.equal(hatch.baseValue.expression.condition.left.name, "combat.currentSide");
+  assert.deepEqual(hatch.baseValue.expression.condition, {
+    kind: "compare",
+    left: {
+      domain: { maximum: 2, minimum: 0 },
+      kind: "stateVariable", name: "combat.currentSide", valueType: "integer",
+    },
+    operator: "equal",
+    right: { kind: "constant", value: 2, valueType: "integer" },
+    valueType: "boolean",
+  });
+  const branchLiteral = (branch) => branch.kind === "convert" ? branch.expression.value : branch.value;
+  assert.equal(branchLiteral(hatch.baseValue.expression.whenTrue), 2);
+  assert.equal(branchLiteral(hatch.baseValue.expression.whenFalse), 1);
   assert.ok(tough.some((row) => row.condition.classification === "restoredHatchedState" && row.effect.kind === "setMaxAndCurrentHp"));
   assert.ok(tough.some((row) => row.condition.classification === "restoredHatchedState" && row.effect.kind === "forceMoveState"));
 
@@ -621,5 +633,7 @@ test("E2a selected Power hooks and runtime contracts are explicit", () => {
     assert.ok(contracts.get(id).domain);
     assert.ok(contracts.get(id).readSites.length > 0);
   }
+  assert.deepEqual(contracts.get("RUNTIME.COMBAT.CURRENT_SIDE").domain,
+    { maximum: 2, minimum: 0 });
   assert.deepEqual(artifact.observationIdentities.aliases, []);
 });

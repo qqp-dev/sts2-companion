@@ -27,6 +27,7 @@ from .cil_eval import (
     SymbolicValue,
     decode_method_signature,
     ensure_resolved,
+    integer_constant,
     value_expression,
 )
 from .errors import SourceExtractionError
@@ -227,7 +228,249 @@ def _target(value: SymbolicValue, invocation: Invocation, record: Mapping[str, A
         raise
 
 
-def _power_apply(invocation: Invocation, record: Mapping[str, Any]) -> tuple[str, str, dict[str, Any], list[int]]:
+_CURRENT_SIDE_GETTER = "MegaCrit.Sts2.Core.Combat.ICombatState::get_CurrentSide sig:200011aa6c"
+_COMBAT_SIDE_TYPE = "MegaCrit.Sts2.Core.Combat.CombatSide"
+
+
+def _combat_side_domain(assembly: AssemblyMetadata) -> dict[str, int]:
+    """Derive the closed Int32 enum domain consumed by CurrentSide."""
+    type_indexes = [index for index, name in assembly.type_names.items() if name == _COMBAT_SIDE_TYPE]
+    getter_indexes = assembly.find_methods("MegaCrit.Sts2.Core.Combat.ICombatState", "get_CurrentSide")
+    if len(type_indexes) != 1 or len(getter_indexes) != 1:
+        raise SourceExtractionError("CombatSide type/getter declaration is not unique")
+    type_index = type_indexes[0]
+    if assembly.base_by_type.get(_COMBAT_SIDE_TYPE) != "System.Enum":
+        raise SourceExtractionError("CombatSide is not a source-declared enum")
+    getter_signature = assembly.md.MethodDef.rows[getter_indexes[0] - 1].Signature.value.hex()
+    if getter_signature != _CURRENT_SIDE_GETTER.rsplit(" sig:", 1)[1]:
+        raise SourceExtractionError("CurrentSide getter type signature drift")
+
+    fields = list(assembly.md.TypeDef.rows[type_index - 1].FieldList)
+    underlying = [item for item in fields if str(item.row.Name) == "value__"]
+    literals = [item for item in fields if str(item.row.Name) != "value__"]
+    if len(underlying) != 1 or underlying[0].row.Signature.value.hex() != "0608" or not literals:
+        raise SourceExtractionError("CombatSide must have Int32 storage and declared literals")
+
+    constants: dict[int, int] = {}
+    table = getattr(assembly.md, "Constant", None)
+    if table is None:
+        raise SourceExtractionError("CombatSide metadata constants are absent")
+    for constant in table.rows:
+        parent = getattr(constant, "Parent", None)
+        if parent is None or getattr(parent, "table", None) is not assembly.md.Field:
+            continue
+        if constant.Type != 8:
+            continue
+        raw = constant.Value.value
+        if not isinstance(raw, bytes) or len(raw) != 4:
+            raise SourceExtractionError("CombatSide has a malformed Int32 constant")
+        if parent.row_index in constants:
+            raise SourceExtractionError("CombatSide literal has duplicate metadata constants")
+        constants[parent.row_index] = int.from_bytes(raw, "little", signed=True)
+
+    values: list[int] = []
+    for item in literals:
+        flags = item.row.Flags
+        if not flags.fdLiteral or not flags.fdStatic or not flags.fdHasDefault:
+            raise SourceExtractionError("CombatSide member is not a static literal with a default")
+        if item.row_index not in constants:
+            raise SourceExtractionError("CombatSide literal lacks an Int32 metadata constant")
+        values.append(constants[item.row_index])
+    unique = set(values)
+    minimum, maximum = min(unique), max(unique)
+    if len(values) != len(unique) or unique != set(range(minimum, maximum + 1)):
+        raise SourceExtractionError("CombatSide values cannot be represented as an exact integer interval")
+    return {"minimum": minimum, "maximum": maximum}
+
+
+def _current_side_join_expression(
+    value: SymbolicValue, record: Mapping[str, Any], sink_index: int,
+    current_side_domain: Mapping[str, int],
+) -> tuple[dict[str, Any], set[int]]:
+    """Decode the supported CIL conditional join without inventing its predicate.
+
+    ``CilDataFlow`` intentionally merges values rather than control predicates.
+    Initial Power amounts may nevertheless use a two-arm integer choice. Accept
+    that join only when an exact CurrentSide comparison dominates both symbolic
+    alternatives and their individual origins prove which CFG successor
+    produced each arm.
+    """
+    if value.kind == "join":
+        joined = value
+        projected_values = list(joined.operands)
+    elif value.kind == "convert" and len(value.operands) == 1 and value.operands[0].kind == "join":
+        joined = value.operands[0]
+        # Copying all join origins onto both alternatives would erase the arm
+        # distinction. Retain only the outer conversion and selected arm.
+        wrapper_origins = value.origins - joined.origins
+        projected_values = [
+            SymbolicValue(
+                "convert", value.cil_type, value.data, (item,),
+                wrapper_origins | item.origins,
+            )
+            for item in joined.operands
+        ]
+    else:
+        raise SourceExtractionError(
+            f"unsupported conditional initial Power amount at instruction {sink_index}"
+        )
+
+    raw_values = list(joined.operands)
+    if len(raw_values) != 2:
+        raise SourceExtractionError(
+            f"initial Power conditional must have exactly two arms at instruction {sink_index}"
+        )
+    projected = [
+        value_expression(item, field_name="initial Power branch amount", instruction_index=sink_index)
+        for item in projected_values
+    ]
+
+    def scalar(expression: Mapping[str, Any]) -> str | int | None:
+        current = expression
+        while current.get("kind") == "convert":
+            current = current["expression"]
+        return current.get("value") if current.get("kind") == "constant" else None
+
+    scalar_values = [scalar(expression) for expression in projected]
+    if {str(item) for item in scalar_values} != {"1", "2"}:
+        raise SourceExtractionError(
+            f"unsupported initial Power conditional values at instruction {sink_index}: {scalar_values}"
+        )
+    value_types = {expression["valueType"] for expression in projected}
+    if len(value_types) != 1:
+        raise SourceExtractionError(
+            f"initial Power conditional arm types differ at instruction {sink_index}"
+        )
+
+    instructions = record.get("instructions")
+    if not isinstance(instructions, list) or not 0 <= sink_index < len(instructions):
+        raise SourceExtractionError(f"invalid initial Power sink index {sink_index}")
+    offset_to_index: dict[int, int] = {}
+    for index, row in enumerate(instructions):
+        if not isinstance(row, Mapping) or not isinstance(row.get("opcode"), str):
+            raise SourceExtractionError(f"malformed initial Power CIL instruction {index}")
+        offset = row.get("offsetDiagnostic", index)
+        if type(offset) is not int or offset in offset_to_index:
+            raise SourceExtractionError(f"invalid initial Power CIL offset at instruction {index}")
+        offset_to_index[offset] = index
+
+    def target(index: int) -> int:
+        operand = instructions[index].get("operand")
+        if type(operand) is not int or operand not in offset_to_index:
+            raise SourceExtractionError(
+                f"unresolved initial Power branch target at instruction {index}: {operand!r}"
+            )
+        return offset_to_index[operand]
+
+    conditional_prefixes = ("brtrue", "brfalse", "beq", "bne", "bge", "bgt", "ble", "blt")
+
+    def successors(index: int) -> list[int]:
+        row = instructions[index]
+        opcode = row["opcode"]
+        following = index + 1
+        if opcode in {"ret", "throw"}:
+            return []
+        if opcode in {"br", "br.s", "leave", "leave.s"}:
+            return [target(index)]
+        if opcode == "switch":
+            operand = row.get("operand")
+            if not isinstance(operand, list) or any(
+                type(item) is not int or item not in offset_to_index for item in operand
+            ):
+                raise SourceExtractionError(f"unresolved initial Power switch at instruction {index}")
+            result = [offset_to_index[item] for item in operand]
+            if following < len(instructions):
+                result.append(following)
+            return result
+        if opcode.startswith(conditional_prefixes):
+            result = [target(index)]
+            if following < len(instructions):
+                result.append(following)
+            return result
+        return [following] if following < len(instructions) else []
+
+    def reachable(start: int) -> tuple[set[int], bool]:
+        active = [start]
+        seen: set[int] = set()
+        reached_sink = False
+        while active:
+            index = active.pop()
+            if index == sink_index:
+                reached_sink = True
+                continue
+            if index in seen:
+                continue
+            if not 0 <= index < sink_index:
+                # An arm escaping past the sink cannot produce its argument.
+                continue
+            seen.add(index)
+            active.extend(successors(index))
+        return seen, reached_sink
+
+    candidates: list[tuple[dict[str, Any], set[int]]] = []
+    for branch_index in range(2, sink_index):
+        opcode = instructions[branch_index]["opcode"]
+        if opcode not in {"beq", "beq.s", "bne", "bne.un", "bne.un.s"}:
+            continue
+        getter = instructions[branch_index - 2]
+        comparison = instructions[branch_index - 1]
+        if getter.get("opcode") not in {"call", "callvirt"} or getter.get("operand") != _CURRENT_SIDE_GETTER:
+            continue
+        comparison_value = integer_constant(comparison)
+        if comparison_value is None:
+            continue
+
+        branch_nodes, branch_reaches_sink = reachable(target(branch_index))
+        fallthrough_nodes, fallthrough_reaches_sink = reachable(branch_index + 1)
+        if not branch_reaches_sink or not fallthrough_reaches_sink:
+            continue
+        branch_only = branch_nodes - fallthrough_nodes
+        fallthrough_only = fallthrough_nodes - branch_nodes
+        branch_arms = [
+            i for i, item in enumerate(raw_values)
+            if item.origins & branch_only and not item.origins & fallthrough_only
+        ]
+        fallthrough_arms = [
+            i for i, item in enumerate(raw_values)
+            if item.origins & fallthrough_only and not item.origins & branch_only
+        ]
+        if len(branch_arms) != 1 or len(fallthrough_arms) != 1 or branch_arms[0] == fallthrough_arms[0]:
+            continue
+
+        operator = "equal" if opcode.startswith("beq") else "notEqual"
+        condition = {
+            "kind": "compare", "operator": operator,
+            "left": {
+                "kind": "stateVariable", "name": "combat.currentSide",
+                "valueType": "integer", "domain": dict(current_side_domain),
+            },
+            "right": {"kind": "constant", "value": comparison_value, "valueType": "integer"},
+            "valueType": "boolean",
+        }
+        expression = {
+            "condition": condition, "kind": "conditional", "valueType": next(iter(value_types)),
+            "whenFalse": projected[fallthrough_arms[0]],
+            "whenTrue": projected[branch_arms[0]],
+        }
+        control_origins = {branch_index - 2, branch_index - 1, branch_index}
+        control_origins.update(
+            index for index in branch_only | fallthrough_only
+            if instructions[index]["opcode"] in {"br", "br.s", "leave", "leave.s"}
+        )
+        candidates.append((expression, control_origins))
+
+    if len(candidates) != 1:
+        raise SourceExtractionError(
+            f"initial Power conditional requires one exact CurrentSide comparison at instruction {sink_index}; "
+            f"found {len(candidates)}"
+        )
+    return candidates[0]
+
+
+def _power_apply(
+    invocation: Invocation, record: Mapping[str, Any], *,
+    current_side_domain: Mapping[str, int] | None = None,
+) -> tuple[str, str, dict[str, Any], list[int]]:
     owner, member = _owner_member(invocation.symbol)
     if owner != "MegaCrit.Sts2.Core.Commands.PowerCmd" or member != "Apply":
         raise SourceExtractionError(f"not a PowerCmd.Apply invocation: {invocation.symbol}")
@@ -243,44 +486,19 @@ def _power_apply(invocation: Invocation, record: Mapping[str, Any]) -> tuple[str
     if not model or not model.startswith("POWER."):
         raise SourceExtractionError(f"unresolved initial Power model at instruction {invocation.index}")
     target = _target(args[target_index], invocation, record)
+    condition_origins: set[int] = set()
     try:
         amount = value_expression(args[amount_index], field_name="initial Power amount", instruction_index=invocation.index)
     except SourceExtractionError:
-        # The only accepted join form is an exact two-branch 1/2 choice guarded
-        # by CombatState.CurrentSide in the same pre-sink slice.
-        value = args[amount_index]
-        if value.kind == "join":
-            alternatives = list(value.operands)
-        elif value.kind == "convert" and len(value.operands) == 1 and value.operands[0].kind == "join":
-            alternatives = [SymbolicValue("convert", value.cil_type, value.data, (item,), value.origins | item.origins)
-                            for item in value.operands[0].operands]
-        else:
-            alternatives = []
-        projected = [value_expression(item, field_name="initial Power branch amount", instruction_index=invocation.index)
-                     for item in alternatives]
-        def scalar(expression: Mapping[str, Any]) -> str | int | None:
-            current = expression
-            while current.get("kind") == "convert": current = current["expression"]
-            return current.get("value") if current.get("kind") == "constant" else None
-        by_value = {str(scalar(expression)): expression for expression in projected}
-        prefix = record["instructions"][:invocation.index]
-        current_side = [i for i, row in enumerate(prefix) if isinstance(row.get("operand"), str)
-                        and "ICombatState::get_CurrentSide sig:" in row["operand"]]
-        value_types = {expression["valueType"] for expression in projected}
-        if set(by_value) != {"1", "2"} or len(current_side) != 1 or len(value_types) != 1:
-            raise
-        result_type = value_types.pop()
-        amount = {
-            "condition": {
-                "kind": "compare", "operator": "equal",
-                "left": {"kind": "stateVariable", "name": "combat.currentSide", "valueType": "integer", "domain": {"minimum": 0, "maximum": 1}},
-                "right": {"kind": "constant", "value": 0, "valueType": "integer"}, "valueType": "boolean",
-            },
-            "kind": "conditional", "valueType": result_type,
-            "whenFalse": by_value["2"], "whenTrue": by_value["1"],
-        }
+        if current_side_domain is None:
+            raise SourceExtractionError(
+                f"conditional initial Power amount lacks a derived CurrentSide domain at instruction {invocation.index}"
+            )
+        amount, condition_origins = _current_side_join_expression(
+            args[amount_index], record, invocation.index, current_side_domain
+        )
     validate_expression(amount)
-    origins = set(args[target_index].origins) | set(args[amount_index].origins) | {invocation.index}
+    origins = set(args[target_index].origins) | set(args[amount_index].origins) | condition_origins | {invocation.index}
     if power_value is not None:
         origins.update(power_value.origins)
     return model, target, amount, sorted(origins)
@@ -429,6 +647,7 @@ def _claim_helper(seen: set[int], method_index: int, symbol: str) -> None:
 
 def _after_added(
     assembly: AssemblyMetadata, assembly_sha256: str, source_to_model: Mapping[str, str],
+    current_side_domain: Mapping[str, int],
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], dict[str, int], dict[str, str]]:
     async_methods = _async_map(assembly)
     implementation_models: dict[int, list[str]] = defaultdict(list)
@@ -461,7 +680,7 @@ def _after_added(
         for index, invocation in sorted(invocations.items()):
             owner, member = _owner_member(invocation.symbol)
             if owner == "MegaCrit.Sts2.Core.Commands.PowerCmd" and member == "Apply":
-                model, target, amount, origins = _power_apply(invocation, record)
+                model, target, amount, origins = _power_apply(invocation, record, current_side_domain=current_side_domain)
                 generic = re.search(r"generic:(MegaCrit\.Sts2\.Core\.Models\.Powers\.[A-Za-z0-9]+)$", invocation.symbol)
                 if generic: power_types[model] = generic.group(1)
                 else:
@@ -669,7 +888,7 @@ def _after_added(
         for index, invocation in sorted(invocations.items()):
             call_owner, member = _owner_member(invocation.symbol)
             if call_owner == "MegaCrit.Sts2.Core.Commands.PowerCmd" and member == "Apply":
-                model, target, amount, origins = _power_apply(invocation, record)
+                model, target, amount, origins = _power_apply(invocation, record, current_side_domain=current_side_domain)
                 generic = re.search(r"generic:(MegaCrit\.Sts2\.Core\.Models\.Powers\.[A-Za-z0-9]+)$", invocation.symbol)
                 if not generic: raise SourceExtractionError(f"helper custom Power type unresolved: {invocation.symbol}")
                 power_types[model] = generic.group(1)
@@ -753,7 +972,10 @@ def _after_added(
     return owners, facts, decisions, dict(sorted(direct_counts.items())), power_types
 
 
-def _runtime_contracts(facts: Sequence[Mapping[str, Any]], assembly: AssemblyMetadata, assembly_sha256: str) -> list[dict[str, Any]]:
+def _runtime_contracts(
+    facts: Sequence[Mapping[str, Any]], assembly: AssemblyMetadata, assembly_sha256: str,
+    current_side_domain: Mapping[str, int],
+) -> list[dict[str, Any]]:
     members: dict[str, list[Mapping[str, Any]]] = defaultdict(list)
     for fact in facts:
         member = fact["effect"].get("member")
@@ -850,7 +1072,7 @@ def _runtime_contracts(facts: Sequence[Mapping[str, Any]], assembly: AssemblyMet
     contracts.extend([
         {
             "consumerMeaning": "side selecting Tough Egg Hatch amount", "contractId": "RUNTIME.COMBAT.CURRENT_SIDE",
-            "default": None, "domain": {"maximum": 1, "minimum": 0}, "owner": "combatState",
+            "default": None, "domain": dict(current_side_domain), "owner": "combatState",
             "ownership": "combatState", "readSites": [{"classification": "sourceGetter", "symbolSignature": "MegaCrit.Sts2.Core.Combat.ICombatState::get_CurrentSide sig:200011aa6c"}],
             "sourceInputs": [], "sourceMember": "MegaCrit.Sts2.Core.Combat.ICombatState::get_CurrentSide sig:200011aa6c",
             "sourceType": "MegaCrit.Sts2.Core.Combat.ICombatState", "unit": "side", "updateSites": [], "valueType": "integer",
@@ -1170,9 +1392,12 @@ def extract_initial_state(
         raise SourceExtractionError(f"initial-state reachable model denominator is not exact: {len(source_to_model)}")
     reachable=set(source_to_model.values()); encounter_ids={row["canonicalId"] for row in encounters}
     if len(encounters)!=89 or len(encounter_ids)!=89: raise SourceExtractionError("initial-state encounter denominator is not exact")
+    current_side_domain = _combat_side_domain(assembly)
     roots,generator_facts,initializer_decisions=_encounter_initializers(assembly,assembly_sha256,encounters,reachable)
     constructor_facts,constructor_decisions=_constructor_defaults(assembly,assembly_sha256,source_to_model)
-    owners,hook_facts,hook_decisions,direct_counts,power_types=_after_added(assembly,assembly_sha256,source_to_model)
+    owners,hook_facts,hook_decisions,direct_counts,power_types=_after_added(
+        assembly,assembly_sha256,source_to_model,current_side_domain
+    )
     power_rows,power_facts,power_decisions=_power_hook_closure(assembly,assembly_sha256,power_types)
     facts=sorted(generator_facts+constructor_facts+hook_facts+power_facts,key=lambda row:row["factId"])
     scaled_powers = {row["canonicalPower"] for row in (power_scaling or {}).get("optIns", [])}
@@ -1181,7 +1406,7 @@ def extract_initial_state(
             fact["finalValueContract"]["scalingRefs"] = ["multiplayerScaling.power"]
     decisions=sorted(hook_decisions+power_decisions,key=lambda row:row["decisionId"])
     boundaries,chain=_external_boundaries(assembly,assembly_sha256)
-    contracts=_runtime_contracts(facts,assembly,assembly_sha256)
+    contracts=_runtime_contracts(facts,assembly,assembly_sha256,current_side_domain)
     result={
         "constructorDecisions":sorted(constructor_decisions,key=lambda row:row["decisionId"]),
         "encounterInitializerDecisions":sorted(initializer_decisions,key=lambda row:row["decisionId"]),

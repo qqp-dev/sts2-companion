@@ -12,7 +12,7 @@ SOURCE_EXTRACTOR_VERSION = "6.0.0"
 
 SOURCE_ARTIFACT = {
     "id": "INPUT.SOURCE", "path": "data/game-v0.111.0-source.json",
-    "sha256": "50e90d196fe6441d59e1864d1c21eab2b15a69cd111e41c96178c9ac23013b43", "size": 11749658,
+    "sha256": "6f3a9aedccdb129d6dcc6ab3942d91a5db39f9b83bab82997d0de476c7dfea39", "size": 11749658,
 }
 LEGACY_ARTIFACT = {
     "id": "INPUT.LEGACY", "path": "data/encounters.json",

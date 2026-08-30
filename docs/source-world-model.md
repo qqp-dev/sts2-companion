@@ -397,8 +397,11 @@ from an intrinsic baseline.
 Helper traversal is mandatory. Lagavulin's `Sleep` writes awake state and
 applies Plating/Asleep. Illusion `AfterApplied` applies Minion conditionally;
 Plating writes a player-count dynamic variable. Galvanic and Vital Spark afflict
-eligible player cards before combat. Tough Egg preserves both the current-side
-conditional Hatch amount and restored-hatched helper branch. Decimillipede's
+eligible player cards before combat. Tough Egg preserves the exact
+`(CurrentSide == 2) ? Hatch 2 : Hatch 1` amount and restored-hatched helper
+branch. Its `CurrentSide` contract derives the closed `CombatSide` enum domain
+`None=0`, `Player=1`, and `Enemy=2` from CLI metadata rather than inventing a
+range. Decimillipede's
 shared HP algorithm remains a dynamic source contract rather than a fabricated
 static number.
 

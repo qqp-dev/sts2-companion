@@ -44,12 +44,12 @@
       "name": "sts2-encounter-facts",
       "version": "3.0.0"
     },
-    "payloadSha256": "ec0e69e6cd71a4f22b59b1d178b5d59363feddcf2f00ece276356de0ef119b66",
+    "payloadSha256": "502185f9f77615b8779d528caf6cbf2847b0e1481c19145c577315747dc5c88c",
     "projectionInputs": [
       {
         "id": "INPUT.SOURCE",
         "path": "data/game-v0.111.0-source.json",
-        "sha256": "50e90d196fe6441d59e1864d1c21eab2b15a69cd111e41c96178c9ac23013b43",
+        "sha256": "6f3a9aedccdb129d6dcc6ab3942d91a5db39f9b83bab82997d0de476c7dfea39",
         "size": 11749658
       },
       {
@@ -8747,7 +8747,7 @@
         "pointers": [
           {
             "jsonPointer": "/initialState/initialStateFacts/95",
-            "valueSha256": "440aedbe112b2656cddd16c8269cd98d73c43a03dae87921dc881781b090ccba"
+            "valueSha256": "de99a3161de2a31765154e5b39dd243a024a47591aae6c1ac6eabf08517d6e98"
           }
         ]
       },
@@ -9694,7 +9694,7 @@
         "pointers": [
           {
             "jsonPointer": "/initialState/initialStateFacts/95",
-            "valueSha256": "440aedbe112b2656cddd16c8269cd98d73c43a03dae87921dc881781b090ccba"
+            "valueSha256": "de99a3161de2a31765154e5b39dd243a024a47591aae6c1ac6eabf08517d6e98"
           },
           {
             "jsonPointer": "/initialState/initialStateFacts/96",
@@ -20408,7 +20408,7 @@
         "pointers": [
           {
             "jsonPointer": "/initialState/runtimeStateContracts/0",
-            "valueSha256": "ccbe167f4c2a957e01d32794b226117eae4cf3361e2443c9ef896e1631b02986"
+            "valueSha256": "f4d8b93aa3dda2f5e7b5764130e8776aeb62645e7c1b2cdb06157503cce84068"
           }
         ]
       },
@@ -69478,7 +69478,7 @@
                   "kind": "compare",
                   "left": {
                     "domain": {
-                      "maximum": 1,
+                      "maximum": 2,
                       "minimum": 0
                     },
                     "kind": "stateVariable",
@@ -69488,7 +69488,7 @@
                   "operator": "equal",
                   "right": {
                     "kind": "constant",
-                    "value": 0,
+                    "value": 2,
                     "valueType": "integer"
                   },
                   "valueType": "boolean"
@@ -69498,7 +69498,7 @@
                 "whenFalse": {
                   "expression": {
                     "kind": "constant",
-                    "value": 2,
+                    "value": 1,
                     "valueType": "integer"
                   },
                   "fromType": "integer",
@@ -69510,7 +69510,7 @@
                 "whenTrue": {
                   "expression": {
                     "kind": "constant",
-                    "value": 1,
+                    "value": 2,
                     "valueType": "integer"
                   },
                   "fromType": "integer",
@@ -76254,7 +76254,7 @@
             "contractId": "RUNTIME.COMBAT.CURRENT_SIDE",
             "default": null,
             "domain": {
-              "maximum": 1,
+              "maximum": 2,
               "minimum": 0
             },
             "factId": "SOURCE.RUNTIME.COMBAT.CURRENT_SIDE",

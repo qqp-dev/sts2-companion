@@ -169301,7 +169301,7 @@
               "kind": "compare",
               "left": {
                 "domain": {
-                  "maximum": 1,
+                  "maximum": 2,
                   "minimum": 0
                 },
                 "kind": "stateVariable",
@@ -169311,7 +169311,7 @@
               "operator": "equal",
               "right": {
                 "kind": "constant",
-                "value": 0,
+                "value": 2,
                 "valueType": "integer"
               },
               "valueType": "boolean"
@@ -169321,7 +169321,7 @@
             "whenFalse": {
               "expression": {
                 "kind": "constant",
-                "value": 2,
+                "value": 1,
                 "valueType": "integer"
               },
               "fromType": "integer",
@@ -169333,7 +169333,7 @@
             "whenTrue": {
               "expression": {
                 "kind": "constant",
-                "value": 1,
+                "value": 2,
                 "valueType": "integer"
               },
               "fromType": "integer",
@@ -169373,8 +169373,8 @@
           "metadataSignature": "200001",
           "methodBodySha256": "15bf8a5986e3fb2690a5c5ebb8a800d3570599461adff6a88066d80317a70ca4",
           "normalizedInstructionsSha256": "2bb4c1fc962911a3d33e7ff27e6c12a5a1ce474410c0d73a678a99754e214e0a",
-          "normalizedSliceSha256": "5639f4145c32620b26adc85c4914e2e89be55652c52423f3bf9c37f1421c089b",
-          "semanticWitnessSha256": "de46f2a7617436ea907671843a4f4707910e22d634c2a2c171b4e0d95b9b01d7",
+          "normalizedSliceSha256": "96a843c37ac703f0fc8d90235cc778e7fe5bc06c4e337d0551980a1c5cd4055c",
+          "semanticWitnessSha256": "b80c553f01bce8a3d1988019d57861c91a6e54144ac6f61dd95ab34dd22289b3",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.ToughEgg+<AfterAddedToRoom>d__33::MoveNext sig:200001"
         },
         "recipient": {
@@ -195996,7 +195996,7 @@
         "contractId": "RUNTIME.COMBAT.CURRENT_SIDE",
         "default": null,
         "domain": {
-          "maximum": 1,
+          "maximum": 2,
           "minimum": 0
         },
         "owner": "combatState",
