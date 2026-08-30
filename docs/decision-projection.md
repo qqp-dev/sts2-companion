@@ -1,17 +1,19 @@
 # Decision projection contract
 
-> **Status:** design contract for a future source-first consumer. This document
-> does not describe current runtime output. The checked E1 projection is static,
-> `runtimeReady: false`, and is not imported by the app. Current observation has
-> encounter lifecycle/identity only, plus final completed-room encounter, model,
-> act, and room IDs. It does **not** observe a live turn, HP, Block, Powers,
-> intents, move history, counters, hand/deck, model state/phase, or survivors.
-> Stable `/sts2` remains legacy-backed and is outside this design change.
+> **Status:** reconciled contract for the opt-in C1 source shadow and future
+> evidence-gated callouts. `/sts2/source` consumes the checked compact projection
+> through one validated adapter and renders a static mechanics capsule. Stable
+> `/sts2` remains legacy-backed. Current observation has encounter
+> lifecycle/identity only, plus final completed-room encounter/model IDs. It does
+> **not** observe a live turn, HP, Block, Powers, intents, move history, counters,
+> hand/deck, model state/phase, or survivors. Live decision frames and editorial
+> callouts remain future work; current `callouts: []` means zero checked records.
 
-This contract defines how an authoritative decoded combat blueprint should be
-reduced into the smallest useful human **thinking window**. Normative words such
-as MUST and MUST NOT apply to a future decision projection implementation.
-Examples are fixtures, not captured gameplay or current API responses.
+This contract defines a rich static mechanics capsule as the primary projection
+of an authoritative decoded combat blueprint, with an additive evidence-gated
+collection of useful human **thinking windows**. Normative words apply to the
+current static shadow where implemented and to future callout/live-frame work as
+labeled. Examples are fixtures, not captured gameplay or observed outcomes.
 
 ## 1. Problem and non-goals
 
@@ -21,14 +23,16 @@ graphs, applicability, evidence, and authority machinery. A decision surface has
 a different job: expose the few consequences and counterfactual breakpoints that
 can change a choice within a declared horizon.
 
-A universal static monster summary cannot do that job. Whether a fact matters
+A rich static mechanics capsule can honestly explain rules and conditions, but
+cannot by itself justify a present-tense imperative. Whether a fact matters
 depends on the realized lineup and state, current HP/Block/Powers, move history,
 ordered hooks, hidden/random branches, available interventions, and the horizon.
 For example, an on-death replacement rule may dominate a lethal-damage decision
 but be irrelevant to a pure Block threshold; a Frail application matters before
 a later defense window but not after the fight ends. Listing every move is too
 large, while choosing one move without state turns possibility into prediction.
-Static material can supply encounter grammar, never the missing temporal cut.
+Static material supplies encounter grammar and source-backed conditional
+mechanics; it never supplies a missing current temporal cut.
 
 This design therefore separates:
 
@@ -67,70 +71,84 @@ energy, Block, intent, or Power rows merely to look complete. `NOW` repeats an
 observed value only when the value is needed to understand a derived threshold,
 resolve ambiguity, establish freshness, or identify a less-visible state.
 
-### Collapsed micro-card contract
+### Tactical callout collection and individual-card budget
 
-The previous six-row surface was still too much. The future default is **zero or
-one room-level tactical micro-card for the whole encounter**—not one card per
-enemy and not six simultaneous rows. A card answers; it does not prove.
+The rich static mechanics capsule is the primary product. Tactical callouts are
+an additive **evidence-gated collection with cardinality `0..N`**. The reducer
+MUST independently evaluate every candidate and MUST retain every distinct
+candidate that passes. It MUST NOT use scarcity, a per-fight quota, enemy count,
+lack of live observation, or available screen rows as an eligibility gate.
 
-A selected card has this visible shape:
+Each candidate is evaluated on all seven gates:
 
-1. **Headline:** one answer or threshold, such as `FOCUS A`, `BLOCK 18`,
-   `NO FOCUS`, `A ↔ B`, or `UNKNOWN`.
-2. **Why:** at most one short effect delta containing the decisive number/effect
-   and, when it is not already unambiguous, the one primary horizon.
-3. **Flip/next:** optionally, one short line naming the single uncertainty,
-   condition, or competing fact that can reverse the headline.
+1. the player can control the named choice;
+2. the mechanic is non-obvious enough to merit a callout;
+3. the consequence is materially useful;
+4. the claim is robust across ordinary states covered by its condition;
+5. checked source facts support it;
+6. its causal chain can be explained from cited facts; and
+7. it is distinct from other passing candidates.
 
-The hard collapsed budget is:
+A callout MUST carry `factRefs`, `conditionRefs`, and `causalRefs`. A
+`static-conditional` callout may say “if/when X, choosing Y causes Z” without a
+live observation. A `live-imperative` such as “do Y now” additionally requires a
+fresh current-state observation and exact observation refs. Missing runtime
+inputs suppress only unsupported present-tense imperatives or affected clauses;
+they do not suppress a source-backed conditional mechanic.
 
-- at most **three visible text rows including the headline**, with two rows the
-  target;
-- at most one primary horizon, selected because it changes the current decision;
-- at most two consequence coordinates total, with one preferred;
-- at most one alternative or runner-up, omitted under strict dominance;
-- at most one visible uncertainty or condition. If several material unknowns can
-  change the answer, the headline becomes `UNKNOWN` and the reason names only the
-  highest-priority unresolved boundary or says `multiple decisive inputs
-  unresolved`, never a caveat list; and
-- no catalogs, per-target tables, source/lane labels, confidence prose, enemy
-  move titles/IDs, full effect sequences, audit refs, or repeated visible game
-  state.
+Source-confirmed phase control is eligible when the record names the
+player-controllable choice, the exact phase/turn mechanism, how that choice keeps
+multi-enemy attacks staggered, and the synchronized spike it avoids. It MUST NOT
+guess the encounter, phase, or mechanism. The extractor remains editorially
+neutral and does not manufacture these records.
 
-A compact target locator—portrait, left/middle/right, or a short enemy name—is
-allowed only when needed to make the answer actionable. It identifies a target,
-not an enemy move. The full target frontier MUST NOT appear collapsed.
+A collapsed phone view MAY rank and show a subset. It MUST show the total passing
+count and provide one expansion path to all passing records. Ranking is stable
+and presentation-only; it MUST NOT delete or demote a passing record out of the
+collection. Distinctness deduplication may combine records only when they declare
+the same semantic `distinctnessKey`; the retained/duplicate IDs remain auditable.
 
-`NOW`, `IN`, `BREAK`/`FOCUS`, `OUT`/`NEXT`, `CLOCK`, and `?` have no reserved
-visible rows. One may appear only when it is itself the selected answer or the
-single flip line. Empty chunks are forbidden. If nothing crosses the relevance
-threshold, rendering no tactical card is valid and preferable to filler.
+Each **individual card**, not the collection, has this cognitive budget:
 
-### Deterministic card selection
+1. one headline or conditional mechanic;
+2. one short causal/effect line; and
+3. optionally one short condition/flip line.
 
-Selection is a reducer operation over typed claims, not a renderer inference:
+Thus each individual card has at most three visible text rows, one primary
+horizon, two consequence coordinates, one alternative, and one visible
+condition. Additional conditions, frontier rows, operations, and proof stay in
+that card's expansion. These per-card limits never cap the number of candidate
+cards. Enemy move titles/IDs, full operation lists, audit refs, and repeated HUD
+state stay out of collapsed cards but remain in exact detail.
 
-1. **Safety gate.** First reject a contradiction or stale required input that
-   invalidates the cut; it fails closed to `UNKNOWN`, and no derived conclusion
-   may survive it. Among valid claims, a decision-relevant lethal result or
-   safety-critical unknown wins over every ordinary candidate.
-2. **Relevance gate.** Discard claims that do not satisfy the relevance predicate
-   at the observation cut. Admit `FOCUS` only when a realized multi-enemy
-   frontier changes the current action class; enemy count alone is insufficient.
-3. **Sensitivity rank.** Select the eligible claim with the greatest decision
-   sensitivity: the one whose truth or threshold changes the current action
-   class. Ties go to the earliest decision-changing consequence
-   boundary, then to an irreversible consequence over a reversible one. A final
-   exact tie uses stable `claimId` order only to make display deterministic; it
-   does not imply mechanical superiority.
-4. **Answer form.** Proven strict dominance gets a direct headline and no
-   runner-up. A Pareto tradeoff gets `A ↔ B` and one differentiating coordinate
-   per candidate; policy and all other candidates remain tap-through. If no
-   removal is reachable, or a non-removal scenario dominates, emit `NO FOCUS`
-   with one reason. More than one material uncertainty emits `UNKNOWN`, not a
-   list.
-5. **Null result.** If no candidate changes the current action class, return no
-   card. The reducer MUST NOT promote a lower-value fact merely to occupy space.
+An empty collection is honest only when zero distinct candidates pass the seven
+evidence gates (or all otherwise-passing live imperatives lack their required
+observation). It is not a target count and MUST NOT cause filler. Conversely,
+lack of live turn observation alone never suppresses source-backed static
+conditional callouts.
+
+### Deterministic independent evaluation, deduplication, and ranking
+
+The reducer performs these operations without a collection quota:
+
+1. **Validate support.** Reject malformed records, lane conflation, absent basis
+   refs, and unsupported present-tense language.
+2. **Evaluate independently.** Record pass/fail for each of the seven gates. One
+   candidate's score or presence cannot make another candidate fail.
+3. **Apply observation language.** Preserve static conditional records without
+   live state. Reject a live imperative unless all required current observation
+   refs are present and fresh.
+4. **Deduplicate by declared semantics.** Group only exact
+   `distinctnessKey` duplicates and retain an audit mapping.
+5. **Rank stably.** Sort passing distinct records by declared rank and stable ID.
+   Rank determines collapsed order, not collection membership.
+6. **Render transparently.** Return all passing records, `total`, the collapsed
+   subset/count, and `hasMore`/expand state.
+
+Safety-critical contradictions remain explicit `UNKNOWN` callouts when their own
+record passes the gates and cites the contradiction. A multi-enemy encounter does
+not itself imply `FOCUS`; a focus or phase-control callout must establish its
+actual causal mechanism and conditions.
 
 ### Internal query taxonomy and expanded model
 
@@ -164,21 +182,19 @@ missing semantics.
 
 Information is progressively disclosed:
 
-1. **Decision surface:** zero or one room-level micro-card, normally a headline
-   and one decisive effect line, with an optional single flip line.
-2. **Expanded decision/fight view:** the six query families; race only under a
-   declared policy; otherwise windows, clocks, the complete horizon-qualified
-   removal frontier, recurrence, and persistent or irreversible costs.
-3. **Exact detail:** ordered operations, formulas, branch conditions, missing
-   inputs, rule/input references, and any action ID/title needed for source joins
-   or trace disambiguation for each claim.
-4. **Audit:** untouched lane facts, conflicts, checked evidence pointers, and raw
-   source projection objects.
+1. **Primary static mechanics capsule:** roster, variants, HP/formulas, initial
+   state, moves/operations/graphs, production, events, lifecycle, and unknowns.
+2. **Collapsed tactical collection:** a ranked subset of passing callouts with an
+   explicit total count and expansion path. It may be empty but is never the
+   primary mechanics surface.
+3. **Expanded decision/fight view:** every passing callout plus the six query
+   families, complete frontiers, clocks, conditions, and persistent costs.
+4. **Exact detail and audit:** ordered operations, formulas, missing inputs,
+   rule/input refs, untouched lane facts, conflicts, and evidence pointers.
 
-Suppression at a higher level is view compression only. Every headline, reason,
-and flip MUST link through one tap to its exact claim, full frontier where
-applicable, provenance, and raw facts. Omission MUST NOT delete or rewrite
-lower-level facts.
+Suppression at a higher level is view compression only. Every displayed callout
+MUST link to exact support, and every passing callout MUST remain reachable.
+Omission MUST NOT delete, rewrite, or silently discard a lower-level record.
 
 ## 3. The two products
 
@@ -227,11 +243,12 @@ in state. END NOW is a counterfactual reference point, not advice to end the
 turn. This definition avoids an implicit “typical play” policy and makes every
 `BREAK` delta auditable.
 
-If the live observation cannot identify a required state, the result remains a
-set, conditional, range, or unknown. If no safe live frame can be formed, the
-selector emits `UNKNOWN` with one reason when the failure is safety-critical, or
-no tactical card otherwise. A `NOT LIVE` capsule remains available in expanded
-reference detail; it never looks current.
+If an observation cannot identify a required state, affected results remain a
+set, conditional, range, or unknown. Unsupported “do it now” language is
+suppressed. The primary mechanics capsule and any independently qualifying
+source-backed static conditional callouts remain available and are labeled
+`STATIC`, never made to look current. Safety-critical observation failures may
+produce their own evidence-backed `UNKNOWN` callout.
 
 ## 4. What matters at each horizon
 
@@ -860,10 +877,11 @@ and lane refs.
 
 ### Static capsule available from the current knowledge boundary
 
-This six-line Axebot capsule is illustrative **expanded reference detail** that
-could be built offline from E1. It is not a collapsed tactical card. With no live
-observation the default tactical surface may be empty; opening reference detail
-never says which branch is current and uses only effect signatures:
+This Axebot capsule is illustrative **primary static mechanics detail** that can
+be built offline. It does not predict a current branch. Lack of live observation
+forbids present-tense imperatives, but it does not suppress independently
+qualified static conditional callouts; all use effect signatures and explicit
+conditions:
 
 ```text
 CAPSULE Axebot · Glory regular · A9/1P params · NOT LIVE
@@ -989,6 +1007,17 @@ satisfy a source-required gate or turn a derived claim into source certainty.
    observations from final completed-room history.
 4. Reject mixed cuts that cannot be ordered. Do not carry a stale intent, HP,
    Power, or survivor forward by assumption.
+
+`matchingPolicy.prefixStripping:false` applies inside the source observation-ID
+domain: projection consumers MUST NOT strip a prefix to make an unrecognized
+source identity match. The existing state reader has a separate, stable wire
+boundary: `parseSave` converts an exact saved `MONSTER.*` wire ID to its
+unprefixed state model-ID representation. The shadow adapter first validates
+every checked projection mapping row, then applies that same pure reader
+conversion to the row's exact `observedId` to build a collision-checked secondary
+index. Looking up an already-normalized reader ID through that index is a
+representation bridge, not projection prefix stripping, an alias, or fuzzy
+matching. Output retains the reader ID, checked wire ID, and canonical model.
 
 Today this stage can identify encounter lifecycle and model IDs only within the
 limits described at the top of this document. It therefore routes to a capsule,
@@ -1129,22 +1158,71 @@ state- and horizon-dependent and must be recomputed after every observation cut.
 Facts used only to establish a displayed derivation remain available in its
 tap-through support even if they are not rendered as their own row.
 
-### 7.10 Select one card and retain audit paths
+### 7.10 Compile the `0..N` collection and retain audit paths
 
-Apply the deterministic safety, relevance, and sensitivity priority in
-[Collapsed micro-card contract](#collapsed-micro-card-contract), returning
-`null` when no claim qualifies. Render at most one room-level card from the
-selected typed claim: a headline, at most one reason, and optionally one flip
-line. Enforce the three-row/two-row-target, one-horizon, two-coordinate,
-one-alternative, and one-uncertainty limits before output. A decision-sensitive
-frontier may produce `FOCUS A`, `A ↔ B`, `NO FOCUS`, or `UNKNOWN`; its complete
-horizon/target matrix always remains tap-through.
+Apply the seven gates in [Tactical callout collection and individual-card
+budget](#tactical-callout-collection-and-individual-card-budget) independently to
+every candidate. Validate language and basis refs, reject unsupported records,
+deduplicate only exact declared semantic duplicates, and rank every remaining
+record stably. Return all passing records; never stop after the first pass.
+
+The collapsed renderer may show a ranked subset only while displaying `total`
+and an expand control that reaches every passing record. The three-row,
+one-horizon, two-coordinate, one-alternative, and one-condition limits apply to
+each individual card, not to collection cardinality. Complete horizon/target
+matrices remain per-card tap-through.
 
 The renderer may abbreviate effect notation, but cannot calculate new outcomes,
-scalarize the frontier, hide multiple material unknowns behind a positive
-conclusion, introduce enemy move IDs/titles, or change labels. Every derived
-surface claim links to exact rule/input refs; expanded lane badges link to lane
-facts; conflicts link to both sides. Raw facts are the final audit layer.
+scalarize a frontier, hide material unknowns behind a positive conclusion,
+introduce enemy move titles as causal explanation, or change labels. Every
+callout links to exact fact, condition, causal, lane, and observation refs as
+applicable. Conflicts link to both sides; raw facts are the final audit layer.
+
+### Collection schema and language contract
+
+A future collection has this normative shape:
+
+```text
+CalloutCollection {
+  all: Callout[]                 // every passing distinct record, cardinality 0..N
+  total: integer                // exactly all.length
+  collapsed: Callout[]          // stable prefix/ranked subset only
+  collapsedCount: integer       // exactly collapsed.length
+  hasMore: boolean              // total > collapsedCount
+  expandPath: string | null     // required when hasMore
+  rejected: { id, failedGates[] }[]
+  deduplicated: { id, duplicateOf, distinctnessKey }[]
+}
+
+Callout {
+  id: stable ID
+  distinctnessKey: stable semantic key
+  language: static-conditional | live-imperative
+  headline: bounded text
+  condition: bounded conditional/current-state statement
+  causalBasis: bounded causal statement
+  rank: non-negative stable integer
+  qualifications: {
+    playerControllable, nonObvious, materiallyUseful,
+    ordinaryStateRobust, sourceSupported, causallyExplainable, distinct
+  }
+  basis: { factRefs[1..N], conditionRefs[1..N], causalRefs[1..N] }
+  observationRefs: [] | [1..N]  // nonempty for live-imperative
+  phaseControl?: {
+    controllableChoice, staggeredEffect, synchronizedSpikeAvoided,
+    mechanismRefs[1..N]
+  }
+}
+```
+
+Fixtures MUST cover 0, 1, and 3 passing records. The three-record fixture must
+prove stable ranking, all-record retention, a visible collapsed total/expand
+path, and exact distinctness dedup. Language fixtures must accept a supported
+static conditional without live state, reject a live imperative without current
+observation refs, accept it with those refs, and retain known runtime gaps only
+on affected clauses. A phase-control fixture must cite the controllable choice,
+staggering mechanism, avoided synchronization, and causal refs. The zero fixture
+must say no source-qualified records passed, never imply a quota.
 
 ## 8. Uncertainty, provenance, and fail-closed rules
 
@@ -1195,7 +1273,7 @@ source probability.
 
 | Condition | Required output |
 |---|---|
-| No live turn observation (the current product) | No tactical card. An optional expanded encounter capsule says `NOT LIVE`; it has no `NOW`, incoming prediction, or current threshold. |
+| No live turn observation (the current product) | Keep the rich static mechanics capsule primary. Retain supported `static-conditional` callouts; reject only present-tense/live imperatives that require current state. Never emit `NOW`, incoming prediction, or a current threshold without observation refs. |
 | Authority manifest/version mismatch or mod ambiguity | No source-derived live frame. A safety-critical card says `UNKNOWN` with one mismatch reason; a version-explicit capsule is expanded detail only. |
 | Missing typed formula input | Preserve conditional/set/range/unknown and list the input; never use zero, midpoint, or legacy default. |
 | Unknown numeric/effect semantics | Preserve the known target/order/condition coordinates and mark the unresolved coordinates unknown; MUST NOT fall back to a move ID or title. |
@@ -1228,8 +1306,9 @@ card still says `UNKNOWN` and the tap-through lists them all.
 A future implementation is acceptable only when automated fixtures establish:
 
 1. lane objects remain separate and every conflict keeps both refs/values;
-2. an input with no live turn observation produces no tactical card; any expanded
-   capsule says `NOT LIVE` and never uses current language;
+2. an input with no live turn observation still produces the rich static capsule
+   and any qualifying source-backed conditional callouts, while live imperatives
+   are rejected and no static text uses current language;
 3. END NOW means no further actions from the exact observation cut;
 4. ordered operations produce ordered consequences, including between-hit hooks;
 5. missing HP/Block suppresses lethal/Block thresholds that require it;
@@ -1301,74 +1380,76 @@ renderer, and expanded renderer separately. A renderer golden cannot substitute
 for trace correctness; a correct trace dump cannot substitute for cognitive
 usability.
 
-### Collapsed-card validation
+### Collection, selector, and renderer validation
 
-Automated selector and renderer fixtures MUST establish that:
+Automated fixtures MUST establish that:
 
-1. the output is `null` or exactly one room-level tactical card, never one card
-   per enemy;
-2. a card has one headline, at most one reason, and at most one flip line: three
-   visible text rows maximum including the headline, with two the target;
-3. a card contains at most one primary horizon, two consequence coordinates, one
-   alternative/runner-up, and one uncertainty/condition;
-4. strict dominance has a direct headline with no runner-up; a Pareto card has
-   only `A ↔ B` and one differentiating coordinate per candidate; `NO FOCUS` has
-   one reason; and multiple material unknowns produce `UNKNOWN` rather than a
-   caveat list;
-5. safety-critical contradiction, staleness, lethal, and uncertainty follow the
-   safety gate before ordinary sensitivity ranking; all other ties follow the
-   declared boundary, reversibility, and stable-ID order;
-6. a multi-enemy frame does not imply a `FOCUS` card, and the absence of any
-   relevant claim produces `null` rather than filler;
-7. no empty query row, catalog, per-target table, source/lane label, confidence
-   prose, move title/ID, full effect sequence, audit ref, or repeated visible game
-   state appears;
-8. no collapsed card contains a full target frontier or more than two candidates;
-   and
-9. every omitted query, horizon, target, coordinate, condition, provenance ref,
-   and raw fact remains exact and reachable through the card's single tap target.
+1. collections with 0, 1, and 3 passing records return exactly those cardinalities;
+2. each candidate is evaluated on controllability, non-obviousness, material
+   usefulness, ordinary-state robustness, source support, causal explanation,
+   and distinctness, independent of every other candidate;
+3. stable rank and ID ordering affect collapsed order but never remove a passing
+   record from `all`;
+4. exact semantic duplicates retain a dedup audit mapping, while merely similar
+   candidates remain distinct;
+5. a collapsed subset exposes `total`, `collapsedCount`, `hasMore`, and an expand
+   path whenever records are hidden from the collapsed view;
+6. a supported static conditional is accepted without live observation, while a
+   live imperative is rejected unless current observation refs are present;
+7. every callout has nonempty fact, condition, and causal basis refs;
+8. phase-control guidance names and cites the controllable choice, mechanism that
+   keeps attacks staggered, and synchronized spike avoided;
+9. zero passing candidates yields an honest no-qualified-record outcome rather
+   than filler or a target quota; and
+10. the rich static mechanics capsule remains available regardless of callout
+    cardinality and never implies current HP, intent, phase, or move prediction.
+
+Individual-card renderer fixtures MAY enforce three visible rows, one primary
+horizon, two coordinates, one alternative, and one visible condition. Those are
+cognitive budgets for one card only. Tests MUST fail any implementation that uses
+those limits to discard candidate cards from the collection. Enemy move IDs,
+full proof, and full target frontiers remain expansion data, not collapsed causal
+prose.
 
 ### Phone usability
 
 At a representative narrow phone viewport, without horizontal scrolling, a
 player should be able to:
 
-- read the answer and decisive reason in the target two rows;
-- recognize strict focus, a two-candidate tradeoff, `NO FOCUS`, a breakpoint, or
-  `UNKNOWN` without reading proof text;
-- understand the single displayed horizon and one or two decisive coordinates
-  without enemy move titles;
-- see at most one fact that can flip the answer and never mistake possibility for
-  prediction;
-- accept the absence of a card when no tactical claim is decision-sensitive; and
-- tap once from any displayed claim to the complete horizon/target frontier,
-  legal cut, ordered effects, conditions, rule and observed inputs, policy, lane,
-  and raw evidence.
+- use the rich static mechanics capsule even when the callout count is zero;
+- see the total passing callout count and whether the collapsed subset has more;
+- expand once to reach every passing callout and its exact support;
+- distinguish static conditions from observed live imperatives;
+- understand each displayed condition and causal mechanism without reading enemy
+  move titles; and
+- never mistake possibility for prediction or a possible roster for simultaneous
+  observed bodies.
 
-Usability tests with experienced and new players SHOULD measure answer
-correctness, time-to-answer, scrolling, and row count. A build fails the collapsed
-contract if any card exceeds three visible text rows, if the normal design targets
-more than two, or if users must read a target table to recover the headline's
-meaning. Extra accurate information is not a defense for exceeding the budget.
-A surface that is terse but causes possibility to be read as prediction also
-fails.
+Usability tests SHOULD measure mechanics comprehension, callout discovery,
+condition interpretation, scrolling, and support reachability. A card that
+exceeds its individual cognitive budget fails, but multiple independently useful
+cards do not fail merely because the collection contains more than one. Extra
+terse output is not a defense for silently dropping passing candidates.
 
 ## 10. Staged implementation plan
 
 This plan follows source migration gates and does not modify their artifacts or
 ownership.
 
-### Now: E1 design/offline capsule work only
+### Current C1 shadow and offline contract work
 
-- Freeze this logical contract and build schema/golden fixtures outside the
-  stable consumer when implementation work is authorized.
-- Compile only a static `EncounterCapsule` from E1-covered families: exact
-  identity/placement, roster grammar, applicability, graph topology, operations,
-  formulas that actually close, and explicit known unknowns.
-- Keep exact legacy prose/values visibly in `legacyAnnotations`; do not use them
-  to pass readiness gates.
-- Do not expose a decision frame, live thresholds, current intent, or `FOCUS`.
-  Do not import the projection into `/sts2`.
+- The opt-in `/sts2/source` path reads only the checked compact projection through
+  one fail-closed adapter. It renders rich static mechanics, explicit unknowns,
+  separate authority lanes, and affected evidence.
+- Stable `/sts2`, its state payload/client, the state reader, and default link stay
+  legacy-backed and behaviorally unchanged. A shadow projection failure returns
+  503 without blocking stable startup.
+- Current checked data contains no editorial callout records, so the collection is
+  honestly empty. The extractor remains editorially neutral.
+- Continue building callout schema/golden fixtures outside extraction. Static
+  conditional records may be added only when all seven gates and basis refs pass.
+- Do not expose a live decision frame, current threshold, current intent, or
+  present-tense `FOCUS` without the observation gate.
 
 ### E2 source gates
 
@@ -1410,10 +1491,10 @@ does not trigger state inference from screen conventions or model IDs.
 
 ### C1/C2/C3 consumer gates
 
-- **C1 shadow:** run capsule/frame compilation only in the migration architect's
-  approved shadow path, compare structured outputs, paired removal traces,
-  frontier classifications, and fail-closed reasons, and collect no unsupported
-  confidence/probability metric. Stable output remains unchanged.
+- **C1 shadow (current):** render the validated compact source capsule only under
+  `/sts2/source`; keep stable output unchanged, preserve fail-closed reasons, and
+  collect no unsupported confidence/probability metric. It does not compile live
+  frames or invent editorial tactics.
 - **C2 staged source-first UI:** render only claim families whose E2 and
   observation gates are green; a partially green frontier retains typed unknowns
   and cannot become a positive focus conclusion. Retain immediate rollback and

@@ -1087,16 +1087,22 @@ class EncounterProjectionTests(unittest.TestCase):
                 regenerate(SOURCE_PATH, LEGACY_PATH, output, check=True)
             self.assertEqual(output.read_bytes(), b"DIFFERENT")
 
-    def test_cli_check_and_no_runtime_consumer(self):
+    def test_cli_check_and_single_compact_runtime_adapter(self):
         result = subprocess.run(
             [sys.executable, str(ROOT / "tools/generate-encounter-facts.py"), "--check"],
             cwd=ROOT, text=True, capture_output=True, check=False,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("verified byte-identical", result.stdout)
+        compact_consumers = []
         for path in (ROOT / "src").glob("*"):
-            if path.is_file():
-                self.assertNotIn("encounter-facts-v0.111.0", path.read_text(encoding="utf-8"), str(path))
+            if not path.is_file():
+                continue
+            text = path.read_text(encoding="utf-8")
+            self.assertNotIn("game-v0.111.0-source.json", text, str(path))
+            if "encounter-facts-v0.111.0" in text:
+                compact_consumers.append(path.name)
+        self.assertEqual(compact_consumers, ["source-adapter.mjs"])
 
 
 if __name__ == "__main__":
