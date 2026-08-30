@@ -71,15 +71,30 @@ may wrap, but the order and meaning remain stable:
 | `NOW` | What observation cut makes these claims valid? | Only required observation context, parameters, freshness, and state ambiguity. Absent in a static capsule. |
 | `IN` | What happens before I can decide again under the baseline? | Source-ordered raw/net threat and non-damage consequences, including cards, Powers, summons, state, and lifecycle. |
 | `BREAK` | Which counterfactual boundary changes that result? | Kill, Block, strip, or interrupt thresholds and their consequence deltas. These are levers, not recommendations. |
-| `OUT/NEXT` | Where does the baseline leave the fight, and what follows? | Post-turn deltas and the next-move envelope with conditions or branch structure. |
+| `OUT/NEXT` | Where does the baseline leave the fight, and what follows? | Post-turn deltas and the next consequence envelope, expressed as effect signatures with conditions or branch structure. |
 | `CLOCK` | Which timer/window changes the fight? | Escalation, phase, spawn, escape, revive, recurrence, and expiring opportunity clocks. |
 | `?` | What unresolved fact could change a decision? | Hidden, stale, random, conflicting, unsupported, or unobserved inputs, named rather than guessed. |
 
+The unit of human thought is an **effect signature**, not a move name. An effect
+signature states the target, amount and hit structure, ordered status/card/Power/
+state/lifecycle effects, and their timing and conditions. It is the canonical
+human projection for both current and future enemy consequences.
+
+The collapsed six-chunk surface MUST NOT display enemy move IDs or titles. Names
+are excluded by default, not an optional renderer preference, and must not consume
+the phone thinking window. Move IDs and titles are **audit/navigation metadata
+only**. They are available in exact-detail drill-down when needed to join source
+facts or disambiguate traces; their presence in support data never licenses them
+as collapsed explanatory text. If a number, effect, target, order, timing, or
+condition is unresolved, it remains typed as conditional/set/range/unknown. The
+renderer MUST NOT fall back to a move ID or title as if the name explained the
+missing semantics.
+
 `IN` and `OUT` may render as separate rows when space allows. Otherwise
 `OUT/NEXT` is one chunk. A renderer SHOULD prefer one baseline, at most the few
-non-dominated decision-sensitive breakpoints, and a branch envelope over a move
-catalog. It MUST NOT remove uncertainty merely to meet the viewport budget.
-Overflow becomes a tap-through layer, not silent omission.
+non-dominated decision-sensitive breakpoints, and an effect-signature branch
+envelope over an action catalog. It MUST NOT remove uncertainty merely to meet
+the viewport budget. Overflow becomes a tap-through layer, not silent omission.
 
 Information is progressively disclosed:
 
@@ -87,7 +102,8 @@ Information is progressively disclosed:
 2. **Fight expansion:** race only under a declared policy; otherwise windows,
    clocks, removal consequences, recurrence, and persistent/irreversible costs.
 3. **Exact detail:** ordered operations, formulas, branch conditions, missing
-   inputs, and rule/input references for each displayed claim.
+   inputs, rule/input references, and any action ID/title needed for source joins
+   or trace disambiguation for each displayed claim.
 4. **Audit:** untouched lane facts, conflicts, checked evidence pointers, and raw
    source projection objects.
 
@@ -191,7 +207,7 @@ The fight expansion answers questions that can change planning across turns:
 - windows to interrupt, strip, split, or safely remove a body;
 - removal consequences, including replacement bodies and encounter completion;
 - persistent or irreversible HP, deck, card, gold, Power, or resource costs; and
-- conditions under which the next-move envelope changes.
+- conditions under which the next consequence envelope changes.
 
 It prefers clocks/windows/removal deltas to a speculative TTK. A TTK or race in
 turn counts is permitted only when a named player policy, its input observations,
@@ -210,11 +226,14 @@ declared horizon, it:
 4. creates a persistent or irreversible cost; or
 5. changes what removal of a body/state does.
 
-The consequence vector is ordered and at minimum spans per-creature HP/Block,
-Powers, card zones/deck mutation, summons/bodies, model state/phase, and
-lifecycle/encounter status. Implementations may add typed coordinates, but MUST
-NOT merge traces that differ on any relevant coordinate. Move title equality is
-never an equivalence rule.
+The consequence vector is ordered and at minimum spans effect target, amount
+and hit count, per-creature HP/Block, Powers, card zones/deck mutation,
+summons/bodies, model state/phase, timing/conditions, and lifecycle/encounter
+status. Implementations may add typed coordinates, but MUST NOT merge traces that
+differ on any relevant coordinate. Distinct moves may coalesce only when their
+full relevant consequence vectors are equivalent through the declared horizon.
+Equal names or intents never justify coalescing, and different names do not
+prevent coalescing when that complete equivalence actually holds.
 
 ## 5. Future typed `DecisionFrame` contract
 
@@ -250,6 +269,39 @@ Claim<T> = {
   "support": Support         // mandatory when labels contains "derived"
 }
 
+Target = { "side": "player" | "enemy", "selection": string,
+           "entityId": string | null }
+Timing = { "relativeToDecision": string, "phase": string }
+Condition = { "expression": string, "missingInputs": string[] }
+EffectNumber = Value<number>  // exact, range, set, conditional, or unknown
+
+OrderedEffect =
+  { "kind": "damage", "target": Target,
+    "amountPerHit": EffectNumber, "hitCount": Value<integer>,
+    "timing": Timing, "condition": Condition | null } |
+  { "kind": "block", "target": Target, "amount": EffectNumber,
+    "timing": Timing, "condition": Condition | null } |
+  { "kind": "power", "operation": "apply" | "remove" | "modify",
+    "target": Target, "powerId": string, "stacks": EffectNumber | null,
+    "duration": EffectNumber | null,
+    "timing": Timing, "condition": Condition | null } |
+  { "kind": "card", "operation": string, "target": Target,
+    "cardId": string | null, "count": Value<integer>,
+    "fromZone": string | null, "toZone": string | null,
+    "timing": Timing, "condition": Condition | null } |
+  { "kind": "state" | "lifecycle", "operation": string, "target": Target,
+    "stateId": string | null, "count": Value<integer> | null,
+    "timing": Timing, "condition": Condition | null }
+
+EffectSignature = {
+  "orderedEffects": OrderedEffect[]
+}
+
+ConsequenceEnvelope = {
+  "branches": { "condition": Condition | null,
+                "signature": EffectSignature }[]
+}
+
 DecisionFrame = {
   "schemaVersion": integer,
   "kind": "decision-frame",
@@ -262,12 +314,14 @@ DecisionFrame = {
     "observationSequence": integer,
     "horizon": "next-player-decision"
   },
-  "observation": { "facts": ObservedFact[], "omittedVisibleFacts": string[] },
+  "observation": { "facts": ObservedFact[],
+                   "auditMetadata": AuditMetadata[],
+                   "omittedVisibleFacts": string[] },
   "belief": { "shape": "singleton" | "finite-set" | "symbolic",
               "unresolved": string[] },
   "baseline": Claim<ConsequenceVector>,
   "breakpoints": Breakpoint[],
-  "next": Claim<MoveEnvelope>,
+  "next": Claim<ConsequenceEnvelope>,
   "clocks": Claim<Clock>[],
   "unknowns": Claim<string>[]
 }
@@ -309,8 +363,10 @@ lifecycle closure would be required for an authoritative equivalent.
       { "ref": "OBS.FIXTURE.PLAYER.BLOCK", "path": "player.block", "value": 0 },
       { "ref": "OBS.FIXTURE.AXEBOT.HP", "path": "axebot.hp", "value": 17 },
       { "ref": "OBS.FIXTURE.AXEBOT.BLOCK", "path": "axebot.block", "value": 0 },
-      { "ref": "OBS.FIXTURE.AXEBOT.INTENT", "path": "axebot.intent", "value": "HAMMER_UPPERCUT_MOVE" },
       { "ref": "OBS.FIXTURE.AXEBOT.STOCK", "path": "axebot.powers.stock", "value": 2 }
+    ],
+    "auditMetadata": [
+      { "ref": "OBS.FIXTURE.AXEBOT.ACTION_ID", "kind": "enemy-action-id", "value": "HAMMER_UPPERCUT_MOVE" }
     ],
     "omittedVisibleFacts": ["hand", "energy"]
   },
@@ -325,10 +381,35 @@ lifecycle closure would be required for an authoritative equivalent.
       "shape": "exact",
       "value": {
         "counterfactual": "END_NOW",
-        "ordered": ["damage 18", "apply Weak 2", "apply Frail 2"],
-        "rawThreat": 18,
-        "netThreat": 18,
-        "playerHpDelta": -18
+        "signature": {
+          "orderedEffects": [
+            {
+              "kind": "damage",
+              "target": { "side": "player", "selection": "single", "entityId": "player" },
+              "amountPerHit": { "shape": "exact", "value": 18 },
+              "hitCount": { "shape": "exact", "value": 1 },
+              "timing": { "relativeToDecision": "before-next", "phase": "current enemy resolution" },
+              "condition": null
+            },
+            {
+              "kind": "power", "operation": "apply",
+              "target": { "side": "player", "selection": "single", "entityId": "player" },
+              "powerId": "POWER.WEAK", "stacks": { "shape": "exact", "value": 2 }, "duration": null,
+              "timing": { "relativeToDecision": "before-next", "phase": "after damage" },
+              "condition": null
+            },
+            {
+              "kind": "power", "operation": "apply",
+              "target": { "side": "player", "selection": "single", "entityId": "player" },
+              "powerId": "POWER.FRAIL", "stacks": { "shape": "exact", "value": 2 }, "duration": null,
+              "timing": { "relativeToDecision": "before-next", "phase": "after Weak" },
+              "condition": null
+            }
+          ]
+        },
+        "rawThreat": { "shape": "exact", "value": 18 },
+        "netThreat": { "shape": "exact", "value": 18 },
+        "playerHpDelta": { "shape": "exact", "value": -18 }
       }
     },
     "support": {
@@ -339,12 +420,12 @@ lifecycle closure would be required for an authoritative equivalent.
       "inputRefs": [
         "OBS.FIXTURE.PLAYER.HP",
         "OBS.FIXTURE.PLAYER.BLOCK",
-        "OBS.FIXTURE.AXEBOT.INTENT"
+        "OBS.FIXTURE.AXEBOT.ACTION_ID"
       ],
       "laneRefs": [
         { "lane": "sourceFacts", "refs": ["SOURCE.MOVE.MONSTER.AXEBOT.HAMMER_UPPERCUT_MOVE"] },
         { "lane": "legacyAnnotations", "refs": ["LEGACY.BODY.AXEBOTS_NORMAL.0"] },
-        { "lane": "observedFacts", "refs": ["OBS.FIXTURE.PLAYER.HP", "OBS.FIXTURE.PLAYER.BLOCK", "OBS.FIXTURE.AXEBOT.INTENT"] }
+        { "lane": "observedFacts", "refs": ["OBS.FIXTURE.PLAYER.HP", "OBS.FIXTURE.PLAYER.BLOCK", "OBS.FIXTURE.AXEBOT.ACTION_ID"] }
       ]
     }
   },
@@ -383,14 +464,36 @@ lifecycle closure would be required for an authoritative equivalent.
   ],
   "next": {
     "claimId": "FRAME.FIXTURE.NEXT",
-    "labels": ["derived", "source-certain"],
-    "value": { "shape": "exact", "value": { "move": "ONE_TWO_MOVE" } },
+    "labels": ["derived"],
+    "value": {
+      "shape": "exact",
+      "value": {
+        "branches": [
+          {
+            "condition": null,
+            "signature": {
+              "orderedEffects": [
+                {
+                  "kind": "damage",
+                  "target": { "side": "player", "selection": "single", "entityId": "player" },
+                  "amountPerHit": { "shape": "exact", "value": 11 },
+                  "hitCount": { "shape": "exact", "value": 2 },
+                  "timing": { "relativeToDecision": "after-next", "phase": "next enemy resolution" },
+                  "condition": null
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
     "support": {
-      "ruleRefs": ["SOURCE.GRAPH.AXEBOT"],
-      "inputRefs": ["OBS.FIXTURE.AXEBOT.INTENT"],
+      "ruleRefs": ["SOURCE.GRAPH.AXEBOT", "LEGACY.BODY.AXEBOTS_NORMAL.0"],
+      "inputRefs": ["OBS.FIXTURE.AXEBOT.ACTION_ID"],
       "laneRefs": [
         { "lane": "sourceFacts", "refs": ["SOURCE.GRAPH.AXEBOT"] },
-        { "lane": "observedFacts", "refs": ["OBS.FIXTURE.AXEBOT.INTENT"] }
+        { "lane": "legacyAnnotations", "refs": ["LEGACY.BODY.AXEBOTS_NORMAL.0"] },
+        { "lane": "observedFacts", "refs": ["OBS.FIXTURE.AXEBOT.ACTION_ID"] }
       ]
     }
   },
@@ -413,11 +516,14 @@ lifecycle closure would be required for an authoritative equivalent.
 }
 ```
 
-The example's `derived` + `source-certain` next claim selects an unconditional
-graph edge from an observed Hammer Uppercut. It intentionally carries no damage
-value because the source formula is not closed here. `derived` says that the
-baseline, threshold, or next edge was computed—it does not assign confidence or
-upgrade its inputs.
+The example's `derived` next claim projects the unconditional graph edge as the
+effect signature `player: 11×2`: graph sequence is supported by `sourceFacts`,
+while the exact A9 amount is visibly supported by `legacyAnnotations`. A fully
+source-authoritative amount still waits for E2 formula closure. The action ID in
+`auditMetadata` and the source rule refs exist only to join and disambiguate the
+trace in exact detail; neither is human explanation or collapsed content.
+`derived` says that the baseline, threshold, or next envelope was computed—it
+does not assign confidence or upgrade its inputs.
 
 ## 6. Phone DSL
 
@@ -428,15 +534,15 @@ and lane refs.
 ### Static capsule available from the current knowledge boundary
 
 This six-line Axebot capsule is illustrative output that could be built offline
-from E1. It never says which branch is current:
+from E1. It never says which branch is current and uses only effect signatures:
 
 ```text
 CAPSULE Axebot · Glory regular · A9/1P params · NOT LIVE
 ROSTER  1 Axebot [source-certain]
-OPEN    {Hammer Uppercut | Boot Up}; Stock chooser not closed [source-conditional]
-CYCLE   Boot Up → Uppercut ↔ One-Two [source-certain]
-VALUES  Uppercut 18 + Weak 2/Frail 2; One-Two 11×2; Boot Up 15 Block + 4/8 Str [legacyAnnotations:A9]
-CLOCK/? max HP = base +10×respawnCount (0..2, pre-MP) [source-certain formula]; trigger/timing/removal and turn state unknown [unknown]
+OPEN    {you: 18 → Weak 2 → Frail 2 | self: 15 Block → Strength 4/8}; chooser not closed [source-conditional; values=legacyAnnotations:A9]
+CYCLE   self:[15 Block → Strength 4/8] → you:[18 → Weak 2 → Frail 2] ↔ you:11×2 [sequence=source-certain; values=legacyAnnotations:A9]
+CLOCK   max HP = base +10×respawnCount (0..2, pre-MP) [source-certain formula]
+?       Stock trigger/timing/removal and turn state unknown [unknown]
 ```
 
 The two graph initials and cycle are present in `SOURCE.GRAPH.AXEBOT`. E1's
@@ -452,8 +558,8 @@ lane. They are useful reference material, not authoritative lifecycle closure.
 NOW      fixture only · obs #42 @ 00:00:00Z · A9/1P · you 50 HP/0 Block · Axebot 17 HP/0 Block, Stock 2
 IN       END NOW → 18 raw / 18 net, then Weak 2 + Frail 2 [derived; damage=legacyAnnotations:A9]
 BREAK    Block ≥18 → net 0; deal ≥17 → removal delta ? (Stock hooks) [derived, not advice]
-OUT/NEXT baseline you 50→32; then One-Two, 11×2 [edge=source-certain; value=legacyAnnotations:A9]
-CLOCK    Stock 2 observed; replacement/Boot Up window is legacy-only until lifecycle gates close [observed, unknown]
+OUT/NEXT baseline you 50→32; then you: 11×2 [sequence=source-certain; value=legacyAnnotations:A9]
+CLOCK    Stock 2 observed; replacement/self: 15 Block + Strength 4/8 window is legacy-only until lifecycle gates close [observed, unknown]
 ?        current app cannot observe these facts; formula closure, respawn count, Stock ordering, hand/feasibility missing [unknown]
 ```
 
@@ -551,11 +657,14 @@ unknown; it never silently drops branches.
 
 ### 7.6 Project consequence vectors and aggregate
 
-Project each trace to an ordered player-relevant consequence vector. Traces may
-be grouped only when they have the same vector through the horizon, the same
-relevant clock/window/removal behavior, and compatible displayed provenance.
-Grouping by move title, intent icon, final damage alone, or coincidentally equal
-HP is invalid.
+Project each trace to an ordered player-relevant consequence vector. Distinct
+moves may be grouped only when their full relevant consequence vectors are
+equivalent through the declared horizon, including target, per-hit amount, hit
+count, ordering, non-damage effects, timing/conditions, state transitions,
+clock/window/removal behavior, and compatible displayed provenance. Equal names
+or intents never justify coalescing. Grouping by title, intent icon, final damage
+alone, or coincidentally equal HP is invalid; a different title alone also cannot
+prevent otherwise valid full-vector coalescing.
 
 A grouped branch retains the underlying trace/rule refs and unresolved branch
 conditions. Exact branch probability may be attached only after the probability
@@ -585,10 +694,10 @@ tap-through support even if they are not rendered as their own row.
 ### 7.9 Render and retain audit paths
 
 Render the stable six chunks from typed claims. The renderer may abbreviate
-names and combine rows, but cannot calculate new outcomes, collapse uncertainty,
-or change labels. Every derived surface claim links to exact rule/input refs;
-every lane badge links to lane facts; conflicts link to both sides. Raw facts are
-the final audit layer.
+effect notation and combine equivalent rows, but cannot calculate new outcomes,
+collapse uncertainty, introduce enemy move IDs/titles, or change labels. Every
+derived surface claim links to exact rule/input refs; every lane badge links to
+lane facts; conflicts link to both sides. Raw facts are the final audit layer.
 
 ## 8. Uncertainty, provenance, and fail-closed rules
 
@@ -642,6 +751,7 @@ source probability.
 | No live turn observation (the current product) | Encounter capsule with `NOT LIVE`; no `NOW`, incoming prediction, or current threshold. |
 | Authority manifest/version mismatch or mod ambiguity | No source-derived live frame; show mismatch and capsule only if its version is explicit. |
 | Missing typed formula input | Preserve conditional/set/range/unknown and list the input; never use zero, midpoint, or legacy default. |
+| Unknown numeric/effect semantics | Preserve the known target/order/condition coordinates and mark the unresolved coordinates unknown; MUST NOT fall back to a move ID or title. |
 | Unsupported operation/hook/lifecycle | Stop affected traces at that boundary and mark downstream consequences unknown; never treat it as a no-op. |
 | Unknown branch condition/eligibility/history | Structured branch set without probability. |
 | Unresolved lane conflict | Retain both lane values and conflict refs; do not choose via precedence. |
@@ -652,7 +762,8 @@ source probability.
 | Removal lifecycle incomplete | No “kill cancels move/ends fight” claim; show removal delta unknown. |
 | Hand/energy/timing absent | Mechanical threshold may remain, but feasibility is `unknown`. |
 
-Unknown is not zero damage, “probably no effect,” or an empty list. Conditions
+Unknown is not zero damage, “probably no effect,” an empty list, or an enemy
+move name presented as explanation. Conditions, targets, hit structure, ordering,
 and ranges MUST remain machine-readable through rendering and tap-through.
 
 ## 9. Validation and usability criteria
@@ -671,12 +782,17 @@ A future implementation is acceptable only when automated fixtures establish:
    lethal damage threshold itself is known;
 7. possible/produced monsters never become observed co-present bodies;
 8. model identity never selects a hidden phase/state;
-9. traces merge by complete relevant consequence vector, not move title;
-10. correlated branches do not become independent numeric ranges;
-11. probabilities appear only under the five closure conditions;
-12. stale, contradictory, unsupported, and trace-truncated inputs fail closed;
-13. every derived claim resolves all rule/input/lane refs; and
-14. ascension, player count, act, and room parameters alter frames only through
+9. distinct actions coalesce only by complete relevant consequence-vector
+   equivalence for the declared horizon, never by equal name or intent;
+10. all six collapsed chunks exclude enemy move IDs/titles and express action
+    information as typed effect signatures;
+11. an unknown number or effect remains unknown instead of becoming a named-action
+    fallback;
+12. correlated branches do not become independent numeric ranges;
+13. probabilities appear only under the five closure conditions;
+14. stale, contradictory, unsupported, and trace-truncated inputs fail closed;
+15. every derived claim resolves all rule/input/lane refs; and
+16. ascension, player count, act, and room parameters alter frames only through
     cited formulas/rules, with no hidden defaults.
 
 Closed trace fixtures should be compared with an independently reviewed oracle
@@ -702,6 +818,8 @@ At a representative narrow phone viewport, without horizontal scrolling, a
 player should be able to:
 
 - identify END NOW raw/net incoming threat and ordered non-damage effects;
+- read each target, hit count, condition, and next consequence without enemy move
+  titles;
 - find the smallest displayed breakpoint and its delta without reading move ASTs;
 - distinguish a condition/random set from a prediction;
 - identify the one or two missing facts that can change the immediate decision;
