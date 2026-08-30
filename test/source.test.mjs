@@ -32,8 +32,8 @@ const exactManifest = [
 
 test("source artifact is canonical, exactly pinned, partial, and raw-only", () => {
   assert.equal(artifactBytes.toString("utf8"), `${JSON.stringify(sortedValue(artifact), null, 2)}\n`);
-  assert.equal(artifact.schemaVersion, 11);
-  assert.equal(artifact.extractorVersion, "11.0.0");
+  assert.equal(artifact.schemaVersion, 12);
+  assert.equal(artifact.extractorVersion, "12.0.0");
   assert.equal(artifact.runtimeReady, false);
   assert.equal(artifact.status, "incomplete");
   assert.deepEqual(artifact.inputs, exactManifest);
@@ -109,6 +109,14 @@ test("coverage is denominator-based and current behavior families are complete o
     productionHelperCallClosure: 5,
     productionDirectSiteDiscovery: 6,
     productionOwnerEncounterApplicability: 6,
+    productionProducerSemantics: 7,
+    productionPoolSemantics: 7,
+    productionCandidateEntries: 9,
+    productionSlotPolicies: 6,
+    productionCandidateRngSelection: 1,
+    productionPostAddEffects: 4,
+    productionRuntimeStateContracts: 12,
+    productionDependencyRefs: 4,
     coreAddOverloadClosure: 3,
     coreAddMethodClosure: 6,
     coreAddSemanticFieldClosure: 11,
@@ -800,7 +808,7 @@ test("selection graphs preserve topology, Flyconid/Fabricator/Decimillipede fixt
   }
 });
 
-test("E2d1a random callbacks, Rat repeat policy, and production/core Add contracts are source-closed", () => {
+test("E2d1b random callbacks, producer semantics, and production/core Add contracts are source-closed", () => {
   const random = artifact.behavior.randomSelectionContract;
   assert.deepEqual(random.enum.values, [
     { name: "CanRepeatForever", value: 0 }, { name: "CanRepeatXTimes", value: 1 },
@@ -837,7 +845,34 @@ test("E2d1a random callbacks, Rat repeat policy, and production/core Add contrac
   ]);
   assert.equal(production.directSites.length, 6);
   assert.ok(production.directSites.every((row) => row.candidateMembership.canonicalModels.length > 0));
-  assert.equal(production.productionSemantics.status, "pendingE2d1b");
+  const semantics = production.productionSemantics;
+  assert.equal(semantics.status, "sourceComplete");
+  assert.deepEqual(semantics.sourceDenominators, {
+    candidateEntries: 9, candidateRngSelections: 1, dependencyRefs: 4, pools: 7,
+    postAddEffects: 4, producers: 7, runtimeStateContracts: 12, slotStrategies: 6,
+  });
+  assert.deepEqual(semantics.producers.map((row) => [row.producerId, row.semanticKind]), [
+    ["PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE", "orderedHelperBatch"],
+    ["PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE", "orderedHelperBatch"],
+    ["PRODUCTION.MONSTER.FOGMOG.ILLUSION_MOVE", "fixedGraphOnce"],
+    ["PRODUCTION.MONSTER.LIVING_FOG.BLOAT_MOVE", "runtimeCardinalityRepeating"],
+    ["PRODUCTION.MONSTER.OVICOPTER.LAY_EGGS_MOVE", "fixedThreeAttemptBatch"],
+    ["PRODUCTION.MONSTER.THE_OBSCURA.ILLUSION_MOVE", "fixedGraphOnceWithStatePostAdd"],
+    ["PRODUCTION.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE", "groupCounterBounded"],
+  ]);
+  assert.deepEqual(semantics.pools.filter((row) => row.selection.kind === "runtimeRng").map((row) => row.candidateModels), [
+    ["MONSTER.ZAPBOT", "MONSTER.STABBOT"], ["MONSTER.GUARDBOT", "MONSTER.NOISEBOT"],
+  ]);
+  assert.deepEqual(semantics.slotStrategies.reduce((counts, row) => (counts[row.noSlotBehavior] = (counts[row.noSlotBehavior] ?? 0) + 1, counts), {}), {
+    passEmptyStringToCoreAdd: 1, passFixedNameWithoutOccupancyCheck: 2, skipAttempt: 3,
+  });
+  assert.ok(semantics.postAddEffects.every((row) => row.ordering === "afterNormalAddTaskReturn"));
+  const ratProducer = semantics.producers.find((row) => row.ownerModel === "MONSTER.TWO_TAILED_RAT");
+  assert.equal(ratProducer.lifetimePolicy.completedCallPathMaximum, 3);
+  assert.equal(ratProducer.repeatPolicy.classification, "graphPerBodyUseOnlyOnce");
+  const ovi = semantics.producers.find((row) => row.ownerModel === "MONSTER.OVICOPTER");
+  assert.deepEqual(ovi.activationCardinality, { bodyAddAttempts: { exact: 3 }, normallyAddedBodies: { maximum: 3, minimum: 0 } });
+  assert.deepEqual(ovi.availability.expression.paths.map((row) => row.path), ["initial", "repeatAfterTenderizer"]);
   assert.equal(production.ostySummonContract.afterSummon, "awaitedAfterOstyAddOrReviveHistory");
   assert.equal(production.ostySummonContract.classification, "separateFromCreatureCmdAddEnemyProduction");
   const core = production.coreAddContract;
@@ -1015,7 +1050,7 @@ test("E2a selected Power hooks and runtime contracts are explicit", () => {
   assert.deepEqual(artifact.observationIdentities.aliases, []);
 });
 
-test("README and world-model census claims match schema 11 summary and coverage", () => {
+test("README and world-model census claims match the current schema summary and coverage", () => {
   const markdown = (url) => readFileSync(new URL(url, import.meta.url), "utf8").replace(/\s+/g, " ").trim();
   const readme = markdown("../README.md");
   const worldModel = markdown("../docs/source-world-model.md");
@@ -1085,7 +1120,7 @@ test("README and world-model census claims match schema 11 summary and coverage"
   has(readme, `deterministic schema ${JSON.parse(readFileSync(new URL("../data/encounter-facts-v0.111.0.json", import.meta.url))).schemaVersion} compact projection`);
   has(readme, `(schema ${artifact.schemaVersion} raw source facts)`);
 
-  has(worldModel, `Schema ${artifact.schemaVersion} is the E2d1a boundary`);
+  has(worldModel, `Schema ${artifact.schemaVersion} is the E2d1b boundary`);
   has(worldModel, `exact metadata inheritance closure for all ${topology.behaviorClasses} behavior graph owners`);
   has(worldModel, `The ${summary.intentConstructorSites} constructor sites contain ${summary.requiredIntentArguments} required arguments`);
   has(worldModel, `separately count ${summary.intentConstructorSites} classified constructors and ${summary.requiredIntentArguments} resolved arguments`);

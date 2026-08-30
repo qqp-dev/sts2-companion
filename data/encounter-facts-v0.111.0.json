@@ -43,15 +43,15 @@
     },
     "generator": {
       "name": "sts2-encounter-facts",
-      "version": "8.0.0"
+      "version": "9.0.0"
     },
-    "payloadSha256": "17a467890b1de5407c5a186734f8ff92dfc22e5644e91b4fcdc74134e5051aea",
+    "payloadSha256": "fe8919b14d72efed47b41341b19ddc2ce8edb5978208660f22018d2ba686d058",
     "projectionInputs": [
       {
         "id": "INPUT.SOURCE",
         "path": "data/game-v0.111.0-source.json",
-        "sha256": "89069872f7b100ed414ddb7583bef54dff23b32d9be6d78cdcb3d56ece94020f",
-        "size": 13290318
+        "sha256": "c1f5c95c86f3c7bcf8a28a983aadab355c73ffb43ef1dacbb5153198d9a498c0",
+        "size": 13399941
       },
       {
         "id": "INPUT.LEGACY",
@@ -832,6 +832,27 @@
         "unresolved": 0
       },
       {
+        "denominator": 9,
+        "family": "productionCandidateEntries",
+        "numerator": 9,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 1,
+        "family": "productionCandidateRngSelection",
+        "numerator": 1,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 4,
+        "family": "productionDependencyRefs",
+        "numerator": 4,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
         "denominator": 6,
         "family": "productionDirectSiteDiscovery",
         "numerator": 6,
@@ -867,6 +888,41 @@
         "unresolved": 0
       },
       {
+        "denominator": 7,
+        "family": "productionPoolSemantics",
+        "numerator": 7,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 4,
+        "family": "productionPostAddEffects",
+        "numerator": 4,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 7,
+        "family": "productionProducerSemantics",
+        "numerator": 7,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 12,
+        "family": "productionRuntimeStateContracts",
+        "numerator": 12,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 6,
+        "family": "productionSlotPolicies",
+        "numerator": 6,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
         "denominator": 10,
         "family": "randomBranchOverloadClosure",
         "numerator": 10,
@@ -895,8 +951,8 @@
         "unresolved": 0
       }
     ],
-    "sourceExtractorVersion": "11.0.0",
-    "sourceSchemaVersion": 11
+    "sourceExtractorVersion": "12.0.0",
+    "sourceSchemaVersion": 12
   },
   "payload": {
     "conflicts": [
@@ -7843,6 +7899,50 @@
           {
             "jsonPointer": "/cards/8",
             "valueSha256": "bfdf1e3e594d0712f093378a662b1196fb9b9ee09fdde07993dadff4ab1c67cd"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/dependencies/1",
+            "valueSha256": "f37a5319dc3a6294db302afa4c6a71b05c0da841481562ea15e77a910c64ef1f"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/dependencies/0",
+            "valueSha256": "3e70ecaa7fe669d982af217027a7cb471393daacf4b9f55459f3c776cdef36a0"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.DEPENDENCY.PRODUCTION.DEATH_POWER_ADD_SITES",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/dependencies/3",
+            "valueSha256": "c76a38756ec3b240db0630482e88a8d3c92756511f5798e283f3f339b296b6b4"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/dependencies/2",
+            "valueSha256": "e27b716b7e410309bf155459eb91b16d01772a2cea52e19e47790e72fbdcff8d"
           }
         ]
       },
@@ -23414,6 +23514,50 @@
       },
       {
         "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.POST_ADD.PRODUCTION.MINION.FABRICATOR",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/postAddEffects/0",
+            "valueSha256": "732d68cd61afe5f832931a27e7566d867e1cbff1d46b46e79a28be1f53f2ab86"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.POST_ADD.PRODUCTION.MINION.OVICOPTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/postAddEffects/1",
+            "valueSha256": "f13dc431fa8ec25fe2bb1a817d00fe67021b756b9a6a1a72e0d3e14829201c1c"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.POST_ADD.PRODUCTION.OBSCURA_HAS_SUMMONED",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/postAddEffects/2",
+            "valueSha256": "8e1de0b2abe5895188d895b60f7961b7c2b6f66731449924808aca55c8e75b36"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.POST_ADD.PRODUCTION.RAT_GROUP_COUNTER_SYNC",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/postAddEffects/3",
+            "valueSha256": "f7e210f78e266dcd527a8a09a368cb61c971aabb5e4fb213ec4d91c5642467be"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
         "evidenceId": "EVIDENCE.SOURCE.POWER.ADAPTABLE_POWER",
         "lane": "source",
         "pointers": [
@@ -24178,7 +24322,161 @@
         "pointers": [
           {
             "jsonPointer": "/production",
-            "valueSha256": "23191b90f72dd409e9248436cdbd5ce0c0e2f6eab16d6ccd478d4ffdca6b829d"
+            "valueSha256": "3ed54683487f1552ffa7eef9a1ffcc8dcc8b599cf2500061cc6190541c03e05e"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/producers/0",
+            "valueSha256": "7bc3a2a740e978aa118b1ad0ee99010d6bf87d59a71891727a424e92a0e41bd9"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/producers/1",
+            "valueSha256": "d65570cec2b1e1243d634c0067dedddcfb6629f745dc5d99ae0c0447c41ea999"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION.MONSTER.FOGMOG.ILLUSION_MOVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/producers/2",
+            "valueSha256": "52c5b315906fc4a21c08578c20c654c44c7ad755f62c844b203865a89ad23dd2"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION.MONSTER.LIVING_FOG.BLOAT_MOVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/producers/3",
+            "valueSha256": "70eddd648c5a504f2740cb7d99123d452f09fc2ad4b06dd57efdd4c258f3fd5a"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION.MONSTER.OVICOPTER.LAY_EGGS_MOVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/producers/4",
+            "valueSha256": "9a5cce5467a668e0892545b2e699ff833fd4a4606b37403e73d800b931b7e0e8"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION.MONSTER.THE_OBSCURA.ILLUSION_MOVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/producers/5",
+            "valueSha256": "b696c6555e88a45051f91579356be1a6ab651e424a264aa7964f744f32534f28"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/producers/6",
+            "valueSha256": "294f39c38455a91e11be0a175c8e68a9b899406b5f8aea63f58b6464549435a2"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.FABRICATOR.AGGRESSIVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/pools/0",
+            "valueSha256": "c1a8650c6759abb58538b2d96ec3e8b392f5fbbd01192a95de51313e9bd249e6"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.FABRICATOR.DEFENSIVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/pools/1",
+            "valueSha256": "8c58553b0779958bc0620c361428bc35e24d4f6bb0e2f8776a6d5689c662c9c6"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.FOGMOG.ILLUSION_MOVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/pools/2",
+            "valueSha256": "77f78f40da92473f5170d33054631c3b012e871e8ee2a37ce9ded12ebea381cd"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.LIVING_FOG.BLOAT_MOVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/pools/3",
+            "valueSha256": "0ca3cb4024924f7b87b393bc8ab4a3e5909480cd423e9453167e39f1538cb6d2"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.OVICOPTER.LAY_EGGS_MOVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/pools/4",
+            "valueSha256": "4065bcfe56ccd7965985b42bd126b2190f3a4a159db193d98d1599c9513e199b"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.THE_OBSCURA.ILLUSION_MOVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/pools/5",
+            "valueSha256": "eb84500e57a5fb7dff94d1bbd2a7cddd1437363ec12167b2fb27e393dc6f29ba"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/pools/6",
+            "valueSha256": "f8bb328ceaa945f06e19253c518cd8527a8e7f88d6d1c669dbbc39be270fd38a"
           }
         ]
       },
@@ -24701,6 +24999,138 @@
       },
       {
         "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.COMBAT_IS_LIVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/runtimeStateContracts/0",
+            "valueSha256": "fef01c65052cd6d06bb1840318a902b89d30104c14a6bbd8318b46471514ae05"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.CREATURE_IS_ALIVE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/runtimeStateContracts/4",
+            "valueSha256": "a65bb79f02713db8ad947f58475d17b991515643629e81e36dbd00216b2b1cff"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.CURRENT_ENEMIES",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/runtimeStateContracts/2",
+            "valueSha256": "d4757adb65d100045a6dfb7194da38c065e320ada6df2cced40a67dfaf3fd164"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.ENCOUNTER",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/runtimeStateContracts/1",
+            "valueSha256": "81b4b4a011cbfb23b8edbf38fe5874ab015c6df0b2fea146477e002cad89cf0d"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.FABRICATOR_LAST_SPAWNED",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/runtimeStateContracts/7",
+            "valueSha256": "dd27f67671bac44399c0aa435dc7fe59baa7bd0618461d99156ebcdbbc4ea344"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.LIVING_FOG_BLOAT_AMOUNT",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/runtimeStateContracts/10",
+            "valueSha256": "91d2c82ff251c8e463af06b2e4a25fdf81641a5a194d0b69373a35983df4b8de"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.MONSTER_AI_RNG",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/runtimeStateContracts/6",
+            "valueSha256": "6262343b9343b13c6f25497b43d066887be3b6d218cd872a248d36e8bafee050"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.MONSTER_NEXT_MOVE_ID",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/runtimeStateContracts/5",
+            "valueSha256": "da87f49d277542b111542acfa3c95f5ef409307dc558d3133734ff31eccd4d2b"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.OBSCURA_HAS_SUMMONED",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/runtimeStateContracts/11",
+            "valueSha256": "7e6d153a98775c341991af4551085e8c4fc8ba6f89a593438eaf752069827ac0"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.RAT_CALL_FOR_BACKUP_COUNT",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/runtimeStateContracts/9",
+            "valueSha256": "ecfb025c810a2a3c3d5d91651ba29e982e3d85cd1672e912b3219b5b20233112"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.RAT_TURNS_UNTIL_SUMMONABLE",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/runtimeStateContracts/8",
+            "valueSha256": "1e55d0a37c06df6694fcc37688fb54502846fba38bc2420d2be5df461458a8ae"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.SAME_SIDE_CREATURES",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/runtimeStateContracts/3",
+            "valueSha256": "b7d66598c5a5f6528fb4ff5bd15d0dde0efaf96ed934c6e106d8d451b836fabc"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
         "evidenceId": "EVIDENCE.SOURCE.RUNTIME.RUN.PLAYER_COUNT",
         "lane": "source",
         "pointers": [
@@ -24751,6 +25181,72 @@
           {
             "jsonPointer": "/multiplayerScaling/power",
             "valueSha256": "3cedf1b2353527e9f7d5a47a3af5e2c8f9de0ce757036b672626b3ccd978cf52"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.SLOT_STRATEGY.0cd97ca938d14203d9d3129d061876c638206edd22166995df0f8562f5334a2c",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/slotStrategies/0",
+            "valueSha256": "0dae84ca06ed07fba2d83b84c02301766e9894b87778425b76c173fdfd1cda0e"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.SLOT_STRATEGY.1f070aec6335467af55346556653748e0ec4da0478e7c58afc5c64876102de81",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/slotStrategies/1",
+            "valueSha256": "d4c71c05c35a7f45472961668ffeb5aa77a0fdb05e6cf3178562a19472cc42cc"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.SLOT_STRATEGY.220869a52ca90a1bdccfa6a42c5bbfba3f2db8eb8e2e1d3006178d4099bf4fda",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/slotStrategies/2",
+            "valueSha256": "524c33e935932d7f2a88fbba88b0bc3339a586aa01cdc14272cc2d559da5516c"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.SLOT_STRATEGY.9e9a0cddf03ba5d18337c19c406668451973094894de820874906445a368799f",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/slotStrategies/3",
+            "valueSha256": "aeb626c7d679f87f5bd0a8f35f4120883c3059de2c8a0bd824b6f4531e6c9c6f"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.SLOT_STRATEGY.c1d627384a57e57006b62636cd15a6e106c193b2a1d825c4c39a48398f3904fa",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/slotStrategies/4",
+            "valueSha256": "71b5a4c9ef372d0dfe7d9443f2fa128e34c21e3e338f74f93e48a3106fcb1f35"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.SLOT_STRATEGY.f4936d06795a7cd495a3a1f17a2cd0a8d938dbc814e48009ecdde4d4a87def12",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/production/productionSemantics/slotStrategies/5",
+            "valueSha256": "f9a8b7a66bd3ca917bc877cadbbb10b9b95729187a5fc44e48bba8b7c3d7deca"
           }
         ]
       },
@@ -28371,6 +28867,34 @@
           "EVIDENCE.SOURCE.CARD.WOUND"
         ],
         "factId": "SOURCE.CARD.WOUND",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS"
+        ],
+        "factId": "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE"
+        ],
+        "factId": "SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.DEPENDENCY.PRODUCTION.DEATH_POWER_ADD_SITES"
+        ],
+        "factId": "SOURCE.DEPENDENCY.PRODUCTION.DEATH_POWER_ADD_SITES",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH"
+        ],
+        "factId": "SOURCE.DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH",
         "lane": "source"
       },
       {
@@ -37853,6 +38377,34 @@
       },
       {
         "evidenceRefs": [
+          "EVIDENCE.SOURCE.POST_ADD.PRODUCTION.MINION.FABRICATOR"
+        ],
+        "factId": "SOURCE.POST_ADD.PRODUCTION.MINION.FABRICATOR",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.POST_ADD.PRODUCTION.MINION.OVICOPTER"
+        ],
+        "factId": "SOURCE.POST_ADD.PRODUCTION.MINION.OVICOPTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.POST_ADD.PRODUCTION.OBSCURA_HAS_SUMMONED"
+        ],
+        "factId": "SOURCE.POST_ADD.PRODUCTION.OBSCURA_HAS_SUMMONED",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.POST_ADD.PRODUCTION.RAT_GROUP_COUNTER_SYNC"
+        ],
+        "factId": "SOURCE.POST_ADD.PRODUCTION.RAT_GROUP_COUNTER_SYNC",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
           "EVIDENCE.SOURCE.POWER.ADAPTABLE_POWER"
         ],
         "factId": "SOURCE.POWER.ADAPTABLE_POWER",
@@ -38343,6 +38895,104 @@
       },
       {
         "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE"
+        ],
+        "factId": "SOURCE.PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE"
+        ],
+        "factId": "SOURCE.PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION.MONSTER.FOGMOG.ILLUSION_MOVE"
+        ],
+        "factId": "SOURCE.PRODUCTION.MONSTER.FOGMOG.ILLUSION_MOVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION.MONSTER.LIVING_FOG.BLOAT_MOVE"
+        ],
+        "factId": "SOURCE.PRODUCTION.MONSTER.LIVING_FOG.BLOAT_MOVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION.MONSTER.OVICOPTER.LAY_EGGS_MOVE"
+        ],
+        "factId": "SOURCE.PRODUCTION.MONSTER.OVICOPTER.LAY_EGGS_MOVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION.MONSTER.THE_OBSCURA.ILLUSION_MOVE"
+        ],
+        "factId": "SOURCE.PRODUCTION.MONSTER.THE_OBSCURA.ILLUSION_MOVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE"
+        ],
+        "factId": "SOURCE.PRODUCTION.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.FABRICATOR.AGGRESSIVE"
+        ],
+        "factId": "SOURCE.PRODUCTION_POOL.MONSTER.FABRICATOR.AGGRESSIVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.FABRICATOR.DEFENSIVE"
+        ],
+        "factId": "SOURCE.PRODUCTION_POOL.MONSTER.FABRICATOR.DEFENSIVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.FOGMOG.ILLUSION_MOVE"
+        ],
+        "factId": "SOURCE.PRODUCTION_POOL.MONSTER.FOGMOG.ILLUSION_MOVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.LIVING_FOG.BLOAT_MOVE"
+        ],
+        "factId": "SOURCE.PRODUCTION_POOL.MONSTER.LIVING_FOG.BLOAT_MOVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.OVICOPTER.LAY_EGGS_MOVE"
+        ],
+        "factId": "SOURCE.PRODUCTION_POOL.MONSTER.OVICOPTER.LAY_EGGS_MOVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.THE_OBSCURA.ILLUSION_MOVE"
+        ],
+        "factId": "SOURCE.PRODUCTION_POOL.MONSTER.THE_OBSCURA.ILLUSION_MOVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.PRODUCTION_POOL.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE"
+        ],
+        "factId": "SOURCE.PRODUCTION_POOL.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
           "EVIDENCE.SOURCE.RANDOM_SELECTION.CONTRACT"
         ],
         "factId": "SOURCE.RANDOM_SELECTION.CONTRACT",
@@ -38672,6 +39322,90 @@
       },
       {
         "evidenceRefs": [
+          "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.COMBAT_IS_LIVE"
+        ],
+        "factId": "SOURCE.RUNTIME.PRODUCTION.COMBAT_IS_LIVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.CREATURE_IS_ALIVE"
+        ],
+        "factId": "SOURCE.RUNTIME.PRODUCTION.CREATURE_IS_ALIVE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.CURRENT_ENEMIES"
+        ],
+        "factId": "SOURCE.RUNTIME.PRODUCTION.CURRENT_ENEMIES",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.ENCOUNTER"
+        ],
+        "factId": "SOURCE.RUNTIME.PRODUCTION.ENCOUNTER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.FABRICATOR_LAST_SPAWNED"
+        ],
+        "factId": "SOURCE.RUNTIME.PRODUCTION.FABRICATOR_LAST_SPAWNED",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.LIVING_FOG_BLOAT_AMOUNT"
+        ],
+        "factId": "SOURCE.RUNTIME.PRODUCTION.LIVING_FOG_BLOAT_AMOUNT",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.MONSTER_AI_RNG"
+        ],
+        "factId": "SOURCE.RUNTIME.PRODUCTION.MONSTER_AI_RNG",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.MONSTER_NEXT_MOVE_ID"
+        ],
+        "factId": "SOURCE.RUNTIME.PRODUCTION.MONSTER_NEXT_MOVE_ID",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.OBSCURA_HAS_SUMMONED"
+        ],
+        "factId": "SOURCE.RUNTIME.PRODUCTION.OBSCURA_HAS_SUMMONED",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.RAT_CALL_FOR_BACKUP_COUNT"
+        ],
+        "factId": "SOURCE.RUNTIME.PRODUCTION.RAT_CALL_FOR_BACKUP_COUNT",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.RAT_TURNS_UNTIL_SUMMONABLE"
+        ],
+        "factId": "SOURCE.RUNTIME.PRODUCTION.RAT_TURNS_UNTIL_SUMMONABLE",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.RUNTIME.PRODUCTION.SAME_SIDE_CREATURES"
+        ],
+        "factId": "SOURCE.RUNTIME.PRODUCTION.SAME_SIDE_CREATURES",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
           "EVIDENCE.SOURCE.RUNTIME.RUN.PLAYER_COUNT"
         ],
         "factId": "SOURCE.RUNTIME.RUN.PLAYER_COUNT",
@@ -38703,6 +39437,48 @@
           "EVIDENCE.SOURCE.SCALING.POWER"
         ],
         "factId": "SOURCE.SCALING.POWER",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.SLOT_STRATEGY.0cd97ca938d14203d9d3129d061876c638206edd22166995df0f8562f5334a2c"
+        ],
+        "factId": "SOURCE.SLOT_STRATEGY.0cd97ca938d14203d9d3129d061876c638206edd22166995df0f8562f5334a2c",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.SLOT_STRATEGY.1f070aec6335467af55346556653748e0ec4da0478e7c58afc5c64876102de81"
+        ],
+        "factId": "SOURCE.SLOT_STRATEGY.1f070aec6335467af55346556653748e0ec4da0478e7c58afc5c64876102de81",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.SLOT_STRATEGY.220869a52ca90a1bdccfa6a42c5bbfba3f2db8eb8e2e1d3006178d4099bf4fda"
+        ],
+        "factId": "SOURCE.SLOT_STRATEGY.220869a52ca90a1bdccfa6a42c5bbfba3f2db8eb8e2e1d3006178d4099bf4fda",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.SLOT_STRATEGY.9e9a0cddf03ba5d18337c19c406668451973094894de820874906445a368799f"
+        ],
+        "factId": "SOURCE.SLOT_STRATEGY.9e9a0cddf03ba5d18337c19c406668451973094894de820874906445a368799f",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.SLOT_STRATEGY.c1d627384a57e57006b62636cd15a6e106c193b2a1d825c4c39a48398f3904fa"
+        ],
+        "factId": "SOURCE.SLOT_STRATEGY.c1d627384a57e57006b62636cd15a6e106c193b2a1d825c4c39a48398f3904fa",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.SLOT_STRATEGY.f4936d06795a7cd495a3a1f17a2cd0a8d938dbc814e48009ecdde4d4a87def12"
+        ],
+        "factId": "SOURCE.SLOT_STRATEGY.f4936d06795a7cd495a3a1f17a2cd0a8d938dbc814e48009ecdde4d4a87def12",
         "lane": "source"
       },
       {
@@ -38883,23 +39659,17 @@
           "SOURCE.INITIAL.POWER_OWNER.POWER.ILLUSION_POWER.POWERAFTERAPPLIED.700.APPLYPOWER",
           "SOURCE.INITIAL.POWER_OWNER.POWER.PLATING_POWER.POWERAFTERAPPLIED.700.SETSTATE",
           "SOURCE.INITIAL.POWER_OWNER.POWER.VITAL_SPARK_POWER.BEFORECOMBATSTART.700.AFFLICTCARD",
+          "SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+          "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS",
+          "SOURCE.DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH",
+          "SOURCE.DEPENDENCY.PRODUCTION.DEATH_POWER_ADD_SITES",
           "SOURCE.PRODUCTION.DISCOVERY_CORE_ADD"
         ],
-        "detail": "Production discovery and core Add are closed, but producer-specific E2d1b semantics and death/prevention, revive/hatch phase, escape/removal, and encounter-result E2d2 lifecycle semantics remain pending.",
+        "detail": "Producer pools, availability, slots, cardinality, cap/repeat state, and ordered post-Add effects are source-complete; death/prevention, revive/hatch phase, escape/removal, listener effects, and encounter-result E2d2 lifecycle semantics remain pending.",
         "reasonCode": "LIFECYCLE_COVERAGE_ABSENT",
         "scope": "encounterCompanion",
         "status": "unresolved",
         "unknownId": "UNKNOWN.LIFECYCLE_COVERAGE"
-      },
-      {
-        "affectedFactIds": [
-          "SOURCE.PRODUCTION.DISCOVERY_CORE_ADD"
-        ],
-        "detail": "The current owner/root/helper/direct-site census and shared core Add contract are complete; per-producer pools, availability, slot/no-slot behavior, cardinality, caps, repetition state, and post-add ordering remain E2d1b.",
-        "reasonCode": "PRODUCTION_SEMANTICS_PENDING_E2D1B",
-        "scope": "encounterCompanion",
-        "status": "unresolved",
-        "unknownId": "UNKNOWN.PRODUCTION_SEMANTICS"
       },
       {
         "affectedFactIds": [
@@ -38950,6 +39720,18 @@
           "SOURCE.RUNTIME.MEMBER.F67C13D89EFDCE5C",
           "SOURCE.RUNTIME.MEMBER.FD235541CE6E4E55",
           "SOURCE.RUNTIME.RUN.PLAYER_COUNT",
+          "SOURCE.RUNTIME.PRODUCTION.COMBAT_IS_LIVE",
+          "SOURCE.RUNTIME.PRODUCTION.ENCOUNTER",
+          "SOURCE.RUNTIME.PRODUCTION.CURRENT_ENEMIES",
+          "SOURCE.RUNTIME.PRODUCTION.SAME_SIDE_CREATURES",
+          "SOURCE.RUNTIME.PRODUCTION.CREATURE_IS_ALIVE",
+          "SOURCE.RUNTIME.PRODUCTION.MONSTER_NEXT_MOVE_ID",
+          "SOURCE.RUNTIME.PRODUCTION.MONSTER_AI_RNG",
+          "SOURCE.RUNTIME.PRODUCTION.FABRICATOR_LAST_SPAWNED",
+          "SOURCE.RUNTIME.PRODUCTION.RAT_TURNS_UNTIL_SUMMONABLE",
+          "SOURCE.RUNTIME.PRODUCTION.RAT_CALL_FOR_BACKUP_COUNT",
+          "SOURCE.RUNTIME.PRODUCTION.LIVING_FOG_BLOAT_AMOUNT",
+          "SOURCE.RUNTIME.PRODUCTION.OBSCURA_HAS_SUMMONED",
           "SOURCE.ARCHITECT.CONTRACT.event.owner.character.id",
           "SOURCE.ARCHITECT.CONTRACT.progress.characterStats.totalWins",
           "SOURCE.ARCHITECT.CONTRACT.progress.wins",
@@ -38960,7 +39742,7 @@
           "SOURCE.ARCHITECT.CONTRACT.event.currentLineIndex",
           "SOURCE.ARCHITECT.DEPENDENCY.FORMULA.SCORE_UTILITY.CALCULATE_SCORE"
         ],
-        "detail": "Initial and Architect runtime inputs are preserved, but companion-wide getter/delegate formula inlining, including ScoreUtility.CalculateScore, remains incomplete.",
+        "detail": "Initial, production, and Architect runtime inputs are preserved, but live observation adapters, actual RNG outcomes, and companion-wide getter/delegate formula inlining, including ScoreUtility.CalculateScore, remain incomplete.",
         "reasonCode": "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE",
         "scope": "encounterCompanion",
         "status": "unresolved",
@@ -60164,8 +60946,7 @@
           "UNKNOWN.MOVE_TITLE.MONSTER.TERROR_EEL.STUN_MOVE",
           "UNKNOWN.MOVE_TITLE.MONSTER.TORCH_HEAD_AMALGAM.TACKLE_2_MOVE",
           "UNKNOWN.MOVE_TITLE.MONSTER.TORCH_HEAD_AMALGAM.TACKLE_3_MOVE",
-          "UNKNOWN.MOVE_TITLE.MONSTER.TORCH_HEAD_AMALGAM.TACKLE_4_MOVE",
-          "UNKNOWN.PRODUCTION_SEMANTICS"
+          "UNKNOWN.MOVE_TITLE.MONSTER.TORCH_HEAD_AMALGAM.TACKLE_4_MOVE"
         ],
         "status": "incomplete"
       },
@@ -60176,8 +60957,7 @@
             "UNKNOWN.EVENT_BEHAVIOR",
             "UNKNOWN.EVENT_LIFECYCLE",
             "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
-            "UNKNOWN.LIFECYCLE_COVERAGE",
-            "UNKNOWN.PRODUCTION_SEMANTICS"
+            "UNKNOWN.LIFECYCLE_COVERAGE"
           ],
           "status": "incomplete"
         },
@@ -60294,11 +61074,19 @@
             "powerMultiplayerOptIns",
             "powerMultiplayerOverrides",
             "productionAddApiCensus",
+            "productionCandidateEntries",
+            "productionCandidateRngSelection",
+            "productionDependencyRefs",
             "productionDirectSiteDiscovery",
             "productionHelperCallClosure",
             "productionOstyApiCensus",
             "productionOwnerEncounterApplicability",
             "productionOwnerRootDiscovery",
+            "productionPoolSemantics",
+            "productionPostAddEffects",
+            "productionProducerSemantics",
+            "productionRuntimeStateContracts",
+            "productionSlotPolicies",
             "randomBranchOverloadClosure",
             "randomBranchRepeatWeightSemantics",
             "randomSelectionRuntimeContract",
@@ -60337,13 +61125,79 @@
             "randomBranchRepeatWeight",
             "randomSelectionRuntime",
             "productionDiscovery",
-            "coreAddDependencies"
+            "coreAddDependencies",
+            "productionProducerPool",
+            "productionAvailabilityCapRepeat",
+            "productionSlotFailure",
+            "productionRuntimeState",
+            "productionPostAddOrder",
+            "productionLifecycleDependencies"
           ],
           "status": "complete"
         }
       }
     },
     "resolvedAudits": [
+      {
+        "auditId": "AUDIT.RESOLVED.PRODUCTION_SEMANTICS",
+        "boundary": "Seven producer triggers are source-complete; death/removal, Tough Egg hatch, general AfterCreatureAdded listener effects, and four death-Power Add sites remain E2d2 dependencies.",
+        "classificationFactRefs": [
+          "SOURCE.PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE",
+          "SOURCE.PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE",
+          "SOURCE.PRODUCTION.MONSTER.FOGMOG.ILLUSION_MOVE",
+          "SOURCE.PRODUCTION.MONSTER.LIVING_FOG.BLOAT_MOVE",
+          "SOURCE.PRODUCTION.MONSTER.OVICOPTER.LAY_EGGS_MOVE",
+          "SOURCE.PRODUCTION.MONSTER.THE_OBSCURA.ILLUSION_MOVE",
+          "SOURCE.PRODUCTION.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE",
+          "SOURCE.PRODUCTION_POOL.MONSTER.FABRICATOR.AGGRESSIVE",
+          "SOURCE.PRODUCTION_POOL.MONSTER.FABRICATOR.DEFENSIVE",
+          "SOURCE.PRODUCTION_POOL.MONSTER.FOGMOG.ILLUSION_MOVE",
+          "SOURCE.PRODUCTION_POOL.MONSTER.LIVING_FOG.BLOAT_MOVE",
+          "SOURCE.PRODUCTION_POOL.MONSTER.OVICOPTER.LAY_EGGS_MOVE",
+          "SOURCE.PRODUCTION_POOL.MONSTER.THE_OBSCURA.ILLUSION_MOVE",
+          "SOURCE.PRODUCTION_POOL.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE",
+          "SOURCE.SLOT_STRATEGY.0cd97ca938d14203d9d3129d061876c638206edd22166995df0f8562f5334a2c",
+          "SOURCE.SLOT_STRATEGY.1f070aec6335467af55346556653748e0ec4da0478e7c58afc5c64876102de81",
+          "SOURCE.SLOT_STRATEGY.220869a52ca90a1bdccfa6a42c5bbfba3f2db8eb8e2e1d3006178d4099bf4fda",
+          "SOURCE.SLOT_STRATEGY.9e9a0cddf03ba5d18337c19c406668451973094894de820874906445a368799f",
+          "SOURCE.SLOT_STRATEGY.c1d627384a57e57006b62636cd15a6e106c193b2a1d825c4c39a48398f3904fa",
+          "SOURCE.SLOT_STRATEGY.f4936d06795a7cd495a3a1f17a2cd0a8d938dbc814e48009ecdde4d4a87def12",
+          "SOURCE.POST_ADD.PRODUCTION.MINION.FABRICATOR",
+          "SOURCE.POST_ADD.PRODUCTION.MINION.OVICOPTER",
+          "SOURCE.POST_ADD.PRODUCTION.OBSCURA_HAS_SUMMONED",
+          "SOURCE.POST_ADD.PRODUCTION.RAT_GROUP_COUNTER_SYNC",
+          "SOURCE.RUNTIME.PRODUCTION.COMBAT_IS_LIVE",
+          "SOURCE.RUNTIME.PRODUCTION.ENCOUNTER",
+          "SOURCE.RUNTIME.PRODUCTION.CURRENT_ENEMIES",
+          "SOURCE.RUNTIME.PRODUCTION.SAME_SIDE_CREATURES",
+          "SOURCE.RUNTIME.PRODUCTION.CREATURE_IS_ALIVE",
+          "SOURCE.RUNTIME.PRODUCTION.MONSTER_NEXT_MOVE_ID",
+          "SOURCE.RUNTIME.PRODUCTION.MONSTER_AI_RNG",
+          "SOURCE.RUNTIME.PRODUCTION.FABRICATOR_LAST_SPAWNED",
+          "SOURCE.RUNTIME.PRODUCTION.RAT_TURNS_UNTIL_SUMMONABLE",
+          "SOURCE.RUNTIME.PRODUCTION.RAT_CALL_FOR_BACKUP_COUNT",
+          "SOURCE.RUNTIME.PRODUCTION.LIVING_FOG_BLOAT_AMOUNT",
+          "SOURCE.RUNTIME.PRODUCTION.OBSCURA_HAS_SUMMONED"
+        ],
+        "dependencyFactRefs": [
+          "SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+          "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS",
+          "SOURCE.DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH",
+          "SOURCE.DEPENDENCY.PRODUCTION.DEATH_POWER_ADD_SITES"
+        ],
+        "family": "enemyBodyProduction",
+        "historicalStatus": "sourceComplete",
+        "sourceDenominators": {
+          "candidateEntries": 9,
+          "candidateRngSelections": 1,
+          "dependencyRefs": 4,
+          "pools": 7,
+          "postAddEffects": 4,
+          "producers": 7,
+          "runtimeStateContracts": 12,
+          "slotStrategies": 6
+        }
+      },
       {
         "auditId": "AUDIT.RESOLVED.EVENT_TURN_MACHINES",
         "boundary": "Architect scripting is separately source-complete; lifecycle/timeout/result dependencies remain unresolved.",
@@ -127398,7 +128252,7 @@
               "MONSTER.ZAPBOT"
             ],
             "lifecycle": "pendingE2d2",
-            "producerSemantics": "pendingE2d1b"
+            "producerSemantics": "sourceCompleteE2d1b"
           },
           "failureSemantics": {
             "cancellationToken": "absent",
@@ -127491,7 +128345,7 @@
           "resultIdentity": "generic and explicit-model wrappers return the exact body created before awaiting core Add",
           "semanticBoundaries": {
             "coreSlotValidation": "absent",
-            "emptyOrNoSlot": "producerOwnedPendingE2d1b"
+            "emptyOrNoSlot": "producerOwnedSourceCompleteE2d1b"
           }
         },
         "directSites": [
@@ -127510,7 +128364,7 @@
             },
             "modelArgument": {
               "kind": "runtimeCanonicalMonsterModel",
-              "producerSemantics": "pendingE2d1b",
+              "producerSemantics": "sourceCompleteE2d1b",
               "source": "closedTraversedHelperOptionSelection"
             },
             "rootRefs": [
@@ -127967,7 +128821,1487 @@
           }
         ],
         "productionSemantics": {
-          "status": "pendingE2d1b"
+          "dependencies": [
+            {
+              "affectedProducerRefs": [
+                "PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE",
+                "PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE",
+                "PRODUCTION.MONSTER.FOGMOG.ILLUSION_MOVE",
+                "PRODUCTION.MONSTER.LIVING_FOG.BLOAT_MOVE",
+                "PRODUCTION.MONSTER.OVICOPTER.LAY_EGGS_MOVE",
+                "PRODUCTION.MONSTER.THE_OBSCURA.ILLUSION_MOVE",
+                "PRODUCTION.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE"
+              ],
+              "dependencyId": "DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+              "factId": "SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+              "kind": "deathRemovalSlotAvailability",
+              "sourceRefs": [
+                "production.runtimeStateContracts.CURRENT_ENEMIES",
+                "production.slotStrategies"
+              ],
+              "status": "pendingE2d2"
+            },
+            {
+              "affectedProducerRefs": [
+                "PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE",
+                "PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE",
+                "PRODUCTION.MONSTER.FOGMOG.ILLUSION_MOVE",
+                "PRODUCTION.MONSTER.LIVING_FOG.BLOAT_MOVE",
+                "PRODUCTION.MONSTER.OVICOPTER.LAY_EGGS_MOVE",
+                "PRODUCTION.MONSTER.THE_OBSCURA.ILLUSION_MOVE",
+                "PRODUCTION.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE"
+              ],
+              "dependencyId": "DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS",
+              "factId": "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS",
+              "kind": "awaitedHookListenerEffects",
+              "sourceRefs": [
+                "production.coreAddContract.hookBoundary.afterCreatureAddedToCombat"
+              ],
+              "status": "pendingE2d2"
+            },
+            {
+              "affectedProducerRefs": [
+                "PRODUCTION.MONSTER.OVICOPTER.LAY_EGGS_MOVE"
+              ],
+              "dependencyId": "DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH",
+              "factId": "SOURCE.DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH",
+              "kind": "sameBodyHatchStateTransitionNotAdd",
+              "sourceRefs": [
+                "initialState",
+                "behavior.MONSTER.TOUGH_EGG#HATCH_MOVE"
+              ],
+              "status": "pendingE2d2"
+            },
+            {
+              "affectedProducerRefs": [],
+              "dependencyId": "DEPENDENCY.PRODUCTION.DEATH_POWER_ADD_SITES",
+              "factId": "SOURCE.DEPENDENCY.PRODUCTION.DEATH_POWER_ADD_SITES",
+              "kind": "fourExplicitOutOfDomainAddSites",
+              "sourceRefs": [
+                "production.addApiCensus.outOfScopeDeathPower"
+              ],
+              "status": "pendingE2d2"
+            }
+          ],
+          "pools": [
+            {
+              "candidateModels": [
+                "MONSTER.ZAPBOT",
+                "MONSTER.STABBOT"
+              ],
+              "emptySelection": "NextItemReturnsNullThenToMutableFaults",
+              "factId": "SOURCE.PRODUCTION_POOL.MONSTER.FABRICATOR.AGGRESSIVE",
+              "filter": {
+                "comparison": "canonicalModelReferenceIdentity",
+                "excludeRuntimeStateRef": "RUNTIME.PRODUCTION.FABRICATOR_LAST_SPAWNED",
+                "kind": "excludeImmediatePreviousReference"
+              },
+              "poolId": "PRODUCTION_POOL.MONSTER.FABRICATOR.AGGRESSIVE",
+              "provenance": {
+                "methodBodySha256": "b948295e9dd742d5be3c934dc5bde2a47281f3eab4175bae3f205b052de95541",
+                "normalizedSliceSha256": "f4dda948c355d6df31fc7e0b0041cfc1deeedf7190ce559203c99594ac9b9cfc",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator::.cctor sig:000001"
+              },
+              "replacementPolicy": "reusablePoolWithImmediateSameReferenceExclusion",
+              "selection": {
+                "algorithm": "uniformNextIntZeroInclusiveCountExclusive",
+                "kind": "runtimeRng",
+                "rngStateRef": "RUNTIME.PRODUCTION.MONSTER_AI_RNG"
+              },
+              "selectionProvenance": {
+                "filter": {
+                  "methodBodySha256": "4fb2677d39505f7b468d89d0dfebe1022cc499c94ee42bfb547c8e772053463e",
+                  "normalizedSliceSha256": "126845190027911e7b5b53293fc854ab07dbf284451bc5e674e6b3002fb7d58e",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator::<SpawnBot>b__25_0 sig:2001021288e4"
+                },
+                "selectionAndWriteBeforeAdd": {
+                  "methodBodySha256": "65f21e5f3de11d7e333a10a709b8a3828d0cab8101faa31a0b353db8cb4c58ae",
+                  "normalizedSliceSha256": "4ab82ddfb309db8e3eb42d629482db8a0514f89939935861e3f118fd502ba4a7",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator+<SpawnBot>d__25::MoveNext sig:200001"
+                },
+                "uniformRng": {
+                  "methodBodySha256": "5e15efc8aec3b4bb3222236eb4f00a460bf656388277fcfb8c0298a051cc247a",
+                  "normalizedSliceSha256": "8645e8bcec193a9c5cf68c5b330f1c192f0618bb1172df61d759486385d59fb5",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Random.Rng::NextItem sig:3001011e00151281f5011e00"
+                }
+              }
+            },
+            {
+              "candidateModels": [
+                "MONSTER.GUARDBOT",
+                "MONSTER.NOISEBOT"
+              ],
+              "emptySelection": "NextItemReturnsNullThenToMutableFaults",
+              "factId": "SOURCE.PRODUCTION_POOL.MONSTER.FABRICATOR.DEFENSIVE",
+              "filter": {
+                "comparison": "canonicalModelReferenceIdentity",
+                "excludeRuntimeStateRef": "RUNTIME.PRODUCTION.FABRICATOR_LAST_SPAWNED",
+                "kind": "excludeImmediatePreviousReference"
+              },
+              "poolId": "PRODUCTION_POOL.MONSTER.FABRICATOR.DEFENSIVE",
+              "provenance": {
+                "methodBodySha256": "b948295e9dd742d5be3c934dc5bde2a47281f3eab4175bae3f205b052de95541",
+                "normalizedSliceSha256": "39d934beb89978f59aa7e44d4ca8842a0a030c01e4c3ee41b37dd3364b451609",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator::.cctor sig:000001"
+              },
+              "replacementPolicy": "reusablePoolWithImmediateSameReferenceExclusion",
+              "selection": {
+                "algorithm": "uniformNextIntZeroInclusiveCountExclusive",
+                "kind": "runtimeRng",
+                "rngStateRef": "RUNTIME.PRODUCTION.MONSTER_AI_RNG"
+              },
+              "selectionProvenance": {
+                "filter": {
+                  "methodBodySha256": "4fb2677d39505f7b468d89d0dfebe1022cc499c94ee42bfb547c8e772053463e",
+                  "normalizedSliceSha256": "126845190027911e7b5b53293fc854ab07dbf284451bc5e674e6b3002fb7d58e",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator::<SpawnBot>b__25_0 sig:2001021288e4"
+                },
+                "selectionAndWriteBeforeAdd": {
+                  "methodBodySha256": "65f21e5f3de11d7e333a10a709b8a3828d0cab8101faa31a0b353db8cb4c58ae",
+                  "normalizedSliceSha256": "4ab82ddfb309db8e3eb42d629482db8a0514f89939935861e3f118fd502ba4a7",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator+<SpawnBot>d__25::MoveNext sig:200001"
+                },
+                "uniformRng": {
+                  "methodBodySha256": "5e15efc8aec3b4bb3222236eb4f00a460bf656388277fcfb8c0298a051cc247a",
+                  "normalizedSliceSha256": "8645e8bcec193a9c5cf68c5b330f1c192f0618bb1172df61d759486385d59fb5",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Random.Rng::NextItem sig:3001011e00151281f5011e00"
+                }
+              }
+            },
+            {
+              "candidateModels": [
+                "MONSTER.EYE_WITH_TEETH"
+              ],
+              "emptySelection": "impossibleForSourceFixedCandidate",
+              "factId": "SOURCE.PRODUCTION_POOL.MONSTER.FOGMOG.ILLUSION_MOVE",
+              "filter": {
+                "kind": "none"
+              },
+              "poolId": "PRODUCTION_POOL.MONSTER.FOGMOG.ILLUSION_MOVE",
+              "provenance": {
+                "methodBodySha256": "4b7cd6ac2e8153cd7e44d5519f349da1b525852acca4525cb4f8db7d49521536",
+                "normalizedSliceSha256": "5fdf183bc9c01b0bfb99c4906f4e708d3ce206c524a75fa697f9238238a670d6",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fogmog+<IllusionMove>d__15::MoveNext sig:200001"
+              },
+              "replacementPolicy": "reusableFixedCandidate",
+              "selection": {
+                "kind": "fixedCanonicalModel"
+              }
+            },
+            {
+              "candidateModels": [
+                "MONSTER.GAS_BOMB"
+              ],
+              "emptySelection": "impossibleForSourceFixedCandidate",
+              "factId": "SOURCE.PRODUCTION_POOL.MONSTER.LIVING_FOG.BLOAT_MOVE",
+              "filter": {
+                "kind": "none"
+              },
+              "poolId": "PRODUCTION_POOL.MONSTER.LIVING_FOG.BLOAT_MOVE",
+              "provenance": {
+                "methodBodySha256": "ff91b67ffaee72f8956b4b20d12ba48978fa79734cda230d5498b0bb52e96c70",
+                "normalizedSliceSha256": "b780d339fc44b944ae0aeb0d0194637fc49f79ea80d54e76d852ff3c31c3434a",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.LivingFog+<BloatMove>d__26::MoveNext sig:200001"
+              },
+              "replacementPolicy": "reusableFixedCandidate",
+              "selection": {
+                "kind": "fixedCanonicalModel"
+              }
+            },
+            {
+              "candidateModels": [
+                "MONSTER.TOUGH_EGG"
+              ],
+              "emptySelection": "impossibleForSourceFixedCandidate",
+              "factId": "SOURCE.PRODUCTION_POOL.MONSTER.OVICOPTER.LAY_EGGS_MOVE",
+              "filter": {
+                "kind": "none"
+              },
+              "poolId": "PRODUCTION_POOL.MONSTER.OVICOPTER.LAY_EGGS_MOVE",
+              "provenance": {
+                "methodBodySha256": "266a044500a05a073bdc8972b4bd3ec00fa89eef638894b4492e54d04fbb7404",
+                "normalizedSliceSha256": "70527a20dbae4c75cde2806933213869b588efb022641f1462ff4549d077a752",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Ovicopter+<LayEggsMove>d__26::MoveNext sig:200001"
+              },
+              "replacementPolicy": "reusableFixedCandidate",
+              "selection": {
+                "kind": "fixedCanonicalModel"
+              }
+            },
+            {
+              "candidateModels": [
+                "MONSTER.PARAFRIGHT"
+              ],
+              "emptySelection": "impossibleForSourceFixedCandidate",
+              "factId": "SOURCE.PRODUCTION_POOL.MONSTER.THE_OBSCURA.ILLUSION_MOVE",
+              "filter": {
+                "kind": "none"
+              },
+              "poolId": "PRODUCTION_POOL.MONSTER.THE_OBSCURA.ILLUSION_MOVE",
+              "provenance": {
+                "methodBodySha256": "5457844a1e9f307deba8d27bd34dcd543259c2696a10d3f5c4540a5817dfd0ef",
+                "normalizedSliceSha256": "23aebc7d927d8cb6ad291acc9ac83d8d8baf6d0e49a571b40c4b7a3a0db0f505",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TheObscura+<IllusionMove>d__25::MoveNext sig:200001"
+              },
+              "replacementPolicy": "reusableFixedCandidate",
+              "selection": {
+                "kind": "fixedCanonicalModel"
+              }
+            },
+            {
+              "candidateModels": [
+                "MONSTER.TWO_TAILED_RAT"
+              ],
+              "emptySelection": "impossibleForSourceFixedCandidate",
+              "factId": "SOURCE.PRODUCTION_POOL.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE",
+              "filter": {
+                "kind": "none"
+              },
+              "poolId": "PRODUCTION_POOL.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE",
+              "provenance": {
+                "methodBodySha256": "220e5f752795b0f2fb7a3d1d517a421a2df49bf7b8758e59845b98a5e4d2ad6f",
+                "normalizedSliceSha256": "b92097c22dfb3725cfaab7e5b83889ed45ba8318ab99b748b870f99f999310ed",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat+<CallForBackup>d__41::MoveNext sig:200001"
+              },
+              "replacementPolicy": "reusableFixedCandidate",
+              "selection": {
+                "kind": "fixedCanonicalModel"
+              }
+            }
+          ],
+          "postAddEffects": [
+            {
+              "effectId": "POST_ADD.PRODUCTION.MINION.FABRICATOR",
+              "factId": "SOURCE.POST_ADD.PRODUCTION.MINION.FABRICATOR",
+              "kind": "applyPower",
+              "ordering": "afterNormalAddTaskReturn",
+              "provenance": {
+                "methodBodySha256": "65f21e5f3de11d7e333a10a709b8a3828d0cab8101faa31a0b353db8cb4c58ae",
+                "normalizedSliceSha256": "7678b93176cbf1177e382f87a0e31579bacd5ca67cbd0e926f30d44fe972b665",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator+<SpawnBot>d__25::MoveNext sig:200001"
+              },
+              "targetRef": "POWER.MINION_POWER"
+            },
+            {
+              "effectId": "POST_ADD.PRODUCTION.MINION.OVICOPTER",
+              "factId": "SOURCE.POST_ADD.PRODUCTION.MINION.OVICOPTER",
+              "kind": "applyPower",
+              "ordering": "afterNormalAddTaskReturn",
+              "provenance": {
+                "methodBodySha256": "266a044500a05a073bdc8972b4bd3ec00fa89eef638894b4492e54d04fbb7404",
+                "normalizedSliceSha256": "0ea65099937f59ed3b995a103acef0b0bf4ca9b93a7d0713ce7584c07d47f9b5",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Ovicopter+<LayEggsMove>d__26::MoveNext sig:200001"
+              },
+              "targetRef": "POWER.MINION_POWER"
+            },
+            {
+              "effectId": "POST_ADD.PRODUCTION.OBSCURA_HAS_SUMMONED",
+              "factId": "SOURCE.POST_ADD.PRODUCTION.OBSCURA_HAS_SUMMONED",
+              "kind": "stateWrite",
+              "ordering": "afterNormalAddTaskReturn",
+              "provenance": {
+                "methodBodySha256": "5457844a1e9f307deba8d27bd34dcd543259c2696a10d3f5c4540a5817dfd0ef",
+                "normalizedSliceSha256": "e97d0229a58566d8d55d9c177fa74f36a5f6c21035ca370fbdbe1f9b1bb5e4e8",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TheObscura+<IllusionMove>d__25::MoveNext sig:200001"
+              },
+              "targetRef": "RUNTIME.PRODUCTION.OBSCURA_HAS_SUMMONED"
+            },
+            {
+              "effectId": "POST_ADD.PRODUCTION.RAT_GROUP_COUNTER_SYNC",
+              "factId": "SOURCE.POST_ADD.PRODUCTION.RAT_GROUP_COUNTER_SYNC",
+              "kind": "groupStateWrite",
+              "ordering": "afterNormalAddTaskReturn",
+              "provenance": {
+                "methodBodySha256": "220e5f752795b0f2fb7a3d1d517a421a2df49bf7b8758e59845b98a5e4d2ad6f",
+                "normalizedSliceSha256": "929dd700cac8cc303233b76eb17f762602971d2756edd9033c27e16602413559",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat+<CallForBackup>d__41::MoveNext sig:200001"
+              },
+              "supportProvenance": [
+                {
+                  "methodBodySha256": "ca069960a6943aaf8072bd2398de851f38180096707fe6b6c95375709b53190f",
+                  "normalizedSliceSha256": "14b9351c2ed48f2320b0f1ad125cc017a8892c65f959a8f67d00050c8a0cb54a",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat+<>c__DisplayClass41_0::<CallForBackup>b__3 sig:200101129570"
+                }
+              ],
+              "targetRef": "RUNTIME.PRODUCTION.RAT_CALL_FOR_BACKUP_COUNT"
+            }
+          ],
+          "producers": [
+            {
+              "activationCardinality": {
+                "bodyAddAttempts": {
+                  "maximum": 2,
+                  "minimum": 0
+                },
+                "normallyAddedBodies": {
+                  "maximum": 2,
+                  "minimum": 0
+                },
+                "orderedTriggerCalls": 2
+              },
+              "applicableConcreteModels": [
+                "MONSTER.FABRICATOR"
+              ],
+              "attempts": [
+                {
+                  "addApiSiteRef": "CREATURE_ADD_SITE.0cd97ca938d14203d9d3129d061876c638206edd22166995df0f8562f5334a2c",
+                  "attemptId": "PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE/attempt/0",
+                  "awaitedResult": "exactCreatedCreatureBody",
+                  "bodyAddAttempts": {
+                    "maximum": 1,
+                    "minimum": 0
+                  },
+                  "emptyPoolBehavior": "nullThenToMutableFault",
+                  "noSlotBehavior": "passEmptyStringToCoreAdd",
+                  "order": 0,
+                  "poolRef": "PRODUCTION_POOL.MONSTER.FABRICATOR.DEFENSIVE",
+                  "postAddEffectRefs": [
+                    "POST_ADD.PRODUCTION.MINION.FABRICATOR"
+                  ],
+                  "slotStrategyRef": "SLOT_STRATEGY.0cd97ca938d14203d9d3129d061876c638206edd22166995df0f8562f5334a2c",
+                  "triggerHelperCallSiteRef": "MONSTER.FABRICATOR#FABRICATE_MOVE/invocation/46"
+                },
+                {
+                  "addApiSiteRef": "CREATURE_ADD_SITE.0cd97ca938d14203d9d3129d061876c638206edd22166995df0f8562f5334a2c",
+                  "attemptId": "PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE/attempt/1",
+                  "awaitedResult": "exactCreatedCreatureBody",
+                  "bodyAddAttempts": {
+                    "maximum": 1,
+                    "minimum": 0
+                  },
+                  "emptyPoolBehavior": "nullThenToMutableFault",
+                  "noSlotBehavior": "passEmptyStringToCoreAdd",
+                  "order": 1,
+                  "poolRef": "PRODUCTION_POOL.MONSTER.FABRICATOR.AGGRESSIVE",
+                  "postAddEffectRefs": [
+                    "POST_ADD.PRODUCTION.MINION.FABRICATOR"
+                  ],
+                  "slotStrategyRef": "SLOT_STRATEGY.0cd97ca938d14203d9d3129d061876c638206edd22166995df0f8562f5334a2c",
+                  "triggerHelperCallSiteRef": "MONSTER.FABRICATOR#FABRICATE_MOVE/invocation/80"
+                }
+              ],
+              "availability": {
+                "expression": {
+                  "kind": "comparison",
+                  "left": {
+                    "collection": "aliveSameSideCreaturesIncludingOwner",
+                    "kind": "count"
+                  },
+                  "operator": "lessThan",
+                  "right": {
+                    "kind": "constant",
+                    "value": 4,
+                    "valueType": "integer"
+                  },
+                  "valueType": "boolean"
+                },
+                "method": {
+                  "methodBodySha256": "b32d2628b07b2ac67cc52bd9aed68bb312a623e1e846a714028d15a9a237139e",
+                  "normalizedSliceSha256": "4081f28d83d3a3dac87d8a02f4e4d4dcff678f751c292834a9be65a5cedfa44d",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator::get_CanFabricate sig:200002"
+                },
+                "runtimeInputRefs": [
+                  "RUNTIME.PRODUCTION.SAME_SIDE_CREATURES",
+                  "RUNTIME.PRODUCTION.CREATURE_IS_ALIVE"
+                ]
+              },
+              "canonicalEncounter": "ENCOUNTER.FABRICATOR_NORMAL",
+              "concurrentPolicy": {
+                "classification": "predicateBounded",
+                "possiblePostActivationAliveSameSideMaximum": 5,
+                "preActivationAliveSameSideMaximum": 3
+              },
+              "dependencies": {
+                "e2aInitialStateFactRefs": [
+                  "SOURCE.INITIAL.MONSTER.ZAPBOT.AFTERADDEDTOROOM.000.APPLYPOWER"
+                ],
+                "e2bHpAssignmentRef": "SOURCE.HP_ASSIGNMENT_PIPELINE",
+                "e2d2LifecycleRefs": [
+                  "SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+                  "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS"
+                ]
+              },
+              "factId": "SOURCE.PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE",
+              "graphRef": "GRAPH.FABRICATOR",
+              "lifetimePolicy": {
+                "classification": "sourceProvenNoLifetimeCapInClosedGraph",
+                "poolDepletion": false
+              },
+              "moveRef": "MONSTER.FABRICATOR#FABRICATE_MOVE",
+              "ownerModel": "MONSTER.FABRICATOR",
+              "producerId": "PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE",
+              "provenance": {
+                "methodBodySha256": "a44e9c22a985eab0b3ff3729418ed5c572928a06ca57cbdc676bdd3a836231db",
+                "normalizedSliceSha256": "7013b1ec7921ddcbfc70e7b3860f3b0b059b998ee240696851b9e4ce191e14ba",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator+<FabricateMove>d__20::MoveNext sig:200001"
+              },
+              "repeatPolicy": {
+                "branchSourceOrder": 61,
+                "classification": "graphRepeatWhileAvailable",
+                "cooldown": 0,
+                "graphCycle": true,
+                "repeat": {
+                  "enumName": "CanRepeatForever",
+                  "enumValue": 0
+                }
+              },
+              "semanticKind": "orderedHelperBatch",
+              "triggerKind": "monsterMove"
+            },
+            {
+              "activationCardinality": {
+                "bodyAddAttempts": {
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "normallyAddedBodies": {
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "orderedTriggerCalls": 1
+              },
+              "applicableConcreteModels": [
+                "MONSTER.FABRICATOR"
+              ],
+              "attempts": [
+                {
+                  "addApiSiteRef": "CREATURE_ADD_SITE.0cd97ca938d14203d9d3129d061876c638206edd22166995df0f8562f5334a2c",
+                  "attemptId": "PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE/attempt/0",
+                  "awaitedResult": "exactCreatedCreatureBody",
+                  "bodyAddAttempts": {
+                    "maximum": 1,
+                    "minimum": 0
+                  },
+                  "emptyPoolBehavior": "nullThenToMutableFault",
+                  "noSlotBehavior": "passEmptyStringToCoreAdd",
+                  "order": 0,
+                  "poolRef": "PRODUCTION_POOL.MONSTER.FABRICATOR.AGGRESSIVE",
+                  "postAddEffectRefs": [
+                    "POST_ADD.PRODUCTION.MINION.FABRICATOR"
+                  ],
+                  "slotStrategyRef": "SLOT_STRATEGY.0cd97ca938d14203d9d3129d061876c638206edd22166995df0f8562f5334a2c",
+                  "triggerHelperCallSiteRef": "MONSTER.FABRICATOR#FABRICATING_STRIKE_MOVE/invocation/66"
+                }
+              ],
+              "availability": {
+                "expression": {
+                  "kind": "comparison",
+                  "left": {
+                    "collection": "aliveSameSideCreaturesIncludingOwner",
+                    "kind": "count"
+                  },
+                  "operator": "lessThan",
+                  "right": {
+                    "kind": "constant",
+                    "value": 4,
+                    "valueType": "integer"
+                  },
+                  "valueType": "boolean"
+                },
+                "method": {
+                  "methodBodySha256": "b32d2628b07b2ac67cc52bd9aed68bb312a623e1e846a714028d15a9a237139e",
+                  "normalizedSliceSha256": "4081f28d83d3a3dac87d8a02f4e4d4dcff678f751c292834a9be65a5cedfa44d",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator::get_CanFabricate sig:200002"
+                },
+                "runtimeInputRefs": [
+                  "RUNTIME.PRODUCTION.SAME_SIDE_CREATURES",
+                  "RUNTIME.PRODUCTION.CREATURE_IS_ALIVE"
+                ]
+              },
+              "canonicalEncounter": "ENCOUNTER.FABRICATOR_NORMAL",
+              "concurrentPolicy": {
+                "classification": "predicateBounded",
+                "possiblePostActivationAliveSameSideMaximum": 5,
+                "preActivationAliveSameSideMaximum": 3
+              },
+              "dependencies": {
+                "e2aInitialStateFactRefs": [
+                  "SOURCE.INITIAL.MONSTER.ZAPBOT.AFTERADDEDTOROOM.000.APPLYPOWER"
+                ],
+                "e2bHpAssignmentRef": "SOURCE.HP_ASSIGNMENT_PIPELINE",
+                "e2d2LifecycleRefs": [
+                  "SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+                  "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS"
+                ]
+              },
+              "factId": "SOURCE.PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE",
+              "graphRef": "GRAPH.FABRICATOR",
+              "lifetimePolicy": {
+                "classification": "sourceProvenNoLifetimeCapInClosedGraph",
+                "poolDepletion": false
+              },
+              "moveRef": "MONSTER.FABRICATOR#FABRICATING_STRIKE_MOVE",
+              "ownerModel": "MONSTER.FABRICATOR",
+              "producerId": "PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE",
+              "provenance": {
+                "methodBodySha256": "a19aa279509d3577149b30ffbb12308e031f34596196be6a444328e5d2bd3d36",
+                "normalizedSliceSha256": "dbde505e2ed201685e6aa0a37107af49265e85754fdfb9abd208b6c6d534e25b",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator+<FabricatingStrikeMove>d__21::MoveNext sig:200001"
+              },
+              "repeatPolicy": {
+                "branchSourceOrder": 74,
+                "classification": "graphRepeatWhileAvailable",
+                "cooldown": 0,
+                "graphCycle": true,
+                "repeat": {
+                  "enumName": "CanRepeatForever",
+                  "enumValue": 0
+                }
+              },
+              "semanticKind": "orderedHelperBatch",
+              "triggerKind": "monsterMove"
+            },
+            {
+              "activationCardinality": {
+                "bodyAddAttempts": {
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "normallyAddedBodies": {
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "orderedTriggerCalls": 1
+              },
+              "applicableConcreteModels": [
+                "MONSTER.FOGMOG"
+              ],
+              "attempts": [
+                {
+                  "addApiSiteRef": "CREATURE_ADD_SITE.f4936d06795a7cd495a3a1f17a2cd0a8d938dbc814e48009ecdde4d4a87def12",
+                  "attemptId": "PRODUCTION.MONSTER.FOGMOG.ILLUSION_MOVE/attempt/0",
+                  "awaitedResult": "exactCreatedCreatureBody",
+                  "bodyAddAttempts": {
+                    "maximum": 1,
+                    "minimum": 0
+                  },
+                  "emptyPoolBehavior": "notApplicableFixedCandidate",
+                  "noSlotBehavior": "passFixedNameWithoutOccupancyCheck",
+                  "order": 0,
+                  "poolRef": "PRODUCTION_POOL.MONSTER.FOGMOG.ILLUSION_MOVE",
+                  "postAddEffectRefs": [],
+                  "slotStrategyRef": "SLOT_STRATEGY.f4936d06795a7cd495a3a1f17a2cd0a8d938dbc814e48009ecdde4d4a87def12"
+                }
+              ],
+              "availability": {
+                "expression": {
+                  "kind": "graphLifetimeOnce"
+                },
+                "runtimeInputRefs": [
+                  "RUNTIME.PRODUCTION.COMBAT_IS_LIVE"
+                ]
+              },
+              "canonicalEncounter": "ENCOUNTER.FOGMOG_NORMAL",
+              "concurrentPolicy": {
+                "classification": "fixedSlotNoOccupancyGuard"
+              },
+              "dependencies": {
+                "e2aInitialStateFactRefs": [
+                  "SOURCE.INITIAL.MONSTER.EYE_WITH_TEETH.AFTERADDEDTOROOM.000.APPLYPOWER"
+                ],
+                "e2bHpAssignmentRef": "SOURCE.HP_ASSIGNMENT_PIPELINE",
+                "e2d2LifecycleRefs": [
+                  "SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+                  "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS"
+                ]
+              },
+              "factId": "SOURCE.PRODUCTION.MONSTER.FOGMOG.ILLUSION_MOVE",
+              "graphRef": "GRAPH.FOGMOG",
+              "lifetimePolicy": {
+                "classification": "graphLifetimeOnce"
+              },
+              "moveRef": "MONSTER.FOGMOG#ILLUSION_MOVE",
+              "ownerModel": "MONSTER.FOGMOG",
+              "producerId": "PRODUCTION.MONSTER.FOGMOG.ILLUSION_MOVE",
+              "provenance": {
+                "methodBodySha256": "4b7cd6ac2e8153cd7e44d5519f349da1b525852acca4525cb4f8db7d49521536",
+                "normalizedSliceSha256": "5fdf183bc9c01b0bfb99c4906f4e708d3ce206c524a75fa697f9238238a670d6",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fogmog+<IllusionMove>d__15::MoveNext sig:200001"
+              },
+              "repeatPolicy": {
+                "classification": "graphLifetimeOnce",
+                "graphCycle": false
+              },
+              "semanticKind": "fixedGraphOnce",
+              "triggerKind": "monsterMove"
+            },
+            {
+              "activationCardinality": {
+                "bodyAddAttempts": {
+                  "kind": "runtimeStateValue",
+                  "runtimeStateRef": "RUNTIME.PRODUCTION.LIVING_FOG_BLOAT_AMOUNT"
+                },
+                "normallyAddedBodies": {
+                  "maximumRef": "RUNTIME.PRODUCTION.LIVING_FOG_BLOAT_AMOUNT",
+                  "minimum": 0
+                }
+              },
+              "applicableConcreteModels": [
+                "MONSTER.LIVING_FOG"
+              ],
+              "attempts": [
+                {
+                  "addApiSiteRef": "CREATURE_ADD_SITE.c1d627384a57e57006b62636cd15a6e106c193b2a1d825c4c39a48398f3904fa",
+                  "attemptId": "PRODUCTION.MONSTER.LIVING_FOG.BLOAT_MOVE/attempt/0",
+                  "awaitedResult": "exactCreatedCreatureBody",
+                  "bodyAddAttempts": {
+                    "kind": "runtimeStateValue",
+                    "runtimeStateRef": "RUNTIME.PRODUCTION.LIVING_FOG_BLOAT_AMOUNT"
+                  },
+                  "emptyPoolBehavior": "notApplicableFixedCandidate",
+                  "noSlotBehavior": "skipAttempt",
+                  "order": 0,
+                  "poolRef": "PRODUCTION_POOL.MONSTER.LIVING_FOG.BLOAT_MOVE",
+                  "postAddEffectRefs": [],
+                  "slotStrategyRef": "SLOT_STRATEGY.c1d627384a57e57006b62636cd15a6e106c193b2a1d825c4c39a48398f3904fa"
+                }
+              ],
+              "availability": {
+                "expression": {
+                  "kind": "graphReachable"
+                },
+                "runtimeInputRefs": [
+                  "RUNTIME.PRODUCTION.ENCOUNTER",
+                  "RUNTIME.PRODUCTION.CURRENT_ENEMIES"
+                ]
+              },
+              "canonicalEncounter": "ENCOUNTER.LIVING_FOG_NORMAL",
+              "concurrentPolicy": {
+                "classification": "slotMediatedNoExplicitNumericCap"
+              },
+              "dependencies": {
+                "e2aInitialStateFactRefs": [
+                  "SOURCE.INITIAL.MONSTER.GAS_BOMB.AFTERADDEDTOROOM.000.APPLYPOWER"
+                ],
+                "e2bHpAssignmentRef": "SOURCE.HP_ASSIGNMENT_PIPELINE",
+                "e2d2LifecycleRefs": [
+                  "SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+                  "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS"
+                ]
+              },
+              "factId": "SOURCE.PRODUCTION.MONSTER.LIVING_FOG.BLOAT_MOVE",
+              "graphRef": "GRAPH.LIVING_FOG",
+              "lifetimePolicy": {
+                "classification": "sourceProvenNoLifetimeCapInClosedGraph",
+                "poolDepletion": false
+              },
+              "moveRef": "MONSTER.LIVING_FOG#BLOAT_MOVE",
+              "ownerModel": "MONSTER.LIVING_FOG",
+              "producerId": "PRODUCTION.MONSTER.LIVING_FOG.BLOAT_MOVE",
+              "provenance": {
+                "methodBodySha256": "ff91b67ffaee72f8956b4b20d12ba48978fa79734cda230d5498b0bb52e96c70",
+                "normalizedSliceSha256": "b780d339fc44b944ae0aeb0d0194637fc49f79ea80d54e76d852ff3c31c3434a",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.LivingFog+<BloatMove>d__26::MoveNext sig:200001"
+              },
+              "repeatPolicy": {
+                "classification": "graphCycleRepeat",
+                "graphCycle": true
+              },
+              "semanticKind": "runtimeCardinalityRepeating",
+              "triggerKind": "monsterMove"
+            },
+            {
+              "activationCardinality": {
+                "bodyAddAttempts": {
+                  "exact": 3
+                },
+                "normallyAddedBodies": {
+                  "maximum": 3,
+                  "minimum": 0
+                }
+              },
+              "applicableConcreteModels": [
+                "MONSTER.OVICOPTER"
+              ],
+              "attempts": [
+                {
+                  "addApiSiteRef": "CREATURE_ADD_SITE.9e9a0cddf03ba5d18337c19c406668451973094894de820874906445a368799f",
+                  "attemptId": "PRODUCTION.MONSTER.OVICOPTER.LAY_EGGS_MOVE/attempt/0",
+                  "awaitedResult": "exactCreatedCreatureBody",
+                  "bodyAddAttempts": {
+                    "maximum": 3,
+                    "minimum": 0,
+                    "sourceLoopIterations": 3
+                  },
+                  "emptyPoolBehavior": "notApplicableFixedCandidate",
+                  "noSlotBehavior": "skipAttempt",
+                  "order": 0,
+                  "poolRef": "PRODUCTION_POOL.MONSTER.OVICOPTER.LAY_EGGS_MOVE",
+                  "postAddEffectRefs": [
+                    "POST_ADD.PRODUCTION.MINION.OVICOPTER"
+                  ],
+                  "slotStrategyRef": "SLOT_STRATEGY.9e9a0cddf03ba5d18337c19c406668451973094894de820874906445a368799f"
+                }
+              ],
+              "availability": {
+                "expression": {
+                  "kind": "pathQualified",
+                  "paths": [
+                    {
+                      "condition": {
+                        "kind": "unconditionalGraphInitial"
+                      },
+                      "path": "initial"
+                    },
+                    {
+                      "condition": {
+                        "kind": "comparison",
+                        "left": {
+                          "collection": "aliveSameSideCreaturesIncludingOwner",
+                          "kind": "count"
+                        },
+                        "operator": "lessThanOrEqual",
+                        "right": {
+                          "kind": "constant",
+                          "value": 3,
+                          "valueType": "integer"
+                        },
+                        "valueType": "boolean"
+                      },
+                      "path": "repeatAfterTenderizer"
+                    }
+                  ]
+                },
+                "method": {
+                  "methodBodySha256": "cb38a753f3803f37106a2bb370a4ecd4ef611b0f74cffec642c56ba4790d8fce",
+                  "normalizedSliceSha256": "e7da30a32da7a95a5e5a8f2d2016090b7f90a8998ab379acc1e09bdd0f8ff251",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Ovicopter::get_CanLay sig:200002"
+                },
+                "runtimeInputRefs": [
+                  "RUNTIME.PRODUCTION.SAME_SIDE_CREATURES",
+                  "RUNTIME.PRODUCTION.CREATURE_IS_ALIVE"
+                ]
+              },
+              "canonicalEncounter": "ENCOUNTER.OVICOPTER_NORMAL",
+              "concurrentPolicy": {
+                "classification": "predicateAndSlotsMediated",
+                "preActivationAliveSameSideMaximum": 3,
+                "sourceLoopAttempts": 3
+              },
+              "dependencies": {
+                "e2aInitialStateFactRefs": [
+                  "SOURCE.INITIAL.MONSTER.TOUGH_EGG.AFTERADDEDTOROOM.000.APPLYPOWER",
+                  "SOURCE.INITIAL.MONSTER.TOUGH_EGG.AFTERADDEDTOROOM.001.FORCEMOVESTATE",
+                  "SOURCE.INITIAL.MONSTER.TOUGH_EGG.AFTERADDEDTOROOM.500.SETMAXANDCURRENTHP"
+                ],
+                "e2bHpAssignmentRef": "SOURCE.HP_ASSIGNMENT_PIPELINE",
+                "e2d2LifecycleRefs": [
+                  "SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+                  "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS"
+                ]
+              },
+              "factId": "SOURCE.PRODUCTION.MONSTER.OVICOPTER.LAY_EGGS_MOVE",
+              "graphRef": "GRAPH.OVICOPTER",
+              "lifetimePolicy": {
+                "classification": "sourceProvenNoLifetimeCapInClosedGraph",
+                "hatchDependencyRef": "DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH",
+                "poolDepletion": false
+              },
+              "moveRef": "MONSTER.OVICOPTER#LAY_EGGS_MOVE",
+              "ownerModel": "MONSTER.OVICOPTER",
+              "producerId": "PRODUCTION.MONSTER.OVICOPTER.LAY_EGGS_MOVE",
+              "provenance": {
+                "methodBodySha256": "266a044500a05a073bdc8972b4bd3ec00fa89eef638894b4492e54d04fbb7404",
+                "normalizedSliceSha256": "70527a20dbae4c75cde2806933213869b588efb022641f1462ff4549d077a752",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Ovicopter+<LayEggsMove>d__26::MoveNext sig:200001"
+              },
+              "repeatPolicy": {
+                "classification": "graphCycleRepeat",
+                "graphCycle": true
+              },
+              "semanticKind": "fixedThreeAttemptBatch",
+              "triggerKind": "monsterMove"
+            },
+            {
+              "activationCardinality": {
+                "bodyAddAttempts": {
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "normallyAddedBodies": {
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "orderedTriggerCalls": 1
+              },
+              "applicableConcreteModels": [
+                "MONSTER.THE_OBSCURA"
+              ],
+              "attempts": [
+                {
+                  "addApiSiteRef": "CREATURE_ADD_SITE.220869a52ca90a1bdccfa6a42c5bbfba3f2db8eb8e2e1d3006178d4099bf4fda",
+                  "attemptId": "PRODUCTION.MONSTER.THE_OBSCURA.ILLUSION_MOVE/attempt/0",
+                  "awaitedResult": "exactCreatedCreatureBody",
+                  "bodyAddAttempts": {
+                    "maximum": 1,
+                    "minimum": 0
+                  },
+                  "emptyPoolBehavior": "notApplicableFixedCandidate",
+                  "noSlotBehavior": "passFixedNameWithoutOccupancyCheck",
+                  "order": 0,
+                  "poolRef": "PRODUCTION_POOL.MONSTER.THE_OBSCURA.ILLUSION_MOVE",
+                  "postAddEffectRefs": [
+                    "POST_ADD.PRODUCTION.OBSCURA_HAS_SUMMONED"
+                  ],
+                  "slotStrategyRef": "SLOT_STRATEGY.220869a52ca90a1bdccfa6a42c5bbfba3f2db8eb8e2e1d3006178d4099bf4fda"
+                }
+              ],
+              "availability": {
+                "expression": {
+                  "kind": "graphLifetimeOnce"
+                },
+                "runtimeInputRefs": [
+                  "RUNTIME.PRODUCTION.COMBAT_IS_LIVE"
+                ]
+              },
+              "canonicalEncounter": "ENCOUNTER.THE_OBSCURA_NORMAL",
+              "concurrentPolicy": {
+                "classification": "fixedSlotNoOccupancyGuard"
+              },
+              "dependencies": {
+                "e2aInitialStateFactRefs": [
+                  "SOURCE.INITIAL.MONSTER.PARAFRIGHT.AFTERADDEDTOROOM.000.APPLYPOWER"
+                ],
+                "e2bHpAssignmentRef": "SOURCE.HP_ASSIGNMENT_PIPELINE",
+                "e2d2LifecycleRefs": [
+                  "SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+                  "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS"
+                ]
+              },
+              "factId": "SOURCE.PRODUCTION.MONSTER.THE_OBSCURA.ILLUSION_MOVE",
+              "graphRef": "GRAPH.THE_OBSCURA",
+              "lifetimePolicy": {
+                "classification": "graphLifetimeOnce"
+              },
+              "moveRef": "MONSTER.THE_OBSCURA#ILLUSION_MOVE",
+              "ownerModel": "MONSTER.THE_OBSCURA",
+              "producerId": "PRODUCTION.MONSTER.THE_OBSCURA.ILLUSION_MOVE",
+              "provenance": {
+                "methodBodySha256": "5457844a1e9f307deba8d27bd34dcd543259c2696a10d3f5c4540a5817dfd0ef",
+                "normalizedSliceSha256": "23aebc7d927d8cb6ad291acc9ac83d8d8baf6d0e49a571b40c4b7a3a0db0f505",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TheObscura+<IllusionMove>d__25::MoveNext sig:200001"
+              },
+              "repeatPolicy": {
+                "classification": "graphLifetimeOnce",
+                "graphCycle": false
+              },
+              "semanticKind": "fixedGraphOnceWithStatePostAdd",
+              "triggerKind": "monsterMove"
+            },
+            {
+              "activationCardinality": {
+                "bodyAddAttempts": {
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "normallyAddedBodies": {
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                "orderedTriggerCalls": 1
+              },
+              "applicableConcreteModels": [
+                "MONSTER.TWO_TAILED_RAT"
+              ],
+              "attempts": [
+                {
+                  "addApiSiteRef": "CREATURE_ADD_SITE.1f070aec6335467af55346556653748e0ec4da0478e7c58afc5c64876102de81",
+                  "attemptId": "PRODUCTION.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE/attempt/0",
+                  "awaitedResult": "exactCreatedCreatureBody",
+                  "bodyAddAttempts": {
+                    "maximum": 1,
+                    "minimum": 0
+                  },
+                  "emptyPoolBehavior": "notApplicableFixedCandidate",
+                  "noSlotBehavior": "skipAttempt",
+                  "order": 0,
+                  "poolRef": "PRODUCTION_POOL.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE",
+                  "postAddEffectRefs": [
+                    "POST_ADD.PRODUCTION.RAT_GROUP_COUNTER_SYNC"
+                  ],
+                  "slotStrategyRef": "SLOT_STRATEGY.1f070aec6335467af55346556653748e0ec4da0478e7c58afc5c64876102de81"
+                }
+              ],
+              "availability": {
+                "evaluationOrder": [
+                  "turnsAtOrBelowZero",
+                  "groupCallCountBelowThree",
+                  "encounterAndFirstFreeSlot",
+                  "noOtherTeammatePlansCallForBackup"
+                ],
+                "expression": {
+                  "conditions": [
+                    {
+                      "left": "RUNTIME.PRODUCTION.RAT_TURNS_UNTIL_SUMMONABLE",
+                      "operator": "lessThanOrEqual",
+                      "right": 0
+                    },
+                    {
+                      "left": "RUNTIME.PRODUCTION.RAT_CALL_FOR_BACKUP_COUNT",
+                      "operator": "lessThan",
+                      "right": 3
+                    },
+                    {
+                      "kind": "nonEmptyFirstFreeSlot"
+                    },
+                    {
+                      "kind": "noOtherTeammateNextMove",
+                      "moveId": "MONSTER.TWO_TAILED_RAT#CALL_FOR_BACKUP_MOVE"
+                    }
+                  ],
+                  "kind": "all",
+                  "valueType": "boolean"
+                },
+                "method": {
+                  "methodBodySha256": "fe26353e9b6c9d0b82ff23d2ba4efb53501284af6863fd90064703c08b557731",
+                  "normalizedSliceSha256": "0fc3163801542636644aa12e2532252fffedcdadda49524298f544a1c48dd791",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat::CanSummon sig:200002"
+                },
+                "runtimeInputRefs": [
+                  "RUNTIME.PRODUCTION.RAT_TURNS_UNTIL_SUMMONABLE",
+                  "RUNTIME.PRODUCTION.RAT_CALL_FOR_BACKUP_COUNT",
+                  "RUNTIME.PRODUCTION.ENCOUNTER",
+                  "RUNTIME.PRODUCTION.CURRENT_ENEMIES",
+                  "RUNTIME.PRODUCTION.MONSTER_NEXT_MOVE_ID"
+                ]
+              },
+              "canonicalEncounter": "ENCOUNTER.TWO_TAILED_RATS_NORMAL",
+              "concurrentPolicy": {
+                "classification": "slotAndTeammatePlanMediated"
+              },
+              "dependencies": {
+                "e2aInitialStateFactRefs": [],
+                "e2bHpAssignmentRef": "SOURCE.HP_ASSIGNMENT_PIPELINE",
+                "e2d2LifecycleRefs": [
+                  "SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+                  "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS"
+                ]
+              },
+              "factId": "SOURCE.PRODUCTION.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE",
+              "graphRef": "GRAPH.TWO_TAILED_RAT",
+              "lifetimePolicy": {
+                "classification": "groupCounterBounded",
+                "completedCallPathMaximum": 3,
+                "normallyAddedBodyMaximum": 3,
+                "scope": "allCurrentTwoTailedRats"
+              },
+              "moveRef": "MONSTER.TWO_TAILED_RAT#CALL_FOR_BACKUP_MOVE",
+              "ownerModel": "MONSTER.TWO_TAILED_RAT",
+              "producerId": "PRODUCTION.MONSTER.TWO_TAILED_RAT.CALL_FOR_BACKUP_MOVE",
+              "provenance": {
+                "methodBodySha256": "220e5f752795b0f2fb7a3d1d517a421a2df49bf7b8758e59845b98a5e4d2ad6f",
+                "normalizedSliceSha256": "b92097c22dfb3725cfaab7e5b83889ed45ba8318ab99b748b870f99f999310ed",
+                "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat+<CallForBackup>d__41::MoveNext sig:200001"
+              },
+              "repeatPolicy": {
+                "branchSourceOrder": 98,
+                "classification": "graphPerBodyUseOnlyOnce",
+                "cooldown": 0,
+                "graphCycle": true,
+                "repeat": {
+                  "enumName": "UseOnlyOnce",
+                  "enumValue": 3
+                }
+              },
+              "semanticKind": "groupCounterBounded",
+              "triggerKind": "monsterMove"
+            }
+          ],
+          "runtimeStateContracts": [
+            {
+              "contractId": "RUNTIME.PRODUCTION.COMBAT_IS_LIVE",
+              "default": "runtime",
+              "domain": "boolean",
+              "factId": "SOURCE.RUNTIME.PRODUCTION.COMBAT_IS_LIVE",
+              "observationAvailability": "unavailableNoCurrentAdapter",
+              "provenance": [
+                {
+                  "methodBodySha256": "4b7cd6ac2e8153cd7e44d5519f349da1b525852acca4525cb4f8db7d49521536",
+                  "normalizedSliceSha256": "946359902c95775d24d1a7b0ee4f99acb14f75bce3534c102c3ed7b36d194b32",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fogmog+<IllusionMove>d__15::MoveNext sig:200001"
+                },
+                {
+                  "methodBodySha256": "5457844a1e9f307deba8d27bd34dcd543259c2696a10d3f5c4540a5817dfd0ef",
+                  "normalizedSliceSha256": "ac06e2384ee8ce9e294ec6478a9e4a63f0fd5da31151bc54895c522a3de6d67e",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TheObscura+<IllusionMove>d__25::MoveNext sig:200001"
+                },
+                {
+                  "methodBodySha256": "220e5f752795b0f2fb7a3d1d517a421a2df49bf7b8758e59845b98a5e4d2ad6f",
+                  "normalizedSliceSha256": "7332e3fe12224a19b46c0a2d9068d131462e184de5a98e6f9625e13beaf525f8",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat+<CallForBackup>d__41::MoveNext sig:200001"
+                }
+              ],
+              "update": "combatLifecycle"
+            },
+            {
+              "contractId": "RUNTIME.PRODUCTION.ENCOUNTER",
+              "default": "runtimeNullable",
+              "domain": "nullableCanonicalEncounter",
+              "factId": "SOURCE.RUNTIME.PRODUCTION.ENCOUNTER",
+              "observationAvailability": "unavailableNoCurrentAdapter",
+              "provenance": [
+                {
+                  "methodBodySha256": "ff91b67ffaee72f8956b4b20d12ba48978fa79734cda230d5498b0bb52e96c70",
+                  "normalizedSliceSha256": "bffdc8123a64bfd498dda27ae82990a5306ad4f9c9cd7ff82d33ee7695667220",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.LivingFog+<BloatMove>d__26::MoveNext sig:200001"
+                },
+                {
+                  "methodBodySha256": "266a044500a05a073bdc8972b4bd3ec00fa89eef638894b4492e54d04fbb7404",
+                  "normalizedSliceSha256": "6066345173adf10a37ad0eaf4fc06b6f813344214f51a8ac14f4cb995a08b4e4",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Ovicopter+<LayEggsMove>d__26::MoveNext sig:200001"
+                },
+                {
+                  "methodBodySha256": "220e5f752795b0f2fb7a3d1d517a421a2df49bf7b8758e59845b98a5e4d2ad6f",
+                  "normalizedSliceSha256": "7332e3fe12224a19b46c0a2d9068d131462e184de5a98e6f9625e13beaf525f8",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat+<CallForBackup>d__41::MoveNext sig:200001"
+                }
+              ],
+              "update": "combatLifecycle"
+            },
+            {
+              "contractId": "RUNTIME.PRODUCTION.CURRENT_ENEMIES",
+              "default": "runtime",
+              "domain": "orderedCreatureBodyCollection",
+              "factId": "SOURCE.RUNTIME.PRODUCTION.CURRENT_ENEMIES",
+              "observationAvailability": "unavailableNoCurrentAdapter",
+              "provenance": [
+                {
+                  "methodBodySha256": "220e5f752795b0f2fb7a3d1d517a421a2df49bf7b8758e59845b98a5e4d2ad6f",
+                  "normalizedSliceSha256": "7332e3fe12224a19b46c0a2d9068d131462e184de5a98e6f9625e13beaf525f8",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat+<CallForBackup>d__41::MoveNext sig:200001"
+                }
+              ],
+              "update": "E2d2LifecycleOwned"
+            },
+            {
+              "contractId": "RUNTIME.PRODUCTION.SAME_SIDE_CREATURES",
+              "default": "runtime",
+              "domain": "orderedCreatureBodyCollectionIncludingSource",
+              "factId": "SOURCE.RUNTIME.PRODUCTION.SAME_SIDE_CREATURES",
+              "observationAvailability": "unavailableNoCurrentAdapter",
+              "provenance": [
+                {
+                  "methodBodySha256": "b32d2628b07b2ac67cc52bd9aed68bb312a623e1e846a714028d15a9a237139e",
+                  "normalizedSliceSha256": "458fd9633f30de8200ce5ea83ac6bc95d2c6fa0b629c785bd25d80bcd55a71e4",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator::get_CanFabricate sig:200002"
+                },
+                {
+                  "methodBodySha256": "cb38a753f3803f37106a2bb370a4ecd4ef611b0f74cffec642c56ba4790d8fce",
+                  "normalizedSliceSha256": "497ffd8c17344cfd4fa0849054d98c322537f197e499f9c515f6a0623b02cc5f",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Ovicopter::get_CanLay sig:200002"
+                },
+                {
+                  "methodBodySha256": "fe26353e9b6c9d0b82ff23d2ba4efb53501284af6863fd90064703c08b557731",
+                  "normalizedSliceSha256": "92ddb32004bb0bd55c7071f1de838d8bc040a9329d08bb33b80358f3165d8307",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat::CanSummon sig:200002"
+                }
+              ],
+              "update": "combatLifecycle"
+            },
+            {
+              "contractId": "RUNTIME.PRODUCTION.CREATURE_IS_ALIVE",
+              "default": "runtime",
+              "domain": "booleanPerBody",
+              "factId": "SOURCE.RUNTIME.PRODUCTION.CREATURE_IS_ALIVE",
+              "observationAvailability": "unavailableNoCurrentAdapter",
+              "provenance": [
+                {
+                  "methodBodySha256": "b32d2628b07b2ac67cc52bd9aed68bb312a623e1e846a714028d15a9a237139e",
+                  "normalizedSliceSha256": "458fd9633f30de8200ce5ea83ac6bc95d2c6fa0b629c785bd25d80bcd55a71e4",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator::get_CanFabricate sig:200002"
+                },
+                {
+                  "methodBodySha256": "cb38a753f3803f37106a2bb370a4ecd4ef611b0f74cffec642c56ba4790d8fce",
+                  "normalizedSliceSha256": "497ffd8c17344cfd4fa0849054d98c322537f197e499f9c515f6a0623b02cc5f",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Ovicopter::get_CanLay sig:200002"
+                },
+                {
+                  "methodBodySha256": "fe26353e9b6c9d0b82ff23d2ba4efb53501284af6863fd90064703c08b557731",
+                  "normalizedSliceSha256": "92ddb32004bb0bd55c7071f1de838d8bc040a9329d08bb33b80358f3165d8307",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat::CanSummon sig:200002"
+                }
+              ],
+              "update": "E2d2LifecycleOwned"
+            },
+            {
+              "contractId": "RUNTIME.PRODUCTION.MONSTER_NEXT_MOVE_ID",
+              "default": "runtimeNullable",
+              "domain": "nullableCanonicalMoveIdPerBody",
+              "factId": "SOURCE.RUNTIME.PRODUCTION.MONSTER_NEXT_MOVE_ID",
+              "observationAvailability": "unavailableNoCurrentAdapter",
+              "provenance": [
+                {
+                  "methodBodySha256": "fe26353e9b6c9d0b82ff23d2ba4efb53501284af6863fd90064703c08b557731",
+                  "normalizedSliceSha256": "92ddb32004bb0bd55c7071f1de838d8bc040a9329d08bb33b80358f3165d8307",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat::CanSummon sig:200002"
+                }
+              ],
+              "update": "moveSelection"
+            },
+            {
+              "contractId": "RUNTIME.PRODUCTION.MONSTER_AI_RNG",
+              "default": "runSeededRuntimeState",
+              "domain": "deterministicRngStream",
+              "factId": "SOURCE.RUNTIME.PRODUCTION.MONSTER_AI_RNG",
+              "observationAvailability": "unavailableNoCurrentAdapter",
+              "provenance": [
+                {
+                  "methodBodySha256": "65f21e5f3de11d7e333a10a709b8a3828d0cab8101faa31a0b353db8cb4c58ae",
+                  "normalizedSliceSha256": "ce12a2e4dacae6f7c2dcbb89216715db63f629326c7c59c53b361bff6f85aa26",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator+<SpawnBot>d__25::MoveNext sig:200001"
+                },
+                {
+                  "methodBodySha256": "5e15efc8aec3b4bb3222236eb4f00a460bf656388277fcfb8c0298a051cc247a",
+                  "normalizedSliceSha256": "c15deba96e2b599bef57b94cb8d750fa6e81947bb74da45752774eec450a7497",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Random.Rng::NextItem sig:3001011e00151281f5011e00"
+                }
+              ],
+              "update": "NextItemConsumesNextIntOnlyWhenNonempty"
+            },
+            {
+              "contractId": "RUNTIME.PRODUCTION.FABRICATOR_LAST_SPAWNED",
+              "default": null,
+              "domain": "nullableCanonicalMonsterModelReference",
+              "factId": "SOURCE.RUNTIME.PRODUCTION.FABRICATOR_LAST_SPAWNED",
+              "observationAvailability": "unavailableNoCurrentAdapter",
+              "provenance": [
+                {
+                  "methodBodySha256": "6f45805f3d251ccaccef1f8f1ffb0591414f5d51a3a0540ea36c64b7e51681b0",
+                  "normalizedSliceSha256": "f9285503145519d38d38df6bcdf71dce3de95e1640ce224a5b68e4d534aeebf1",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator::.ctor sig:200001"
+                },
+                {
+                  "methodBodySha256": "65f21e5f3de11d7e333a10a709b8a3828d0cab8101faa31a0b353db8cb4c58ae",
+                  "normalizedSliceSha256": "ce12a2e4dacae6f7c2dcbb89216715db63f629326c7c59c53b361bff6f85aa26",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator+<SpawnBot>d__25::MoveNext sig:200001"
+                },
+                {
+                  "methodBodySha256": "4fb2677d39505f7b468d89d0dfebe1022cc499c94ee42bfb547c8e772053463e",
+                  "normalizedSliceSha256": "5d57c3049a45fb870940ee4e3ec66425f38b023274280a5600f57fc3b2b0f030",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator::<SpawnBot>b__25_0 sig:2001021288e4"
+                }
+              ],
+              "reset": "noneFound",
+              "update": "chosenReferenceBeforeAdd"
+            },
+            {
+              "contractId": "RUNTIME.PRODUCTION.RAT_TURNS_UNTIL_SUMMONABLE",
+              "default": 2,
+              "domain": "Int32NoFloor",
+              "factId": "SOURCE.RUNTIME.PRODUCTION.RAT_TURNS_UNTIL_SUMMONABLE",
+              "observationAvailability": "unavailableNoCurrentAdapter",
+              "provenance": [
+                {
+                  "methodBodySha256": "ab63882f3d75ef3a1a254eb2549d06ab09d5fdfeafe618422b71ed9efc87b21c",
+                  "normalizedSliceSha256": "c1349063a48cf9271a843ffc56e48713a219f4aebdd3664ec523fa2d96738e57",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat::.ctor sig:200001"
+                },
+                {
+                  "methodBodySha256": "4ffda5462c6d2f6a51b765110a47f70ae80544812543b4df5d17f843aa86093a",
+                  "normalizedSliceSha256": "5410a53bf952bc8d0bcf375c9bfc3dbd856838f1df7cf09fc07fdec53a0d9d37",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat::get_TurnsUntilSummonable sig:200008"
+                },
+                {
+                  "methodBodySha256": "f85034dded501bc5a1ada6636cfcd7436089ac9de71007994bfd7eb0232ba2ab",
+                  "normalizedSliceSha256": "a179d6adacb13b228ea8e92eb8c43fc85ddec4016204d7714d1a90edb79a08dd",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat::set_TurnsUntilSummonable sig:20010108"
+                },
+                {
+                  "methodBodySha256": "713a44c0fa6e6f907074dc53bdb7f29521dcc610752e2f3f6117f81e317f5629",
+                  "normalizedSliceSha256": "4c62bcd9caf59034be5950f329640ee7b2624cf1f28d716786e467795a7a3371",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat+<DiseaseBiteMove>d__39::MoveNext sig:200001"
+                },
+                {
+                  "methodBodySha256": "33e7ceeb339cbcf4a09276276e2767cb5b1786b945ae398ee7fb8dffe2de67bc",
+                  "normalizedSliceSha256": "b3fe75c40f9ad41585700f14556a72cd2dc0750b3e89ded99e8bbc575a0c0698",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat+<ScratchMove>d__38::MoveNext sig:200001"
+                },
+                {
+                  "methodBodySha256": "6a597f24e2d904f90039b9574606ca3cfd84d22125384e54beb47195fdde2965",
+                  "normalizedSliceSha256": "c35d0e121012bf9078fa3b5a4a7f1c50508248b6e5ea7835f68599f983cd13a6",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat+<ScreechMove>d__40::MoveNext sig:200001"
+                }
+              ],
+              "reset": "noneFound",
+              "update": "subtractOneBeforeEachOfThreeNonCallMoveEffects"
+            },
+            {
+              "contractId": "RUNTIME.PRODUCTION.RAT_CALL_FOR_BACKUP_COUNT",
+              "default": 0,
+              "domain": "Int32; reachable production range 0..3",
+              "factId": "SOURCE.RUNTIME.PRODUCTION.RAT_CALL_FOR_BACKUP_COUNT",
+              "observationAvailability": "unavailableNoCurrentAdapter",
+              "provenance": [
+                {
+                  "methodBodySha256": "ab63882f3d75ef3a1a254eb2549d06ab09d5fdfeafe618422b71ed9efc87b21c",
+                  "normalizedSliceSha256": "c1349063a48cf9271a843ffc56e48713a219f4aebdd3664ec523fa2d96738e57",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat::.ctor sig:200001"
+                },
+                {
+                  "methodBodySha256": "62bf0b749c845054a969e1cd8b5c93d7a900690caea97a005ceb8692dde2f2ab",
+                  "normalizedSliceSha256": "33daa4de370d48bdd75339d94340ef71e43b921fd83e9ff37ec1b038c8fa7534",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat::get_CallForBackupCount sig:200008"
+                },
+                {
+                  "methodBodySha256": "ee8f2a84d92f8de3493730e89cd1012bbeb66c873627c5e53a802acb2d6d7cdf",
+                  "normalizedSliceSha256": "1d0f32307c5ee92eac2545752303343056d6738cf1e81bb2ee2de86be6a8fee4",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat::set_CallForBackupCount sig:20010108"
+                },
+                {
+                  "methodBodySha256": "ca069960a6943aaf8072bd2398de851f38180096707fe6b6c95375709b53190f",
+                  "normalizedSliceSha256": "86a2251936cf098ab89ce4aa2985dab50fb42c3e8b1c310a97fd814a5d5fff7a",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat+<>c__DisplayClass41_0::<CallForBackup>b__3 sig:200101129570"
+                },
+                {
+                  "methodBodySha256": "220e5f752795b0f2fb7a3d1d517a421a2df49bf7b8758e59845b98a5e4d2ad6f",
+                  "normalizedSliceSha256": "7332e3fe12224a19b46c0a2d9068d131462e184de5a98e6f9625e13beaf525f8",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat+<CallForBackup>d__41::MoveNext sig:200001"
+                }
+              ],
+              "reset": "noneFound",
+              "update": "afterNormalAddReturn set every current Rat to Max(oldPlusOne)"
+            },
+            {
+              "contractId": "RUNTIME.PRODUCTION.LIVING_FOG_BLOAT_AMOUNT",
+              "default": 1,
+              "domain": "Int32",
+              "factId": "SOURCE.RUNTIME.PRODUCTION.LIVING_FOG_BLOAT_AMOUNT",
+              "observationAvailability": "unavailableNoCurrentAdapter",
+              "provenance": [
+                {
+                  "methodBodySha256": "37e5c1b1c66b23e88c6f10b9520c48784e9a7970f2eb3fa4878841d5669ac418",
+                  "normalizedSliceSha256": "3ee49a74b85ae0bd0961e7495fb1289520e478ea620397653988ab67a91833da",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.LivingFog::.ctor sig:200001"
+                },
+                {
+                  "methodBodySha256": "c552e26f7ded178b2aa9b9545d543e49d1a91edfdcfe8b0df46645fc6856f0d0",
+                  "normalizedSliceSha256": "66d182597bf4c19c6d2ff3e2f4ae0609ebf14e83bb306e1146c7dfb9b89114f6",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.LivingFog::get_BloatAmount sig:200008"
+                },
+                {
+                  "methodBodySha256": "99ca6bcf75e73e3f4460f09ce715122259520023252a45f5b59fef24224ef655",
+                  "normalizedSliceSha256": "8017badd3392cea6fbb352c4e6cb5a85855fa5b202dfba1fb126264bb0f942e5",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.LivingFog::set_BloatAmount sig:20010108"
+                }
+              ],
+              "reset": "noneFound",
+              "update": "noReachableWriteAfterConstruction"
+            },
+            {
+              "contractId": "RUNTIME.PRODUCTION.OBSCURA_HAS_SUMMONED",
+              "default": false,
+              "domain": "boolean",
+              "factId": "SOURCE.RUNTIME.PRODUCTION.OBSCURA_HAS_SUMMONED",
+              "observationAvailability": "unavailableNoCurrentAdapter",
+              "provenance": [
+                {
+                  "methodBodySha256": "6f45805f3d251ccaccef1f8f1ffb0591414f5d51a3a0540ea36c64b7e51681b0",
+                  "normalizedSliceSha256": "f9285503145519d38d38df6bcdf71dce3de95e1640ce224a5b68e4d534aeebf1",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TheObscura::.ctor sig:200001"
+                },
+                {
+                  "methodBodySha256": "5457844a1e9f307deba8d27bd34dcd543259c2696a10d3f5c4540a5817dfd0ef",
+                  "normalizedSliceSha256": "ac06e2384ee8ce9e294ec6478a9e4a63f0fd5da31151bc54895c522a3de6d67e",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TheObscura+<IllusionMove>d__25::MoveNext sig:200001"
+                },
+                {
+                  "methodBodySha256": "1376081b22187b5cfb30dba27116b069ede7a202d4dd1f9365364d62846cdcac",
+                  "normalizedSliceSha256": "92584c1c0776fc306a2cca0773cea3375c4ba1f849cbd2ff5bb0100a519cb33b",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TheObscura::get_HasSummoned sig:200002"
+                },
+                {
+                  "methodBodySha256": "4ceac88f2e09c3a14b741de1df77e2702e44a26efdf8f9725d0c9ad6a2383978",
+                  "normalizedSliceSha256": "443db8c395684b20a5919d0fb07703ecd97a2eda1880c547380b54087411cfe7",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TheObscura::set_HasSummoned sig:20010102"
+                }
+              ],
+              "reset": "noneFound",
+              "update": "trueAfterNormalAddReturn"
+            }
+          ],
+          "slotStrategies": [
+            {
+              "canonicalEncounter": "ENCOUNTER.FABRICATOR_NORMAL",
+              "emptyResult": "emptyStringOrNull",
+              "factId": "SOURCE.SLOT_STRATEGY.0cd97ca938d14203d9d3129d061876c638206edd22166995df0f8562f5334a2c",
+              "fixedName": null,
+              "kind": "firstFreeDeclaredSlot",
+              "noSlotBehavior": "passEmptyStringToCoreAdd",
+              "orderedEncounterSlots": [
+                "bot1",
+                "bot2",
+                "fabricator",
+                "bot3",
+                "bot4"
+              ],
+              "provenance": {
+                "selection": {
+                  "methodBodySha256": "65f21e5f3de11d7e333a10a709b8a3828d0cab8101faa31a0b353db8cb4c58ae",
+                  "normalizedSliceSha256": "2e91ee42d0225cf351b48f27ce9311d0a9026ca4918ca42a4405d59b5a1142a5",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fabricator+<SpawnBot>d__25::MoveNext sig:200001"
+                },
+                "slots": {
+                  "methodBodySha256": "021fe312f6036b3abb5f1a0022d8742719c16d0376e5551d2ba2160e822c541d",
+                  "normalizedSliceSha256": "744dbd068a3a34c2083ef1a6ec606d3e9d8c1ac304f2ff7c7d3c80b996b2e770",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.FabricatorNormal::get_Slots sig:2000151281fd010e"
+                }
+              },
+              "slotStrategyId": "SLOT_STRATEGY.0cd97ca938d14203d9d3129d061876c638206edd22166995df0f8562f5334a2c",
+              "validation": "producerOwned; core Add performs none"
+            },
+            {
+              "canonicalEncounter": "ENCOUNTER.TWO_TAILED_RATS_NORMAL",
+              "emptyResult": "emptyStringOrNull",
+              "factId": "SOURCE.SLOT_STRATEGY.1f070aec6335467af55346556653748e0ec4da0478e7c58afc5c64876102de81",
+              "fixedName": null,
+              "kind": "lastFreeDeclaredSlot",
+              "noSlotBehavior": "skipAttempt",
+              "orderedEncounterSlots": [
+                "first",
+                "second",
+                "third",
+                "fourth",
+                "fifth"
+              ],
+              "provenance": {
+                "selection": {
+                  "methodBodySha256": "220e5f752795b0f2fb7a3d1d517a421a2df49bf7b8758e59845b98a5e4d2ad6f",
+                  "normalizedSliceSha256": "6104110d46e976ddfdd875bec81adba40553ecb014c0b8b5139abc67ca1e495e",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat+<CallForBackup>d__41::MoveNext sig:200001"
+                },
+                "slots": {
+                  "methodBodySha256": "a11a14efd1c0645b5a643b4b0c3ed14d0aff7ec302b45591f3351c9340e2d5a7",
+                  "normalizedSliceSha256": "b501f516fc166c8956d631180f1cc668473a520a074144f40c48a3efc38fff92",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.TwoTailedRatsNormal::get_Slots sig:2000151281fd010e"
+                }
+              },
+              "slotStrategyId": "SLOT_STRATEGY.1f070aec6335467af55346556653748e0ec4da0478e7c58afc5c64876102de81",
+              "validation": "producerOwned; core Add performs none"
+            },
+            {
+              "canonicalEncounter": "ENCOUNTER.THE_OBSCURA_NORMAL",
+              "emptyResult": "notApplicableFixedName",
+              "factId": "SOURCE.SLOT_STRATEGY.220869a52ca90a1bdccfa6a42c5bbfba3f2db8eb8e2e1d3006178d4099bf4fda",
+              "fixedName": "illusion",
+              "kind": "fixedName",
+              "noSlotBehavior": "passFixedNameWithoutOccupancyCheck",
+              "orderedEncounterSlots": [
+                "illusion",
+                "obscura"
+              ],
+              "provenance": {
+                "selection": {
+                  "methodBodySha256": "5457844a1e9f307deba8d27bd34dcd543259c2696a10d3f5c4540a5817dfd0ef",
+                  "normalizedSliceSha256": "6f47bea582edcdc7ea287af91320ca321c2e9640313eaa18af018832d3d4e5ee",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TheObscura+<IllusionMove>d__25::MoveNext sig:200001"
+                },
+                "slots": {
+                  "methodBodySha256": "e92750a2508d24570d842f5cbfbc936d5318fb2aa16886dd8466d7f9b0a412ad",
+                  "normalizedSliceSha256": "c9869886f1d82ebab614e3ad8f54cc3e1592a4210d10b77303f5129ee6d3d431",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.TheObscuraNormal::get_Slots sig:2000151281fd010e"
+                }
+              },
+              "slotStrategyId": "SLOT_STRATEGY.220869a52ca90a1bdccfa6a42c5bbfba3f2db8eb8e2e1d3006178d4099bf4fda",
+              "validation": "producerOwned; core Add performs none"
+            },
+            {
+              "canonicalEncounter": "ENCOUNTER.OVICOPTER_NORMAL",
+              "emptyResult": "emptyStringOrNull",
+              "factId": "SOURCE.SLOT_STRATEGY.9e9a0cddf03ba5d18337c19c406668451973094894de820874906445a368799f",
+              "fixedName": null,
+              "kind": "lastFreeDeclaredSlot",
+              "noSlotBehavior": "skipAttempt",
+              "orderedEncounterSlots": [
+                "egg1",
+                "egg2",
+                "egg3",
+                "egg4",
+                "egg5",
+                "ovicopter"
+              ],
+              "provenance": {
+                "selection": {
+                  "methodBodySha256": "266a044500a05a073bdc8972b4bd3ec00fa89eef638894b4492e54d04fbb7404",
+                  "normalizedSliceSha256": "debb3aa87f2563e4743996b5f28f3729d4a561aeacd386bd18bbd743c8205994",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Ovicopter+<LayEggsMove>d__26::MoveNext sig:200001"
+                },
+                "slots": {
+                  "methodBodySha256": "77ebe48a1ca0ad22b54d1081feecad20a9af23dc8ff72e4f0adeb2a491be9ef5",
+                  "normalizedSliceSha256": "7edf9378ffa19c3e56d62d7b60a9bc726f5a6b025e057758abe7665f1415367d",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.OvicopterNormal::get_Slots sig:2000151281fd010e"
+                }
+              },
+              "slotStrategyId": "SLOT_STRATEGY.9e9a0cddf03ba5d18337c19c406668451973094894de820874906445a368799f",
+              "validation": "producerOwned; core Add performs none"
+            },
+            {
+              "canonicalEncounter": "ENCOUNTER.LIVING_FOG_NORMAL",
+              "emptyResult": "emptyStringOrNull",
+              "factId": "SOURCE.SLOT_STRATEGY.c1d627384a57e57006b62636cd15a6e106c193b2a1d825c4c39a48398f3904fa",
+              "fixedName": null,
+              "kind": "firstFreeDeclaredSlot",
+              "noSlotBehavior": "skipAttempt",
+              "orderedEncounterSlots": [
+                "bomb1",
+                "bomb2",
+                "bomb3",
+                "bomb4",
+                "bomb5",
+                "livingFog"
+              ],
+              "provenance": {
+                "selection": {
+                  "methodBodySha256": "ff91b67ffaee72f8956b4b20d12ba48978fa79734cda230d5498b0bb52e96c70",
+                  "normalizedSliceSha256": "f09b4db588967ce481039e9ce554dd7f0285c231fbefef8b77b374b880d5309a",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.LivingFog+<BloatMove>d__26::MoveNext sig:200001"
+                },
+                "slots": {
+                  "methodBodySha256": "205955774f8d5fa47f3cc2483e11516b2127ec3c113832ec160dec5c81748a0f",
+                  "normalizedSliceSha256": "b51f67db9e41e4c0a9fc1269864389586674ea3e50266bb880e3606ac3f2ded9",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.LivingFogNormal::get_Slots sig:2000151281fd010e"
+                }
+              },
+              "slotStrategyId": "SLOT_STRATEGY.c1d627384a57e57006b62636cd15a6e106c193b2a1d825c4c39a48398f3904fa",
+              "validation": "producerOwned; core Add performs none"
+            },
+            {
+              "canonicalEncounter": "ENCOUNTER.FOGMOG_NORMAL",
+              "emptyResult": "notApplicableFixedName",
+              "factId": "SOURCE.SLOT_STRATEGY.f4936d06795a7cd495a3a1f17a2cd0a8d938dbc814e48009ecdde4d4a87def12",
+              "fixedName": "illusion",
+              "kind": "fixedName",
+              "noSlotBehavior": "passFixedNameWithoutOccupancyCheck",
+              "orderedEncounterSlots": [
+                "illusion",
+                "fogmog"
+              ],
+              "provenance": {
+                "selection": {
+                  "methodBodySha256": "4b7cd6ac2e8153cd7e44d5519f349da1b525852acca4525cb4f8db7d49521536",
+                  "normalizedSliceSha256": "134cb430472644d1ab996c969ba0df8cf0a2d87b63e8194fa0dad05a64a08672",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.Fogmog+<IllusionMove>d__15::MoveNext sig:200001"
+                },
+                "slots": {
+                  "methodBodySha256": "9fecd4ed3bd704ce8fb9838f9802488bd191434866a76482ae5da4c84f19fb33",
+                  "normalizedSliceSha256": "185faea84bfe39d1ea3d7d81acc7e90ce3021c06c6536d0fa24f21bd22d577d1",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.FogmogNormal::get_Slots sig:2000151281fd010e"
+                }
+              },
+              "slotStrategyId": "SLOT_STRATEGY.f4936d06795a7cd495a3a1f17a2cd0a8d938dbc814e48009ecdde4d4a87def12",
+              "validation": "producerOwned; core Add performs none"
+            }
+          ],
+          "sourceDenominators": {
+            "candidateEntries": 9,
+            "candidateRngSelections": 1,
+            "dependencyRefs": 4,
+            "pools": 7,
+            "postAddEffects": 4,
+            "producers": 7,
+            "runtimeStateContracts": 12,
+            "slotStrategies": 6
+          },
+          "status": "sourceComplete"
         },
         "summary": {
           "addAssemblySites": 14,
@@ -129541,5 +131875,5 @@
       ]
     }
   },
-  "schemaVersion": 8
+  "schemaVersion": 9
 }

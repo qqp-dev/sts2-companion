@@ -1,18 +1,18 @@
-"""Closed E2d1a encounter projection contract and pinned v0.111.0 identities."""
+"""Closed E2d1b encounter projection contract and pinned v0.111.0 identities."""
 
 from __future__ import annotations
 
 from typing import Any
 
-SCHEMA_VERSION = 8
+SCHEMA_VERSION = 9
 GENERATOR_NAME = "sts2-encounter-facts"
-GENERATOR_VERSION = "8.0.0"
-SOURCE_SCHEMA_VERSION = 11
-SOURCE_EXTRACTOR_VERSION = "11.0.0"
+GENERATOR_VERSION = "9.0.0"
+SOURCE_SCHEMA_VERSION = 12
+SOURCE_EXTRACTOR_VERSION = "12.0.0"
 
 SOURCE_ARTIFACT = {
     "id": "INPUT.SOURCE", "path": "data/game-v0.111.0-source.json",
-    "sha256": "89069872f7b100ed414ddb7583bef54dff23b32d9be6d78cdcb3d56ece94020f", "size": 13290318,
+    "sha256": "c1f5c95c86f3c7bcf8a28a983aadab355c73ffb43ef1dacbb5153198d9a498c0", "size": 13399941,
 }
 LEGACY_ARTIFACT = {
     "id": "INPUT.LEGACY", "path": "data/encounters.json",
@@ -101,6 +101,14 @@ REQUIRED_COVERAGE: dict[str, tuple[str, int, int, int]] = {
     "productionHelperCallClosure": ("complete", 5, 5, 0),
     "productionDirectSiteDiscovery": ("complete", 6, 6, 0),
     "productionOwnerEncounterApplicability": ("complete", 6, 6, 0),
+    "productionProducerSemantics": ("complete", 7, 7, 0),
+    "productionPoolSemantics": ("complete", 7, 7, 0),
+    "productionCandidateEntries": ("complete", 9, 9, 0),
+    "productionSlotPolicies": ("complete", 6, 6, 0),
+    "productionCandidateRngSelection": ("complete", 1, 1, 0),
+    "productionPostAddEffects": ("complete", 4, 4, 0),
+    "productionRuntimeStateContracts": ("complete", 12, 12, 0),
+    "productionDependencyRefs": ("complete", 4, 4, 0),
     "coreAddOverloadClosure": ("complete", 3, 3, 0),
     "coreAddMethodClosure": ("complete", 6, 6, 0),
     "coreAddSemanticFieldClosure": ("complete", 11, 11, 0),
