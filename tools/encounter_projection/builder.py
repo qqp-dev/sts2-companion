@@ -1,4 +1,4 @@
-"""Pure builder for the compact E2d1a encounter projection."""
+"""Pure builder for the compact E2d1b encounter projection."""
 
 from __future__ import annotations
 
@@ -257,13 +257,70 @@ def _source_production(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
     )} for row in raw["helperCallSites"]]
     osty_contract = deepcopy(raw["ostySummonContract"])
     osty_contract["methods"] = {key: _compact_method(value) for key, value in raw["ostySummonContract"]["methods"].items()}
+    raw_semantics = raw["productionSemantics"]
+    semantics = {"sourceDenominators": deepcopy(raw_semantics["sourceDenominators"]),
+                 "status": raw_semantics["status"]}
+    semantics["producers"] = []
+    for index, row in enumerate(raw_semantics["producers"]):
+        compact = deepcopy(row)
+        compact["provenance"] = _compact_method(row["provenance"])
+        if "method" in compact["availability"]:
+            compact["availability"]["method"] = _compact_method(row["availability"]["method"])
+        compact["dependencies"]["e2aInitialStateFactRefs"] = ["SOURCE." + ref for ref in row["dependencies"]["e2aInitialStateFactRefs"]]
+        compact["dependencies"]["e2bHpAssignmentRef"] = "SOURCE.HP_ASSIGNMENT_PIPELINE"
+        compact["dependencies"]["e2d2LifecycleRefs"] = ["SOURCE." + ref for ref in row["dependencies"]["e2d2LifecycleRefs"]]
+        compact["factId"] = "SOURCE." + row["producerId"]
+        facts.add(compact["factId"], "source", "EVIDENCE." + compact["factId"], "INPUT.SOURCE",
+                  [f"/production/productionSemantics/producers/{index}"])
+        semantics["producers"].append(compact)
+    semantics["pools"] = []
+    for index, row in enumerate(raw_semantics["pools"]):
+        compact = deepcopy(row); compact["provenance"] = _compact_method(row["provenance"])
+        if "selectionProvenance" in row:
+            compact["selectionProvenance"] = {key: _compact_method(value) for key, value in row["selectionProvenance"].items()}
+        compact["factId"] = "SOURCE." + row["poolId"]
+        facts.add(compact["factId"], "source", "EVIDENCE." + compact["factId"], "INPUT.SOURCE",
+                  [f"/production/productionSemantics/pools/{index}"])
+        semantics["pools"].append(compact)
+    semantics["slotStrategies"] = []
+    for index, row in enumerate(raw_semantics["slotStrategies"]):
+        compact = deepcopy(row)
+        compact["provenance"] = {key: _compact_method(value) for key, value in row["provenance"].items()}
+        compact["factId"] = "SOURCE." + row["slotStrategyId"]
+        facts.add(compact["factId"], "source", "EVIDENCE." + compact["factId"], "INPUT.SOURCE",
+                  [f"/production/productionSemantics/slotStrategies/{index}"])
+        semantics["slotStrategies"].append(compact)
+    semantics["postAddEffects"] = []
+    for index, row in enumerate(raw_semantics["postAddEffects"]):
+        compact = deepcopy(row); compact.pop("validatedOrderInstructionIndices", None)
+        compact["provenance"] = _compact_method(row["provenance"])
+        if "supportProvenance" in row:
+            compact["supportProvenance"] = [_compact_method(value) for value in row["supportProvenance"]]
+        compact["factId"] = "SOURCE." + row["effectId"]
+        facts.add(compact["factId"], "source", "EVIDENCE." + compact["factId"], "INPUT.SOURCE",
+                  [f"/production/productionSemantics/postAddEffects/{index}"])
+        semantics["postAddEffects"].append(compact)
+    semantics["runtimeStateContracts"] = []
+    for index, row in enumerate(raw_semantics["runtimeStateContracts"]):
+        compact = deepcopy(row)
+        compact["provenance"] = [_compact_method(value) for value in row["provenance"]]
+        compact["factId"] = "SOURCE." + row["contractId"]
+        facts.add(compact["factId"], "source", "EVIDENCE." + compact["factId"], "INPUT.SOURCE",
+                  [f"/production/productionSemantics/runtimeStateContracts/{index}"])
+        semantics["runtimeStateContracts"].append(compact)
+    semantics["dependencies"] = []
+    for index, row in enumerate(raw_semantics["dependencies"]):
+        compact = deepcopy(row); compact["factId"] = "SOURCE." + row["dependencyId"]
+        facts.add(compact["factId"], "source", "EVIDENCE." + compact["factId"], "INPUT.SOURCE",
+                  [f"/production/productionSemantics/dependencies/{index}"])
+        semantics["dependencies"].append(compact)
     return {
         "addApiCensus": [site(row) for row in raw["addApiCensus"]],
         "applicability": deepcopy(raw["applicability"]), "coreAddContract": core,
         "directSites": deepcopy(raw["directSites"]), "factId": fact_id,
         "helperCallSites": helpers, "ostySummonCensus": [site(row) for row in raw["ostySummonCensus"]],
         "ostySummonContract": osty_contract,
-        "producerRoots": roots, "productionSemantics": deepcopy(raw["productionSemantics"]),
+        "producerRoots": roots, "productionSemantics": semantics,
         "summary": deepcopy(raw["summary"]),
     }
 
@@ -852,22 +909,19 @@ def _fallback_candidates(source_facts: dict[str, Any], legacy_annotations: dict[
 def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, Any]) -> list[dict[str, Any]]:
     rows = [
         {
-            "affectedFactIds": [row["factId"] for row in source_facts["initialState"]["facts"]] + [source_facts["production"]["factId"]],
-            "detail": "Production discovery and core Add are closed, but producer-specific E2d1b semantics and death/prevention, revive/hatch phase, escape/removal, and encounter-result E2d2 lifecycle semantics remain pending.",
+            "affectedFactIds": [row["factId"] for row in source_facts["initialState"]["facts"]]
+                               + [row["factId"] for row in source_facts["production"]["productionSemantics"]["dependencies"]]
+                               + [source_facts["production"]["factId"]],
+            "detail": "Producer pools, availability, slots, cardinality, cap/repeat state, and ordered post-Add effects are source-complete; death/prevention, revive/hatch phase, escape/removal, listener effects, and encounter-result E2d2 lifecycle semantics remain pending.",
             "reasonCode": "LIFECYCLE_COVERAGE_ABSENT", "scope": "encounterCompanion", "status": "unresolved",
             "unknownId": "UNKNOWN.LIFECYCLE_COVERAGE",
         },
         {
-            "affectedFactIds": [source_facts["production"]["factId"]],
-            "detail": "The current owner/root/helper/direct-site census and shared core Add contract are complete; per-producer pools, availability, slot/no-slot behavior, cardinality, caps, repetition state, and post-add ordering remain E2d1b.",
-            "reasonCode": "PRODUCTION_SEMANTICS_PENDING_E2D1B", "scope": "encounterCompanion", "status": "unresolved",
-            "unknownId": "UNKNOWN.PRODUCTION_SEMANTICS",
-        },
-        {
             "affectedFactIds": [row["factId"] for row in source_facts["initialState"]["runtimeStateContracts"]]
+                               + [row["factId"] for row in source_facts["production"]["productionSemantics"]["runtimeStateContracts"]]
                                + [row["factId"] for row in source_facts["eventScripts"]["architect"]["runtimeContracts"]]
                                + [row["factId"] for row in source_facts["eventScripts"]["architect"]["dependencies"] if row["kind"] == "formula"],
-            "detail": "Initial and Architect runtime inputs are preserved, but companion-wide getter/delegate formula inlining, including ScoreUtility.CalculateScore, remains incomplete.",
+            "detail": "Initial, production, and Architect runtime inputs are preserved, but live observation adapters, actual RNG outcomes, and companion-wide getter/delegate formula inlining, including ScoreUtility.CalculateScore, remain incomplete.",
             "reasonCode": "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE", "scope": "encounterCompanion", "status": "unresolved",
             "unknownId": "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
         },
@@ -920,7 +974,15 @@ def _resolved_audits(source_facts: dict[str, Any]) -> list[dict[str, Any]]:
     helper = source_facts["scaling"]["hp"]
     pipeline = source_facts["hpPipeline"]
     event_turn = source_facts["eventTurnBehavior"]
+    production = source_facts["production"]["productionSemantics"]
     return [{
+        "auditId": "AUDIT.RESOLVED.PRODUCTION_SEMANTICS",
+        "boundary": "Seven producer triggers are source-complete; death/removal, Tough Egg hatch, general AfterCreatureAdded listener effects, and four death-Power Add sites remain E2d2 dependencies.",
+        "classificationFactRefs": [row["factId"] for family in ("producers", "pools", "slotStrategies", "postAddEffects", "runtimeStateContracts") for row in production[family]],
+        "dependencyFactRefs": [row["factId"] for row in production["dependencies"]],
+        "family": "enemyBodyProduction", "historicalStatus": "sourceComplete",
+        "sourceDenominators": deepcopy(production["sourceDenominators"]),
+    }, {
         "auditId": "AUDIT.RESOLVED.EVENT_TURN_MACHINES",
         "boundary": "Architect scripting is separately source-complete; lifecycle/timeout/result dependencies remain unresolved.",
         "classificationFactRefs": [row["factId"] for row in event_turn["encounters"]],
@@ -998,6 +1060,8 @@ def _readiness(known_unknowns: list[dict[str, Any]]) -> dict[str, Any]:
                     "architectDialogueLineGraph", "architectOptionDelegates", "architectVisualOnlyLayout",
                     "architectPresentationGameplayBoundary", "architectTerminalOrder", "architectDependencyRefs",
                     "randomBranchRepeatWeight", "randomSelectionRuntime", "productionDiscovery", "coreAddDependencies",
+                    "productionProducerPool", "productionAvailabilityCapRepeat", "productionSlotFailure",
+                    "productionRuntimeState", "productionPostAddOrder", "productionLifecycleDependencies",
                 ],
                 "status": "complete",
             },

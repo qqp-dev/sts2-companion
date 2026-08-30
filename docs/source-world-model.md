@@ -3,7 +3,7 @@
 `data/game-v0.111.0-source.json` is a deterministic, presentation-independent
 world model for exact public-beta v0.111.0 inputs. It contains identities,
 localization joins, formulas, roster selections, membership sets, and state
-facts—not UI sentences or layout. Schema 11 is the E2d1a boundary and remains
+facts—not UI sentences or layout. Schema 12 is the E2d1b boundary and remains
 runtime-incomplete until independently gated later E2 and consumer waves land.
 
 ## Three-wave boundary
@@ -18,7 +18,8 @@ runtime-incomplete until independently gated later E2 and consumer waves land.
 | E2c1 | Event-inclusive physical turn graphs, inherited/reused applicability, event titles/intents/operations/no-op proofs, and helper-call closure | Complete for exact turn-machine denominators; scripted event and lifecycle dependencies remain |
 | E2c2a | Five linked event owners, 12 option/delegate constructions, seven exact combat transitions/outcomes, Foul Potion dispatch, and common framework closure | Complete for the non-Architect linked slice |
 | E2c2b | Architect placement, dialogue selection/line graph, structural localization, visual-only layout, presentation closure, and terminal sink/order | Script component complete; lifecycle producers/order and formulas remain dependencies |
-| E2d1a | Generic random repeat/float-weight repair; closed Add/Osty census; current producer roots/helper sites; shared core Add lifecycle contract | Complete for exact discovery/core denominators; per-producer E2d1b semantics and E2d2 lifecycle remain pending |
+| E2d1a | Generic random repeat/float-weight repair; closed Add/Osty census; current producer roots/helper sites; shared core Add lifecycle contract | Complete for exact discovery/core denominators |
+| E2d1b | Seven producer triggers; pools/candidates; availability, slots, cardinality, cap/repeat state; ordered post-Add effects and runtime/dependency contracts | Complete for exact production denominators; E2d2 lifecycle remains pending |
 
 The current app does not import this artifact or the compact projection and still displays the
 wiki-derived book. Source extraction changes no routes, renderer output, event display, or
@@ -641,10 +642,58 @@ or cancellation. Producer-specific pool, availability, no-slot, cardinality, cap
 repeat-state, and post-add facts are explicitly pending E2d1b; lifecycle outcomes
 remain E2d2.
 
+## E2d1b closed producer semantics
+
+The E2d1a reachability census now compiles seven typed producers rather than
+leaving their six direct Add sinks as membership hints. The source denominators
+are 7 producers, 7 pools, 9 distinct candidate entries, 6 slot strategies, 1
+shared candidate RNG site, 4 producer-local post-Add effects, 12 runtime-state
+contracts, and 4 E2d2 dependencies. Every producer joins its move/graph, concrete
+owner, unique source encounter, pool, Add site, ordered slots, exact returned
+body, E2a initial-state facts, and the E2b HP assignment contract.
+
+Fabricator has two reusable two-model pools. Its filter is immediate canonical
+model **reference** inequality against nullable `_lastSpawned`, not ID comparison,
+lifetime no-replacement, depletion, or `SpawnedEnemies`. `NextItem` uses
+Monster-AI `NextInt(0,count)` when nonempty; null on empty proceeds to the exact
+faulting `ToMutable` path. The selected reference is written before Add. The
+alive same-side `< 4` predicate gates both graph branches; Fabricate orders two
+helpers and Fabricating Strike orders attack then one helper. Each returned body
+receives Minion only after normal Add-task completion. The closed graph has no
+lifetime cap, while E2d2 owns deaths that can lower the live count.
+
+Rat's ordered availability combines `TurnsUntilSummonable <= 0`, synchronized
+`CallForBackupCount < 3`, nonempty first-free availability, and exclusion of
+another teammate whose `NextMove.Id` is Call for Backup. Execution independently
+selects the last free slot. After one returned Rat body, all current Rat models
+receive `Max(old + 1)`. The initial/default/update contracts remain 2/decrement
+without floor and 0/group update without reset. The group bound is three
+completed paths; slot mediation is separate. The random branch is
+`UseOnlyOnce` per body.
+
+Ovicopter's graph-initial Lay is unconditional; repeated Lay is conditioned by
+alive same-side count `<= 3`. Its exact three-iteration loop can normally add
+`0..3` reusable Tough Eggs as last-free slots permit, applying Minion to each
+returned body. Hatch remains an E2d2 same-body dependency. Living Fog reads its
+source-default-one `BloatAmount` for a dynamic loop, checks first-free per
+iteration, and can repeat without depletion or a lifetime cap. Fogmog and
+Obscura each pass fixed `illusion` without occupancy validation and are graph
+lifetime once; Obscura sets `HasSummoned` after normal Add return.
+
+Slot failure remains producer-owned: Ovicopter, Rat, and Living Fog skip;
+Fabricator forwards an empty string; fixed-name producers forward `illusion`.
+The 12 runtime contracts preserve dynamic combat, encounter/body collections,
+alive and next-move inputs, Monster-AI RNG, Fabricator history, Rat fields,
+Living Fog cardinality, and Obscura state as unavailable to the current adapter.
+The four dependency records retain current-enemy death/removal, awaited
+AfterCreatureAdded listener effects, Tough Egg Hatch, and the four classified
+death-Power Add sites for E2d2. Thus production semantics are complete while
+general lifecycle is not.
+
 ## E2 projection boundary
 
 The checked source artifact above remains the full static evidence artifact.
-C0 introduced, E1 extended, and E2a/E2b/E2c1/E2c2a/E2c2b/E2d1a extend `data/encounter-facts-v0.111.0.json`, built by
+C0 introduced, E1 extended, and E2a/E2b/E2c1/E2c2a/E2c2b/E2d1a/E2d1b extend `data/encounter-facts-v0.111.0.json`, built by
 `tools/generate-encounter-facts.py` from that artifact and
 `data/encounters.json` only. It is a projection, not a replacement extractor
 and not a runtime consumer input.
@@ -675,9 +724,9 @@ pointed-value hashes instead of repeating CIL proof or the 6,786-invocation
 census. This makes the projection substantially smaller while retaining an
 auditable path to the full checked source artifact.
 
-E2d1a declares only the bounded encounter projection complete. The encounter
+E2d1b declares only the bounded encounter projection complete. The encounter
 companion remains hard-false/incomplete: event turn machines are source-complete,
-but scripted event behavior, event lifecycle/timeout/result semantics, broader lifecycle
+but referenced event lifecycle/timeout/result and formula semantics, broader lifecycle
 closure, and companion-wide formula/runtime contracts remain blockers. Global readiness also remains false
 pending the independent product-family source waves. No `src/` file imports the projection,
 so `/sts2` continues to use byte-identical `data/encounters.json`.

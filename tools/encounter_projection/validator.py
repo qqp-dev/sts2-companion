@@ -1,4 +1,4 @@
-"""Fail-closed validation for source input and compact E2d1a projection schema."""
+"""Fail-closed validation for source input and compact E2d1b projection schema."""
 
 from __future__ import annotations
 
@@ -171,6 +171,238 @@ def _validate_state_collection(value: Any, path: str, node_ids: set[str]) -> Non
         _fail(path + ".cardinality", "read-only single-element constructor cardinality changed")
     if any(node not in node_ids for node in ordered):
         _fail(path + ".orderedNodes", "graph collection element join is unknown")
+
+
+
+def _production_method(value: Any, path: str, *, compact: bool) -> None:
+    required = {"methodBodySha256", "normalizedSliceSha256", "symbolSignature"}
+    if not isinstance(value, dict) or not required <= set(value):
+        _fail(path, "production method provenance is incomplete")
+    if compact and set(value) != required:
+        _fail(path, "compact production provenance retained proof bulk")
+    if not compact and "semanticWitnessSha256" not in value:
+        _fail(path, "raw production semantic witness is missing")
+    for key in required - {"symbolSignature"} | ({"semanticWitnessSha256"} if not compact else set()):
+        if not isinstance(value.get(key), str) or len(value[key]) != 64:
+            _fail(path + "." + key, "must be a SHA-256 digest")
+    _string(value["symbolSignature"], path + ".symbolSignature")
+
+
+def _validate_production_semantics(value: Any, path: str, *, move_ids: set[str],
+                                   initial_fact_ids: set[str], compact: bool) -> set[str]:
+    semantics = _object(value, path, {"dependencies", "pools", "postAddEffects", "producers",
+                                      "runtimeStateContracts", "slotStrategies", "sourceDenominators", "status"})
+    if semantics["status"] != "sourceComplete":
+        _fail(path + ".status", "E2d1b producer semantics are not source-complete")
+    expected_denominators = {"candidateEntries": 9, "candidateRngSelections": 1, "dependencyRefs": 4,
+                             "pools": 7, "postAddEffects": 4, "producers": 7,
+                             "runtimeStateContracts": 12, "slotStrategies": 6}
+    if semantics["sourceDenominators"] != expected_denominators:
+        _fail(path + ".sourceDenominators", "production semantic denominator drift")
+    fact_ids: set[str] = set()
+
+    pools = _list(semantics["pools"], path + ".pools")
+    pool_ids = _unique(pools, "poolId", path + ".pools")
+    candidates: list[str] = []
+    dynamic_pools = 0
+    for index, pool in enumerate(pools):
+        pp = f"{path}.pools[{index}]"
+        if compact:
+            fact_ids.add(_string(pool.get("factId"), pp + ".factId", prefix="SOURCE.PRODUCTION_POOL."))
+        elif "factId" in pool:
+            _fail(pp + ".factId", "raw production pool cannot contain projection ID")
+        models = _list(pool.get("candidateModels"), pp + ".candidateModels")
+        if not models or len(models) != len(set(models)) or any(not isinstance(model, str) or not model.startswith("MONSTER.") for model in models):
+            _fail(pp + ".candidateModels", "production pool candidate identity/order is invalid")
+        candidates.extend(models)
+        selection = pool.get("selection", {})
+        if selection.get("kind") == "runtimeRng":
+            dynamic_pools += 1
+            if (models not in (["MONSTER.ZAPBOT", "MONSTER.STABBOT"], ["MONSTER.GUARDBOT", "MONSTER.NOISEBOT"])
+                    or pool.get("replacementPolicy") != "reusablePoolWithImmediateSameReferenceExclusion"
+                    or pool.get("filter") != {"comparison": "canonicalModelReferenceIdentity",
+                        "excludeRuntimeStateRef": "RUNTIME.PRODUCTION.FABRICATOR_LAST_SPAWNED",
+                        "kind": "excludeImmediatePreviousReference"}
+                    or pool.get("emptySelection") != "NextItemReturnsNullThenToMutableFaults"):
+                _fail(pp, "Fabricator reusable immediate-reference pool semantics changed")
+            provenance = _object(pool.get("selectionProvenance"), pp + ".selectionProvenance",
+                                 {"filter", "selectionAndWriteBeforeAdd", "uniformRng"})
+            for key, method in provenance.items(): _production_method(method, pp + ".selectionProvenance." + key, compact=compact)
+        elif (selection != {"kind": "fixedCanonicalModel"} or len(models) != 1
+              or pool.get("replacementPolicy") != "reusableFixedCandidate"
+              or pool.get("filter") != {"kind": "none"}):
+            _fail(pp, "fixed reusable production pool semantics changed")
+        _production_method(pool.get("provenance"), pp + ".provenance", compact=compact)
+    if len(pools) != 7 or len(candidates) != 9 or len(set(candidates)) != 9 or dynamic_pools != 2:
+        _fail(path + ".pools", "production pool/candidate/RNG closure incomplete")
+
+    slots = _list(semantics["slotStrategies"], path + ".slotStrategies")
+    slot_ids = _unique(slots, "slotStrategyId", path + ".slotStrategies")
+    slot_kinds: dict[str, int] = {}
+    no_slot: dict[str, int] = {}
+    for index, slot in enumerate(slots):
+        sp = f"{path}.slotStrategies[{index}]"
+        if compact: fact_ids.add(_string(slot.get("factId"), sp + ".factId", prefix="SOURCE.SLOT_STRATEGY."))
+        elif "factId" in slot: _fail(sp + ".factId", "raw slot strategy cannot contain projection ID")
+        kind = slot.get("kind"); slot_kinds[kind] = slot_kinds.get(kind, 0) + 1
+        behavior = slot.get("noSlotBehavior"); no_slot[behavior] = no_slot.get(behavior, 0) + 1
+        ordered = slot.get("orderedEncounterSlots")
+        if not isinstance(ordered, list) or not ordered or len(ordered) != len(set(ordered)):
+            _fail(sp + ".orderedEncounterSlots", "ordered static slots are incomplete")
+        if kind == "fixedName" and slot.get("fixedName") not in ordered:
+            _fail(sp + ".fixedName", "fixed production slot is outside encounter slots")
+        provenance = _object(slot.get("provenance"), sp + ".provenance", {"selection", "slots"})
+        for key, method in provenance.items(): _production_method(method, sp + ".provenance." + key, compact=compact)
+    if (len(slots) != 6 or slot_kinds != {"firstFreeDeclaredSlot": 2, "fixedName": 2, "lastFreeDeclaredSlot": 2}
+            or no_slot != {"passEmptyStringToCoreAdd": 1, "passFixedNameWithoutOccupancyCheck": 2, "skipAttempt": 3}):
+        _fail(path + ".slotStrategies", "slot/no-slot policy closure changed")
+
+    effects = _list(semantics["postAddEffects"], path + ".postAddEffects")
+    effect_ids = _unique(effects, "effectId", path + ".postAddEffects")
+    expected_effects = {"POST_ADD.PRODUCTION.MINION.FABRICATOR", "POST_ADD.PRODUCTION.MINION.OVICOPTER",
+                        "POST_ADD.PRODUCTION.OBSCURA_HAS_SUMMONED", "POST_ADD.PRODUCTION.RAT_GROUP_COUNTER_SYNC"}
+    if effect_ids != expected_effects:
+        _fail(path + ".postAddEffects", "producer-local post-Add effect census changed")
+    for index, effect in enumerate(effects):
+        ep = f"{path}.postAddEffects[{index}]"
+        if compact: fact_ids.add(_string(effect.get("factId"), ep + ".factId", prefix="SOURCE.POST_ADD.PRODUCTION."))
+        elif "factId" in effect: _fail(ep + ".factId", "raw post-Add effect cannot contain projection ID")
+        if effect.get("ordering") != "afterNormalAddTaskReturn":
+            _fail(ep + ".ordering", "post-Add effect moved before Add completion")
+        _production_method(effect.get("provenance"), ep + ".provenance", compact=compact)
+        support = effect.get("supportProvenance", [])
+        if (effect["effectId"].endswith("RAT_GROUP_COUNTER_SYNC")) != bool(support):
+            _fail(ep + ".supportProvenance", "Rat group setter closure mismatch")
+        for si, method in enumerate(support): _production_method(method, f"{ep}.supportProvenance[{si}]", compact=compact)
+        if compact and "validatedOrderInstructionIndices" in effect:
+            _fail(ep, "compact post-Add effect retained diagnostic instruction indexes")
+        if not compact and (not isinstance(effect.get("validatedOrderInstructionIndices"), list)
+                            or effect["validatedOrderInstructionIndices"] != sorted(effect["validatedOrderInstructionIndices"])):
+            _fail(ep + ".validatedOrderInstructionIndices", "raw post-Add order witness missing")
+
+    contracts = _list(semantics["runtimeStateContracts"], path + ".runtimeStateContracts")
+    contract_ids = _unique(contracts, "contractId", path + ".runtimeStateContracts")
+    expected_contract_ids = {"RUNTIME.PRODUCTION.COMBAT_IS_LIVE", "RUNTIME.PRODUCTION.ENCOUNTER",
+        "RUNTIME.PRODUCTION.CURRENT_ENEMIES", "RUNTIME.PRODUCTION.SAME_SIDE_CREATURES",
+        "RUNTIME.PRODUCTION.CREATURE_IS_ALIVE", "RUNTIME.PRODUCTION.MONSTER_NEXT_MOVE_ID",
+        "RUNTIME.PRODUCTION.MONSTER_AI_RNG", "RUNTIME.PRODUCTION.FABRICATOR_LAST_SPAWNED",
+        "RUNTIME.PRODUCTION.RAT_TURNS_UNTIL_SUMMONABLE", "RUNTIME.PRODUCTION.RAT_CALL_FOR_BACKUP_COUNT",
+        "RUNTIME.PRODUCTION.LIVING_FOG_BLOAT_AMOUNT", "RUNTIME.PRODUCTION.OBSCURA_HAS_SUMMONED"}
+    if contract_ids != expected_contract_ids:
+        _fail(path + ".runtimeStateContracts", "production runtime-state contract closure changed")
+    by_contract = {row["contractId"]: row for row in contracts}
+    expected_defaults = {"RUNTIME.PRODUCTION.FABRICATOR_LAST_SPAWNED": None,
+                         "RUNTIME.PRODUCTION.RAT_TURNS_UNTIL_SUMMONABLE": 2,
+                         "RUNTIME.PRODUCTION.RAT_CALL_FOR_BACKUP_COUNT": 0,
+                         "RUNTIME.PRODUCTION.LIVING_FOG_BLOAT_AMOUNT": 1,
+                         "RUNTIME.PRODUCTION.OBSCURA_HAS_SUMMONED": False}
+    for contract_id, expected in expected_defaults.items():
+        if by_contract[contract_id].get("default") != expected:
+            _fail(path + ".runtimeStateContracts", "production state default changed")
+    for index, contract in enumerate(contracts):
+        cp = f"{path}.runtimeStateContracts[{index}]"
+        if contract.get("observationAvailability") != "unavailableNoCurrentAdapter":
+            _fail(cp + ".observationAvailability", "source getter was promoted into an observed value")
+        if compact: fact_ids.add(_string(contract.get("factId"), cp + ".factId", prefix="SOURCE.RUNTIME.PRODUCTION."))
+        elif "factId" in contract: _fail(cp + ".factId", "raw runtime contract cannot contain projection ID")
+        methods = _list(contract.get("provenance"), cp + ".provenance")
+        if not methods: _fail(cp + ".provenance", "runtime contract has no provenance")
+        for mi, method in enumerate(methods): _production_method(method, f"{cp}.provenance[{mi}]", compact=compact)
+
+    dependencies = _list(semantics["dependencies"], path + ".dependencies")
+    dependency_ids = _unique(dependencies, "dependencyId", path + ".dependencies")
+    expected_dependencies = {"DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
+                             "DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS",
+                             "DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH", "DEPENDENCY.PRODUCTION.DEATH_POWER_ADD_SITES"}
+    if dependency_ids != expected_dependencies:
+        _fail(path + ".dependencies", "production E2d2 dependency boundary changed")
+    for index, dependency in enumerate(dependencies):
+        dp = f"{path}.dependencies[{index}]"
+        if dependency.get("status") != "pendingE2d2" or not dependency.get("sourceRefs"):
+            _fail(dp, "production lifecycle dependency was hidden or promoted")
+        if compact: fact_ids.add(_string(dependency.get("factId"), dp + ".factId", prefix="SOURCE.DEPENDENCY.PRODUCTION."))
+        elif "factId" in dependency: _fail(dp + ".factId", "raw dependency cannot contain projection ID")
+
+    producers = _list(semantics["producers"], path + ".producers")
+    producer_ids = _unique(producers, "producerId", path + ".producers")
+    semantic_kinds: dict[str, int] = {}
+    seen_moves: set[str] = set()
+    for index, producer in enumerate(producers):
+        pp = f"{path}.producers[{index}]"
+        if compact: fact_ids.add(_string(producer.get("factId"), pp + ".factId", prefix="SOURCE.PRODUCTION.MONSTER."))
+        elif "factId" in producer: _fail(pp + ".factId", "raw producer cannot contain projection ID")
+        move = producer.get("moveRef")
+        if move not in move_ids or move in seen_moves or producer.get("producerId") != "PRODUCTION." + move.replace("#", "."):
+            _fail(pp, "producer/move identity join is ambiguous")
+        seen_moves.add(move)
+        kind = producer.get("semanticKind"); semantic_kinds[kind] = semantic_kinds.get(kind, 0) + 1
+        attempts = _list(producer.get("attempts"), pp + ".attempts")
+        if not attempts or any(attempt.get("poolRef") not in pool_ids or attempt.get("slotStrategyRef") not in slot_ids
+                               or not set(attempt.get("postAddEffectRefs", [])) <= effect_ids
+                               or attempt.get("awaitedResult") != "exactCreatedCreatureBody" for attempt in attempts):
+            _fail(pp + ".attempts", "producer attempt pool/slot/body/post-Add join changed")
+        runtime_refs = set(producer.get("availability", {}).get("runtimeInputRefs", []))
+        if not runtime_refs <= contract_ids:
+            _fail(pp + ".availability.runtimeInputRefs", "unknown production runtime input")
+        deps = producer.get("dependencies", {})
+        expected_hp_ref = "SOURCE.HP_ASSIGNMENT_PIPELINE" if compact else "hpPipeline.assignment"
+        expected_lifecycle_refs = {("SOURCE." if compact else "") + value for value in dependency_ids}
+        expected_initial_refs = {("SOURCE." if compact else "") + value for value in initial_fact_ids}
+        if (deps.get("e2bHpAssignmentRef") != expected_hp_ref
+                or not set(deps.get("e2d2LifecycleRefs", [])) <= expected_lifecycle_refs
+                or not set(deps.get("e2aInitialStateFactRefs", [])) <= expected_initial_refs):
+            _fail(pp + ".dependencies", "E2a/E2b/E2d2 producer dependency join changed")
+        _production_method(producer.get("provenance"), pp + ".provenance", compact=compact)
+    expected_kinds = {"orderedHelperBatch": 2, "fixedGraphOnce": 1, "runtimeCardinalityRepeating": 1,
+                      "fixedThreeAttemptBatch": 1, "fixedGraphOnceWithStatePostAdd": 1, "groupCounterBounded": 1}
+    if len(producers) != 7 or semantic_kinds != expected_kinds or seen_moves != move_ids & seen_moves:
+        _fail(path + ".producers", "seven producer trigger semantics changed")
+    by_kind: dict[str, list[dict[str, Any]]] = {}
+    for row in producers: by_kind.setdefault(row["semanticKind"], []).append(row)
+    fabricators = by_kind["orderedHelperBatch"]
+    expected_fabricator_maxima = {
+        "PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE": (2, 5),
+        "PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE": (1, 4),
+    }
+    if ({row.get("producerId") for row in fabricators} != set(expected_fabricator_maxima)
+            or any(row.get("activationCardinality", {}).get("normallyAddedBodies", {}).get("maximum") != expected_fabricator_maxima[row["producerId"]][0]
+                   or len(row["attempts"]) != expected_fabricator_maxima[row["producerId"]][0]
+                   or row.get("concurrentPolicy") != {"classification": "predicateBounded",
+                       "possiblePostActivationAliveSameSideMaximum": expected_fabricator_maxima[row["producerId"]][1],
+                       "preActivationAliveSameSideMaximum": 3}
+                   for row in fabricators)
+            or any(row.get("lifetimePolicy") != {"classification": "sourceProvenNoLifetimeCapInClosedGraph", "poolDepletion": False}
+                   for row in fabricators)
+            or any(row.get("availability", {}).get("expression", {}).get("operator") != "lessThan"
+                   or row["availability"]["expression"].get("right", {}).get("value") != 4 for row in fabricators)):
+        _fail(path + ".producers", "Fabricator availability/batch/concurrent/lifetime semantics changed")
+    ovi = by_kind["fixedThreeAttemptBatch"][0]
+    if (ovi.get("activationCardinality") != {"bodyAddAttempts": {"exact": 3}, "normallyAddedBodies": {"maximum": 3, "minimum": 0}}
+            or [row.get("path") for row in ovi.get("availability", {}).get("expression", {}).get("paths", [])] != ["initial", "repeatAfterTenderizer"]
+            or ovi.get("lifetimePolicy", {}).get("hatchDependencyRef") != "DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH"):
+        _fail(path + ".producers", "Ovicopter path/cardinality/Hatch boundary changed")
+    living = by_kind["runtimeCardinalityRepeating"][0]
+    if (living.get("activationCardinality", {}).get("bodyAddAttempts", {}).get("runtimeStateRef") != "RUNTIME.PRODUCTION.LIVING_FOG_BLOAT_AMOUNT"
+            or living.get("lifetimePolicy") != {"classification": "sourceProvenNoLifetimeCapInClosedGraph", "poolDepletion": False}):
+        _fail(path + ".producers", "Living Fog dynamic cardinality/no-lifetime-cap changed")
+    rat = by_kind["groupCounterBounded"][0]
+    if (rat.get("lifetimePolicy") != {"classification": "groupCounterBounded", "completedCallPathMaximum": 3,
+                                     "normallyAddedBodyMaximum": 3, "scope": "allCurrentTwoTailedRats"}
+            or rat.get("repeatPolicy", {}).get("classification") != "graphPerBodyUseOnlyOnce"
+            or rat.get("availability", {}).get("evaluationOrder") != ["turnsAtOrBelowZero", "groupCallCountBelowThree",
+                "encounterAndFirstFreeSlot", "noOtherTeammatePlansCallForBackup"]):
+        _fail(path + ".producers", "Rat availability/repeat/group-counter lifetime bound changed")
+    if (by_kind["fixedGraphOnce"][0].get("repeatPolicy", {}).get("classification") != "graphLifetimeOnce"
+            or by_kind["fixedGraphOnceWithStatePostAdd"][0].get("repeatPolicy", {}).get("classification") != "graphLifetimeOnce"):
+        _fail(path + ".producers", "fixed-slot graph-lifetime-once semantics changed")
+    attempt_ids = [attempt.get("attemptId") for row in producers for attempt in row["attempts"]]
+    if len(attempt_ids) != 8 or len(set(attempt_ids)) != 8:
+        _fail(path + ".producers", "production attempt IDs/order are incomplete")
+    for dependency in dependencies:
+        if not set(dependency.get("affectedProducerRefs", [])) <= producer_ids:
+            _fail(path + ".dependencies", "dependency refers to unknown producer")
+    return fact_ids
+
 
 def _validate_source_document(source: dict[str, Any]) -> None:
     if source.get("schemaVersion") != SOURCE_SCHEMA_VERSION:
@@ -427,14 +659,14 @@ def _validate_source_document(source: dict[str, Any]) -> None:
     if len(core.get("overloads", [])) != 3 or len(core.get("methods", {})) != 6 or core.get("hookBoundary") != {
         "afterCreatureAddedToCombat": "awaited", "afterSummon": "absentSeparateOstyApi"}:
         _fail("source.production.coreAddContract", "core Add overload/method/hook closure incomplete")
-    if core.get("semanticBoundaries") != {"coreSlotValidation": "absent", "emptyOrNoSlot": "producerOwnedPendingE2d1b"} or core.get("failureSemantics", {}).get("rollback") != "absent":
+    if core.get("semanticBoundaries") != {"coreSlotValidation": "absent", "emptyOrNoSlot": "producerOwnedSourceCompleteE2d1b"} or core.get("failureSemantics", {}).get("rollback") != "absent":
         _fail("source.production.coreAddContract", "core slot/failure boundary changed")
     expected_core_order = ["createBody", "encounterOnCreatureSpawned", "coreLiveCheck", "combatBodyListInsertion", "combatManagerNodeInsertion", "roomNodeInsertion", "awaitInitialStateDispatch", "prepareForNextTurn", "uniqueRoomMonsterIdHistory", "awaitAfterCreatureAddedToCombat", "returnCreatedBody"]
     dependencies = core.get("dependencies", {})
     if (dependencies.get("hpAssignmentComponentRef") != "hpPipeline.assignment" or dependencies.get("initialStateComponentRef") != "initialState"
             or len(dependencies.get("initialStateFactRefs", [])) != 7 or len(dependencies.get("initialStateOwnerModels", [])) != 9
             or len(dependencies.get("initialStateNoGameplayFactModels", [])) != 4 or dependencies.get("lifecycle") != "pendingE2d2"
-            or dependencies.get("producerSemantics") != "pendingE2d1b"):
+            or dependencies.get("producerSemantics") != "sourceCompleteE2d1b"):
         _fail("source.production.coreAddContract.dependencies", "E2a/E2b/E2d1b/E2d2 dependency join incomplete")
     if core.get("callOrder") != expected_core_order:
         _fail("source.production.coreAddContract", "core Add order or E2a/E2b/E2d1b/E2d2 dependency changed")
@@ -445,8 +677,10 @@ def _validate_source_document(source: dict[str, Any]) -> None:
     osty_contract = production["ostySummonContract"]
     if osty_contract.get("afterSummon") != "awaitedAfterOstyAddOrReviveHistory" or osty_contract.get("classification") != "separateFromCreatureCmdAddEnemyProduction" or len(osty_contract.get("methods", {})) != 2:
         _fail("source.production.ostySummonContract", "Osty AfterSummon separation incomplete")
-    if production["productionSemantics"] != {"status": "pendingE2d1b"}:
-        _fail("source.production.productionSemantics", "E2d1b boundary missing")
+    _validate_production_semantics(production["productionSemantics"], "source.production.productionSemantics",
+                                   move_ids=move_ids,
+                                   initial_fact_ids={row["factId"] for row in source["initialState"]["initialStateFacts"]},
+                                   compact=False)
 
     event_turn = _list(source["behavior"].get("eventTurnMachines"), "source.behavior.eventTurnMachines")
     event_ids = {row["canonicalId"] for row in encounters["event"]}
@@ -1110,8 +1344,14 @@ def _validate_source_facts(source_facts: Any, source: dict[str, Any]) -> dict[st
         "producerOwners": 6, "producerRoots": 7, "siteClassifications": {"coreAddForwarding": 2,
         "currentEnemyEncounterProduction": 6, "outOfScopeDeathPower": 4, "outOfScopeMock": 1,
         "outOfScopePlayerPet": 1}}
-    if production["summary"] != expected_summary or production["productionSemantics"] != {"status": "pendingE2d1b"}:
-        _fail("payload.sourceFacts.production", "compact production summary/pending boundary mismatch")
+    if production["summary"] != expected_summary:
+        _fail("payload.sourceFacts.production", "compact production summary mismatch")
+    production_semantic_fact_ids = _validate_production_semantics(
+        production["productionSemantics"], "payload.sourceFacts.production.productionSemantics",
+        move_ids=move_ids,
+        initial_fact_ids={row["factId"] for row in source["initialState"]["initialStateFacts"]},
+        compact=True,
+    )
     add_rows = _list(production["addApiCensus"], "payload.sourceFacts.production.addApiCensus")
     osty_rows = _list(production["ostySummonCensus"], "payload.sourceFacts.production.ostySummonCensus")
     add_ids = _unique(add_rows, "siteId", "payload.sourceFacts.production.addApiCensus")
@@ -1497,12 +1737,12 @@ def _validate_source_facts(source_facts: Any, source: dict[str, Any]) -> dict[st
         owner_fact_ids | move_fact_ids | graph_fact_ids | scaling_fact_ids | placement_fact_ids |
         identity_fact_ids | initial_fact_ids | initial_owner_fact_ids | runtime_fact_ids |
         initial_comparison_fact_ids | event_dependency_fact_ids | event_turn_fact_ids | event_script_fact_ids |
-        {state_rules["factId"], hp_pipeline_fact_id, random_fact_id, production_fact_id}
+        production_semantic_fact_ids | {state_rules["factId"], hp_pipeline_fact_id, random_fact_id, production_fact_id}
     )
     return {
         "all": all_source_facts, "encounters": encounter_fact_ids, "models": model_ids,
         "moves": move_fact_ids, "operations": operation_ids,
-        "randomSelection": {random_fact_id}, "production": {production_fact_id},
+        "randomSelection": {random_fact_id}, "production": {production_fact_id} | production_semantic_fact_ids,
     }
 
 _LEGACY_BODY_FIELDS = {
@@ -1688,10 +1928,10 @@ def _validate_evidence_and_refs(payload: dict[str, Any], source: dict[str, Any],
 
 def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts: set[str]) -> None:
     audits = _list(payload["resolvedAudits"], "payload.resolvedAudits")
-    if len(audits) != 4:
-        _fail("payload.resolvedAudits", "expected HP, event-turn, linked-event, and Architect resolved audits")
+    if len(audits) != 5:
+        _fail("payload.resolvedAudits", "expected HP, production, event-turn, linked-event, and Architect resolved audits")
     audit_ids = _unique(audits, "auditId", "payload.resolvedAudits")
-    if audit_ids != {"AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING", "AUDIT.RESOLVED.EVENT_TURN_MACHINES", "AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS", "AUDIT.RESOLVED.ARCHITECT_SCRIPT"}:
+    if audit_ids != {"AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING", "AUDIT.RESOLVED.PRODUCTION_SEMANTICS", "AUDIT.RESOLVED.EVENT_TURN_MACHINES", "AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS", "AUDIT.RESOLVED.ARCHITECT_SCRIPT"}:
         _fail("payload.resolvedAudits", "resolved audit identity set drift")
     by_id = {row["auditId"]: row for row in audits}
     hp_audit = _object(by_id["AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING"], "payload.resolvedAudits[HP]", {"auditId", "family", "historicalStatus", "lanes", "resolution"})
@@ -1712,6 +1952,23 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
         "negativeValuesGeneralized": False, "precedenceSelected": False,
     }:
         _fail("payload.resolvedAudits[HP].resolution", "must resolve by non-negative agreement without precedence")
+
+    production_audit = _object(by_id["AUDIT.RESOLVED.PRODUCTION_SEMANTICS"], "payload.resolvedAudits[production]",
+                               {"auditId", "boundary", "classificationFactRefs", "dependencyFactRefs", "family", "historicalStatus", "sourceDenominators"})
+    production = payload["sourceFacts"]["production"]["productionSemantics"]
+    expected_production_classifications = {row["factId"] for family in ("producers", "pools", "slotStrategies", "postAddEffects", "runtimeStateContracts") for row in production[family]}
+    expected_production_dependencies = {row["factId"] for row in production["dependencies"]}
+    if (production_audit["family"], production_audit["historicalStatus"]) != ("enemyBodyProduction", "sourceComplete"):
+        _fail("payload.resolvedAudits[production]", "production audit identity/status drift")
+    if (set(production_audit["classificationFactRefs"]) != expected_production_classifications
+            or set(production_audit["dependencyFactRefs"]) != expected_production_dependencies
+            or production_audit["sourceDenominators"] != production["sourceDenominators"]):
+        _fail("payload.resolvedAudits[production]", "production audit denominators/fact refs drift")
+    if not set(production_audit["classificationFactRefs"] + production_audit["dependencyFactRefs"]) <= all_facts:
+        _fail("payload.resolvedAudits[production]", "production audit has broken fact refs")
+    if ("source-complete" not in production_audit["boundary"] or "E2d2 dependencies" not in production_audit["boundary"]
+            or "death/removal" not in production_audit["boundary"]):
+        _fail("payload.resolvedAudits[production]", "production audit overclaims lifecycle closure")
 
     event_audit = _object(by_id["AUDIT.RESOLVED.EVENT_TURN_MACHINES"], "payload.resolvedAudits[eventTurn]",
                           {"auditId", "boundary", "classificationFactRefs", "dependencyFactRefs", "family", "historicalStatus", "sourceDenominators"})
@@ -1823,13 +2080,13 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     if missing_title_count != 18:
         _fail("payload.knownUnknowns", "all 18 missing source move titles must be individually classified")
     required_reasons = {
-        "LIFECYCLE_COVERAGE_ABSENT", "PRODUCTION_SEMANTICS_PENDING_E2D1B", "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE",
+        "LIFECYCLE_COVERAGE_ABSENT", "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE",
         "EVENT_BEHAVIOR_AGGREGATE_INCOMPLETE",
         "EVENT_LIFECYCLE_TIMEOUT_RESULT_UNEXTRACTED", "LEGACY_PER_FACT_PROVENANCE_INCOMPLETE",
         "BROADER_WORLD_MODEL_FAMILIES_ABSENT",
     }
     actual_reasons = {row["reasonCode"] for row in unknowns}
-    retired_e1_reasons = {"SCRIPTED_EVENT_BEHAVIOR_UNEXTRACTED", "SOURCE_ACT_PLACEMENT_ABSENT", "SOURCE_ROOM_CLASS_PLACEMENT_ABSENT", "OBSERVED_IDENTITY_ALIAS_JOIN_ABSENT", "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT", "INITIAL_STATE_COVERAGE_ABSENT", "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT"}
+    retired_e1_reasons = {"SCRIPTED_EVENT_BEHAVIOR_UNEXTRACTED", "SOURCE_ACT_PLACEMENT_ABSENT", "SOURCE_ROOM_CLASS_PLACEMENT_ABSENT", "OBSERVED_IDENTITY_ALIAS_JOIN_ABSENT", "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT", "INITIAL_STATE_COVERAGE_ABSENT", "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT", "PRODUCTION_SEMANTICS_PENDING_E2D1B"}
     if actual_reasons & retired_e1_reasons:
         _fail("payload.knownUnknowns", "resolved E1 absence reason was retained")
     if not required_reasons <= actual_reasons:
@@ -1849,7 +2106,7 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
         _fail("payload.readiness.runtimeScopes.encounterProjection", "independent projection section should be complete")
     if projected["requiredCoverageFamilies"] != [row["family"] for row in coverage_rows()]:
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredCoverageFamilies", "coverage gate mismatch")
-    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage", "eventTurnClassificationDependencies", "eventScriptOwnerEncounterLink", "eventScriptOptionDelegate", "eventScriptTransitionArguments", "eventScriptOutcomeDependency", "architectOwnerPlacementApplicability", "architectLocalizationStructure", "architectDialogueLineGraph", "architectOptionDelegates", "architectVisualOnlyLayout", "architectPresentationGameplayBoundary", "architectTerminalOrder", "architectDependencyRefs", "randomBranchRepeatWeight", "randomSelectionRuntime", "productionDiscovery", "coreAddDependencies"}
+    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage", "eventTurnClassificationDependencies", "eventScriptOwnerEncounterLink", "eventScriptOptionDelegate", "eventScriptTransitionArguments", "eventScriptOutcomeDependency", "architectOwnerPlacementApplicability", "architectLocalizationStructure", "architectDialogueLineGraph", "architectOptionDelegates", "architectVisualOnlyLayout", "architectPresentationGameplayBoundary", "architectTerminalOrder", "architectDependencyRefs", "randomBranchRepeatWeight", "randomSelectionRuntime", "productionDiscovery", "coreAddDependencies", "productionProducerPool", "productionAvailabilityCapRepeat", "productionSlotFailure", "productionRuntimeState", "productionPostAddOrder", "productionLifecycleDependencies"}
     if set(projected["requiredJoins"]) != expected_joins or len(projected["requiredJoins"]) != len(expected_joins):
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredJoins", "join gate mismatch")
 

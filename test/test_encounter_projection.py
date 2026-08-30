@@ -426,7 +426,7 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual((companion["ready"], companion["status"]), (False, "incomplete"))
         self.assertEqual(set(companion["reasonRefs"]), {
             "UNKNOWN.LIFECYCLE_COVERAGE", "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
-            "UNKNOWN.EVENT_BEHAVIOR", "UNKNOWN.EVENT_LIFECYCLE", "UNKNOWN.PRODUCTION_SEMANTICS",
+            "UNKNOWN.EVENT_BEHAVIOR", "UNKNOWN.EVENT_LIFECYCLE",
         })
 
     def test_e2a_compact_mutations_fail_closed(self):
@@ -701,9 +701,34 @@ class EncounterProjectionTests(unittest.TestCase):
             "afterCreatureAddedToCombat": "awaited", "afterSummon": "absentSeparateOstyApi"})
         self.assertEqual(production["coreAddContract"]["semanticBoundaries"]["coreSlotValidation"], "absent")
         unknowns = {row["unknownId"] for row in self.artifact["payload"]["knownUnknowns"]}
-        self.assertTrue({"UNKNOWN.PRODUCTION_SEMANTICS", "UNKNOWN.LIFECYCLE_COVERAGE"} <= unknowns)
+        self.assertNotIn("UNKNOWN.PRODUCTION_SEMANTICS", unknowns)
+        self.assertIn("UNKNOWN.LIFECYCLE_COVERAGE", unknowns)
+        semantics = production["productionSemantics"]
+        self.assertEqual(semantics["status"], "sourceComplete")
+        self.assertEqual(semantics["sourceDenominators"], {
+            "candidateEntries": 9, "candidateRngSelections": 1, "dependencyRefs": 4,
+            "pools": 7, "postAddEffects": 4, "producers": 7,
+            "runtimeStateContracts": 12, "slotStrategies": 6,
+        })
+        self.assertEqual([row["semanticKind"] for row in semantics["producers"]], [
+            "orderedHelperBatch", "orderedHelperBatch", "fixedGraphOnce",
+            "runtimeCardinalityRepeating", "fixedThreeAttemptBatch",
+            "fixedGraphOnceWithStatePostAdd", "groupCounterBounded",
+        ])
+        self.assertEqual([
+            (row["producerId"], row["activationCardinality"]["normallyAddedBodies"]["maximum"],
+             row["concurrentPolicy"]["preActivationAliveSameSideMaximum"],
+             row["concurrentPolicy"]["possiblePostActivationAliveSameSideMaximum"])
+            for row in semantics["producers"] if row["ownerModel"] == "MONSTER.FABRICATOR"
+        ], [
+            ("PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE", 2, 3, 5),
+            ("PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE", 1, 3, 4),
+        ])
+        audit = next(row for row in self.artifact["payload"]["resolvedAudits"]
+                     if row["auditId"] == "AUDIT.RESOLVED.PRODUCTION_SEMANTICS")
+        self.assertEqual((audit["family"], audit["historicalStatus"]), ("enemyBodyProduction", "sourceComplete"))
 
-    def test_e2d1a_compact_mutations_fail_closed(self):
+    def test_e2d1b_compact_mutations_fail_closed(self):
         def random_edge(a):
             return next(edge for graph in a["payload"]["sourceFacts"]["graphs"] for edge in graph["edges"] if edge["kind"] == "randomBranch")
         def delegate_edge(a):
@@ -724,9 +749,25 @@ class EncounterProjectionTests(unittest.TestCase):
         def core_order(a): production(a)["coreAddContract"]["callOrder"][0:2] = reversed(production(a)["coreAddContract"]["callOrder"][0:2])
         def after_summon(a): production(a)["coreAddContract"]["hookBoundary"]["afterSummon"] = "awaited"
         def missing_dependency(a): production(a)["coreAddContract"]["dependencies"].pop("initialStateComponentRef")
-        def false_complete(a): production(a)["productionSemantics"]["status"] = "complete"
+        def false_complete(a): production(a)["productionSemantics"]["status"] = "pendingE2d1b"
         def missing_candidates(a): production(a)["directSites"][0]["candidateMembership"]["canonicalModels"] = []
         def osty_conflation(a): production(a)["ostySummonContract"]["afterSummon"] = "partOfCreatureCmdAdd"
+        def pool_order(a): production(a)["productionSemantics"]["pools"][0]["candidateModels"].reverse()
+        def no_slot(a): production(a)["productionSemantics"]["slotStrategies"][0]["noSlotBehavior"] = "skipAttempt"
+        def post_add_order(a): production(a)["productionSemantics"]["postAddEffects"][0]["ordering"] = "beforeAdd"
+        def ovi_cardinality(a):
+            next(row for row in production(a)["productionSemantics"]["producers"]
+                 if row["semanticKind"] == "fixedThreeAttemptBatch")["activationCardinality"]["bodyAddAttempts"]["exact"] = 2
+        def fabricating_strike_post_maximum(a):
+            next(row for row in production(a)["productionSemantics"]["producers"]
+                 if row["producerId"].endswith("FABRICATING_STRIKE_MOVE"))["concurrentPolicy"]["possiblePostActivationAliveSameSideMaximum"] = 5
+        def rat_cap(a):
+            next(row for row in production(a)["productionSemantics"]["producers"]
+                 if row["semanticKind"] == "groupCounterBounded")["lifetimePolicy"]["completedCallPathMaximum"] = 5
+        def state_default(a):
+            next(row for row in production(a)["productionSemantics"]["runtimeStateContracts"]
+                 if row["contractId"].endswith("RAT_TURNS_UNTIL_SUMMONABLE"))["default"] = 0
+        def semantic_dependency(a): production(a)["productionSemantics"]["dependencies"][0]["sourceRefs"] = []
         cases = [
             (legacy_weight, "typed float"), (callback_predicate, "legacy predicate"),
             (repeat_swap, "name/value mismatch"), (callback_type, "typed float"),
@@ -735,14 +776,19 @@ class EncounterProjectionTests(unittest.TestCase):
             (helper_duplicate, "duplicate"), (root_missing, "denominator drift"),
             (body_identity, "target/side/awaited"), (side_changed, "target/side/awaited"),
             (core_order, "order/dependency/history differs"), (after_summon, "core Add boundary"),
-            (missing_dependency, "order/dependency/history differs"), (false_complete, "pending boundary"),
+            (missing_dependency, "order/dependency/history differs"), (false_complete, "not source-complete"),
             (missing_candidates, "candidate membership"), (osty_conflation, "Osty AfterSummon"),
+            (pool_order, "Fabricator reusable"), (no_slot, "slot/no-slot"),
+            (post_add_order, "moved before Add"), (ovi_cardinality, "Ovicopter"),
+            (fabricating_strike_post_maximum, "Fabricator availability/batch/concurrent/lifetime"),
+            (rat_cap, "Rat availability/repeat/group-counter"), (state_default, "state default"),
+            (semantic_dependency, "dependency was hidden"),
         ]
         for change, pattern in cases:
             with self.subTest(pattern=pattern):
                 self.assert_invalid(self.mutated(change), pattern)
 
-    def test_e2d1a_raw_source_mutations_fail_closed(self):
+    def test_e2d1b_raw_source_mutations_fail_closed(self):
         def validate(change, pattern):
             source = deepcopy(self.source); change(source)
             with self.assertRaisesRegex(SourceExtractionError, pattern):
@@ -757,6 +803,11 @@ class EncounterProjectionTests(unittest.TestCase):
             (lambda source: source["production"]["coreAddContract"]["callOrder"].reverse(), "core Add order"),
             (lambda source: source["production"]["coreAddContract"]["dependencies"].pop("hpAssignmentComponentRef"), "E2a/E2b/E2d1b/E2d2"),
             (lambda source: source["production"]["coreAddContract"]["hookBoundary"].__setitem__("afterSummon", "awaited"), "hook closure"),
+            (lambda source: source["production"]["productionSemantics"]["pools"][0]["candidateModels"].reverse(), "Fabricator reusable"),
+            (lambda source: source["production"]["productionSemantics"]["slotStrategies"][0].__setitem__("noSlotBehavior", "skipAttempt"), "slot/no-slot"),
+            (lambda source: source["production"]["productionSemantics"]["postAddEffects"][0].__setitem__("ordering", "beforeAdd"), "moved before Add"),
+            (lambda source: next(row for row in source["production"]["productionSemantics"]["producers"] if row["producerId"].endswith("FABRICATING_STRIKE_MOVE"))["concurrentPolicy"].__setitem__("possiblePostActivationAliveSameSideMaximum", 5), "Fabricator availability/batch/concurrent/lifetime"),
+            (lambda source: next(row for row in source["production"]["productionSemantics"]["runtimeStateContracts"] if row["contractId"].endswith("LIVING_FOG_BLOAT_AMOUNT")).__setitem__("default", 2), "state default"),
         ]
         for change, pattern in cases:
             with self.subTest(pattern=pattern): validate(change, pattern)
