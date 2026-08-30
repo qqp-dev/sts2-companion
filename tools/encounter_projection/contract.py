@@ -4,15 +4,15 @@ from __future__ import annotations
 
 from typing import Any
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 GENERATOR_NAME = "sts2-encounter-facts"
-GENERATOR_VERSION = "3.0.0"
-SOURCE_SCHEMA_VERSION = 6
-SOURCE_EXTRACTOR_VERSION = "6.0.0"
+GENERATOR_VERSION = "4.0.0"
+SOURCE_SCHEMA_VERSION = 7
+SOURCE_EXTRACTOR_VERSION = "7.0.0"
 
 SOURCE_ARTIFACT = {
     "id": "INPUT.SOURCE", "path": "data/game-v0.111.0-source.json",
-    "sha256": "6f3a9aedccdb129d6dcc6ab3942d91a5db39f9b83bab82997d0de476c7dfea39", "size": 11749658,
+    "sha256": "5afd3335100c2c4edfe306ece5e407fc5a977a22eb66a8bfdcc9997d91b8ea0a", "size": 11798482,
 }
 LEGACY_ARTIFACT = {
     "id": "INPUT.LEGACY", "path": "data/encounters.json",
@@ -39,6 +39,7 @@ AUTHORITY = {
     "observedRuntimeIdentity": "sourceDerivedAdapterVocabularyNoObservedSamples",
     "projectionPatchPolicy": {"artifactTier": "raw-only", "kind": "none"},
     "silentMerge": False, "sourceFacts": "rawSource",
+    "stableLegacyConsumer": "historicalImplementationAuditOnly",
 }
 # family -> (status, denominator, numerator, unresolved); reviewed constants,
 # never values learned from the document being validated.
@@ -63,6 +64,13 @@ REQUIRED_COVERAGE: dict[str, tuple[str, int, int, int]] = {
     "encounterTitlesEnglish": ("complete", 89, 89, 0),
     "hpInitialCurrentReachable": ("complete", 108, 108, 0),
     "hpMultiplayerScaling": ("complete", 1, 1, 0),
+    "hpAssignmentSetterCensus": ("complete", 11, 11, 0),
+    "hpBaseSelectionUniqueValueChain": ("complete", 4, 4, 0),
+    "hpCapClampPreconditionSemanticFields": ("complete", 8, 8, 0),
+    "hpCommandSpecialCallerApplicability": ("complete", 52, 52, 0),
+    "hpCompletePipelineSemanticFields": ("complete", 85, 85, 0),
+    "hpMultiplayerWrapperHelperCallClosure": ("complete", 9, 9, 0),
+    "hpStorageNetworkSerializationJoins": ("complete", 10, 10, 0),
     "hpSpecialStateFormulas": ("complete", 4, 4, 0),
     "encounterInitializers": ("complete", 89, 89, 0),
     "initialStateOwners": ("complete", 108, 108, 0),
@@ -102,8 +110,8 @@ METADATA_KEYS = {
     "embeddedSourceInputManifest", "embeddedSourceInputManifestSha256", "game", "generator",
     "payloadSha256", "projectionInputs", "requiredCoverage", "sourceExtractorVersion", "sourceSchemaVersion",
 }
-PAYLOAD_KEYS = {"conflicts", "evidence", "factReferences", "knownUnknowns", "laneComparisons", "legacyAnnotations", "readiness", "sourceFacts"}
-SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states", "initialState"}
+PAYLOAD_KEYS = {"conflicts", "evidence", "factReferences", "knownUnknowns", "laneComparisons", "legacyAnnotations", "readiness", "resolvedAudits", "sourceFacts"}
+SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states", "initialState", "hpPipeline"}
 
 
 def coverage_rows() -> list[dict[str, Any]]:

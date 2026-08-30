@@ -127,7 +127,12 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual(len(payload["conflicts"]), 26)
         self.assertTrue(all(row["resolution"] == "unresolved" for row in payload["conflicts"]))
         self.assertTrue(any(row["conflictId"] == "CONFLICT.MONSTER_TITLE.FOGMOG_NORMAL.1" for row in payload["conflicts"]))
-        self.assertTrue(any(row["reasonCode"] == "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT" for row in unknowns))
+        self.assertFalse(any(row["reasonCode"] == "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT" for row in unknowns))
+        audit = payload["resolvedAudits"][0]
+        self.assertEqual(audit["auditId"], "AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING")
+        self.assertEqual([row["lane"] for row in audit["lanes"]], ["rawSourceHelper", "rawSourceAssignment", "stableLegacyConsumer"])
+        self.assertEqual(audit["resolution"]["classification"], "agreementForNonNegativeFinalAssignedHp")
+        self.assertFalse(audit["resolution"]["precedenceSelected"])
 
 
     def test_e1_placement_census_pools_conditions_and_nonpool_records(self):
@@ -313,12 +318,12 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertIn("UNKNOWN.LIFECYCLE_COVERAGE", unknowns)
         self.assertIn("UNKNOWN.FORMULA_RUNTIME_CONTRACTS", unknowns)
         self.assertIn("UNKNOWN.EVENT_BEHAVIOR", unknowns)
-        self.assertIn("UNKNOWN.HP_ROUNDING_CONFLICT", unknowns)
+        self.assertNotIn("UNKNOWN.HP_ROUNDING_CONFLICT", unknowns)
         companion = payload["readiness"]["runtimeScopes"]["encounterCompanion"]
         self.assertEqual((companion["ready"], companion["status"]), (False, "incomplete"))
         self.assertEqual(set(companion["reasonRefs"]), {
             "UNKNOWN.LIFECYCLE_COVERAGE", "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
-            "UNKNOWN.EVENT_BEHAVIOR", "UNKNOWN.HP_ROUNDING_CONFLICT",
+            "UNKNOWN.EVENT_BEHAVIOR",
         })
 
     def test_e2a_compact_mutations_fail_closed(self):
@@ -396,6 +401,58 @@ class EncounterProjectionTests(unittest.TestCase):
         proof = next(row for row in evidence if row["evidenceId"] == move_ref["evidenceRefs"][0])
         self.assertEqual(proof["pointers"][0]["jsonPointer"], "/behavior/registrations/0")
 
+    def test_e2b_pipeline_projection_and_mutations_fail_closed(self):
+        hp = self.artifact["payload"]["sourceFacts"]["hpPipeline"]
+        self.assertNotIn("callCensus", hp)
+        self.assertNotIn("provenance", hp)
+        self.assertEqual(hp["factId"], "SOURCE.HP_ASSIGNMENT_PIPELINE")
+        self.assertEqual(hp["assignment"]["numericContract"]["arithmeticRounding"], "none")
+        self.assertEqual(hp["assignment"]["conversion"]["mode"], "truncateTowardZero")
+        self.assertEqual(hp["assignment"]["max"]["cap"], 999999999)
+        self.assertEqual(hp["networkStorage"]["wireBits"], 32)
+        self.assertEqual([row["pathId"] for row in hp["specialCallPaths"]], ["DECIMILLIPEDE", "TEST_SUBJECT", "TOUGH_EGG"])
+
+        def projected(change):
+            return lambda artifact: change(artifact["payload"]["sourceFacts"]["hpPipeline"])
+        cases = [
+            (projected(lambda row: row["assignment"]["conversion"].__setitem__("mode", "floor")), "conversion|deterministic"),
+            (projected(lambda row: row["assignment"]["max"].__setitem__("cap", 999999998)), "deterministic"),
+            (projected(lambda row: row["assignment"]["max"].__setitem__("capOrder", "beforeDecimalToInt32Conversion")), "deterministic"),
+            (projected(lambda row: row["assignment"]["max"].__setitem__("negativeInput", "accepted")), "deterministic"),
+            (projected(lambda row: row["networkStorage"]["fields"]["currentHp"].__setitem__("cliType", "Decimal")), "deterministic"),
+            (projected(lambda row: row["commandWrappers"][3]["joins"].reverse()), "deterministic"),
+            (projected(lambda row: row["specialCallPaths"].pop()), "deterministic"),
+            (projected(lambda row: row["baseSelection"].__setitem__("fallback", "none")), "deterministic"),
+            (lambda a: a["payload"]["resolvedAudits"][0]["resolution"].__setitem__("precedenceSelected", True), "without precedence"),
+            (lambda a: a["payload"]["resolvedAudits"][0]["lanes"].pop(), "authority lanes"),
+        ]
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern):
+                self.assert_invalid(self.mutated(change), pattern)
+
+    def test_e2b_raw_pipeline_mutations_fail_closed(self):
+        def assert_bad(change, pattern):
+            source = deepcopy(self.source)
+            change(source["hpPipeline"])
+            with self.assertRaisesRegex(SourceExtractionError, pattern):
+                validate_artifact(self.artifact, source=source, legacy=self.legacy)
+        cases = [
+            (lambda hp: hp["assignment"]["conversion"].__setitem__("mode", "floor"), "conversion"),
+            (lambda hp: hp["assignment"]["max"].__setitem__("cap", 10), "cap"),
+            (lambda hp: hp["assignment"]["max"].__setitem__("negativeInput", "none"), "guard|order|drift"),
+            (lambda hp: hp["networkStorage"]["fields"]["maxHp"].__setitem__("cliType", "Decimal"), "wire fields"),
+            (lambda hp: hp["commandWrappers"][3]["joins"].reverse(), "assignment order"),
+            (lambda hp: hp["commandWrappers"].append({"command": "UnknownSetter", "joins": ["SetMaxHpInternal"]}), "unknown setter overload|assignment order"),
+            (lambda hp: hp["specialCallPaths"].pop(), "special caller"),
+            (lambda hp: hp["baseSelection"].__setitem__("fallback", "none"), "unique-selection"),
+            (lambda hp: hp["sourceDenominators"].__setitem__("completePipelineSemanticFields", 82), "Denominators|denominators"),
+            (lambda hp: hp["provenance"]["setMax"].pop("methodBodySha256"), "methodBodySha256"),
+            (lambda hp: hp["callCensus"]["targetSites"].pop(), "target call closure"),
+        ]
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern):
+                assert_bad(change, pattern)
+
     def test_metadata_manifest_payload_and_coverage_mutations_fail(self):
         cases = [
             (lambda a: a.__setitem__("schemaVersion", 999), "schemaVersion"),
@@ -420,6 +477,7 @@ class EncounterProjectionTests(unittest.TestCase):
             (lambda s: s["inputs"][0].__setitem__("path", "wrong"), "source.inputs"),
             (lambda s: s["authority"].__setitem__("artifactTier", "patched"), "source.authority"),
             (lambda s: s["coverage"]["moveOperations"].__setitem__("unresolved", 1), "moveOperations"),
+            (lambda s: s["coverage"]["hpCompletePipelineSemanticFields"].__setitem__("numerator", 82), "hpCompletePipelineSemanticFields"),
         ]
         for change, pattern in cases:
             with self.subTest(pattern=pattern):

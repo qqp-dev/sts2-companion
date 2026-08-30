@@ -15,6 +15,7 @@ from .errors import SourceExtractionError
 from .input_gate import VerifiedInputs
 from .localization import require_localized_text
 from .identity import extract_observation_identities
+from .hp_pipeline import extract_hp_pipeline
 from .initial_state import extract_initial_state
 from .placement import extract_placement
 from .metadata import AssemblyMetadata, extract_encounter_census
@@ -188,6 +189,7 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             assembly, dll.sha256, world["concrete"], set(rosters["reachableModels"]), state_facts
         )
         hp_scaling = extract_hp_multiplayer_scaling(dll.path, dll.sha256, assembly=assembly)
+        hp_pipeline = extract_hp_pipeline(assembly, dll.sha256)
         monster_l10n, monster_l10n_blob = _localization(verified, _MONSTER_LOCALIZATION)
         behavior = extract_behavior(assembly, dll.sha256, pck.sha256, world["concrete"],
                                     rosters["ordinaryReachableModels"], monster_l10n,
@@ -281,6 +283,13 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             "hpInitialConcreteCensus": complete(len(world["hpGetterCensus"]), 120),
             "hpInitialCurrentReachable": complete(len(reachable), 108),
             "hpMultiplayerScaling": complete(1, 1),
+            "hpBaseSelectionUniqueValueChain": complete(hp_pipeline["sourceDenominators"]["baseSelectionChainMethods"], hp_pipeline["sourceDenominators"]["baseSelectionChainMethods"]),
+            "hpMultiplayerWrapperHelperCallClosure": complete(hp_pipeline["sourceDenominators"]["multiplayerWrapperHelperCallSites"], hp_pipeline["sourceDenominators"]["multiplayerWrapperHelperCallSites"]),
+            "hpAssignmentSetterCensus": complete(hp_pipeline["sourceDenominators"]["setterMethodsAndDirectCallSites"], hp_pipeline["sourceDenominators"]["setterMethodsAndDirectCallSites"]),
+            "hpCommandSpecialCallerApplicability": complete(hp_pipeline["sourceDenominators"]["commandAndSpecialCallerApplicability"], hp_pipeline["sourceDenominators"]["commandAndSpecialCallerApplicability"]),
+            "hpCapClampPreconditionSemanticFields": complete(hp_pipeline["sourceDenominators"]["capClampPreconditionSemanticFields"], hp_pipeline["sourceDenominators"]["capClampPreconditionSemanticFields"]),
+            "hpStorageNetworkSerializationJoins": complete(hp_pipeline["sourceDenominators"]["storageAndNetworkSerializationJoins"], hp_pipeline["sourceDenominators"]["storageAndNetworkSerializationJoins"]),
+            "hpCompletePipelineSemanticFields": complete(hp_pipeline["sourceDenominators"]["completePipelineSemanticFields"], hp_pipeline["sourceDenominators"]["completePipelineSemanticFields"]),
             "hpSpecialStateFormulas": complete(4, 4),
             "monsterIdentitiesCurrentReachable": complete(len(reachable), 108),
             "monsterNamesEnglishCurrentReachable": complete(name_data["joinedCount"], 108),
@@ -315,6 +324,7 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
         },
         "behavior": behavior,
         "cards": referenced["cards"],
+        "hpPipeline": hp_pipeline,
         "initialState": initial_state,
         "intentLocalization": {"entries": intent_l10n, "provenance": intent_l10n_blob},
         "powers": referenced["powers"],

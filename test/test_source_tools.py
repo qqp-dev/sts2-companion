@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 import hashlib
 import json
 from decimal import Decimal
@@ -19,6 +20,7 @@ from source_extractor.cil_safety import validate_cil_slice
 from source_extractor.cil_eval import CilDataFlow, CilType, Invocation, SymbolicValue, decode_method_signature, value_expression
 from source_extractor.invocations import ClosedWorldInvocationAudit
 from source_extractor.initial_state import _claim_helper, _power_apply
+from source_extractor.hp_pipeline import _require_exact_opcodes, _require_order, validate_hp_pipeline
 from source_extractor.inheritance import attach_behavior_applicability, resolve_behavior_applicability
 from source_extractor.identity import resolve_observed_identity, validate_observation_identities
 from source_extractor.placement import decode_factory_collection, validate_placement
@@ -472,6 +474,76 @@ class FixedRosterCompilerTests(unittest.TestCase):
             _derive_fixed_slot_names(dynamic)
         with self.assertRaisesRegex(SourceExtractionError, "no proven fixed cardinality"):
             _derive_fixed_slot_names([])
+
+
+class HpPipelineCilMutationTests(unittest.TestCase):
+    @staticmethod
+    def record(rows):
+        return {
+            "instructions": [{"opcode": opcode, "operand": operand} for opcode, operand in rows],
+            "symbolSignature": "Synthetic::HpPipeline sig:00",
+        }
+
+    def test_conversion_multiplication_and_cap_order_fail_closed(self):
+        helper = self.record([
+            ("call", "System.Decimal::op_Implicit sig:x"),
+            ("call", "System.Decimal::op_Multiply sig:x"),
+            ("call", "MultiplayerScalingModel::GetMultiplayerScaling sig:x"),
+            ("call", "System.Decimal::op_Multiply sig:x"),
+        ])
+        chain = ("Decimal::op_Implicit", "Decimal::op_Multiply", "GetMultiplayerScaling", "Decimal::op_Multiply")
+        _require_order(helper, chain, label="test helper")
+        removed = deepcopy(helper); removed["instructions"].pop(0)
+        with self.assertRaisesRegex(SourceExtractionError, "missing or reordered"):
+            _require_order(removed, chain, label="test helper")
+        early = deepcopy(helper); early["instructions"][0], early["instructions"][1] = early["instructions"][1], early["instructions"][0]
+        with self.assertRaisesRegex(SourceExtractionError, "missing or reordered"):
+            _require_order(early, chain, label="test helper")
+
+        setter = self.record([
+            ("call", "System.Decimal::op_Explicit sig:x"),
+            ("ldc.i4", 999999999),
+            ("call", "System.Math::Min sig:x"),
+            ("call", "Creature::set_MaxHp sig:x"),
+        ])
+        exact = (("call", "System.Decimal::op_Explicit sig:x"), ("ldc.i4", 999999999),
+                 ("call", "System.Math::Min sig:x"), ("call", "Creature::set_MaxHp sig:x"))
+        _require_exact_opcodes(setter, exact, label="test cap")
+        moved = deepcopy(setter); moved["instructions"][0], moved["instructions"][1] = moved["instructions"][1], moved["instructions"][0]
+        with self.assertRaisesRegex(SourceExtractionError, "missing or reordered opcode"):
+            _require_exact_opcodes(moved, exact, label="test cap")
+        no_explicit = deepcopy(setter); no_explicit["instructions"].pop(0)
+        with self.assertRaisesRegex(SourceExtractionError, "missing or reordered opcode"):
+            _require_exact_opcodes(no_explicit, exact, label="test cap")
+
+    def test_one_player_and_int32_wire_order_fail_closed(self):
+        bypass = self.record([("ldarg.2", None), ("ldc.i4.1", None), ("bne.un.s", 6)])
+        branch = (("ldarg.2", None), ("ldc.i4.1", None), ("bne.un.s", 6))
+        _require_exact_opcodes(bypass, branch, label="test bypass")
+        missing = deepcopy(bypass); missing["instructions"].pop()
+        with self.assertRaisesRegex(SourceExtractionError, "missing or reordered opcode"):
+            _require_exact_opcodes(missing, branch, label="test bypass")
+
+        wire = self.record([
+            ("ldfld", "CreatureState::currentHp"), ("ldc.i4.s", 32), ("callvirt", "PacketWriter::WriteInt"),
+            ("ldfld", "CreatureState::maxHp"), ("ldc.i4.s", 32), ("callvirt", "PacketWriter::WriteInt"),
+        ])
+        expected = tuple((row["opcode"], row["operand"]) for row in wire["instructions"])
+        _require_exact_opcodes(wire, expected, label="test wire")
+        decimal_wire = deepcopy(wire); decimal_wire["instructions"][2]["operand"] = "PacketWriter::WriteDecimal"
+        with self.assertRaisesRegex(SourceExtractionError, "missing or reordered opcode"):
+            _require_exact_opcodes(decimal_wire, expected, label="test wire")
+        wrong_order = deepcopy(wire); wrong_order["instructions"][0]["operand"] = "CreatureState::maxHp"
+        with self.assertRaisesRegex(SourceExtractionError, "missing or reordered opcode"):
+            _require_exact_opcodes(wrong_order, expected, label="test wire")
+
+    def test_checked_pipeline_document_and_unsupported_ast_fail(self):
+        pipeline = json.loads((REPO_ROOT / "data/game-v0.111.0-source.json").read_text())["hpPipeline"]
+        validate_hp_pipeline(pipeline)
+        bad = deepcopy(pipeline)
+        bad["assignment"]["conversion"]["kind"] = "castByName"
+        with self.assertRaisesRegex(SourceExtractionError, "malformed AST|conversion"):
+            validate_hp_pipeline(bad)
 
 
 class SyntheticFailClosedTests(unittest.TestCase):

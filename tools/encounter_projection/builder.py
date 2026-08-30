@@ -264,6 +264,17 @@ def _source_scaling(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
     return result
 
 
+def _source_hp_pipeline(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
+    """Project semantics and refs, never the 63-site census or CIL proof bulk."""
+    fact_id = "SOURCE.HP_ASSIGNMENT_PIPELINE"
+    facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE", ["/hpPipeline"])
+    compact = deepcopy(source["hpPipeline"])
+    compact.pop("callCensus")
+    compact.pop("provenance")
+    compact["factId"] = fact_id
+    return compact
+
+
 def _source_initial_state(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
     initial = source["initialState"]
     projected_facts = []
@@ -662,12 +673,6 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
             "unknownId": "UNKNOWN.EVENT_BEHAVIOR",
         },
         {
-            "affectedFactIds": [source_facts["scaling"]["hp"]["factId"]],
-            "detail": "The Decimal scaling helper declares no rounding; its downstream HP setter conversion/cap/storage chain is deferred to E2b, so no rounding conclusion or precedence is selected here.",
-            "reasonCode": "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT", "scope": "encounterCompanion", "status": "unresolved",
-            "unknownId": "UNKNOWN.HP_ROUNDING_CONFLICT",
-        },
-        {
             "affectedFactIds": [row["factId"] for row in legacy_annotations["current"] + legacy_annotations["archive"]],
             "detail": "Legacy records lack the per-fact confidence and status fields required by the future community provenance contract.",
             "reasonCode": "LEGACY_PER_FACT_PROVENANCE_INCOMPLETE", "scope": "legacyAnnotations", "status": "unresolved",
@@ -694,6 +699,40 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
     return rows
 
 
+def _resolved_audits(source_facts: dict[str, Any]) -> list[dict[str, Any]]:
+    helper = source_facts["scaling"]["hp"]
+    pipeline = source_facts["hpPipeline"]
+    return [{
+        "auditId": "AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING",
+        "family": "hpAssignmentRounding",
+        "historicalStatus": "resolved",
+        "lanes": [
+            {
+                "factId": helper["factId"], "lane": "rawSourceHelper",
+                "statement": {"arithmeticRounding": helper["rule"]["numericSemantics"]["rounding"], "outputType": helper["rule"]["numericSemantics"]["outputType"]},
+            },
+            {
+                "factId": pipeline["factId"], "lane": "rawSourceAssignment",
+                "statement": {
+                    "assignmentConversion": pipeline["assignment"]["numericContract"]["assignmentConversion"],
+                    "nonNegativeEquivalence": pipeline["assignment"]["numericContract"]["nonNegativeEquivalence"],
+                    "storageType": pipeline["assignment"]["max"]["storageType"],
+                },
+            },
+            {
+                "implementationPath": "src/book.mjs::scaleRange", "lane": "stableLegacyConsumer",
+                "statement": {"conversion": "Math.floor", "domain": "displayedNonNegativeHp"},
+            },
+        ],
+        "resolution": {
+            "classification": "agreementForNonNegativeFinalAssignedHp",
+            "detail": "The helper performs no rounding; downstream assignment truncates toward zero, which equals floor only for source-proven non-negative HP. The stable legacy consumer floors displayed non-negative HP.",
+            "negativeValuesGeneralized": False,
+            "precedenceSelected": False,
+        },
+    }]
+
+
 def _readiness(known_unknowns: list[dict[str, Any]]) -> dict[str, Any]:
     by_scope: dict[str, list[str]] = {}
     for row in known_unknowns:
@@ -712,7 +751,7 @@ def _readiness(known_unknowns: list[dict[str, Any]]) -> dict[str, Any]:
                     "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement",
                     "eventEncounterLinkage", "observationIdentity", "behaviorApplicability",
                     "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure",
-                    "initialStateLegacyComparisons",
+                    "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage",
                 ],
                 "status": "complete",
             },
@@ -732,6 +771,7 @@ def build_payload(source: dict[str, Any], legacy: dict[str, Any]) -> dict[str, A
         "models": models, "monsters": monsters, "moves": moves,
         "observationIdentities": _source_observation_identities(source, facts),
         "placement": _source_placement(source, facts), "scaling": _source_scaling(source, facts),
+        "hpPipeline": _source_hp_pipeline(source, facts),
         "stateRules": state_rules, "states": states,
         "initialState": _source_initial_state(source, facts),
     }
@@ -746,6 +786,7 @@ def build_payload(source: dict[str, Any], legacy: dict[str, Any]) -> dict[str, A
         "conflicts": conflicts, "evidence": sorted(facts.evidence, key=lambda row: row["evidenceId"]),
         "factReferences": sorted(facts.fact_references, key=lambda row: row["factId"]), "knownUnknowns": unknowns,
         "laneComparisons": comparisons, "legacyAnnotations": legacy_annotations, "readiness": _readiness(unknowns),
+        "resolvedAudits": _resolved_audits(source_facts),
         "sourceFacts": source_facts,
     }
 
