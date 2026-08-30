@@ -4,5 +4,5 @@ Modules parse PE/CLI metadata, CIL method bodies, and selected PCK entries as
 bytes. They never load or execute the shipped assembly or initialize Godot.
 """
 
-EXTRACTOR_VERSION = "6.0.0"
-SCHEMA_VERSION = 6
+EXTRACTOR_VERSION = "7.0.0"
+SCHEMA_VERSION = 7

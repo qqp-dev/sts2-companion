@@ -144645,6 +144645,36 @@
       "status": "complete",
       "unresolved": 0
     },
+    "hpAssignmentSetterCensus": {
+      "denominator": 11,
+      "numerator": 11,
+      "status": "complete",
+      "unresolved": 0
+    },
+    "hpBaseSelectionUniqueValueChain": {
+      "denominator": 4,
+      "numerator": 4,
+      "status": "complete",
+      "unresolved": 0
+    },
+    "hpCapClampPreconditionSemanticFields": {
+      "denominator": 8,
+      "numerator": 8,
+      "status": "complete",
+      "unresolved": 0
+    },
+    "hpCommandSpecialCallerApplicability": {
+      "denominator": 52,
+      "numerator": 52,
+      "status": "complete",
+      "unresolved": 0
+    },
+    "hpCompletePipelineSemanticFields": {
+      "denominator": 85,
+      "numerator": 85,
+      "status": "complete",
+      "unresolved": 0
+    },
     "hpInitialConcreteCensus": {
       "denominator": 120,
       "numerator": 120,
@@ -144663,9 +144693,21 @@
       "status": "complete",
       "unresolved": 0
     },
+    "hpMultiplayerWrapperHelperCallClosure": {
+      "denominator": 9,
+      "numerator": 9,
+      "status": "complete",
+      "unresolved": 0
+    },
     "hpSpecialStateFormulas": {
       "denominator": 4,
       "numerator": 4,
+      "status": "complete",
+      "unresolved": 0
+    },
+    "hpStorageNetworkSerializationJoins": {
+      "denominator": 10,
+      "numerator": 10,
       "status": "complete",
       "unresolved": 0
     },
@@ -158586,12 +158628,1008 @@
       }
     ]
   },
-  "extractorVersion": "6.0.0",
+  "extractorVersion": "7.0.0",
   "game": {
     "branch": "v0.111.0",
     "commit": "41cef1ea",
     "mainAssemblyHash": 1579942752,
     "version": "v0.111.0"
+  },
+  "hpPipeline": {
+    "applicability": {
+      "normalCreation": "CombatSide.Enemy",
+      "normalCreationEnumValue": 2,
+      "normalOrder": [
+        "SetUniqueMonsterHpValue",
+        "ScaleMonsterHpForMultiplayer"
+      ],
+      "onePlayer": "ScaleMonsterHpForMultiplayerReturnsWithoutSetterWrites",
+      "specialPathsJoinAssignment": true
+    },
+    "assignment": {
+      "conversion": {
+        "expression": {
+          "domain": {
+            "minimum": "0"
+          },
+          "kind": "stateVariable",
+          "name": "assignedHpDecimal",
+          "valueType": "decimal"
+        },
+        "fromType": "decimal",
+        "kind": "convert",
+        "mode": "truncateTowardZero",
+        "toType": "integer",
+        "valueType": "integer"
+      },
+      "current": {
+        "clamp": "DecimalMin(requestedCurrent,Decimal(maxHp))BeforeConversion",
+        "lowerClamp": "none",
+        "storageType": "Int32"
+      },
+      "max": {
+        "cap": 999999999,
+        "capOrder": "afterDecimalToInt32Conversion",
+        "currentInteraction": "storeMaxThenStoreMin(previousCurrent,newMax)",
+        "negativeInput": "ArgumentExceptionBeforeConversion",
+        "storageType": "Int32"
+      },
+      "numericContract": {
+        "arithmeticRounding": "none",
+        "assignmentConversion": "truncateTowardZero",
+        "checkedOverflow": "Decimal.op_Explicit throws OverflowException outside Int32",
+        "negativeEquivalenceClaimed": false,
+        "nonNegativeEquivalence": "floor",
+        "operator": "System.Decimal.op_Explicit(System.Decimal)->System.Int32"
+      }
+    },
+    "baseSelection": {
+      "candidateDomain": "inclusiveIntegers",
+      "fallback": "fullInclusiveRangeWhenEveryCandidateMatchesATeammateMaxHp",
+      "initialConstructorWrites": [
+        "maxHp=maxInitialHp",
+        "currentHp=maxInitialHp"
+      ],
+      "invalidRange": "InvalidOperationExceptionWhenMinInitialHpGreaterThanMaxInitialHp",
+      "rangeConstruction": "Enumerable.Range(minInitialHp,maxInitialHp+1-minInitialHp)",
+      "rng": "RunRngSet.Niche",
+      "selection": "Rng.NextItem(remainingCandidates)ElseRng.NextInt(minInclusive,maxExclusive)",
+      "teammateAvoidance": "removeExistingTeammateMaxHpValuesWhenPossible",
+      "writeOrder": [
+        "maxHp",
+        "currentHp",
+        "monsterMaxHpBeforeModification"
+      ]
+    },
+    "callCensus": {
+      "commandSites": [
+        {
+          "caller": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<GainMaxHp>d__22::MoveNext sig:200001",
+          "instructionIndex": 25,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::SetMaxHp sig:0002151282210111844912a7e4118449",
+          "targetMember": "SetMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<LoseMaxHp>d__23::MoveNext sig:200001",
+          "instructionIndex": 123,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::SetMaxHp sig:0002151282210111844912a7e4118449",
+          "targetMember": "SetMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<SetMaxAndCurrentHp>d__25::MoveNext sig:200001",
+          "instructionIndex": 12,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::SetMaxHp sig:0002151282210111844912a7e4118449",
+          "targetMember": "SetMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<SetMaxAndCurrentHp>d__25::MoveNext sig:200001",
+          "instructionIndex": 50,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::SetCurrentHp sig:000212812112a7e4118449",
+          "targetMember": "SetCurrentHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Commands.OstyCmd+<Summon>d__0::MoveNext sig:200001",
+          "instructionIndex": 72,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Commands.OstyCmd+<Summon>d__0::MoveNext sig:200001",
+          "instructionIndex": 271,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::SetMaxHp sig:0002151282210111844912a7e4118449",
+          "targetMember": "SetMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Entities.RestSite.CookRestSiteOption+<OnSelect>d__9::MoveNext sig:200001",
+          "instructionIndex": 137,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Cards.BrightestFlame+<OnPlay>d__5::MoveNext sig:200001",
+          "instructionIndex": 101,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::LoseMaxHp sig:000412812112a64c12a7e411844902",
+          "targetMember": "LoseMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Cards.Feed+<OnPlay>d__9::MoveNext sig:200001",
+          "instructionIndex": 121,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Events.AbyssalBaths+<OnImmerse>d__14::MoveNext sig:200001",
+          "instructionIndex": 18,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Events.ByrdonisNest+<Eat>d__5::MoveNext sig:200001",
+          "instructionIndex": 15,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Events.DrowningBeacon+<ClimbOption>d__6::MoveNext sig:200001",
+          "instructionIndex": 20,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::LoseMaxHp sig:000412812112a64c12a7e411844902",
+          "targetMember": "LoseMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Events.EndlessConveyor+<Caviar>d__23::MoveNext sig:200001",
+          "instructionIndex": 17,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Events.MorphicGrove+<Loner>d__7::MoveNext sig:200001",
+          "instructionIndex": 15,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Events.StoneOfAllTime+<Lift>d__14::MoveNext sig:200001",
+          "instructionIndex": 54,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Events.TabletOfTruth+<LoseMaxHpAndUpgrade>d__13::MoveNext sig:200001",
+          "instructionIndex": 24,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::LoseMaxHp sig:000412812112a64c12a7e411844902",
+          "targetMember": "LoseMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Events.TabletOfTruth+<LoseMaxHpAndUpgrade>d__13::MoveNext sig:200001",
+          "instructionIndex": 70,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::LoseMaxHp sig:000412812112a64c12a7e411844902",
+          "targetMember": "LoseMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Events.UnrestSite+<Kill>d__7::MoveNext sig:200001",
+          "instructionIndex": 21,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::LoseMaxHp sig:000412812112a64c12a7e411844902",
+          "targetMember": "LoseMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Events.WaterloggedScriptorium+<BloodyInk>d__8::MoveNext sig:200001",
+          "instructionIndex": 15,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Modifiers.NightTerrors+<AfterRestSiteHeal>d__2::MoveNext sig:200001",
+          "instructionIndex": 25,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::LoseMaxHp sig:000412812112a64c12a7e411844902",
+          "targetMember": "LoseMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Modifiers.Terminal+<AfterRoomEntered>d__0::MoveNext sig:200001",
+          "instructionIndex": 49,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::LoseMaxHp sig:000412812112a64c12a7e411844902",
+          "targetMember": "LoseMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Monsters.DecimillipedeSegment+<AfterAddedToRoom>d__46::MoveNext sig:200001",
+          "instructionIndex": 147,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::SetMaxAndCurrentHp sig:000212812112a7e4118449",
+          "targetMember": "SetMaxAndCurrentHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Monsters.TestSubject+<Revive>d__81::MoveNext sig:200001",
+          "instructionIndex": 34,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::SetMaxHp sig:0002151282210111844912a7e4118449",
+          "targetMember": "SetMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Monsters.ToughEgg+<Hatch>d__36::MoveNext sig:200001",
+          "instructionIndex": 75,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::SetMaxAndCurrentHp sig:000212812112a7e4118449",
+          "targetMember": "SetMaxAndCurrentHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Monsters.WaterfallGiant+<TriggerAboutToBlowState>d__77::MoveNext sig:200001",
+          "instructionIndex": 18,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::SetMaxAndCurrentHp sig:000212812112a7e4118449",
+          "targetMember": "SetMaxAndCurrentHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Potions.FruitJuice+<OnUse>d__10::MoveNext sig:200001",
+          "instructionIndex": 17,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Powers.Mocks.MockInvincibleOnDeathPower+<AfterDeath>d__6::MoveNext sig:200001",
+          "instructionIndex": 22,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::SetMaxAndCurrentHp sig:000212812112a7e4118449",
+          "targetMember": "SetMaxAndCurrentHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Powers.PaperCutsPower+<AfterDamageGiven>d__4::MoveNext sig:200001",
+          "instructionIndex": 38,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::LoseMaxHp sig:000412812112a64c12a7e411844902",
+          "targetMember": "LoseMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.BigMushroom+<AfterObtained>d__6::MoveNext sig:200001",
+          "instructionIndex": 15,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.ChosenCheese+<AfterCombatEnd>d__4::MoveNext sig:200001",
+          "instructionIndex": 17,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.DarkstonePeriapt+<AfterCardChangedPiles>d__4::MoveNext sig:200001",
+          "instructionIndex": 45,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.DragonFruit+<AfterGoldGained>d__5::MoveNext sig:200001",
+          "instructionIndex": 23,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.FakeMango+<AfterObtained>d__8::MoveNext sig:200001",
+          "instructionIndex": 15,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.FurCoat+<AfterCreatureAddedToCombat>d__27::MoveNext sig:200001",
+          "instructionIndex": 37,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::SetCurrentHp sig:000212812112a7e4118449",
+          "targetMember": "SetCurrentHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.FurCoat+<BeforeCombatStart>d__26::MoveNext sig:200001",
+          "instructionIndex": 61,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::SetCurrentHp sig:000212812112a7e4118449",
+          "targetMember": "SetCurrentHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.LeafyPoultice+<AfterObtained>d__6::MoveNext sig:200001",
+          "instructionIndex": 20,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::LoseMaxHp sig:000412812112a64c12a7e411844902",
+          "targetMember": "LoseMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.LeesWaffle+<AfterObtained>d__6::MoveNext sig:200001",
+          "instructionIndex": 22,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.LoomingFruit+<AfterObtained>d__9::MoveNext sig:200001",
+          "instructionIndex": 15,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.Mango+<AfterObtained>d__6::MoveNext sig:200001",
+          "instructionIndex": 15,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.NutritiousOyster+<AfterObtained>d__6::MoveNext sig:200001",
+          "instructionIndex": 15,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.Pear+<AfterObtained>d__6::MoveNext sig:200001",
+          "instructionIndex": 15,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.SereTalon+<AfterObtained>d__10::MoveNext sig:200001",
+          "instructionIndex": 17,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::LoseMaxHp sig:000412812112a64c12a7e411844902",
+          "targetMember": "LoseMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.StoneHumidifier+<AfterRestSiteHeal>d__4::MoveNext sig:200001",
+          "instructionIndex": 23,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Relics.Strawberry+<AfterObtained>d__6::MoveNext sig:200001",
+          "instructionIndex": 15,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Commands.CreatureCmd::GainMaxHp sig:000212812112a7e4118449",
+          "targetMember": "GainMaxHp"
+        }
+      ],
+      "commandTargetDistribution": {
+        "GainMaxHp": 22,
+        "LoseMaxHp": 10,
+        "SetCurrentHp": 3,
+        "SetMaxAndCurrentHp": 4,
+        "SetMaxHp": 5
+      },
+      "targetDistribution": {
+        "ScaleHpForMultiplayer": 8,
+        "ScaleMonsterHpForMultiplayer": 1,
+        "SetCurrentHpInternal": 6,
+        "SetMaxHpInternal": 3,
+        "SetUniqueMonsterHpValue": 1
+      },
+      "targetSites": [
+        {
+          "caller": "MegaCrit.Sts2.Core.Combat.CombatState::CreateCreature sig:200312a7e41288e411aa6c0e",
+          "instructionIndex": 30,
+          "opcode": "callvirt",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::SetUniqueMonsterHpValue sig:200201151281fd0112a7e4128544",
+          "targetMember": "SetUniqueMonsterHpValue"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Combat.CombatState::CreateCreature sig:200312a7e41288e411aa6c0e",
+          "instructionIndex": 40,
+          "opcode": "callvirt",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleMonsterHpForMultiplayer sig:2003011288c80808",
+          "targetMember": "ScaleMonsterHpForMultiplayer"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<SetCurrentHp>d__21::MoveNext sig:200001",
+          "instructionIndex": 28,
+          "opcode": "callvirt",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::SetCurrentHpInternal sig:200101118449",
+          "targetMember": "SetCurrentHpInternal"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<SetMaxHp>d__24::MoveNext sig:200001",
+          "instructionIndex": 16,
+          "opcode": "callvirt",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::SetMaxHpInternal sig:200101118449",
+          "targetMember": "SetMaxHpInternal"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::HealInternal sig:200101118449",
+          "instructionIndex": 9,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::SetCurrentHpInternal sig:200101118449",
+          "targetMember": "SetCurrentHpInternal"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleMonsterHpForMultiplayer sig:2003011288c80808",
+          "instructionIndex": 11,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleHpForMultiplayer sig:00041184491184491288c80808",
+          "targetMember": "ScaleHpForMultiplayer"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleMonsterHpForMultiplayer sig:2003011288c80808",
+          "instructionIndex": 12,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::SetMaxHpInternal sig:200101118449",
+          "targetMember": "SetMaxHpInternal"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleMonsterHpForMultiplayer sig:2003011288c80808",
+          "instructionIndex": 17,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::SetCurrentHpInternal sig:200101118449",
+          "targetMember": "SetCurrentHpInternal"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Entities.Players.Player::SyncWithSerializedPlayer sig:200101128310",
+          "instructionIndex": 60,
+          "opcode": "callvirt",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::SetMaxHpInternal sig:200101118449",
+          "targetMember": "SetMaxHpInternal"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Entities.Players.Player::SyncWithSerializedPlayer sig:200101128310",
+          "instructionIndex": 66,
+          "opcode": "callvirt",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::SetCurrentHpInternal sig:200101118449",
+          "targetMember": "SetCurrentHpInternal"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.AncientEventModel+<BeforeEventStarted>d__62::MoveNext sig:200001",
+          "instructionIndex": 19,
+          "opcode": "callvirt",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::SetCurrentHpInternal sig:200101118449",
+          "targetMember": "SetCurrentHpInternal"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::GenerateInitialOptions sig:2000151281fd0112a68c",
+          "instructionIndex": 31,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleHpForMultiplayer sig:00041184491184491288c80808",
+          "targetMember": "ScaleHpForMultiplayer"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::GenerateInitialOptions sig:2000151281fd0112a68c",
+          "instructionIndex": 43,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleHpForMultiplayer sig:00041184491184491288c80808",
+          "targetMember": "ScaleHpForMultiplayer"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::GenerateInitialOptions sig:2000151281fd0112a68c",
+          "instructionIndex": 55,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleHpForMultiplayer sig:00041184491184491288c80808",
+          "targetMember": "ScaleHpForMultiplayer"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Monsters.DecimillipedeSegment+<AfterAddedToRoom>d__46::MoveNext sig:200001",
+          "instructionIndex": 120,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleHpForMultiplayer sig:00041184491184491288c80808",
+          "targetMember": "ScaleHpForMultiplayer"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Monsters.DecimillipedeSegment+<AfterAddedToRoom>d__46::MoveNext sig:200001",
+          "instructionIndex": 133,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleHpForMultiplayer sig:00041184491184491288c80808",
+          "targetMember": "ScaleHpForMultiplayer"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Monsters.PunchConstruct+<AfterAddedToRoom>d__24::MoveNext sig:200001",
+          "instructionIndex": 102,
+          "opcode": "callvirt",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::SetCurrentHpInternal sig:200101118449",
+          "targetMember": "SetCurrentHpInternal"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Monsters.TestSubject+<Revive>d__81::MoveNext sig:200001",
+          "instructionIndex": 28,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleHpForMultiplayer sig:00041184491184491288c80808",
+          "targetMember": "ScaleHpForMultiplayer"
+        },
+        {
+          "caller": "MegaCrit.Sts2.Core.Models.Monsters.ToughEgg+<Hatch>d__36::MoveNext sig:200001",
+          "instructionIndex": 70,
+          "opcode": "call",
+          "target": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleHpForMultiplayer sig:00041184491184491288c80808",
+          "targetMember": "ScaleHpForMultiplayer"
+        }
+      ]
+    },
+    "commandWrappers": [
+      {
+        "command": "GainMaxHp",
+        "joins": [
+          "SetMaxHp"
+        ]
+      },
+      {
+        "command": "LoseMaxHp",
+        "joins": [
+          "SetMaxHp"
+        ]
+      },
+      {
+        "command": "SetCurrentHp",
+        "joins": [
+          "SetCurrentHpInternal"
+        ]
+      },
+      {
+        "command": "SetMaxAndCurrentHp",
+        "joins": [
+          "SetMaxHp",
+          "SetCurrentHp"
+        ]
+      },
+      {
+        "command": "SetMaxHp",
+        "joins": [
+          "SetMaxHpInternal"
+        ]
+      }
+    ],
+    "networkStorage": {
+      "captureOrder": [
+        "currentHp",
+        "maxHp"
+      ],
+      "deserializationOrder": [
+        "currentHp",
+        "maxHp"
+      ],
+      "fields": {
+        "currentHp": {
+          "cliType": "Int32",
+          "metadataSignature": "0608",
+          "symbol": "MegaCrit.Sts2.Core.Entities.Multiplayer.NetFullCombatState+CreatureState::currentHp"
+        },
+        "maxHp": {
+          "cliType": "Int32",
+          "metadataSignature": "0608",
+          "symbol": "MegaCrit.Sts2.Core.Entities.Multiplayer.NetFullCombatState+CreatureState::maxHp"
+        }
+      },
+      "serializationOrder": [
+        "currentHp:Int32/32",
+        "maxHp:Int32/32"
+      ],
+      "wireBits": 32,
+      "wireReader": "PacketReader.ReadInt",
+      "wireWriter": "PacketWriter.WriteInt"
+    },
+    "provenance": {
+      "baseConstructor": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "cilInstructionsSha256": "eb12231ce62a8300fccfe66be9fe0f1938d1543898f8f6dc51428dccd57f8d23",
+        "diagnosticMetadataToken": "0x060051cf",
+        "metadataSignature": "2003011288e411aa6c0e",
+        "methodBodySha256": "01df494af8ff9b4ee0c8ccf461e060308d9197107feddf86ad77714afbc87783",
+        "normalizedInstructionsSha256": "b2392365cb38a88cfd0d09f6515979e7ae893b70e7eb197583b6b200871bedff",
+        "normalizedSliceSha256": "b2392365cb38a88cfd0d09f6515979e7ae893b70e7eb197583b6b200871bedff",
+        "semanticWitnessSha256": "0d8cb33860506846f6b9bc9d938959dcfa61c602589a02093383e17fe2ba05f3",
+        "symbolSignature": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::.ctor sig:2003011288e411aa6c0e"
+      },
+      "commandStateMachines": [
+        {
+          "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+          "cilInstructionsSha256": "c7c05f3f2213c3a5f8e3097513312eff0e890f981906823ae6fb854f9d2ef97d",
+          "diagnosticMetadataToken": "0x0600b305",
+          "metadataSignature": "200001",
+          "methodBodySha256": "d974fe6c7b3ca7ad4883179ecfa2339719890e942213c605c73e18070e73157c",
+          "normalizedInstructionsSha256": "eb8292d37533255cc01e5de6f290c70684b657030d7832fde826d720e5721cd1",
+          "normalizedSliceSha256": "eb8292d37533255cc01e5de6f290c70684b657030d7832fde826d720e5721cd1",
+          "semanticWitnessSha256": "706c388f2666cc8100415b216edfa9db7116567933a6081aa6df77fdabdf54b3",
+          "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<GainMaxHp>d__22::MoveNext sig:200001"
+        },
+        {
+          "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+          "cilInstructionsSha256": "5063b76cba46dbfb744fa5fa256486db5808e934fe19c2c8da08ba997929e2d5",
+          "diagnosticMetadataToken": "0x0600b311",
+          "metadataSignature": "200001",
+          "methodBodySha256": "f73151c32040868525380f62afb5e699a3a1d0d34f9c8d708cd8c95fc8dbac0b",
+          "normalizedInstructionsSha256": "a002ccac314b78dee098c203ca3670d83cef7ee4c234855a801e8475f8742cf3",
+          "normalizedSliceSha256": "a002ccac314b78dee098c203ca3670d83cef7ee4c234855a801e8475f8742cf3",
+          "semanticWitnessSha256": "4c0394f30835c1ee33aedc5764c1022b1df5a56ba08d3e0a966dcbdb6051f11a",
+          "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<LoseMaxHp>d__23::MoveNext sig:200001"
+        },
+        {
+          "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+          "cilInstructionsSha256": "efd6bcf61d09652389242aa12b95aa726b711d4198fb250d8cd22aa5a49fef46",
+          "diagnosticMetadataToken": "0x0600b313",
+          "metadataSignature": "200001",
+          "methodBodySha256": "cb7c7f2102e641e66220df058855c686170b723f32ef42120a0206cd0b69741e",
+          "normalizedInstructionsSha256": "262cc47bed807d34ccfcaaff0d9317ada27f50fcf1225cc8c756484c53eaf490",
+          "normalizedSliceSha256": "262cc47bed807d34ccfcaaff0d9317ada27f50fcf1225cc8c756484c53eaf490",
+          "semanticWitnessSha256": "c3f11880a559a96e94b2d256068938175f84d44d3eae3b13b57c353d6c53ce41",
+          "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<SetCurrentHp>d__21::MoveNext sig:200001"
+        },
+        {
+          "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+          "cilInstructionsSha256": "f3e64519299dde335b2de51c79dd86797f4f9e75da6cf979c13ac9a5c992772c",
+          "diagnosticMetadataToken": "0x0600b315",
+          "metadataSignature": "200001",
+          "methodBodySha256": "b5dcca92762cf5b9a402f79799d516e0e6a3926441ab667363beb0d26481117f",
+          "normalizedInstructionsSha256": "a688cd5c8b3c43afab7eb0ceb5f6291f39ee7723d778850f72f5b997ee224a29",
+          "normalizedSliceSha256": "a688cd5c8b3c43afab7eb0ceb5f6291f39ee7723d778850f72f5b997ee224a29",
+          "semanticWitnessSha256": "8d5db1a373d0b54a19958ae90be7f627b35b5aabef698ea194c67dc725335122",
+          "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<SetMaxAndCurrentHp>d__25::MoveNext sig:200001"
+        },
+        {
+          "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+          "cilInstructionsSha256": "4003d44b410137f8d231ae07e3e40fd6a761f528070d5e1e2f8aee27fb8ceb1c",
+          "diagnosticMetadataToken": "0x0600b317",
+          "metadataSignature": "200001",
+          "methodBodySha256": "30fb062e8d87c68335cc06d516d2b00f30a123ec91edf591ed075cd1e80188ea",
+          "normalizedInstructionsSha256": "8f4ffb7dee11496af60b313213bf602da1ce92f5c1ded2964cc723b4617da1c7",
+          "normalizedSliceSha256": "8f4ffb7dee11496af60b313213bf602da1ce92f5c1ded2964cc723b4617da1c7",
+          "semanticWitnessSha256": "e9842bed613854d0b8c81ee8a26e4a28c890caa61ef4ae4c0b826ff0be72400c",
+          "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<SetMaxHp>d__24::MoveNext sig:200001"
+        }
+      ],
+      "createCreature": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "cilInstructionsSha256": "1c29c7ca4b70148e269d56e410bb091db47a509540d1d73101bce56e25b6af3f",
+        "diagnosticMetadataToken": "0x06005704",
+        "metadataSignature": "200312a7e41288e411aa6c0e",
+        "methodBodySha256": "39bb4fe239db01264ce408d80057afa74d0533cf2a8bc477d1ced801b8ba5501",
+        "normalizedInstructionsSha256": "7d3dfb1575f00a17d69647e14f19bf76cd0f8e51c7d473a3f3ce5fe59341a69b",
+        "normalizedSliceSha256": "7d3dfb1575f00a17d69647e14f19bf76cd0f8e51c7d473a3f3ce5fe59341a69b",
+        "semanticWitnessSha256": "497b6df30766ba22b57dee010b23d0c345a517fc05e04d95a34c2daaf1caf8eb",
+        "symbolSignature": "MegaCrit.Sts2.Core.Combat.CombatState::CreateCreature sig:200312a7e41288e411aa6c0e"
+      },
+      "networkCapture": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "cilInstructionsSha256": "5e85bba2c98537a296043106b18f5efc58c016d1d41ed229bd2de115a58b526c",
+        "diagnosticMetadataToken": "0x0600511f",
+        "metadataSignature": "000212a78412841c12a5dc",
+        "methodBodySha256": "4a27f6e447d99b1432bcdf017bcd2f8d7a9e5a0fd5e928a2dd5cec692a036da9",
+        "normalizedInstructionsSha256": "c86a17a763820d475d9f9decdcb8101d296ec2ee5f20e38b5de2ae24c4166b1d",
+        "normalizedSliceSha256": "c86a17a763820d475d9f9decdcb8101d296ec2ee5f20e38b5de2ae24c4166b1d",
+        "semanticWitnessSha256": "d5de130b12a24ecd21a95cfea0bd75fc706af19ea1a14fe1de6656783c609261",
+        "symbolSignature": "MegaCrit.Sts2.Core.Entities.Multiplayer.NetFullCombatState::FromRun sig:000212a78412841c12a5dc"
+      },
+      "networkDeserialize": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "cilInstructionsSha256": "b6ced267b5a492bb9484c66cd233340e32b44ba747ab6431912d67cdf45eeaec",
+        "diagnosticMetadataToken": "0x0600b072",
+        "metadataSignature": "200101128670",
+        "methodBodySha256": "1e340963b8a3a7c39f1dbfccf3837535ae62591420d02f981cbc3675c65588d7",
+        "normalizedInstructionsSha256": "0bb71075fdf555f4d029a0715bf04404151e1d78cf0fca3723c7185bac3f9f3b",
+        "normalizedSliceSha256": "0bb71075fdf555f4d029a0715bf04404151e1d78cf0fca3723c7185bac3f9f3b",
+        "semanticWitnessSha256": "4a7fe47393fcd2c5a9a977013838f1373772b823879059e9c27b913f5ac5fd63",
+        "symbolSignature": "MegaCrit.Sts2.Core.Entities.Multiplayer.NetFullCombatState+CreatureState::Deserialize sig:200101128670"
+      },
+      "networkSerialize": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "cilInstructionsSha256": "3217063bddcf7a46cab6a67bcba0a30fd768f7329f526dabf613bc56995685f8",
+        "diagnosticMetadataToken": "0x0600b071",
+        "metadataSignature": "200101128678",
+        "methodBodySha256": "e3d56a64ca5d73ec496d6a0f06939393c6787238cba1e2950131a615207bb871",
+        "normalizedInstructionsSha256": "1a52ce8e1bba30a07df953f21066c326f4bb1aa9afaa29526f05f9d8c6da3883",
+        "normalizedSliceSha256": "1a52ce8e1bba30a07df953f21066c326f4bb1aa9afaa29526f05f9d8c6da3883",
+        "semanticWitnessSha256": "1a7e09411b2e292eb0ac0a4de8ceb94cd552cebc29d0371d6b560188f9c576cc",
+        "symbolSignature": "MegaCrit.Sts2.Core.Entities.Multiplayer.NetFullCombatState+CreatureState::Serialize sig:200101128678"
+      },
+      "scaleHelper": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "cilInstructionsSha256": "e9bd3719711077bdc64da2f06aae8f27753645867bab8b6fad7bf4676ab0e8c2",
+        "diagnosticMetadataToken": "0x060051f5",
+        "metadataSignature": "00041184491184491288c80808",
+        "methodBodySha256": "68132b0c0ba938937559b0fa0e1c44e36e76390afe1bf54e2ec038c2e88fbebd",
+        "normalizedInstructionsSha256": "ae7049d5eddb1ca0ad946a859e3aedb8c13d0992b42731bff8aeb582e4d66213",
+        "normalizedSliceSha256": "ae7049d5eddb1ca0ad946a859e3aedb8c13d0992b42731bff8aeb582e4d66213",
+        "semanticWitnessSha256": "d93bed74748f9600b7ccdbcf522da0477237033aebe636726075d10a4b380980",
+        "symbolSignature": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleHpForMultiplayer sig:00041184491184491288c80808"
+      },
+      "scaleWrapper": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "cilInstructionsSha256": "526bd00097f4690f5435862a62a8a9a1dd79ba4db5fc2f37b71aa8bbf50d2d8a",
+        "diagnosticMetadataToken": "0x060051d2",
+        "metadataSignature": "2003011288c80808",
+        "methodBodySha256": "d02c6d72112babf97beda8125d027fa48ba7841d15f7efac3fd12f3a9ebc58aa",
+        "normalizedInstructionsSha256": "a3332f9f3ae58d2afc459d1d7a668b4bf45cff5fe38acf91de053d5f7876a3d4",
+        "normalizedSliceSha256": "a3332f9f3ae58d2afc459d1d7a668b4bf45cff5fe38acf91de053d5f7876a3d4",
+        "semanticWitnessSha256": "57e20962a3f3744afc7b4a337e34baaafba97fd0e1bce950ffaa58e599a3e78b",
+        "symbolSignature": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::ScaleMonsterHpForMultiplayer sig:2003011288c80808"
+      },
+      "setCurrent": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "cilInstructionsSha256": "e15d7bfbfe730f900e8028d45e04c8d943682ee8e7f2d2fb8300e6c763059f5d",
+        "diagnosticMetadataToken": "0x060051da",
+        "metadataSignature": "200101118449",
+        "methodBodySha256": "8cf0f236727fe84350088d70da7cb4ec772eff4feddec226ccb07e6713f426d4",
+        "normalizedInstructionsSha256": "e570634016edf2ead76ffd87f0afcd9cf32cd9ec85321f3acb97751877d52bb6",
+        "normalizedSliceSha256": "e570634016edf2ead76ffd87f0afcd9cf32cd9ec85321f3acb97751877d52bb6",
+        "semanticWitnessSha256": "a5ef3bb1bbd997c7c410f64f7ad9913e4e1cd8dff39cd405f269a3ebe75b16d6",
+        "symbolSignature": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::SetCurrentHpInternal sig:200101118449"
+      },
+      "setMax": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "cilInstructionsSha256": "021510d8d2672d3648995b2e425f7f4b521ff11f190a2fbe083a6896e2304c2b",
+        "diagnosticMetadataToken": "0x060051db",
+        "metadataSignature": "200101118449",
+        "methodBodySha256": "63e767e7637a44433c134b1516fdbb4e5c61b9fe9edf789f3dfd15e1da586a3a",
+        "normalizedInstructionsSha256": "22019eca10319e349bad305ac6ec6527434858d88d701bd71e02e248e5843920",
+        "normalizedSliceSha256": "22019eca10319e349bad305ac6ec6527434858d88d701bd71e02e248e5843920",
+        "semanticWitnessSha256": "46701d28b60a4cf19aba6d57157f57de858e3879f2ab23ad7517a4a50bc010d8",
+        "symbolSignature": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::SetMaxHpInternal sig:200101118449"
+      },
+      "setUnique": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "cilInstructionsSha256": "f40865d6a7e740a2ec46daf691cffc3b8a13761d6a8252af01b2deefe227be27",
+        "diagnosticMetadataToken": "0x060051d1",
+        "metadataSignature": "200201151281fd0112a7e4128544",
+        "methodBodySha256": "757d4c03e0a82fdbc5c1b790cf178ddbbe06572e6138903d73427e52c214bddc",
+        "normalizedInstructionsSha256": "0f43cc431573a72e1cdfcf7d3438e974b2e4503fd00c8eed4c1c217ab1cdda3e",
+        "normalizedSliceSha256": "0f43cc431573a72e1cdfcf7d3438e974b2e4503fd00c8eed4c1c217ab1cdda3e",
+        "semanticWitnessSha256": "61889f461afc4bd09a611e1be10e08500f93e3d9ec27fc9ce0b537dbeb23842f",
+        "symbolSignature": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::SetUniqueMonsterHpValue sig:200201151281fd0112a7e4128544"
+      },
+      "specialCallPaths": [
+        {
+          "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+          "cilInstructionsSha256": "26f884f4148ccd44f6c533bdb405c8447827428e283fac701bebc05c3f4499ee",
+          "diagnosticMetadataToken": "0x0600a257",
+          "metadataSignature": "200001",
+          "methodBodySha256": "8420bf55abcd22a7ed18b6c921967a9f67e9c63c3d65ee1ac1016d13c5e3d157",
+          "normalizedInstructionsSha256": "b0cb5c1e7cd7664e7645e763a0bbb273a20b3387d32e57c79d4d6844ab1d6222",
+          "normalizedSliceSha256": "b0cb5c1e7cd7664e7645e763a0bbb273a20b3387d32e57c79d4d6844ab1d6222",
+          "semanticWitnessSha256": "bf5f45450be95676a2ec685bf884b1af7ad84508075efd17f8ff07c5a1611303",
+          "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.DecimillipedeSegment+<AfterAddedToRoom>d__46::MoveNext sig:200001"
+        },
+        {
+          "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+          "cilInstructionsSha256": "fc2e03d6125d7aba2e8c37b8a374fa40751e4b3f91526f55282b12b9e6f72eae",
+          "diagnosticMetadataToken": "0x0600a467",
+          "metadataSignature": "200001",
+          "methodBodySha256": "a0625b749f2819d47124d47124f754bf2e486d619f63b57502e9dadb2e70fd4a",
+          "normalizedInstructionsSha256": "c8ec2099c48a604b532a4ee25f44c109c7e62748ddc6b12d1c697d51e43f6cfe",
+          "normalizedSliceSha256": "c8ec2099c48a604b532a4ee25f44c109c7e62748ddc6b12d1c697d51e43f6cfe",
+          "semanticWitnessSha256": "197f363c3d6032925e6de8e29c7e2c8cf94de049d106550b5eaac7ee16d3868a",
+          "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.TestSubject+<Revive>d__81::MoveNext sig:200001"
+        },
+        {
+          "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+          "cilInstructionsSha256": "cbb29ec1061639c76c1653a6aa7a18b7530cef3535bbeded6011e27a18427317",
+          "diagnosticMetadataToken": "0x0600a4c9",
+          "metadataSignature": "200001",
+          "methodBodySha256": "455f4fb0b61703b830809f22464b1e839de286ab9a63211a347714c79aa3f544",
+          "normalizedInstructionsSha256": "f574cb81a93d2ef4480497737cba2563c9e4844e2a0042ae8120c8eb3e312eff",
+          "normalizedSliceSha256": "f574cb81a93d2ef4480497737cba2563c9e4844e2a0042ae8120c8eb3e312eff",
+          "semanticWitnessSha256": "6e99e801a45be0eed1fb58752eef00b295c916c32e84725f31b7ba8ac6edfe0f",
+          "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.ToughEgg+<Hatch>d__36::MoveNext sig:200001"
+        }
+      ],
+      "testSubjectHealCommand": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "cilInstructionsSha256": "beb9282721edd344e253b8c3a1fd3c7c1f16b047946edd67185008c46b54e124",
+        "diagnosticMetadataToken": "0x0600b307",
+        "metadataSignature": "200001",
+        "methodBodySha256": "a9f0f5aace67f11b74b3c7d9a4fc91610e545141e3412c0daa86fc5478e30d04",
+        "normalizedInstructionsSha256": "61ce5b894ac7ae3b46a6e127b329de3d919cf30e04d1fe1c7ee5637e3f6f1a21",
+        "normalizedSliceSha256": "61ce5b894ac7ae3b46a6e127b329de3d919cf30e04d1fe1c7ee5637e3f6f1a21",
+        "semanticWitnessSha256": "95868fb7c67b374c05d49afd57fece71885a95d437e3a26eaf5599447b9efa98",
+        "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<Heal>d__20::MoveNext sig:200001"
+      },
+      "testSubjectHealInternal": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "cilInstructionsSha256": "4983f6e096cd166d50bdec7a4483e6b8781f38efad58ad340891a1c526700117",
+        "diagnosticMetadataToken": "0x060051d9",
+        "metadataSignature": "200101118449",
+        "methodBodySha256": "c4685a13043fe858492c1c33e10ab1f1ba63dc709a31aa4d0f6f9e72f66d07cd",
+        "normalizedInstructionsSha256": "5e456d0d65a79571f54701b3c33fde79961c1a420830f95c5c5a96ee6070c25e",
+        "normalizedSliceSha256": "5e456d0d65a79571f54701b3c33fde79961c1a420830f95c5c5a96ee6070c25e",
+        "semanticWitnessSha256": "59af5045ffa265c1249215ba8bc2e059689bfb4055821c77e4832c1805b86fa8",
+        "symbolSignature": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::HealInternal sig:200101118449"
+      },
+      "uniqueTeammateProjection": {
+        "assemblySha256": "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f",
+        "cilInstructionsSha256": "d76e90a918798e4008e3f9adfcde8488c6ae3ed3a85f77d31a6d4fe098bd8b5d",
+        "diagnosticMetadataToken": "0x0600b0af",
+        "metadataSignature": "20010812a7e4",
+        "methodBodySha256": "0817486b5398bf63fed90bd38c0f4b579efd01c76335d188307420b02b3653b3",
+        "normalizedInstructionsSha256": "5bba0ff606d490a6b7aa9f58191214c716276868941934c48198fe75f41da9d8",
+        "normalizedSliceSha256": "5bba0ff606d490a6b7aa9f58191214c716276868941934c48198fe75f41da9d8",
+        "semanticWitnessSha256": "cafb3e858ce776d181677695875a03327cfd6313668d8e16ac3a145014b00895",
+        "symbolSignature": "MegaCrit.Sts2.Core.Entities.Creatures.Creature+<>c::<SetUniqueMonsterHpValue>b__107_0 sig:20010812a7e4"
+      }
+    },
+    "regressionWitnesses": [
+      {
+        "case": "fractionalAct1TwoPlayer",
+        "decimalProduct": "101.2",
+        "inputs": {
+          "actIndex": 0,
+          "baseHp": 46,
+          "bossRoom": false,
+          "playerCount": 2
+        },
+        "storedHp": 101
+      },
+      {
+        "case": "exactIntegerProduct",
+        "decimalProduct": "110.0",
+        "inputs": {
+          "actIndex": 0,
+          "baseHp": 50,
+          "bossRoom": false,
+          "playerCount": 2
+        },
+        "storedHp": 110
+      },
+      {
+        "case": "act3Boss",
+        "decimalProduct": "119.6",
+        "inputs": {
+          "actIndex": 2,
+          "baseHp": 46,
+          "bossRoom": true,
+          "playerCount": 2
+        },
+        "storedHp": 119
+      },
+      {
+        "case": "onePlayerBypass",
+        "decimalProduct": "46",
+        "inputs": {
+          "actIndex": 0,
+          "baseHp": 46,
+          "bossRoom": false,
+          "playerCount": 1
+        },
+        "storedHp": 46
+      },
+      {
+        "case": "inclusiveBaseRange",
+        "inputs": {
+          "maximum": 52,
+          "minimum": 46
+        },
+        "selectionDomain": [
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52
+        ]
+      },
+      {
+        "case": "teammateAvoidance",
+        "inputs": {
+          "maximum": 48,
+          "minimum": 46,
+          "teammateMaxHp": [
+            46,
+            48
+          ]
+        },
+        "selectionDomain": [
+          47
+        ]
+      },
+      {
+        "case": "teammateFallback",
+        "inputs": {
+          "maximum": 46,
+          "minimum": 46,
+          "teammateMaxHp": [
+            46
+          ]
+        },
+        "selectionDomain": [
+          46
+        ]
+      },
+      {
+        "case": "capExact",
+        "requestedDecimal": "999999999",
+        "storedHp": 999999999
+      },
+      {
+        "case": "capAbove",
+        "requestedDecimal": "1000000000",
+        "storedHp": 999999999
+      },
+      {
+        "case": "negativeMaxRejected",
+        "requestedDecimal": "-1",
+        "result": "ArgumentExceptionBeforeConversion"
+      },
+      {
+        "case": "currentClamp",
+        "maximumHp": 101,
+        "requestedDecimal": "120.9",
+        "storedHp": 101
+      },
+      {
+        "case": "currentFractionalConversion",
+        "maximumHp": 101,
+        "requestedDecimal": "100.9",
+        "storedHp": 100
+      },
+      {
+        "case": "checkedOverflowBeforeCap",
+        "requestedDecimal": "2147483648",
+        "result": "OverflowExceptionBeforeCap"
+      }
+    ],
+    "ruleId": "monsterHpAssignmentPipeline.v0.111.0",
+    "sourceDenominators": {
+      "baseSelectionChainMethods": 4,
+      "capClampPreconditionSemanticFields": 8,
+      "commandAndSpecialCallerApplicability": 52,
+      "completePipelineSemanticFields": 85,
+      "multiplayerWrapperHelperCallSites": 9,
+      "setterMethodsAndDirectCallSites": 11,
+      "storageAndNetworkSerializationJoins": 10
+    },
+    "specialCallPaths": [
+      {
+        "joins": [
+          "ScaleHpForMultiplayer",
+          "SetMaxAndCurrentHp"
+        ],
+        "pathId": "DECIMILLIPEDE"
+      },
+      {
+        "joins": [
+          "ScaleHpForMultiplayer",
+          "SetMaxHp",
+          "Heal",
+          "HealInternal",
+          "SetCurrentHpInternal"
+        ],
+        "pathId": "TEST_SUBJECT"
+      },
+      {
+        "joins": [
+          "ScaleHpForMultiplayer",
+          "SetMaxAndCurrentHp"
+        ],
+        "pathId": "TOUGH_EGG"
+      }
+    ],
+    "storage": {
+      "currentHp": {
+        "cliType": "Int32",
+        "metadataSignature": "0608",
+        "symbol": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::_currentHp"
+      },
+      "maxHp": {
+        "cliType": "Int32",
+        "metadataSignature": "0608",
+        "symbol": "MegaCrit.Sts2.Core.Entities.Creatures.Creature::_maxHp"
+      }
+    }
   },
   "initialState": {
     "constructorDecisions": [
@@ -230924,7 +231962,7 @@
     "pckAccess": "readOnlySelective",
     "reflectionLoading": false
   },
-  "schemaVersion": 6,
+  "schemaVersion": 7,
   "states": {
     "axebotRespawn": {
       "bonusExpression": {

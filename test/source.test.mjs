@@ -32,8 +32,8 @@ const exactManifest = [
 
 test("source artifact is canonical, exactly pinned, partial, and raw-only", () => {
   assert.equal(artifactBytes.toString("utf8"), `${JSON.stringify(sortedValue(artifact), null, 2)}\n`);
-  assert.equal(artifact.schemaVersion, 6);
-  assert.equal(artifact.extractorVersion, "6.0.0");
+  assert.equal(artifact.schemaVersion, 7);
+  assert.equal(artifact.extractorVersion, "7.0.0");
   assert.equal(artifact.runtimeReady, false);
   assert.equal(artifact.status, "incomplete");
   assert.deepEqual(artifact.inputs, exactManifest);
@@ -73,6 +73,13 @@ test("coverage is denominator-based and Wave B combat families are complete or h
     hpInitialConcreteCensus: 120,
     hpInitialCurrentReachable: 108,
     hpMultiplayerScaling: 1,
+    hpAssignmentSetterCensus: 11,
+    hpBaseSelectionUniqueValueChain: 4,
+    hpCapClampPreconditionSemanticFields: 8,
+    hpCommandSpecialCallerApplicability: 52,
+    hpCompletePipelineSemanticFields: 85,
+    hpMultiplayerWrapperHelperCallClosure: 9,
+    hpStorageNetworkSerializationJoins: 10,
     hpSpecialStateFormulas: 4,
     monsterIdentitiesCurrentReachable: 108,
     monsterNamesEnglishCurrentReachable: 108,
@@ -249,6 +256,69 @@ test("HP multiplayer scaling preserves Decimal identity/factors and no invented 
   });
   assert.deepEqual(hp.regressionWitnesses.map((row) => row.result), ["100", "220.0", "240.0", "240.0", "260.0"]);
 });
+
+test("E2b HP assignment pipeline separates arithmetic, conversion, storage, and wire semantics", () => {
+  const hp = artifact.hpPipeline;
+  assert.deepEqual(hp.sourceDenominators, {
+    baseSelectionChainMethods: 4,
+    capClampPreconditionSemanticFields: 8,
+    commandAndSpecialCallerApplicability: 52,
+    completePipelineSemanticFields: 85,
+    multiplayerWrapperHelperCallSites: 9,
+    setterMethodsAndDirectCallSites: 11,
+    storageAndNetworkSerializationJoins: 10,
+  });
+  assert.equal(artifact.multiplayerScaling.hp.numericSemantics.rounding, "none");
+  assert.deepEqual(hp.assignment.conversion, {
+    expression: { domain: { minimum: "0" }, kind: "stateVariable", name: "assignedHpDecimal", valueType: "decimal" },
+    fromType: "decimal", kind: "convert", mode: "truncateTowardZero", toType: "integer", valueType: "integer",
+  });
+  assert.deepEqual(hp.assignment.max, {
+    cap: 999999999,
+    capOrder: "afterDecimalToInt32Conversion",
+    currentInteraction: "storeMaxThenStoreMin(previousCurrent,newMax)",
+    negativeInput: "ArgumentExceptionBeforeConversion",
+    storageType: "Int32",
+  });
+  assert.equal(hp.assignment.current.clamp, "DecimalMin(requestedCurrent,Decimal(maxHp))BeforeConversion");
+  assert.equal(hp.assignment.current.lowerClamp, "none");
+  assert.equal(hp.assignment.numericContract.nonNegativeEquivalence, "floor");
+  assert.equal(hp.assignment.numericContract.negativeEquivalenceClaimed, false);
+  assert.deepEqual(hp.storage, {
+    currentHp: { cliType: "Int32", metadataSignature: "0608", symbol: "MegaCrit.Sts2.Core.Entities.Creatures.Creature::_currentHp" },
+    maxHp: { cliType: "Int32", metadataSignature: "0608", symbol: "MegaCrit.Sts2.Core.Entities.Creatures.Creature::_maxHp" },
+  });
+  assert.deepEqual(hp.networkStorage.serializationOrder, ["currentHp:Int32/32", "maxHp:Int32/32"]);
+  assert.deepEqual(hp.networkStorage.deserializationOrder, ["currentHp", "maxHp"]);
+  assert.equal(hp.networkStorage.wireBits, 32);
+  assert.deepEqual(hp.callCensus.targetDistribution, {
+    ScaleHpForMultiplayer: 8, ScaleMonsterHpForMultiplayer: 1, SetCurrentHpInternal: 6,
+    SetMaxHpInternal: 3, SetUniqueMonsterHpValue: 1,
+  });
+  assert.deepEqual(hp.callCensus.commandTargetDistribution, {
+    GainMaxHp: 22, LoseMaxHp: 10, SetCurrentHp: 3, SetMaxAndCurrentHp: 4, SetMaxHp: 5,
+  });
+  assert.deepEqual(hp.specialCallPaths, [
+    { joins: ["ScaleHpForMultiplayer", "SetMaxAndCurrentHp"], pathId: "DECIMILLIPEDE" },
+    { joins: ["ScaleHpForMultiplayer", "SetMaxHp", "Heal", "HealInternal", "SetCurrentHpInternal"], pathId: "TEST_SUBJECT" },
+    { joins: ["ScaleHpForMultiplayer", "SetMaxAndCurrentHp"], pathId: "TOUGH_EGG" },
+  ]);
+  const cases = Object.fromEntries(hp.regressionWitnesses.map((row) => [row.case, row]));
+  assert.deepEqual([cases.fractionalAct1TwoPlayer.decimalProduct, cases.fractionalAct1TwoPlayer.storedHp], ["101.2", 101]);
+  assert.deepEqual([cases.exactIntegerProduct.decimalProduct, cases.exactIntegerProduct.storedHp], ["110.0", 110]);
+  assert.deepEqual([cases.act3Boss.decimalProduct, cases.act3Boss.storedHp], ["119.6", 119]);
+  assert.deepEqual([cases.onePlayerBypass.decimalProduct, cases.onePlayerBypass.storedHp], ["46", 46]);
+  assert.deepEqual(cases.inclusiveBaseRange.selectionDomain, [46, 47, 48, 49, 50, 51, 52]);
+  assert.deepEqual(cases.teammateAvoidance.selectionDomain, [47]);
+  assert.deepEqual(cases.teammateFallback.selectionDomain, [46]);
+  assert.equal(cases.capExact.storedHp, 999999999);
+  assert.equal(cases.capAbove.storedHp, 999999999);
+  assert.equal(cases.negativeMaxRejected.result, "ArgumentExceptionBeforeConversion");
+  assert.equal(cases.currentClamp.storedHp, 101);
+  assert.equal(cases.currentFractionalConversion.storedHp, 100);
+  assert.equal(cases.checkedOverflowBeforeCap.result, "OverflowExceptionBeforeCap");
+});
+
 
 test("all 89 roster ASTs are joined, cardinality-safe, and referentially complete", () => {
   const all = [...artifact.encounters.ordinary, ...artifact.encounters.event];

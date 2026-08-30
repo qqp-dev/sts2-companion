@@ -12,6 +12,7 @@ from source_extractor.ast import (
 from source_extractor.canonical import witness_sha256
 from source_extractor.errors import SourceExtractionError
 from source_extractor.identity import validate_observation_identities
+from source_extractor.hp_pipeline import validate_hp_pipeline
 from source_extractor.placement import validate_placement
 from .contract import (
     AUTHORITY, EMBEDDED_SOURCE_INPUTS, GAME, GENERATOR_NAME, GENERATOR_VERSION,
@@ -162,7 +163,7 @@ def _validate_source_document(source: dict[str, Any]) -> None:
     if source.get("authority") != SOURCE_AUTHORITY:
         _fail("source.authority", "malformed raw-only authority/fallback policy")
     if source.get("runtimeReady") is not False or source.get("status") != "incomplete":
-        _fail("source", "schema 6 must remain incomplete and not runtime-ready")
+        _fail("source", "source schema must remain incomplete and not runtime-ready")
     for family, (status, denominator, numerator, unresolved) in REQUIRED_COVERAGE.items():
         expected = {"denominator": denominator, "numerator": numerator, "status": status, "unresolved": unresolved}
         try:
@@ -171,6 +172,11 @@ def _validate_source_document(source: dict[str, Any]) -> None:
             _fail(f"source.coverage.{family}", f"missing required coverage: {exc}")
         if actual != expected:
             _fail(f"source.coverage.{family}", f"coverage mismatch: expected {expected!r}, got {actual!r}")
+
+    try:
+        validate_hp_pipeline(source.get("hpPipeline"), path="source.hpPipeline")
+    except SourceExtractionError as exc:
+        _fail("source.hpPipeline", str(exc))
 
     encounters = source.get("encounters", {})
     if set(encounters) != {"ordinary", "event"} or len(encounters["ordinary"]) != 81 or len(encounters["event"]) != 8:
@@ -675,6 +681,25 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
     except SourceExtractionError as exc:
         _fail("payload.sourceFacts.observationIdentities", str(exc))
 
+    hp_pipeline = _object(sf["hpPipeline"], "payload.sourceFacts.hpPipeline", {
+        "applicability", "assignment", "baseSelection", "commandWrappers", "factId", "networkStorage",
+        "regressionWitnesses", "ruleId", "sourceDenominators", "specialCallPaths", "storage",
+    })
+    hp_pipeline_fact_id = _string(hp_pipeline["factId"], "payload.sourceFacts.hpPipeline.factId", prefix="SOURCE.HP_ASSIGNMENT_PIPELINE")
+    if "callCensus" in hp_pipeline or "provenance" in hp_pipeline:
+        _fail("payload.sourceFacts.hpPipeline", "proof/call bulk leaked")
+    try:
+        validate_expression(hp_pipeline["assignment"]["conversion"], path="payload.sourceFacts.hpPipeline.assignment.conversion", expected_type="integer")
+    except (KeyError, TypeError, SourceExtractionError) as exc:
+        _fail("payload.sourceFacts.hpPipeline.assignment.conversion", str(exc))
+    if hp_pipeline["sourceDenominators"] != {
+        "baseSelectionChainMethods": 4, "capClampPreconditionSemanticFields": 8,
+        "commandAndSpecialCallerApplicability": 52, "completePipelineSemanticFields": 85,
+        "multiplayerWrapperHelperCallSites": 9, "setterMethodsAndDirectCallSites": 11,
+        "storageAndNetworkSerializationJoins": 10,
+    }:
+        _fail("payload.sourceFacts.hpPipeline.sourceDenominators", "HP pipeline denominator drift")
+
     scaling = _object(sf["scaling"], "payload.sourceFacts.scaling", {"block", "hp", "ordinaryMonsterAttack", "power"})
     scaling_fact_ids = set()
     for name, row in scaling.items():
@@ -786,7 +811,7 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
         encounter_fact_ids | monster_fact_ids | state_fact_ids | referenced_fact_ids |
         owner_fact_ids | move_fact_ids | graph_fact_ids | scaling_fact_ids | placement_fact_ids |
         identity_fact_ids | initial_fact_ids | initial_owner_fact_ids | runtime_fact_ids |
-        initial_comparison_fact_ids | {state_rules["factId"]}
+        initial_comparison_fact_ids | {state_rules["factId"], hp_pipeline_fact_id}
     )
     return {
         "all": all_source_facts, "encounters": encounter_fact_ids, "models": model_ids,
@@ -975,6 +1000,30 @@ def _validate_evidence_and_refs(payload: dict[str, Any], source: dict[str, Any],
 
 
 def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts: set[str]) -> None:
+    audits = _list(payload["resolvedAudits"], "payload.resolvedAudits")
+    if len(audits) != 1:
+        _fail("payload.resolvedAudits", "expected one historical HP resolution audit")
+    audit = _object(audits[0], "payload.resolvedAudits[0]", {"auditId", "family", "historicalStatus", "lanes", "resolution"})
+    if (audit["auditId"], audit["family"], audit["historicalStatus"]) != (
+        "AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING", "hpAssignmentRounding", "resolved"
+    ):
+        _fail("payload.resolvedAudits[0]", "HP audit identity/status drift")
+    expected_lanes = [
+        {"factId": "SOURCE.SCALING.HP", "lane": "rawSourceHelper", "statement": {"arithmeticRounding": "none", "outputType": "System.Decimal"}},
+        {"factId": "SOURCE.HP_ASSIGNMENT_PIPELINE", "lane": "rawSourceAssignment", "statement": {"assignmentConversion": "truncateTowardZero", "nonNegativeEquivalence": "floor", "storageType": "Int32"}},
+        {"implementationPath": "src/book.mjs::scaleRange", "lane": "stableLegacyConsumer", "statement": {"conversion": "Math.floor", "domain": "displayedNonNegativeHp"}},
+    ]
+    if audit["lanes"] != expected_lanes:
+        _fail("payload.resolvedAudits[0].lanes", "authority lanes/history changed")
+    if any(row.get("factId") not in all_facts for row in audit["lanes"] if "factId" in row):
+        _fail("payload.resolvedAudits[0].lanes", "broken source fact reference")
+    if audit["resolution"] != {
+        "classification": "agreementForNonNegativeFinalAssignedHp",
+        "detail": "The helper performs no rounding; downstream assignment truncates toward zero, which equals floor only for source-proven non-negative HP. The stable legacy consumer floors displayed non-negative HP.",
+        "negativeValuesGeneralized": False, "precedenceSelected": False,
+    }:
+        _fail("payload.resolvedAudits[0].resolution", "must resolve by non-negative agreement without precedence")
+
     comparisons = _list(payload["laneComparisons"], "payload.laneComparisons")
     comparison_ids = _unique(comparisons, "comparisonId", "payload.laneComparisons")
     conflict_comparisons = set()
@@ -1040,11 +1089,11 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
         _fail("payload.knownUnknowns", "all 18 missing source move titles must be individually classified")
     required_reasons = {
         "LIFECYCLE_COVERAGE_ABSENT", "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE", "EVENT_BEHAVIOR_COVERAGE_ABSENT",
-        "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT", "LEGACY_PER_FACT_PROVENANCE_INCOMPLETE",
+        "LEGACY_PER_FACT_PROVENANCE_INCOMPLETE",
         "BROADER_WORLD_MODEL_FAMILIES_ABSENT",
     }
     actual_reasons = {row["reasonCode"] for row in unknowns}
-    retired_e1_reasons = {"SOURCE_ACT_PLACEMENT_ABSENT", "SOURCE_ROOM_CLASS_PLACEMENT_ABSENT", "OBSERVED_IDENTITY_ALIAS_JOIN_ABSENT", "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT", "INITIAL_STATE_COVERAGE_ABSENT"}
+    retired_e1_reasons = {"SOURCE_ACT_PLACEMENT_ABSENT", "SOURCE_ROOM_CLASS_PLACEMENT_ABSENT", "OBSERVED_IDENTITY_ALIAS_JOIN_ABSENT", "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT", "INITIAL_STATE_COVERAGE_ABSENT", "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT"}
     if actual_reasons & retired_e1_reasons:
         _fail("payload.knownUnknowns", "resolved E1 absence reason was retained")
     if not required_reasons <= actual_reasons:
@@ -1064,7 +1113,7 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
         _fail("payload.readiness.runtimeScopes.encounterProjection", "independent projection section should be complete")
     if projected["requiredCoverageFamilies"] != [row["family"] for row in coverage_rows()]:
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredCoverageFamilies", "coverage gate mismatch")
-    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons"}
+    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage"}
     if set(projected["requiredJoins"]) != expected_joins or len(projected["requiredJoins"]) != len(expected_joins):
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredJoins", "join gate mismatch")
 

@@ -3,7 +3,7 @@
 `data/game-v0.111.0-source.json` is a deterministic, presentation-independent
 world model for exact public-beta v0.111.0 inputs. It contains identities,
 localization joins, formulas, roster selections, membership sets, and state
-facts—not UI sentences or layout. Schema 6 is the E2a boundary and remains
+facts—not UI sentences or layout. Schema 7 is the E2b boundary and remains
 runtime-incomplete until independently gated later E2 and consumer waves land.
 
 ## Three-wave boundary
@@ -14,6 +14,7 @@ runtime-incomplete until independently gated later E2 and consumer waves land.
 | B | Move registration/title/intent; operations and helpers; move/Power scaling; selection and phase graphs | Complete for explicit denominators, with 18 classified missing titles |
 | C0/E1 | Compact fact references plus source placement, observation identity, and behavior applicability | Landed; no runtime consumer change |
 | E2a | Initial generator/constructor state, effective addition hooks, intrinsic Power hooks, runtime contracts, and 57 lane comparisons | Complete for exact denominators; no runtime consumer change |
+| E2b | Integer HP selection, Decimal multiplayer arithmetic, explicit assignment conversion/cap/clamp, special callers, Int32 storage and network wire joins | Complete for exact denominators; no runtime consumer change |
 
 The current app does not import this artifact or the compact projection and still displays the
 wiki-derived book. Source extraction changes no routes, renderer output, event display, or
@@ -144,8 +145,10 @@ HP multiplayer scaling accepts Decimal `baseHp`. One player returns it
 unchanged. More players evaluate `baseHp × Decimal(playerCount) × factor`.
 The observed factor input domain is act index 0 through 2 plus boss context;
 out-of-domain acts fail. The source method returns Decimal and performs no
-rounding or truncation. The pure test evaluator runs only normalized ASTs and
-never game code.
+rounding or truncation. This helper-level statement is not the final stored-HP
+contract. E2b separately proves explicit `Decimal -> Int32` truncation toward zero
+at assignment; for non-negative HP only, that is equivalent to floor. The pure
+test evaluator runs only normalized ASTs and never game code.
 
 ### Roster selections
 
@@ -413,7 +416,7 @@ states. No comparison promotes an alias or selects lane precedence.
 
 The expected Dense Vegetation “stunned setup” did not match source. Its generator
 writes `Wriggler.StartStunned = false`; Wriggler selects `SPAWNED_MOVE` only for
-true. Schema 6 records this source-proven result as an investigated audit
+true. Schema 7 records this source-proven result as an investigated audit
 difference.
 
 Extraction fails before replacement on unknown overload/opcode/target joins,
@@ -423,10 +426,60 @@ applicability/evidence refs, or changed provenance. The compact projection keeps
 facts/contracts/owner/hook summaries and excludes the 1,092-call and initializer
 proof tables.
 
-## E2a projection boundary
+## E2b HP assignment schema
+
+`hpPipeline` begins with `Creature(MonsterModel, CombatSide, slot)`: min and max
+getters are `Int32`, `min > max` throws, and initial max/current both receive max.
+For `CombatSide.Enemy`, `CreateCreature` calls `SetUniqueMonsterHpValue` before
+`ScaleMonsterHpForMultiplayer`. Candidate construction is exactly
+`Enumerable.Range(min, max + 1 - min)`, so the base domain is inclusive and
+discrete. Existing teammate max values are removed when possible; an exhausted
+set falls back to `Rng.NextInt(min, max + 1)`. The run's Niche RNG supplies the
+choice. Selection remains separate from transformation: scaled endpoint values
+do not assert that every intervening integer is attainable.
+
+The multiplayer wrapper returns immediately for one player. Otherwise the helper
+evaluates Decimal `base × playerCount × actRoomFactor` with no rounding, then
+`SetMaxHpInternal` checks `< Decimal.Zero`, explicitly invokes
+`Decimal.op_Explicit` to `Int32`, and applies `Math.Min(converted, 999999999)`.
+Thus checked conversion/overflow precedes the cap. Max is stored before current is
+reduced to `min(previousCurrent, newMax)`. `SetCurrentHpInternal` computes
+`Decimal.Min(requested, Decimal(maxHp))`, then performs the explicit conversion and
+stores `Int32`; it has no source-proven lower clamp. The normalized conversion AST
+uses `truncateTowardZero`. Because assigned monster HP is source-proven
+non-negative, the derived final result equals floor in that domain only.
+
+The complete direct target census is 19 sites: eight helper calls, one multiplayer
+wrapper call, six current-setter calls, three max-setter calls, and one unique-value
+call. The command census is 44 callers across five exact wrappers. `GainMaxHp` and
+`LoseMaxHp` join `SetMaxHp`; `SetMaxAndCurrentHp` awaits max before current. Tough
+Egg joins helper to max/current, Test Subject joins helper to max then heal, and
+Decimillipede joins helper to max/current. Unknown overloads or unjoined special
+paths fail extraction.
+
+Creature `_currentHp`/`_maxHp` and `NetFullCombatState.CreatureState`
+`currentHp`/`maxHp` all have CLI field signature `06 08` (`Int32`). Network capture
+reads current then max; serialization calls `WriteInt` with 32 bits for each; and
+deserialization calls `ReadInt(32)` and stores current then max. Decimal wire
+fields or changed order fail before replacement.
+
+Coverage records 4 base-chain methods, 9 wrapper/helper sites, 11 setter
+method/sites, 52 command/special applicability records, 8 cap/clamp/precondition
+fields, 10 storage/network joins, and 85 semantic fields, all with zero unresolved.
+The compact projection removes call/provenance bulk but retains the semantic
+contract, source denominators, regression witnesses, fact/evidence refs, and exact
+input/payload digests.
+
+The earlier helper-only statement, the assignment conversion, and the stable
+legacy consumer's `Math.floor` remain separate lanes in
+`AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING`. The audit resolves agreement for
+non-negative final assigned HP without selecting precedence, erasing history, or
+generalizing floor equivalence to negative values.
+
+## E2 projection boundary
 
 The checked source artifact above remains the full static evidence artifact.
-C0 introduced, E1 extended, and E2a extends `data/encounter-facts-v0.111.0.json`, built by
+C0 introduced, E1 extended, and E2a/E2b extend `data/encounter-facts-v0.111.0.json`, built by
 `tools/generate-encounter-facts.py` from that artifact and
 `data/encounters.json` only. It is a projection, not a replacement extractor
 and not a runtime consumer input.
@@ -457,9 +510,8 @@ pointed-value hashes instead of repeating CIL proof or the 6,683-invocation
 census. This makes the projection substantially smaller while retaining an
 auditable path to the full checked source artifact.
 
-E2a declares only the bounded encounter projection complete. The encounter
+E2b declares only the bounded encounter projection complete. The encounter
 companion remains hard-false/incomplete pending event behavior, lifecycle
-closure, companion-wide formula/runtime contracts, and E2b downstream HP
-conversion/rounding. Global readiness also remains false
+closure, and companion-wide formula/runtime contracts. Global readiness also remains false
 pending the independent product-family source waves. No `src/` file imports the projection,
 so `/sts2` continues to use byte-identical `data/encounters.json`.
