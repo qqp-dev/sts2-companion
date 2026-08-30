@@ -1,8 +1,9 @@
-"""Fail-closed linked-event script extraction for the E2c2a source slice.
+"""Fail-closed linked-event script extraction for the E2c2 source slice.
 
-Discovery starts exclusively from E1 placement.eventLinkage.  The module reads
-CLI metadata/CIL and never loads or executes the assembly.  Architect is left as
-an explicit later-slice dependency.
+Discovery starts exclusively from E1 ``placement.eventLinkage``. The E2c2a
+ordinary linked scripts retain their independent census; the E2c2b Architect
+terminal component is extracted by :mod:`architect_script`. The module reads CLI
+metadata/CIL and never loads or executes the assembly.
 """
 from __future__ import annotations
 
@@ -12,6 +13,7 @@ import re
 from typing import Any, Iterable, Mapping
 
 from .canonical import witness_sha256
+from .architect_script import extract_architect_script, validate_architect_script
 from .cil_eval import CilDataFlow, Invocation, SymbolicValue
 from .errors import SourceExtractionError
 
@@ -448,7 +450,9 @@ def _validate_bounded_plumbing_vocabulary(decisions: Iterable[Mapping[str, Any]]
         )
 
 
-def extract_event_scripts(assembly: Any, assembly_sha256: str, placement: Mapping[str,Any]) -> dict[str,Any]:
+def extract_event_scripts(assembly: Any, assembly_sha256: str, placement: Mapping[str,Any],
+                          architect_localization: Mapping[str, Any],
+                          architect_localization_blob: Mapping[str, Any]) -> dict[str,Any]:
     links=[deepcopy(x) for x in placement["eventLinkage"] if x["canonicalEvent"]!=_ARCHITECT]
     by_event:dict[str,list[dict[str,Any]]]=defaultdict(list)
     for row in links:by_event[row["canonicalEvent"]].append(row)
@@ -564,7 +568,8 @@ def extract_event_scripts(assembly: Any, assembly_sha256: str, placement: Mappin
          "nodes":len(nodes),"edges":len(edges),"stateContracts":len(contracts),"effects":len(effects),
          "invocations":len(decisions),"dependencies":len(dependencies),"displayScalingCalls":len(display),
          "outcomes":len(outcomes),"frameworkMethods":len(framework),"supportMethods":len(potion_methods)}
-    result={"owners":owners,"options":options,"transitions":transitions,"stateContracts":contracts,"effects":effects,
+    architect=extract_architect_script(assembly,assembly_sha256,placement,architect_localization,architect_localization_blob)
+    result={"architect":architect,"owners":owners,"options":options,"transitions":transitions,"stateContracts":contracts,"effects":effects,
             "nodes":nodes,"edges":edges,"methods":methods,"displayScaling":display,"dependencies":dependencies,
             "outcomes":outcomes,"frameworkMethods":framework,
             "foulPotionDispatch":{"classification":"potionDrivenEventInstanceFanOut","methods":[_method(x) for x in potion_methods],"taskJoin":"Task.WhenAll"},
@@ -576,8 +581,11 @@ def extract_event_scripts(assembly: Any, assembly_sha256: str, placement: Mappin
 
 def validate_event_scripts(value: Any) -> None:
     if not isinstance(value,dict):raise SourceExtractionError("eventScripts must be an object")
-    required={"owners","options","transitions","stateContracts","effects","nodes","edges","methods","displayScaling","dependencies","foulPotionDispatch","invocationCensus","sourceDenominators","outcomes","frameworkMethods"}
+    required={"architect","owners","options","transitions","stateContracts","effects","nodes","edges","methods","displayScaling","dependencies","foulPotionDispatch","invocationCensus","sourceDenominators","outcomes","frameworkMethods"}
     if set(value)!=required:raise SourceExtractionError(f"eventScripts keys differ: {sorted(set(value)^required)}")
+    validate_architect_script(value["architect"])
+    if not any(row.get("edgeRole") == value["architect"]["terminal"]["cleanupBoundary"]["frameworkRole"] for row in value["frameworkMethods"]):
+        raise SourceExtractionError("Architect cleanup boundary lacks deduplicated common framework proof")
     den=value["sourceDenominators"]
     mapping={"owners":"owners","encounterScripts":"transitions","options":"options","methods":"methods","nodes":"nodes","edges":"edges","stateContracts":"stateContracts","effects":"effects","dependencies":"dependencies","displayScalingCalls":"displayScaling","outcomes":"outcomes","frameworkMethods":"frameworkMethods"}
     for d,k in mapping.items():

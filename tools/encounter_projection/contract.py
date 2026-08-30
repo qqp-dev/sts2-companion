@@ -1,18 +1,18 @@
-"""Closed E2c2a encounter projection contract and pinned v0.111.0 identities."""
+"""Closed E2c2b encounter projection contract and pinned v0.111.0 identities."""
 
 from __future__ import annotations
 
 from typing import Any
 
-SCHEMA_VERSION = 6
+SCHEMA_VERSION = 7
 GENERATOR_NAME = "sts2-encounter-facts"
-GENERATOR_VERSION = "6.0.0"
-SOURCE_SCHEMA_VERSION = 9
-SOURCE_EXTRACTOR_VERSION = "9.0.0"
+GENERATOR_VERSION = "7.0.0"
+SOURCE_SCHEMA_VERSION = 10
+SOURCE_EXTRACTOR_VERSION = "10.0.0"
 
 SOURCE_ARTIFACT = {
     "id": "INPUT.SOURCE", "path": "data/game-v0.111.0-source.json",
-    "sha256": "055d571405330e207c8dda17418f3092fd1c548e5248e49541449baffb90944c", "size": 12742768,
+    "sha256": "6b6eefa545299423546b15eaaf13b782e3178f93639559602570665a9a2aae7c", "size": 13162430,
 }
 LEGACY_ARTIFACT = {
     "id": "INPUT.LEGACY", "path": "data/encounters.json",
@@ -44,6 +44,20 @@ AUTHORITY = {
 # family -> (status, denominator, numerator, unresolved); reviewed constants,
 # never values learned from the document being validated.
 REQUIRED_COVERAGE: dict[str, tuple[str, int, int, int]] = {
+    "architectDependencyRefs": ("complete", 5, 5, 0),
+    "architectDialogueLineCensus": ("complete", 39, 39, 0),
+    "architectDialogueTemplateCensus": ("complete", 17, 17, 0),
+    "architectInvocationClassification": ("complete", 715, 715, 0),
+    "architectLineControlEdges": ("complete", 39, 39, 0),
+    "architectLineControlNodes": ("complete", 39, 39, 0),
+    "architectLocalizationStructuralClosure": ("complete", 64, 64, 0),
+    "architectOptionDelegateClosure": ("complete", 2, 2, 0),
+    "architectOwnerLinkPlacementApplicability": ("complete", 1, 1, 0),
+    "architectPresentationOnlyClosure": ("complete", 13, 13, 0),
+    "architectSemanticEffects": ("complete", 6, 6, 0),
+    "architectStateRuntimeInputContracts": ("complete", 8, 8, 0),
+    "architectTerminalSinkOrder": ("complete", 1, 1, 0),
+    "architectVisualOnlyLayoutProof": ("complete", 1, 1, 0),
     "actCensus": ("complete", 4, 4, 0),
     "behaviorGraphApplicability": ("complete", 105, 105, 0),
     "behaviorOwnerApplicability": ("complete", 105, 105, 0),

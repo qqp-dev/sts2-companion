@@ -29,6 +29,7 @@ from source_extractor.encounters import _compile_fixed_selection, _derive_fixed_
 from source_extractor.localization import require_localized_text
 from source_extractor.errors import SourceExtractionError
 from source_extractor.event_scripts import _validate_bounded_plumbing_vocabulary
+from source_extractor.architect_script import join_localization_structure, validate_architect_script
 from source_extractor.input_gate import regenerate_after_gate
 from source_extractor.pck import read_selected
 
@@ -634,6 +635,91 @@ class CombatAstTests(unittest.TestCase):
             validate_graph(graph, known_moves={"MONSTER.OTHER#A"})
         with self.assertRaisesRegex(SourceExtractionError, "unsupported graph node"):
             validate_graph({**graph, "nodes": [{"kind": "wikiPattern", "nodeId": "GRAPH.X/A"}]})
+
+
+class ArchitectLocalizationStructureTests(unittest.TestCase):
+    def templates(self):
+        return [{
+            "characterKey": "IRONCLAD", "characterOrder": 0,
+            "characterSourceType": "Game.Ironclad", "endAttackers": "Both",
+            "lineCount": 2, "sourceOrder": 0, "startAttackers": "None",
+            "templateId": "ARCHITECT_DIALOGUE.IRONCLAD.0", "visitIndex": 0,
+        }]
+
+    def localization(self):
+        return {
+            "PROCEED.description": "", "THE_ARCHITECT.CONTINUE": "continue",
+            "THE_ARCHITECT.RESPOND": "respond",
+            "THE_ARCHITECT.talk.IRONCLAD.0-0r.ancient": "line zero",
+            "THE_ARCHITECT.talk.IRONCLAD.0-0r.next": "next",
+            "THE_ARCHITECT.talk.IRONCLAD.0-1r.char": "line one",
+        }
+
+    def blob(self):
+        return {
+            "entryFlags": 0, "entryMd5": "a" * 32, "entrySha256": "b" * 64,
+            "pckDirectoryOffset": 1, "pckFileCount": 1, "pckFormat": 3,
+            "pckGodotVersion": [4, 5, 1], "pckPath": "localization/eng/ancients.json",
+            "pckSha256": "c" * 64,
+        }
+
+    def test_structural_join_emits_keys_and_digests_but_no_values(self):
+        rows = self.templates()
+        result = join_localization_structure(rows, self.localization(), self.blob(), event_entry="THE_ARCHITECT")
+        self.assertEqual((result["lineKeyCount"], result["nextButtonKeyCount"], result["selectedKeyCount"]), (2, 1, 6))
+        self.assertTrue(rows[0]["repeating"])
+        self.assertEqual([line["speaker"] for line in rows[0]["lines"]], ["Ancient", "Character"])
+        serialized = json.dumps(result)
+        self.assertNotIn("line zero", serialized)
+        self.assertNotIn('"value"', serialized)
+
+    def test_missing_duplicate_speaker_suffix_and_extra_key_fail(self):
+        mutations = [
+            lambda x: x.pop("THE_ARCHITECT.talk.IRONCLAD.0-0r.next"),
+            lambda x: x.__setitem__("THE_ARCHITECT.talk.IRONCLAD.0-0r.char", "duplicate"),
+            lambda x: (x.pop("THE_ARCHITECT.talk.IRONCLAD.0-1r.char"), x.__setitem__("THE_ARCHITECT.talk.IRONCLAD.0-1.char", "wrong suffix")),
+            lambda x: x.__setitem__("THE_ARCHITECT.talk.IRONCLAD.9-0r.ancient", "manual template"),
+        ]
+        for mutate in mutations:
+            with self.subTest(mutate=mutate):
+                localization = self.localization(); mutate(localization)
+                with self.assertRaisesRegex(SourceExtractionError, "missing|speaker|closure"):
+                    join_localization_structure(self.templates(), localization, self.blob(), event_entry="THE_ARCHITECT")
+
+    def test_wrong_source_entry_identity_fails(self):
+        with self.assertRaisesRegex(SourceExtractionError, "entry identity"):
+            join_localization_structure(self.templates(), self.localization(), self.blob(), event_entry="ARCHITECT_ALIAS")
+
+
+class ArchitectRawMutationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.architect = json.loads((REPO_ROOT / "data/game-v0.111.0-source.json").read_text())["eventScripts"]["architect"]
+
+    def assert_bad(self, change, pattern):
+        value = deepcopy(self.architect); change(value)
+        with self.assertRaisesRegex(SourceExtractionError, pattern):
+            validate_architect_script(value)
+
+    def test_semantic_graph_localization_terminal_and_call_mutations_fail(self):
+        cases = [
+            (lambda x: x["sourceDenominators"].__setitem__("templates", 99), "denominator"),
+            (lambda x: x["dialogue"]["templates"][0]["lines"][0].__setitem__("speaker", "Unknown"), "speaker"),
+            (lambda x: x["localization"].__setitem__("prose", "copied dialogue"), "prose"),
+            (lambda x: x["localization"]["keyValueWitnesses"][0].__setitem__("valueSha256", "0" * 64), "digest"),
+            (lambda x: x["visualOnlyCombat"].__setitem__("classification", "activeCombat"), "visual-only|active combat"),
+            (lambda x: x["presentation"].__setitem__("completeSliceHasGameplayDamage", True), "presentation/gameplay"),
+            (lambda x: x["terminal"]["orderedControl"].reverse(), "reordered"),
+            (lambda x: x["terminal"].__setitem__("localOwnerGuarded", False), "active combat/reward/resume"),
+            (lambda x: x["terminal"]["runManagerBoundary"].__setitem__("onEndedArgument", False), "lifecycle"),
+            (lambda x: x["dependencies"].pop(), "dependency"),
+            (lambda x: x["lineControl"]["edges"].pop(), "graph census"),
+            (lambda x: x["semanticEffects"][0].__setitem__("effectId", x["semanticEffects"][1]["effectId"]), "duplicate"),
+            (lambda x: x["invocationCensus"]["decisions"][0].__setitem__("symbolSignature", "MegaCrit.Sts2.Core.Commands.CreatureCmd::Damage sig:bad"), "damage/attack"),
+            (lambda x: x["invocationCensus"]["residualVocabulary"].__setitem__("sha256", "0" * 64), "vocabulary digest"),
+        ]
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern): self.assert_bad(change, pattern)
 
 
 class EventScriptInvocationGateTests(unittest.TestCase):

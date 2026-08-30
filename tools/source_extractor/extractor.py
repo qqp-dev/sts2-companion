@@ -31,6 +31,7 @@ _MONSTER_LOCALIZATION = "localization/eng/monsters.json"
 _INTENT_LOCALIZATION = "localization/eng/intents.json"
 _POWER_LOCALIZATION = "localization/eng/powers.json"
 _CARD_LOCALIZATION = "localization/eng/cards.json"
+_ANCIENT_LOCALIZATION = "localization/eng/ancients.json"
 _DLL_PATH = "data_sts2_linuxbsd_x86_64/sts2.dll"
 _PCK_PATH = "SlayTheSpire2.pck"
 
@@ -178,7 +179,10 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
     try:
         census = extract_encounter_census(dll.path, dll.sha256, assembly=assembly)
         placement = extract_placement(assembly, dll.sha256, census)
-        event_scripts = extract_event_scripts(assembly, dll.sha256, placement)
+        ancient_l10n, ancient_l10n_blob = _localization(verified, _ANCIENT_LOCALIZATION)
+        event_scripts = extract_event_scripts(
+            assembly, dll.sha256, placement, ancient_l10n, ancient_l10n_blob
+        )
         world = extract_monster_world(dll.path, dll.sha256, assembly=assembly)
         known_models = {"MONSTER." + item["canonicalId"] for item in world["concrete"]}
         rosters = extract_rosters(dll.path, dll.sha256, census, known_models, assembly=assembly)
@@ -207,6 +211,14 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             initial_state, set(rosters["eventOnlyModels"]), monster_l10n, pck_sha256=pck.sha256,
             localization_blob_sha256=monster_l10n_blob["entrySha256"],
         )
+        # Resolve the generic E2c1 scripted boundary only after the independently
+        # validated Architect component exists. Lifecycle dependencies stay open.
+        scripted_dependencies = [row for row in behavior["eventDependencies"]
+                                 if row["kind"] == "scriptedEventSemantics"]
+        if len(scripted_dependencies) != 1 or scripted_dependencies[0]["sourceType"] != event_scripts["architect"]["applicability"]["eventSourceType"]:
+            raise SourceExtractionError("Architect scripted dependency/component join is ambiguous")
+        scripted_dependencies[0]["status"] = "sourceComplete"
+        scripted_dependencies[0]["resolvedComponentRef"] = "EVENT_SCRIPT_COMPONENT.THE_ARCHITECT"
         for move in behavior["registrations"]:
             for index, operation in enumerate(move["operations"]):
                 validate_operation(operation, path=f"$.behavior.registrations[{move['canonicalId']!r}].operations[{index}]")
@@ -302,6 +314,20 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             "eventScriptOutcomes": complete(event_scripts["sourceDenominators"]["outcomes"], event_scripts["sourceDenominators"]["outcomes"]),
             "eventScriptFrameworkClosure": complete(event_scripts["sourceDenominators"]["frameworkMethods"], event_scripts["sourceDenominators"]["frameworkMethods"]),
             "eventScriptSupportMethodClosure": complete(event_scripts["sourceDenominators"]["supportMethods"], event_scripts["sourceDenominators"]["supportMethods"]),
+            "architectOwnerLinkPlacementApplicability": complete(1, 1),
+            "architectLocalizationStructuralClosure": complete(event_scripts["architect"]["sourceDenominators"]["localizationKeys"], event_scripts["architect"]["sourceDenominators"]["localizationKeys"]),
+            "architectDialogueTemplateCensus": complete(event_scripts["architect"]["sourceDenominators"]["templates"], event_scripts["architect"]["sourceDenominators"]["templates"]),
+            "architectDialogueLineCensus": complete(event_scripts["architect"]["sourceDenominators"]["lines"], event_scripts["architect"]["sourceDenominators"]["lines"]),
+            "architectOptionDelegateClosure": complete(event_scripts["architect"]["sourceDenominators"]["options"], event_scripts["architect"]["sourceDenominators"]["options"]),
+            "architectLineControlNodes": complete(event_scripts["architect"]["sourceDenominators"]["nodes"], event_scripts["architect"]["sourceDenominators"]["nodes"]),
+            "architectLineControlEdges": complete(event_scripts["architect"]["sourceDenominators"]["edges"], event_scripts["architect"]["sourceDenominators"]["edges"]),
+            "architectVisualOnlyLayoutProof": complete(1, 1),
+            "architectStateRuntimeInputContracts": complete(event_scripts["architect"]["sourceDenominators"]["runtimeContracts"], event_scripts["architect"]["sourceDenominators"]["runtimeContracts"]),
+            "architectSemanticEffects": complete(event_scripts["architect"]["sourceDenominators"]["semanticEffects"], event_scripts["architect"]["sourceDenominators"]["semanticEffects"]),
+            "architectTerminalSinkOrder": complete(1, 1),
+            "architectPresentationOnlyClosure": complete(event_scripts["architect"]["sourceDenominators"]["presentationMethods"], event_scripts["architect"]["sourceDenominators"]["presentationMethods"]),
+            "architectInvocationClassification": complete(event_scripts["architect"]["sourceDenominators"]["invocations"], event_scripts["architect"]["sourceDenominators"]["invocations"]),
+            "architectDependencyRefs": complete(event_scripts["architect"]["sourceDenominators"]["dependencies"], event_scripts["architect"]["sourceDenominators"]["dependencies"]),
             "observableIdentityDomain": complete(len(observation_identities["entries"]), observation_identities["sourceDenominators"]["observableIds"]),
             "observableResourceRepresentations": complete(len(observation_identities["resourceRepresentations"]), observation_identities["sourceDenominators"]["resourceRepresentations"]),
             "observableStateContracts": complete(len(observation_identities["stateObservationContracts"]), observation_identities["sourceDenominators"]["stateObservationContracts"]),
@@ -413,6 +439,7 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
                 "intentsEnglish": intent_l10n_blob,
                 "powersEnglish": power_l10n_blob,
                 "cardsEnglish": card_l10n_blob,
+                "ancientsEnglishStructural": ancient_l10n_blob,
             },
             "titleRules": name_data["titleRules"],
             "witnessCanonicalization": "SHA-256 of UTF-8 RFC 8259 JSON with object keys sorted, no insignificant whitespace, and non-ASCII preserved",
