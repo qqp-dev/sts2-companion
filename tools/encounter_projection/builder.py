@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 import hashlib
+import re
 from pathlib import Path
 from typing import Any
 
@@ -262,6 +263,221 @@ def _source_scaling(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
         result[key] = {"factId": fact_id, "rule": _without_provenance(source["multiplayerScaling"][key])}
     return result
 
+
+def _source_initial_state(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
+    initial = source["initialState"]
+    projected_facts = []
+    fact_id_map: dict[str, str] = {}
+    for index, row in enumerate(initial["initialStateFacts"]):
+        fact_id = "SOURCE." + row["factId"]
+        fact_id_map[row["factId"]] = fact_id
+        facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE",
+                  [f"/initialState/initialStateFacts/{index}"])
+        compact = _without_provenance(row)
+        compact["factId"] = fact_id
+        projected_facts.append(compact)
+
+    owners = []
+    for index, row in enumerate(initial["initialStateOwners"]):
+        fact_id = "SOURCE.INITIAL_OWNER." + row["ownerModel"]
+        facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE",
+                  [f"/initialState/initialStateOwners/{index}"])
+        owners.append({
+            "applicableModels": deepcopy(row["applicableModels"]),
+            "classification": row["classification"], "effectiveHook": row["effectiveHook"],
+            "factId": fact_id, "factRefs": [fact_id_map[ref] for ref in row["factRefs"]],
+            "inheritancePath": deepcopy(row["inheritancePath"]), "ownerModel": row["ownerModel"],
+            "sourceType": row["sourceType"],
+        })
+
+    contracts = []
+    for index, row in enumerate(initial["runtimeStateContracts"]):
+        fact_id = "SOURCE." + row["contractId"]
+        facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE",
+                  [f"/initialState/runtimeStateContracts/{index}"])
+        compact = deepcopy(row); compact["factId"] = fact_id
+        for site in compact["updateSites"]:
+            if "factRef" in site: site["factRef"] = fact_id_map[site["factRef"]]
+        contracts.append(compact)
+
+    power_hooks = []
+    for row in initial["powerHookClosure"]:
+        power_hooks.append({
+            "canonicalPower": row["canonicalPower"], "sourceType": row["sourceType"],
+            "hooks": [{
+                "classification": hook["classification"], "effectiveMethod": hook["effectiveMethod"],
+                "effectFactRefs": [fact_id_map[ref] for ref in hook["effectFactRefs"]],
+                "hook": hook["hook"], "inheritancePath": deepcopy(hook["inheritancePath"]),
+            } for hook in row["hooks"]],
+        })
+
+    return {
+        "externalHookBoundary": [{
+            "family": row["family"], "registryClassification": row["registryClassification"],
+            "declarations": [{"classification": item["classification"], "sourceType": item["sourceType"],
+                              "symbolSignature": item["method"]["symbolSignature"]}
+                             for item in row["declarations"]],
+        } for row in initial["externalHookBoundary"]],
+        "facts": projected_facts,
+        "legacyComparisonFacts": [],
+        "owners": owners,
+        "powerHookClosure": power_hooks,
+        "runtimeStateContracts": contracts,
+        "sourceDenominators": deepcopy(initial["sourceDenominators"]),
+        "stageOrdering": [{"stage": row["stage"], "symbolSignature": row["method"]["symbolSignature"]}
+                          for row in initial["initializationChain"]],
+        "summary": deepcopy(initial["summary"]),
+    }
+
+
+def _legacy_power_tokens(value: str) -> list[dict[str, Any]]:
+    if not isinstance(value, str) or not value.strip():
+        raise SourceExtractionError("legacy startsWithA9 must be a nonempty string")
+    result = []
+    for raw in re.split(r"[;,]", value):
+        token = raw.strip()
+        if not token: raise SourceExtractionError(f"empty legacy initial-state token in {value!r}")
+        match = re.fullmatch(r"(.+?)\s+(-?\d+)", token)
+        result.append({"amount": int(match.group(2)), "title": match.group(1)} if match else {"title": token})
+    return result
+
+
+def _constant_amount(expression: dict[str, Any]) -> int | str | None:
+    value = expression
+    while value.get("kind") == "convert": value = value["expression"]
+    if value.get("kind") != "constant": return None
+    raw = value.get("value")
+    if type(raw) is int: return raw
+    if isinstance(raw, str):
+        try:
+            integer = int(raw)
+        except ValueError:
+            return None
+        return integer if str(integer) == raw else raw
+    return None
+
+
+def _selection_models(node: dict[str, Any]) -> list[str]:
+    kind = node["kind"]
+    if kind in {"model", "fixed"}: return [node["model"]]
+    result = []
+    for key in ("children", "choices"):
+        for child in node.get(key, []): result.extend(_selection_models(child))
+    if "child" in node: result.extend(_selection_models(node["child"]))
+    return result
+
+
+def _initial_legacy_comparisons(
+    source: dict[str, Any], source_facts: dict[str, Any], legacy_annotations: dict[str, Any], facts: _Facts,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    initial = source_facts["initialState"]
+    initial_by_owner: dict[str, list[dict[str, Any]]] = {}
+    source_index_by_fact = {"SOURCE." + row["factId"]: index for index, row in enumerate(source["initialState"]["initialStateFacts"])}
+    for row in initial["facts"]: initial_by_owner.setdefault(row["ownerModel"], []).append(row)
+    initial_fact_by_id = {row["factId"]: row for row in initial["facts"]}
+    power_hook_by_model = {row["canonicalPower"]: row for row in initial["powerHookClosure"]}
+    def with_immediate_power_hooks(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        result = list(rows); seen = {row["factId"] for row in result}
+        for applied in [row for row in rows if row["effect"]["kind"] == "applyPower"]:
+            closure = power_hook_by_model.get(applied["effect"]["model"])
+            if closure is None: continue
+            for hook in closure["hooks"]:
+                for ref in hook["effectFactRefs"]:
+                    if ref not in seen:
+                        result.append(initial_fact_by_id[ref]); seen.add(ref)
+        return result
+    power_titles = {row["canonicalId"]: row["englishTitle"] for row in source_facts["models"]["powers"]}
+    source_power_index = {row["canonicalId"]: index for index, row in enumerate(source["powers"])}
+    observed_entries = source_facts["observationIdentities"]["entries"]
+    observed = {row["observedId"] for row in observed_entries}
+    observed_index = {row["observedId"]: index for index, row in enumerate(source["observationIdentities"]["entries"])}
+    state_by_legacy = {
+        "MONSTER.HATCHLING": next(row for row in source_facts["states"] if row["stateId"] == "MONSTER.TOUGH_EGG#HATCHED"),
+        "MONSTER.TEST_SUBJECT_PHASE_2": next(row for row in source_facts["states"] if row["stateId"] == "MONSTER.TEST_SUBJECT#PHASE_2"),
+        "MONSTER.TEST_SUBJECT_PHASE_3": next(row for row in source_facts["states"] if row["stateId"] == "MONSTER.TEST_SUBJECT#PHASE_3"),
+    }
+    encounters = {row["canonicalId"]: row for kind in ("ordinary", "event") for row in source_facts["encounters"][kind]}
+    comparisons=[]; conflicts=[]
+    for legacy_encounter in legacy_annotations["current"]:
+        encounter_id = legacy_encounter["legacyEncounterId"]
+        for body_index, body in enumerate(legacy_encounter["presentationBodies"]):
+            annotation = body["annotations"].get("startsWithA9")
+            if not annotation: continue
+            queried = "MONSTER." + body["annotations"]["monsterId"]
+            right_value = {"claimedTokens": _legacy_power_tokens(annotation), "queriedObservedId": queried}
+            source_refs: list[str] = []; pointers: list[str] = []
+            reason: str | None = None
+            if queried in state_by_legacy:
+                state = state_by_legacy[queried]
+                source_refs=[state["factId"]]
+                left_value={"canonicalModel":state["canonicalModel"],"stateId":state["stateId"]}
+                status="stateNotModel"; reason="LEGACY_INITIAL_ANNOTATION_DESCRIBES_STATE_NOT_MODEL"
+                pointers=[f"/states/stateIdentities/{next(i for i,x in enumerate(source['states']['stateIdentities']) if x['stateId']==state['stateId'])}"]
+            elif queried not in observed:
+                roster_models=_selection_models(encounters[encounter_id]["initialRoster"]["selection"])
+                candidate=roster_models[body_index] if body_index < len(roster_models) else None
+                candidate_facts=initial_by_owner.get(candidate or "", [])
+                source_refs=[row["factId"] for row in candidate_facts]
+                pointers=[f"/initialState/initialStateFacts/{source_index_by_fact[row['factId']]}" for row in candidate_facts]
+                pointers.append("/observationIdentities/matchingPolicy")
+                if candidate in observed_index: pointers.append(f"/observationIdentities/entries/{observed_index[candidate]}")
+                left_value={"candidateCanonicalModel":candidate,"identityJoin":"none"}
+                status="unmatchedLegacyIdentity"; reason="LEGACY_SHORTCUT_IS_NOT_SOURCE_ALIAS"
+            else:
+                candidate_facts=[row for row in initial_by_owner.get(queried, [])
+                                 if row.get("encounterApplicability") in {None,"ENCOUNTER."+encounter_id}]
+                candidate_facts=with_immediate_power_hooks(candidate_facts)
+                source_refs=[row["factId"] for row in candidate_facts]
+                pointers=[f"/initialState/initialStateFacts/{source_index_by_fact[row['factId']]}" for row in candidate_facts]
+                pointers.append(f"/observationIdentities/entries/{observed_index[queried]}")
+                applies=[row for row in candidate_facts if row["effect"]["kind"]=="applyPower"]
+                by_title={power_titles.get(row["effect"]["model"]):row for row in applies}
+                claims=right_value["claimedTokens"]; normalized=[]; dynamic=False; missing=False
+                for claim in claims:
+                    match=by_title.get(claim["title"])
+                    if match is None: missing=True;continue
+                    item={"title":claim["title"]}
+                    if "amount" in claim:
+                        amount=_constant_amount(match["baseValue"]["expression"])
+                        if amount is None: dynamic=True
+                        elif amount != claim["amount"]:
+                            item["amount"]=amount
+                        else: item["amount"]=claim["amount"]
+                    normalized.append(item)
+                    model=match["effect"]["model"]
+                    if model in source_power_index: pointers.append(f"/powers/{source_power_index[model]}")
+                extras=[row for row in candidate_facts if row["effect"]["kind"]!="applyPower" or power_titles.get(row["effect"].get("model")) not in {x["title"] for x in claims}]
+                if queried=="MONSTER.TOUGH_EGG":
+                    status="dynamicNotComparable";reason="SOURCE_INITIAL_STATE_IS_TRIGGER_AND_CURRENT_SIDE_DEPENDENT"
+                elif missing:
+                    status="partialNonEquivalent";reason="LEGACY_INITIAL_TEXT_HAS_NO_EXACT_SOURCE_POWER_TITLE_MATCH"
+                elif dynamic:
+                    status="dynamicNotComparable";reason="SOURCE_POWER_AMOUNT_REMAINS_RUNTIME_EXPRESSION"
+                elif any(item.get("amount") != claim.get("amount") for item,claim in zip(normalized,claims)):
+                    status="conflict";reason=None
+                elif extras:
+                    status="sourceSuperset";reason="SOURCE_INITIAL_STATE_HAS_ADDITIONAL_ORDERED_GAMEPLAY_EFFECTS"
+                else:
+                    status="agrees";reason=None
+                semantic={"claimedTokens":normalized,"queriedObservedId":queried}
+                left_value=right_value if status=="agrees" else {**semantic,"additionalSourceFactRefs":[x["factId"] for x in extras]}
+                if not pointers: pointers=["/initialState/sourceDenominators"]
+            comparison_fact="SOURCE.INITIAL_LEGACY_COMPARISON."+body["factId"].removeprefix("LEGACY.BODY.")
+            facts.add(comparison_fact,"source",f"EVIDENCE.{comparison_fact}","INPUT.SOURCE",sorted(set(pointers)))
+            initial["legacyComparisonFacts"].append({"factId":comparison_fact,"legacyFactRef":body["factId"],
+                                                     "sourceFactRefs":source_refs,"status":status})
+            comparison={"comparisonId":"COMPARE.INITIAL."+body["factId"].removeprefix("LEGACY.BODY."),
+                        "family":"initialStateLegacyAnnotation",
+                        "left":{"factId":comparison_fact,"lane":"source","value":left_value},
+                        "right":{"factId":body["factId"],"lane":"legacy","value":right_value},"status":status}
+            if reason is not None: comparison["reasonCode"]=reason
+            comparisons.append(comparison)
+            if status=="conflict":
+                conflicts.append({"conflictId":"CONFLICT."+comparison["comparisonId"],"family":comparison["family"],
+                                  "left":deepcopy(comparison["left"]),"right":deepcopy(comparison["right"]),"resolution":"unresolved"})
+    if len(comparisons)!=57: raise SourceExtractionError(f"initial-state legacy comparison coverage incomplete: {len(comparisons)}/57")
+    return comparisons,conflicts
+
 def _legacy_body(row: dict[str, Any], fact_id: str) -> dict[str, Any]:
     allowed = {
         "count", "displayName", "hpA8", "monsterId", "moves", "pack", "patchChecked",
@@ -428,10 +644,16 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
     monster_facts = [row["factId"] for row in source_facts["monsters"]]
     rows = [
         {
-            "affectedFactIds": monster_facts,
-            "detail": "Complete starts-with powers and initial model state coverage is an E2 prerequisite.",
-            "reasonCode": "INITIAL_STATE_COVERAGE_ABSENT", "scope": "encounterCompanion", "status": "unresolved",
-            "unknownId": "UNKNOWN.INITIAL_STATES",
+            "affectedFactIds": [row["factId"] for row in source_facts["initialState"]["facts"]],
+            "detail": "Initial state is closed, but summon/production, death/prevention, revive/hatch phase, escape/removal, and encounter-result lifecycle semantics are not yet extracted.",
+            "reasonCode": "LIFECYCLE_COVERAGE_ABSENT", "scope": "encounterCompanion", "status": "unresolved",
+            "unknownId": "UNKNOWN.LIFECYCLE_COVERAGE",
+        },
+        {
+            "affectedFactIds": [row["factId"] for row in source_facts["initialState"]["runtimeStateContracts"]],
+            "detail": "E2a preserves required initial runtime inputs, but companion-wide getter/delegate formula inlining and runtime-state contracts remain incomplete.",
+            "reasonCode": "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE", "scope": "encounterCompanion", "status": "unresolved",
+            "unknownId": "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
         },
         {
             "affectedFactIds": event_facts,
@@ -441,7 +663,7 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
         },
         {
             "affectedFactIds": [source_facts["scaling"]["hp"]["factId"]],
-            "detail": "Source HP scaling declares no rounding/truncation. The audited stable consumer floors 2P values, but runtime source is outside E1's two-input evidence boundary; no precedence is selected.",
+            "detail": "The Decimal scaling helper declares no rounding; its downstream HP setter conversion/cap/storage chain is deferred to E2b, so no rounding conclusion or precedence is selected here.",
             "reasonCode": "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT", "scope": "encounterCompanion", "status": "unresolved",
             "unknownId": "UNKNOWN.HP_ROUNDING_CONFLICT",
         },
@@ -453,7 +675,7 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
         },
         {
             "affectedFactIds": [],
-            "detail": "Complete acts/rooms/events/map rules beyond bounded encounter placement, items, powers/statuses/enchantments, characters/aspects/pools/unlocks, and global combat/lifecycle families remain outside E1.",
+            "detail": "Complete acts/rooms/events/map rules beyond bounded encounter placement, items, powers/statuses/enchantments, characters/aspects/pools/unlocks, and global combat/lifecycle families remain outside E2a.",
             "reasonCode": "BROADER_WORLD_MODEL_FAMILIES_ABSENT", "scope": "worldModel", "status": "unresolved",
             "unknownId": "UNKNOWN.BROADER_WORLD_MODEL",
         },
@@ -489,6 +711,8 @@ def _readiness(known_unknowns: list[dict[str, Any]]) -> dict[str, Any]:
                     "encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology",
                     "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement",
                     "eventEncounterLinkage", "observationIdentity", "behaviorApplicability",
+                    "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure",
+                    "initialStateLegacyComparisons",
                 ],
                 "status": "complete",
             },
@@ -509,10 +733,14 @@ def build_payload(source: dict[str, Any], legacy: dict[str, Any]) -> dict[str, A
         "observationIdentities": _source_observation_identities(source, facts),
         "placement": _source_placement(source, facts), "scaling": _source_scaling(source, facts),
         "stateRules": state_rules, "states": states,
+        "initialState": _source_initial_state(source, facts),
     }
     legacy_annotations = _legacy_annotations(legacy, facts)
     legacy_annotations["moveTitleFallbackCandidates"] = _fallback_candidates(source_facts, legacy_annotations)
     comparisons, conflicts = _comparisons_and_conflicts(source_facts, legacy_annotations)
+    initial_comparisons, initial_conflicts = _initial_legacy_comparisons(source, source_facts, legacy_annotations, facts)
+    comparisons.extend(initial_comparisons); conflicts.extend(initial_conflicts)
+    comparisons.sort(key=lambda row: row["comparisonId"]); conflicts.sort(key=lambda row: row["conflictId"])
     unknowns = _known_unknowns(source_facts, legacy_annotations)
     return {
         "conflicts": conflicts, "evidence": sorted(facts.evidence, key=lambda row: row["evidenceId"]),

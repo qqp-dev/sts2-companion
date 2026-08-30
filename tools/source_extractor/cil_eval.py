@@ -629,7 +629,7 @@ def value_expression(value: SymbolicValue, *, field_name: str, instruction_index
                 ]
             return result
         if item.kind=="arithmetic" and len(item.operands)==2:
-            if item.data not in {"add", "subtract", "multiply", "divide"}:
+            if item.data not in {"add", "subtract", "multiply", "divide", "remainder"}:
                 raise SourceExtractionError(
                     f"unsupported {field_name} arithmetic at instruction {instruction_index}: {item.data}"
                 )

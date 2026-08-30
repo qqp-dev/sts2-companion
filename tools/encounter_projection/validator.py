@@ -90,6 +90,66 @@ def _validate_name(value: Any, path: str) -> None:
             validate_expression(expression, path=f"{path}.inputs.{key}")
 
 
+
+_INITIAL_RECIPIENTS = {
+    "appliedPowerDynamicVariable", "appliedPowerOwner", "constructedMonsterModel", "customPowerInstance",
+    "eligiblePlayerCombatCards", "sourceMonster", "sourceMonsterLifecycle", "sourceMonsterModel",
+    "sourceMonsterMoveState", "sourceMonsterOpponents",
+}
+_INITIAL_STAGES = {"constructorDefault", "encounterGeneration", "afterAddedToRoom", "powerAfterApplied", "beforeCombatStart"}
+_INITIAL_PREDICATES = {"powerHookCondition", "restoredHatchedState", "sourceCardEligibilityPredicate"}
+
+
+def _validate_initial_fact_contract(row: dict[str, Any], path: str, model_ids: set[str]) -> None:
+    owner = _string(row.get("ownerModel"), path + ".ownerModel")
+    applicable = _list(row.get("applicableModels"), path + ".applicableModels")
+    if owner.startswith("MONSTER."):
+        if owner not in model_ids or not applicable or owner not in applicable or not set(applicable) <= model_ids:
+            _fail(path + ".applicableModels", "missing/unknown initial applicability edge")
+    elif owner.startswith("POWER_OWNER.POWER."):
+        if applicable:
+            _fail(path + ".applicableModels", "Power-hook fact cannot invent monster applicability")
+    else:
+        _fail(path + ".ownerModel", "unsupported initial owner category")
+    condition = row.get("condition")
+    if not isinstance(condition, dict) or condition.get("kind") not in {"unconditional", "sourcePredicate"}:
+        _fail(path + ".condition", "unsupported initial condition")
+    if condition["kind"] == "unconditional":
+        _object(condition, path + ".condition", {"kind"})
+    else:
+        predicate = _object(condition, path + ".condition", {"classification", "kind", "symbolSignature"})
+        if predicate["classification"] not in _INITIAL_PREDICATES or " sig:" not in predicate["symbolSignature"]:
+            _fail(path + ".condition", "unknown source predicate contract")
+    recipient = _object(row.get("recipient"), path + ".recipient", {"kind"})
+    if recipient["kind"] not in _INITIAL_RECIPIENTS:
+        _fail(path + ".recipient.kind", "unsupported initial recipient")
+    if row.get("stage") not in _INITIAL_STAGES:
+        _fail(path + ".stage", "unsupported initial stage")
+    _string(row.get("trigger"), path + ".trigger")
+    order = _object(row.get("order"), path + ".order", {"sourceOrder", "stageOrder"})
+    _integer(order["sourceOrder"], path + ".order.sourceOrder", minimum=0)
+    _integer(order["stageOrder"], path + ".order.stageOrder", minimum=0)
+    final = _object(row.get("finalValueContract"), path + ".finalValueContract",
+                    {"classification", "runtimeModifierInputs", "scalingRefs"})
+    if final["classification"] != "intrinsicRequestedBaseline":
+        _fail(path + ".finalValueContract.classification", "baseline authority changed")
+    for key in ("runtimeModifierInputs", "scalingRefs", "sourceStateInputs"):
+        values = _list(row.get(key) if key == "sourceStateInputs" else final[key], path + "." + key)
+        if len(values) != len(set(values)) or any(not isinstance(value, str) or not value for value in values):
+            _fail(path + "." + key, "runtime/scaling refs must be unique nonempty strings")
+
+
+def _initial_state_variable_names(value: Any) -> set[str]:
+    result: set[str] = set()
+    def walk(node: Any) -> None:
+        if isinstance(node, dict):
+            if node.get("kind") == "stateVariable": result.add(str(node.get("name")))
+            for child in node.values(): walk(child)
+        elif isinstance(node, list):
+            for child in node: walk(child)
+    walk(value)
+    return result
+
 def _validate_source_document(source: dict[str, Any]) -> None:
     if source.get("schemaVersion") != SOURCE_SCHEMA_VERSION:
         _fail("source.schemaVersion", f"expected {SOURCE_SCHEMA_VERSION}")
@@ -102,7 +162,7 @@ def _validate_source_document(source: dict[str, Any]) -> None:
     if source.get("authority") != SOURCE_AUTHORITY:
         _fail("source.authority", "malformed raw-only authority/fallback policy")
     if source.get("runtimeReady") is not False or source.get("status") != "incomplete":
-        _fail("source", "schema 5 must remain incomplete and not runtime-ready")
+        _fail("source", "schema 6 must remain incomplete and not runtime-ready")
     for family, (status, denominator, numerator, unresolved) in REQUIRED_COVERAGE.items():
         expected = {"denominator": denominator, "numerator": numerator, "status": status, "unresolved": unresolved}
         try:
@@ -184,6 +244,113 @@ def _validate_source_document(source: dict[str, Any]) -> None:
                 _fail(f"source.behavior.{family}[{index}].applicableConcreteModels", "does not equal exact owner applicability")
     if any(row["canonicalId"] not in move_ids for row in registrations):
         raise AssertionError("unreachable")
+
+
+    initial = _object(source.get("initialState"), "source.initialState", {
+        "constructorDecisions", "encounterInitializerDecisions", "encounterInitializers", "externalHookBoundary",
+        "initialStateFacts", "initialStateOwners", "initializationChain", "invocationDecisions", "powerHookClosure",
+        "runtimeStateContracts", "sourceDenominators", "summary",
+    })
+    roots = _list(initial["encounterInitializers"], "source.initialState.encounterInitializers")
+    if len(roots) != 89 or {row.get("canonicalEncounter") for row in roots} != {"ENCOUNTER." + value for value in encounter_ids}:
+        _fail("source.initialState.encounterInitializers", "expected all 89 exact generator roots")
+    initializer_decisions = _list(initial["encounterInitializerDecisions"], "source.initialState.encounterInitializerDecisions")
+    initializer_ids = _unique(initializer_decisions, "decisionId", "source.initialState.encounterInitializerDecisions")
+    for index, root in enumerate(roots):
+        refs = root.get("constructionDecisionRefs", []) + root.get("rngDecisionRefs", [])
+        if not set(refs) <= initializer_ids or not isinstance(root.get("method", {}).get("methodBodySha256"), str):
+            _fail(f"source.initialState.encounterInitializers[{index}]", "broken initializer site refs/provenance")
+    constructor_decisions = _list(initial["constructorDecisions"], "source.initialState.constructorDecisions")
+    if len(constructor_decisions) != 5:
+        _fail("source.initialState.constructorDecisions", "expected five explicit constructor writes")
+    owners = _list(initial["initialStateOwners"], "source.initialState.initialStateOwners")
+    if len(owners) != 108 or {row.get("ownerModel") for row in owners} != current_models:
+        _fail("source.initialState.initialStateOwners", "expected all 108 exact reachable owners")
+    source_initial_facts = _list(initial["initialStateFacts"], "source.initialState.initialStateFacts")
+    if len(source_initial_facts) != 111:
+        _fail("source.initialState.initialStateFacts", "expected 111 ordered initial facts")
+    source_initial_ids = _unique(source_initial_facts, "factId", "source.initialState.initialStateFacts")
+    allowed_effects = {"applyPower", "gainBlock", "setMaxAndCurrentHp", "setCurrentHp", "setState", "subscribe",
+                       "relationship", "forceMoveState", "afflictCard", "configurePowerTarget"}
+    for index, row in enumerate(source_initial_facts):
+        path = f"source.initialState.initialStateFacts[{index}]"
+        required = {"applicableModels", "baseValue", "condition", "effect", "factId", "finalValueContract", "order",
+                    "ownerModel", "provenance", "recipient", "sourceStateInputs", "stage", "trigger"}
+        if not required <= set(row) or set(row) - required - {"encounterApplicability"}:
+            _fail(path, "initial fact fields are not closed")
+        if row["effect"].get("kind") not in allowed_effects:
+            _fail(path + ".effect.kind", "unsupported initial effect")
+        base = _object(row["baseValue"], path + ".baseValue", {"expression", "unit", "valueType"})
+        validate_expression(base["expression"], path=path + ".baseValue.expression", expected_type=base["valueType"])
+        _validate_initial_fact_contract(row, path, current_models)
+        proof = row["provenance"]
+        for key in ("assemblySha256", "methodBodySha256", "normalizedInstructionsSha256", "normalizedSliceSha256", "semanticWitnessSha256"):
+            value = proof.get(key)
+            if not isinstance(value, str) or len(value) != 64:
+                _fail(path + ".provenance." + key, "missing exact SHA-256 provenance")
+    for index, owner in enumerate(owners):
+        if owner.get("classification") not in {"orderedGameplayEffects", "sourceProvenNoOp", "sourceProvenNonGameplayOnly"}:
+            _fail(f"source.initialState.initialStateOwners[{index}].classification", "unsupported owner classification")
+        refs = owner.get("factRefs", [])
+        if not set(refs) <= source_initial_ids:
+            _fail(f"source.initialState.initialStateOwners[{index}].factRefs", "broken initial fact ref")
+        if (owner["classification"] == "orderedGameplayEffects") != bool(refs):
+            _fail(f"source.initialState.initialStateOwners[{index}]", "owner effects/classification mismatch")
+        if owner.get("effectiveHook", "").startswith("MegaCrit.Sts2.Core.Models.MonsterModel::AfterAddedToRoom") and owner["classification"] != "sourceProvenNoOp":
+            _fail(f"source.initialState.initialStateOwners[{index}]", "base no-op was not source-inspected")
+    calls = _list(initial["invocationDecisions"], "source.initialState.invocationDecisions")
+    if len(calls) != 1092 or len(_unique(calls, "decisionId", "source.initialState.invocationDecisions")) != 1092:
+        _fail("source.initialState.invocationDecisions", "closed 1092-call census is incomplete")
+    contracts = _list(initial["runtimeStateContracts"], "source.initialState.runtimeStateContracts")
+    if len(contracts) != 47:
+        _fail("source.initialState.runtimeStateContracts", "expected 47 runtime contracts")
+    contract_ids = _unique(contracts, "contractId", "source.initialState.runtimeStateContracts")
+    for index, contract in enumerate(contracts):
+        if "domain" not in contract or not contract.get("readSites") or not isinstance(contract.get("sourceInputs"), list):
+            _fail(f"source.initialState.runtimeStateContracts[{index}]", "runtime domain/read site/source-input inventory missing")
+        for source_input in contract["sourceInputs"]:
+            if set(source_input) != {"sourceMember", "unit", "valueType"} or not source_input["sourceMember"]:
+                _fail(f"source.initialState.runtimeStateContracts[{index}].sourceInputs", "malformed source input")
+        for site in contract.get("updateSites", []):
+            if "factRef" in site and site["factRef"] not in source_initial_ids:
+                _fail(f"source.initialState.runtimeStateContracts[{index}].updateSites", "broken fact update ref")
+    for index, fact in enumerate(source_initial_facts):
+        refs = set(fact["sourceStateInputs"]) | set(fact["finalValueContract"]["runtimeModifierInputs"])
+        if not refs <= contract_ids:
+            _fail(f"source.initialState.initialStateFacts[{index}]", "unregistered runtime input")
+        required_state_contracts = {
+            "combat.currentSide": "RUNTIME.COMBAT.CURRENT_SIDE",
+            "initial.decimillipedeSharedMaxHp": "RUNTIME.INITIAL.DECIMILLIPEDE_SHARED_MAX_HP",
+            "initial.toughEggHatchHp": "RUNTIME.INITIAL.TOUGH_EGG_HATCH_HP",
+        }
+        names = _initial_state_variable_names(fact["baseValue"]["expression"])
+        if not names <= set(required_state_contracts) or not {required_state_contracts[name] for name in names} <= set(fact["sourceStateInputs"]):
+            _fail(f"source.initialState.initialStateFacts[{index}]", "unregistered source field")
+    hooks = _list(initial["powerHookClosure"], "source.initialState.powerHookClosure")
+    if len(hooks) != 41:
+        _fail("source.initialState.powerHookClosure", "expected 41 initially reachable Powers")
+    for index, row in enumerate(hooks):
+        if len(row.get("hooks", [])) != 3:
+            _fail(f"source.initialState.powerHookClosure[{index}]", "apply/start hook family omitted")
+        for hook in row["hooks"]:
+            if not set(hook.get("effectFactRefs", [])) <= source_initial_ids:
+                _fail(f"source.initialState.powerHookClosure[{index}]", "broken Power hook fact ref")
+    if len(initial["initializationChain"]) != 7 or sum(len(row["declarations"]) for row in initial["externalHookBoundary"]) != 29:
+        _fail("source.initialState", "initialization chain/external boundary denominator drift")
+    expected_initial_denominators = {
+        "constructorExplicitWrites": 5, "constructorOwners": 4,
+        "directSinkSitesByKind": {"applyPower": 54, "gainBlock": 1, "setCurrentHp": 1, "setMaxAndCurrentHp": 1},
+        "effectiveHookImplementations": 59, "encounterGenerationOwners": 89,
+        "generatorConstructionSites": 137, "generatorRngSites": 38, "generatorSetterOwners": 13,
+        "generatorSetterSites": 25, "initialStateModels": 108, "nonRosterInitializationRngRoots": 5,
+        "powerModels": 41,
+    }
+    if initial["sourceDenominators"] != expected_initial_denominators:
+        _fail("source.initialState.sourceDenominators", "initial-state source denominator drift")
+    expected_summary = {"encounterRoots": 89, "facts": 111, "invocationDecisions": 1092,
+                        "modelOwners": 108, "powerModels": 41, "runtimeContracts": 47}
+    if initial["summary"] != expected_summary:
+        _fail("source.initialState.summary", "initial-state summary drift")
 
 _EXPR_KINDS = {
     "actRoomFactor", "arithmetic", "ascensionSelect", "combatQuery", "compare",
@@ -343,7 +510,7 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
     referenced_model_ids: set[str] = set(model_ids)
     referenced_fact_ids: set[str] = set()
     for family, prefix in (("cards", "CARD."), ("powers", "POWER.")):
-        expected_count = 9 if family == "cards" else 43
+        expected_count = 9 if family == "cards" else 69
         rows = _list(models[family], f"payload.sourceFacts.models.{family}")
         if len(rows) != expected_count:
             _fail(f"payload.sourceFacts.models.{family}", f"expected {expected_count} records")
@@ -517,10 +684,109 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
 
     if not {row["graphId"] for row in move_rows} <= graph_ids:
         _fail("payload.sourceFacts.moves", "move refers to unknown graph")
+    projected_initial = _object(sf["initialState"], "payload.sourceFacts.initialState", {
+        "externalHookBoundary", "facts", "legacyComparisonFacts", "owners", "powerHookClosure",
+        "runtimeStateContracts", "sourceDenominators", "stageOrdering", "summary",
+    })
+    projected_initial_facts = _list(projected_initial["facts"], "payload.sourceFacts.initialState.facts")
+    if len(projected_initial_facts) != 111:
+        _fail("payload.sourceFacts.initialState.facts", "expected 111 compact facts")
+    initial_fact_ids = _unique(projected_initial_facts, "factId", "payload.sourceFacts.initialState.facts")
+    for index, row in enumerate(projected_initial_facts):
+        path = f"payload.sourceFacts.initialState.facts[{index}]"
+        if "provenance" in row or not row["factId"].startswith("SOURCE.INITIAL."):
+            _fail(path, "proof bulk leaked or fact ID is not source-laned")
+        base = _object(row["baseValue"], path + ".baseValue", {"expression", "unit", "valueType"})
+        validate_expression(base["expression"], path=path + ".baseValue.expression", expected_type=base["valueType"])
+        _validate_initial_fact_contract(row, path, model_ids)
+    initial_owner_rows = _list(projected_initial["owners"], "payload.sourceFacts.initialState.owners")
+    if len(initial_owner_rows) != 108 or {row.get("ownerModel") for row in initial_owner_rows} != model_ids:
+        _fail("payload.sourceFacts.initialState.owners", "expected all 108 owners")
+    initial_owner_fact_ids = _unique(initial_owner_rows, "factId", "payload.sourceFacts.initialState.owners")
+    for index, owner in enumerate(initial_owner_rows):
+        path = f"payload.sourceFacts.initialState.owners[{index}]"
+        if owner.get("classification") not in {"orderedGameplayEffects", "sourceProvenNoOp", "sourceProvenNonGameplayOnly"}:
+            _fail(path + ".classification", "unsupported owner classification")
+        refs = owner.get("factRefs", [])
+        if not set(refs) <= initial_fact_ids:
+            _fail(path + ".factRefs", "broken initial fact ref")
+        applicable = owner.get("applicableModels", [])
+        if not applicable or owner["ownerModel"] not in applicable or set(applicable) - model_ids:
+            _fail(path + ".applicableModels", "missing/unknown applicability model")
+        if (owner["classification"] == "orderedGameplayEffects") != bool(refs):
+            _fail(path, "owner effects/classification mismatch")
+        if owner.get("effectiveHook", "").startswith("MegaCrit.Sts2.Core.Models.MonsterModel::AfterAddedToRoom") and owner["classification"] != "sourceProvenNoOp":
+            _fail(path, "base no-op was not source-inspected")
+    runtime_rows = _list(projected_initial["runtimeStateContracts"], "payload.sourceFacts.initialState.runtimeStateContracts")
+    if len(runtime_rows) != 47:
+        _fail("payload.sourceFacts.initialState.runtimeStateContracts", "expected 47 contracts")
+    runtime_fact_ids = _unique(runtime_rows, "factId", "payload.sourceFacts.initialState.runtimeStateContracts")
+    runtime_contract_ids = _unique(runtime_rows, "contractId", "payload.sourceFacts.initialState.runtimeStateContracts")
+    for index, contract in enumerate(runtime_rows):
+        path = f"payload.sourceFacts.initialState.runtimeStateContracts[{index}]"
+        if "domain" not in contract or not contract.get("readSites") or not isinstance(contract.get("sourceInputs"), list):
+            _fail(path, "runtime contract domain/read site/source-input inventory missing")
+        for source_input in contract["sourceInputs"]:
+            if set(source_input) != {"sourceMember", "unit", "valueType"} or not source_input["sourceMember"]:
+                _fail(path + ".sourceInputs", "malformed source input")
+        for site in contract.get("updateSites", []):
+            if "factRef" in site and site["factRef"] not in initial_fact_ids:
+                _fail(path + ".updateSites", "broken compact fact ref")
+    for index, fact in enumerate(projected_initial_facts):
+        refs = set(fact["sourceStateInputs"]) | set(fact["finalValueContract"]["runtimeModifierInputs"])
+        if not refs <= runtime_contract_ids:
+            _fail(f"payload.sourceFacts.initialState.facts[{index}]", "unregistered compact runtime input")
+        required_state_contracts = {
+            "combat.currentSide": "RUNTIME.COMBAT.CURRENT_SIDE",
+            "initial.decimillipedeSharedMaxHp": "RUNTIME.INITIAL.DECIMILLIPEDE_SHARED_MAX_HP",
+            "initial.toughEggHatchHp": "RUNTIME.INITIAL.TOUGH_EGG_HATCH_HP",
+        }
+        names = _initial_state_variable_names(fact["baseValue"]["expression"])
+        if not names <= set(required_state_contracts) or not {required_state_contracts[name] for name in names} <= set(fact["sourceStateInputs"]):
+            _fail(f"payload.sourceFacts.initialState.facts[{index}]", "unregistered source field")
+    power_hooks = _list(projected_initial["powerHookClosure"], "payload.sourceFacts.initialState.powerHookClosure")
+    if len(power_hooks) != 41:
+        _fail("payload.sourceFacts.initialState.powerHookClosure", "expected 41 Power closures")
+    for index, row in enumerate(power_hooks):
+        if len(row.get("hooks", [])) != 3:
+            _fail(f"payload.sourceFacts.initialState.powerHookClosure[{index}]", "hook omitted")
+        for hook in row["hooks"]:
+            if not set(hook.get("effectFactRefs", [])) <= initial_fact_ids:
+                _fail(f"payload.sourceFacts.initialState.powerHookClosure[{index}]", "broken hook fact ref")
+    comparison_fact_rows = _list(projected_initial["legacyComparisonFacts"], "payload.sourceFacts.initialState.legacyComparisonFacts")
+    if len(comparison_fact_rows) != 57:
+        _fail("payload.sourceFacts.initialState.legacyComparisonFacts", "expected all 57 starts-with comparisons")
+    initial_comparison_fact_ids = _unique(comparison_fact_rows, "factId", "payload.sourceFacts.initialState.legacyComparisonFacts")
+    for index, row in enumerate(comparison_fact_rows):
+        if not set(row.get("sourceFactRefs", [])) <= (initial_fact_ids | state_fact_ids):
+            _fail(f"payload.sourceFacts.initialState.legacyComparisonFacts[{index}]", "broken source comparison refs")
+    boundaries = _list(projected_initial["externalHookBoundary"], "payload.sourceFacts.initialState.externalHookBoundary")
+    if sum(len(row.get("declarations", [])) for row in boundaries) != 29:
+        _fail("payload.sourceFacts.initialState.externalHookBoundary", "external boundary denominator drift")
+    if len(projected_initial["stageOrdering"]) != 7:
+        _fail("payload.sourceFacts.initialState.stageOrdering", "stage ordering chain incomplete")
+    expected_projected_denominators = {
+        "constructorExplicitWrites": 5, "constructorOwners": 4,
+        "directSinkSitesByKind": {"applyPower": 54, "gainBlock": 1, "setCurrentHp": 1, "setMaxAndCurrentHp": 1},
+        "effectiveHookImplementations": 59, "encounterGenerationOwners": 89,
+        "generatorConstructionSites": 137, "generatorRngSites": 38, "generatorSetterOwners": 13,
+        "generatorSetterSites": 25, "initialStateModels": 108, "nonRosterInitializationRngRoots": 5,
+        "powerModels": 41,
+    }
+    if projected_initial["sourceDenominators"] != expected_projected_denominators:
+        _fail("payload.sourceFacts.initialState.sourceDenominators", "initial-state source denominator drift")
+    if projected_initial["summary"] != {"encounterRoots": 89, "facts": 111, "invocationDecisions": 1092,
+                                        "modelOwners": 108, "powerModels": 41, "runtimeContracts": 47}:
+        _fail("payload.sourceFacts.initialState.summary", "summary drift")
+    # The compact contract intentionally excludes all transitive proof/call bulk.
+    if any(key in projected_initial for key in {"invocationDecisions", "constructorDecisions", "encounterInitializerDecisions"}):
+        _fail("payload.sourceFacts.initialState", "proof bulk leaked")
+
     all_source_facts = (
         encounter_fact_ids | monster_fact_ids | state_fact_ids | referenced_fact_ids |
         owner_fact_ids | move_fact_ids | graph_fact_ids | scaling_fact_ids | placement_fact_ids |
-        identity_fact_ids | {state_rules["factId"]}
+        identity_fact_ids | initial_fact_ids | initial_owner_fact_ids | runtime_fact_ids |
+        initial_comparison_fact_ids | {state_rules["factId"]}
     )
     return {
         "all": all_source_facts, "encounters": encounter_fact_ids, "models": model_ids,
@@ -715,12 +981,13 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     for index, row in enumerate(comparisons):
         path = f"payload.laneComparisons[{index}]"
         obj = _object(row, path, {"comparisonId", "family", "left", "reasonCode", "right", "status"}, {"comparisonId", "family", "left", "right", "status"})
-        if obj["family"] not in {"encounterTitle", "monsterTitle", "initialHpA8SinglePlayer", "encounterActPlacement", "encounterRoomClass", "observedMonsterIdentity"}:
+        if obj["family"] not in {"encounterTitle", "monsterTitle", "initialHpA8SinglePlayer", "encounterActPlacement", "encounterRoomClass", "observedMonsterIdentity", "initialStateLegacyAnnotation"}:
             _fail(path + ".family", "unsupported overlap family")
-        if obj["status"] not in {"agrees", "conflict", "notStaticallyComparable"}:
+        reason_statuses = {"notStaticallyComparable", "sourceSuperset", "dynamicNotComparable", "stateNotModel", "unmatchedLegacyIdentity", "partialNonEquivalent"}
+        if obj["status"] not in {"agrees", "conflict"} | reason_statuses:
             _fail(path + ".status", "unsupported overlap classification")
-        if (obj["status"] == "notStaticallyComparable") != ("reasonCode" in obj):
-            _fail(path, "not-comparable overlap requires exactly one reason code")
+        if (obj["status"] in reason_statuses) != ("reasonCode" in obj):
+            _fail(path, "non-equivalent/non-comparable overlap requires exactly one reason code")
         for side, lane in (("left", "source"), ("right", "legacy")):
             so = _object(obj[side], path + "." + side, {"factId", "lane", "value"})
             if so["lane"] != lane or so["factId"] not in all_facts:
@@ -733,6 +1000,9 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
                 _fail(path, "equal values cannot be a conflict")
             conflict_comparisons.add(obj["comparisonId"])
 
+    initial_comparison_count = sum(row["family"] == "initialStateLegacyAnnotation" for row in comparisons)
+    if initial_comparison_count != 57:
+        _fail("payload.laneComparisons", f"expected 57 initial-state comparisons, got {initial_comparison_count}")
     conflicts = _list(payload["conflicts"], "payload.conflicts")
     _unique(conflicts, "conflictId", "payload.conflicts")
     represented = set()
@@ -769,12 +1039,12 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     if missing_title_count != 18:
         _fail("payload.knownUnknowns", "all 18 missing source move titles must be individually classified")
     required_reasons = {
-        "INITIAL_STATE_COVERAGE_ABSENT", "EVENT_BEHAVIOR_COVERAGE_ABSENT",
+        "LIFECYCLE_COVERAGE_ABSENT", "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE", "EVENT_BEHAVIOR_COVERAGE_ABSENT",
         "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT", "LEGACY_PER_FACT_PROVENANCE_INCOMPLETE",
         "BROADER_WORLD_MODEL_FAMILIES_ABSENT",
     }
     actual_reasons = {row["reasonCode"] for row in unknowns}
-    retired_e1_reasons = {"SOURCE_ACT_PLACEMENT_ABSENT", "SOURCE_ROOM_CLASS_PLACEMENT_ABSENT", "OBSERVED_IDENTITY_ALIAS_JOIN_ABSENT", "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT"}
+    retired_e1_reasons = {"SOURCE_ACT_PLACEMENT_ABSENT", "SOURCE_ROOM_CLASS_PLACEMENT_ABSENT", "OBSERVED_IDENTITY_ALIAS_JOIN_ABSENT", "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT", "INITIAL_STATE_COVERAGE_ABSENT"}
     if actual_reasons & retired_e1_reasons:
         _fail("payload.knownUnknowns", "resolved E1 absence reason was retained")
     if not required_reasons <= actual_reasons:
@@ -788,13 +1058,13 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     scopes = _object(readiness["runtimeScopes"], "payload.readiness.runtimeScopes", {"encounterCompanion", "encounterProjection"})
     companion = _object(scopes["encounterCompanion"], "payload.readiness.runtimeScopes.encounterCompanion", {"ready", "reasonRefs", "status"})
     if companion["ready"] is not False or companion["status"] != "incomplete" or not companion["reasonRefs"]:
-        _fail("payload.readiness.runtimeScopes.encounterCompanion", "E1 companion scope cannot be ready")
+        _fail("payload.readiness.runtimeScopes.encounterCompanion", "E2a companion scope cannot be ready")
     projected = _object(scopes["encounterProjection"], "payload.readiness.runtimeScopes.encounterProjection", {"ready", "requiredCoverageFamilies", "requiredJoins", "status"})
     if projected["ready"] is not True or projected["status"] != "complete":
         _fail("payload.readiness.runtimeScopes.encounterProjection", "independent projection section should be complete")
     if projected["requiredCoverageFamilies"] != [row["family"] for row in coverage_rows()]:
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredCoverageFamilies", "coverage gate mismatch")
-    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability"}
+    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons"}
     if set(projected["requiredJoins"]) != expected_joins or len(projected["requiredJoins"]) != len(expected_joins):
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredJoins", "join gate mismatch")
 

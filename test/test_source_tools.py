@@ -16,8 +16,9 @@ sys.path.insert(0, str(REPO_ROOT / "tools"))
 from source_extractor.ast import evaluate_expression, validate_expression, validate_graph, validate_operation, validate_selection
 from source_extractor.canonical import canonical_json_bytes
 from source_extractor.cil_safety import validate_cil_slice
-from source_extractor.cil_eval import CilDataFlow, decode_method_signature, value_expression
+from source_extractor.cil_eval import CilDataFlow, CilType, Invocation, SymbolicValue, decode_method_signature, value_expression
 from source_extractor.invocations import ClosedWorldInvocationAudit
+from source_extractor.initial_state import _claim_helper, _power_apply
 from source_extractor.inheritance import attach_behavior_applicability, resolve_behavior_applicability
 from source_extractor.identity import resolve_observed_identity, validate_observation_identities
 from source_extractor.placement import decode_factory_collection, validate_placement
@@ -293,6 +294,22 @@ class NormalizedExpressionTests(unittest.TestCase):
         self.assertEqual(validate_expression(expression), "decimal")
         self.assertEqual(evaluate_expression(expression, {"actIndex": 0, "baseHp": "51", "bossRoom": False, "playerCount": 1}), Decimal("51"))
         self.assertEqual(evaluate_expression(expression, {"actIndex": 2, "baseHp": "51", "bossRoom": True, "playerCount": 2}), Decimal("132.6"))
+
+    def test_cli_remainder_is_typed_and_truncates_toward_zero(self):
+        def rem(left, right):
+            return {"kind": "arithmetic", "operator": "remainder", "operands": [
+                {"kind": "constant", "value": left, "valueType": "integer"},
+                {"kind": "constant", "value": right, "valueType": "integer"},
+            ], "valueType": "integer"}
+        self.assertEqual(validate_expression(rem(5, 3)), "integer")
+        self.assertEqual(evaluate_expression(rem(5, 3), {}), 2)
+        self.assertEqual(evaluate_expression(rem(-5, 3), {}), -2)
+        with self.assertRaisesRegex(SourceExtractionError, "remainder by zero"):
+            evaluate_expression(rem(1, 0), {})
+        bad = rem(5, 3)
+        bad["operands"].append({"kind": "constant", "value": 1, "valueType": "integer"})
+        with self.assertRaisesRegex(SourceExtractionError, "operand cardinality"):
+            validate_expression(bad)
 
     def test_explicit_rounding_modes(self):
         source = self.decimal("2.5")
@@ -757,6 +774,168 @@ class CilSemanticEvaluatorTests(unittest.TestCase):
         with self.assertRaisesRegex(SourceExtractionError, "missing fields"):
             validate_operation(operation)
 
+
+
+class InitialPowerApplyContractTests(unittest.TestCase):
+    GENERIC = (
+        "MegaCrit.Sts2.Core.Commands.PowerCmd::Apply "
+        "sig:10010615128221011e0012a64c12a7e411844912a7e41288b802 "
+        "generic:MegaCrit.Sts2.Core.Models.Powers.ArtifactPower"
+    )
+    CUSTOM = "MegaCrit.Sts2.Core.Commands.PowerCmd::Apply sig:000712812112a64c1288f412a7e411844912a7e41288b802"
+
+    @staticmethod
+    def value(kind, data=None, operands=(), cil="class", origins=frozenset({0})):
+        return SymbolicValue(kind, CilType(cil), data, tuple(operands), origins)
+
+    def setUp(self):
+        self.record = {"instructions": [{"opcode": "nop", "operand": None} for _ in range(20)]}
+        model = self.value("field", "Synthetic::<>4__this")
+        self.target = self.value(
+            "call", "MegaCrit.Sts2.Core.Models.MonsterModel::get_Creature sig:200012a7e4", (model,)
+        )
+        integer = self.value("constant", 3, cil="i4")
+        self.amount = self.value("new", "System.Decimal::.ctor sig:20010108", (integer,), cil="valuetype")
+        self.context = self.value("new", "SyntheticContext::.ctor sig:200001")
+        self.null = self.value("null")
+        self.false = self.value("constant", 0, cil="i4")
+
+    def invocation(self, symbol, arguments):
+        return Invocation(10, symbol, decode_method_signature(symbol), tuple(arguments), None, None)
+
+    def test_generic_and_custom_overloads_preserve_exact_model_target_and_amount_positions(self):
+        generic = self.invocation(self.GENERIC, [self.context, self.target, self.amount, self.target, self.null, self.false])
+        model, target, amount, _ = _power_apply(generic, self.record)
+        self.assertEqual((model, target), ("POWER.ARTIFACT_POWER", "sourceMonster"))
+        self.assertEqual(amount["expression"]["value"], 3)
+
+        power = self.value(
+            "call",
+            "MegaCrit.Sts2.Core.Models.ModelDb::Power sig:1001001e00 generic:MegaCrit.Sts2.Core.Models.Powers.WitheringPresencePower",
+        )
+        custom = self.invocation(self.CUSTOM, [self.context, power, self.target, self.amount, self.target, self.null, self.false])
+        model, target, amount, _ = _power_apply(custom, self.record)
+        self.assertEqual((model, target, amount["expression"]["value"]),
+                         ("POWER.WITHERING_PRESENCE_POWER", "sourceMonster", 3))
+
+    def conditional_case(self):
+        getter = "MegaCrit.Sts2.Core.Combat.ICombatState::get_CurrentSide sig:200011aa6c"
+        instructions = [
+            {"opcode": "callvirt", "operand": getter},
+            {"opcode": "ldc.i4.2", "operand": None},
+            {"opcode": "beq.s", "operand": 5},
+            {"opcode": "ldc.i4.1", "operand": None},
+            {"opcode": "br.s", "operand": 6},
+            {"opcode": "ldc.i4.2", "operand": None},
+            {"opcode": "nop", "operand": None},
+            {"opcode": "nop", "operand": None},
+            {"opcode": "nop", "operand": None},
+            {"opcode": "nop", "operand": None},
+            {"opcode": "call", "operand": self.GENERIC},
+        ]
+        one = self.value("constant", 1, cil="i4", origins=frozenset({3}))
+        two = self.value("constant", 2, cil="i4", origins=frozenset({5}))
+        joined = self.value("join", "stack[0] at IL_0006", (one, two), cil="i4", origins=frozenset({3, 5}))
+        amount = self.value("convert", "conv.r4", (joined,), cil="r4", origins=frozenset({3, 5, 6}))
+        invocation = self.invocation(
+            self.GENERIC,
+            [self.context, self.target, amount, self.target, self.null, self.false],
+        )
+        return invocation, {"instructions": instructions}
+
+    @staticmethod
+    def branch_literal(expression):
+        while expression["kind"] == "convert":
+            expression = expression["expression"]
+        return expression["value"]
+
+    def test_current_side_join_extracts_exact_comparison_and_cfg_arm_mapping(self):
+        invocation, record = self.conditional_case()
+        model, target, amount, origins = _power_apply(
+            invocation, record, current_side_domain={"minimum": 0, "maximum": 2}
+        )
+        self.assertEqual((model, target), ("POWER.ARTIFACT_POWER", "sourceMonster"))
+        self.assertEqual(amount["condition"], {
+            "kind": "compare",
+            "operator": "equal",
+            "left": {
+                "kind": "stateVariable",
+                "name": "combat.currentSide",
+                "valueType": "integer",
+                "domain": {"minimum": 0, "maximum": 2},
+            },
+            "right": {"kind": "constant", "value": 2, "valueType": "integer"},
+            "valueType": "boolean",
+        })
+        self.assertEqual(self.branch_literal(amount["whenTrue"]), 2)
+        self.assertEqual(self.branch_literal(amount["whenFalse"]), 1)
+        self.assertTrue({0, 1, 2, 3, 4, 5, 6, 10}.issubset(origins))
+
+    def test_current_side_join_requires_source_derived_enum_domain(self):
+        invocation, record = self.conditional_case()
+        with self.assertRaisesRegex(SourceExtractionError, "lacks a derived CurrentSide domain"):
+            _power_apply(invocation, record)
+
+    def test_current_side_join_reads_changed_compare_instead_of_inventing_one(self):
+        invocation, record = self.conditional_case()
+        record["instructions"][1]["opcode"] = "ldc.i4.7"
+        _, _, amount, _ = _power_apply(
+            invocation, record, current_side_domain={"minimum": 0, "maximum": 2}
+        )
+        self.assertEqual(amount["condition"]["right"]["value"], 7)
+        self.assertEqual(self.branch_literal(amount["whenTrue"]), 2)
+        self.assertEqual(self.branch_literal(amount["whenFalse"]), 1)
+
+    def test_current_side_join_rejects_unproved_predicate_or_arm_mapping(self):
+        mutations = (
+            (lambda record: record["instructions"][0].__setitem__("operand", "Other::get_CurrentSide sig:200008"), "one exact CurrentSide comparison"),
+            (lambda record: record["instructions"][2].__setitem__("opcode", "bgt.s"), "one exact CurrentSide comparison"),
+            (lambda record: record["instructions"][2].__setitem__("operand", 99), "branch target"),
+        )
+        for mutate, pattern in mutations:
+            invocation, record = self.conditional_case()
+            mutate(record)
+            with self.subTest(pattern=pattern):
+                with self.assertRaisesRegex(SourceExtractionError, pattern):
+                    _power_apply(
+                invocation, record, current_side_domain={"minimum": 0, "maximum": 2}
+            )
+
+        invocation, record = self.conditional_case()
+        joined = invocation.arguments[2].operands[0]
+        ambiguous_join = self.value(
+            "join", joined.data, (
+                self.value("constant", 1, cil="i4", origins=frozenset({3, 5})),
+                self.value("constant", 2, cil="i4", origins=frozenset({3, 5})),
+            ), cil="i4", origins=frozenset({3, 5}),
+        )
+        amount = self.value(
+            "convert", "conv.r4", (ambiguous_join,), cil="r4", origins=frozenset({3, 5, 6})
+        )
+        args = list(invocation.arguments); args[2] = amount
+        invocation = self.invocation(self.GENERIC, args)
+        with self.assertRaisesRegex(SourceExtractionError, "one exact CurrentSide comparison"):
+            _power_apply(
+                        invocation, record, current_side_domain={"minimum": 0, "maximum": 2}
+                    )
+
+    def test_helper_cycle_or_repeated_traversal_fails_closed(self):
+        seen = set()
+        _claim_helper(seen, 7, "Monster::Sleep sig:2000128121")
+        with self.assertRaisesRegex(SourceExtractionError, "helper cycle/repeated helper"):
+            _claim_helper(seen, 7, "Monster::Sleep sig:2000128121")
+
+    def test_unknown_overload_changed_argument_order_and_unresolved_target_fail(self):
+        unknown_symbol = "MegaCrit.Sts2.Core.Commands.PowerCmd::Apply sig:0002010808"
+        with self.assertRaisesRegex(SourceExtractionError, "unknown PowerCmd.Apply overload"):
+            _power_apply(self.invocation(unknown_symbol, [self.false, self.false]), self.record)
+        changed = self.invocation(self.GENERIC, [self.context, self.amount, self.target, self.target, self.null, self.false])
+        with self.assertRaisesRegex(SourceExtractionError, "recipient|unresolved"):
+            _power_apply(changed, self.record)
+        unresolved = self.value("unresolved", "missing target join")
+        broken = self.invocation(self.GENERIC, [self.context, unresolved, self.amount, self.target, self.null, self.false])
+        with self.assertRaisesRegex(SourceExtractionError, "missing target join"):
+            _power_apply(broken, self.record)
 
 class PlacementExtractionTests(unittest.TestCase):
     def test_literal_registry_count_order_and_unknown_structure_fail_closed(self):
