@@ -605,10 +605,12 @@ class CombatAstTests(unittest.TestCase):
                 validate_operation({key: value for key, value in op.items() if key != missing})
         common = {"operationId": "MONSTER.X#A/op/1", "provenance": {}, "sourceOrder": 4}
         kill = {**common, "kind": "kill", "sinkSymbolSignature": "CreatureCmd::Kill sig:0002",
-                "target": "sourceMonster", "playDeathEffects": {"kind": "constant", "value": False, "valueType": "boolean"}}
+                "target": "sourceMonster", "force": {"kind": "constant", "value": False, "valueType": "boolean"}}
         validate_operation(kill)
+        with self.assertRaisesRegex(SourceExtractionError, "unknown fields"):
+            validate_operation({**kill, "playDeathEffects": kill["force"]})
         with self.assertRaisesRegex(SourceExtractionError, "missing fields"):
-            validate_operation({key: value for key, value in kill.items() if key != "playDeathEffects"})
+            validate_operation({key: value for key, value in kill.items() if key != "force"})
         remove = {**common, "kind": "removePower", "sinkSymbolSignature": "PowerCmd::Remove sig:0001",
                   "target": "sourceMonster", "model": "POWER.SOAR_POWER"}
         validate_operation(remove)
@@ -967,6 +969,24 @@ class CilSemanticEvaluatorTests(unittest.TestCase):
         with self.assertRaisesRegex(SourceExtractionError, "missing fields"):
             validate_operation(operation)
 
+
+
+class LifecycleCilSliceTests(unittest.TestCase):
+    def test_trailing_boolean_argument_is_exact_and_fail_closed(self):
+        rows = [
+            {"opcode": "ldc.i4.7", "operand": None},
+            {"opcode": "ldc.i4.0", "operand": None},
+            {"opcode": "call", "operand": "X::Kill sig:0002010802"},
+        ]
+        value = CilDataFlow(rows).trailing_boolean_argument(2)
+        self.assertEqual((value.kind, value.data, value.cil_type.kind), ("constant", 0, "bool"))
+        for mutation, pattern in [
+            ([*rows[:1], {"opcode": "ldfld", "operand": "X::force"}, rows[2]], "not an immediate constant"),
+            ([*rows[:2], {"opcode": "call", "operand": "X::Kill sig:0002010808"}], "no final CLI Boolean"),
+            ([{"opcode": "ldc.i4.0", "operand": None}], "invalid trailing-Boolean"),
+        ]:
+            with self.subTest(pattern=pattern), self.assertRaisesRegex(SourceExtractionError, pattern):
+                CilDataFlow(mutation).trailing_boolean_argument(len(mutation)-1)
 
 
 class InitialPowerApplyContractTests(unittest.TestCase):

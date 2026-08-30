@@ -438,7 +438,7 @@ def validate_operation(node: Any, *, path: str = "$") -> None:
             _integer(call["sourceOrder"], f"{path}.helperCallSites[{index}].sourceOrder", minimum=0)
             if not isinstance(call["symbolSignature"], str) or " sig:" not in call["symbolSignature"]: _fail(f"{path}.helperCallSites[{index}].symbolSignature", "must identify exact helper call")
         return
-    allowed = common | {"sinkSymbolSignature", "sourceOrder", "value", "model", "modelContract", "target", "destination", "selection", "targetProvenance", "playDeathEffects", "memberSymbolSignature"}
+    allowed = common | {"sinkSymbolSignature", "sourceOrder", "value", "model", "modelContract", "target", "destination", "selection", "targetProvenance", "force", "memberSymbolSignature"}
     required_by_kind = {
         "attack": {"value", "target", "targetProvenance"},
         "attackHitCount": {"value"}, "applyPower": {"value", "target", "model"},
@@ -446,7 +446,7 @@ def validate_operation(node: Any, *, path: str = "$") -> None:
         "addGeneratedCard": {"target", "destination", "model"},
         "summon": {"target", "selection", "model"}, "escape": {"target"},
         "heal": {"value", "target"}, "removeCard": {"target"},
-        "kill": {"target", "playDeathEffects"}, "removePower": {"target"},
+        "kill": {"target", "force"}, "removePower": {"target"},
         "stateWrite": {"target", "value", "memberSymbolSignature"},
     }
     obj = _object(node, path, allowed, common | {"sinkSymbolSignature"} | required_by_kind[kind])
@@ -475,7 +475,7 @@ def validate_operation(node: Any, *, path: str = "$") -> None:
             if not isinstance(contract["sourceSymbolSignature"], str) or "::get_Current sig:" not in contract["sourceSymbolSignature"]:
                 _fail(path + ".modelContract.sourceSymbolSignature", "must identify the exact iterator current getter")
     if kind == "kill":
-        validate_expression(obj["playDeathEffects"], path=path + ".playDeathEffects", expected_type="boolean")
+        validate_expression(obj["force"], path=path + ".force", expected_type="boolean")
     if kind == "stateWrite":
         if not isinstance(obj["memberSymbolSignature"], str) or "::set_" not in obj["memberSymbolSignature"] or " sig:" not in obj["memberSymbolSignature"]:
             _fail(path + ".memberSymbolSignature", "must identify an exact source setter")

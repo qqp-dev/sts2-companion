@@ -1,18 +1,18 @@
-"""Closed E2d1b encounter projection contract and pinned v0.111.0 identities."""
+"""Closed E2d2a encounter projection contract and pinned v0.111.0 identities."""
 
 from __future__ import annotations
 
 from typing import Any
 
-SCHEMA_VERSION = 9
+SCHEMA_VERSION = 10
 GENERATOR_NAME = "sts2-encounter-facts"
-GENERATOR_VERSION = "9.0.0"
-SOURCE_SCHEMA_VERSION = 12
-SOURCE_EXTRACTOR_VERSION = "12.0.0"
+GENERATOR_VERSION = "10.0.0"
+SOURCE_SCHEMA_VERSION = 13
+SOURCE_EXTRACTOR_VERSION = "13.0.0"
 
 SOURCE_ARTIFACT = {
     "id": "INPUT.SOURCE", "path": "data/game-v0.111.0-source.json",
-    "sha256": "4c3b04cca82041c3156de4d3b0552eed3f9346dc1195f97e8d52b8881b74651c", "size": 13399941,
+    "sha256": "8fe227f7fdea18c32abd93c7c910ba861161b9ea4418b3b387030bc0e7b41ace", "size": 14173997,
 }
 LEGACY_ARTIFACT = {
     "id": "INPUT.LEGACY", "path": "data/encounters.json",
@@ -62,6 +62,20 @@ REQUIRED_COVERAGE: dict[str, tuple[str, int, int, int]] = {
     "behaviorGraphApplicability": ("complete", 105, 105, 0),
     "behaviorOwnerApplicability": ("complete", 105, 105, 0),
     "blockMultiplayerScaling": ("complete", 1, 1, 0),
+    "coreLifecycleComponent": ("complete", 1, 1, 0),
+    "lifecycleCommandDeclarations": ("complete", 4, 4, 0),
+    "lifecycleCommandPhysicalBodies": ("complete", 4, 4, 0),
+    "lifecycleKillCallSites": ("complete", 21, 21, 0),
+    "lifecycleEscapeCallSites": ("complete", 3, 3, 0),
+    "lifecycleDispatchMethods": ("complete", 6, 6, 0),
+    "lifecycleListenerRegistryMethods": ("complete", 6, 6, 0),
+    "lifecycleRemovalMethods": ("complete", 4, 4, 0),
+    "lifecycleTerminationMethods": ("complete", 11, 11, 0),
+    "lifecycleCentralizedCheckSites": ("complete", 14, 14, 0),
+    "lifecycleRuntimeBoundaries": ("complete", 7, 7, 0),
+    "lifecycleDependencies": ("complete", 7, 7, 0),
+    "lifecycleInvocationClassification": ("complete", 707, 707, 0),
+    "lifecycleSemanticNodes": ("complete", 59, 59, 0),
     "encounterPlacement": ("complete", 89, 89, 0),
     "eventEncounterLinkage": ("complete", 8, 8, 0),
     "eventTurnClassifications": ("complete", 8, 8, 0),
@@ -173,7 +187,7 @@ METADATA_KEYS = {
     "payloadSha256", "projectionInputs", "requiredCoverage", "sourceExtractorVersion", "sourceSchemaVersion",
 }
 PAYLOAD_KEYS = {"conflicts", "evidence", "factReferences", "knownUnknowns", "laneComparisons", "legacyAnnotations", "readiness", "resolvedAudits", "sourceFacts"}
-SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states", "initialState", "hpPipeline", "eventTurnBehavior", "eventScripts", "randomSelection", "production"}
+SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states", "initialState", "hpPipeline", "eventTurnBehavior", "eventScripts", "randomSelection", "production", "lifecycle"}
 
 
 def coverage_rows() -> list[dict[str, Any]]:

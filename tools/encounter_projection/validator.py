@@ -1,4 +1,4 @@
-"""Fail-closed validation for source input and compact E2d1b projection schema."""
+"""Fail-closed validation for source input and compact E2d2a projection schema."""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ from source_extractor.errors import SourceExtractionError
 from source_extractor.event_scripts import validate_event_scripts
 from source_extractor.identity import validate_observation_identities
 from source_extractor.hp_pipeline import validate_hp_pipeline
+from source_extractor.lifecycle import validate_lifecycle
 from source_extractor.placement import validate_placement
 from .contract import (
     AUTHORITY, EMBEDDED_SOURCE_INPUTS, GAME, GENERATOR_NAME, GENERATOR_VERSION,
@@ -434,6 +435,10 @@ def _validate_source_document(source: dict[str, Any]) -> None:
         validate_event_scripts(source.get("eventScripts"))
     except SourceExtractionError as exc:
         _fail("source.eventScripts", str(exc))
+    try:
+        validate_lifecycle(source.get("lifecycle"))
+    except SourceExtractionError as exc:
+        _fail("source.lifecycle", str(exc))
 
     encounters = source.get("encounters", {})
     if set(encounters) != {"ordinary", "event"} or len(encounters["ordinary"]) != 81 or len(encounters["event"]) != 8:
@@ -1101,6 +1106,108 @@ def _validate_compact_architect(value: Any, placement_fact_ids: set[str]) -> set
     if any(row.get("kind") in {"damage","attack","kill"} for row in effects):_fail(path+".semanticEffects","forced kill/dialogue VFX represented as dialogue damage")
     return set(fact_ids)
 
+def _validate_compact_lifecycle(value: Any, source: dict[str, Any]) -> set[str]:
+    path="payload.sourceFacts.lifecycle"
+    obj=_object(value,path,{"api","combatTermination","componentId","core","dependencies","digests","dispatch","factId","listenerRegistry","methodRefs","removal","runtimeBoundaries","runtimeStateContracts","sourceDenominators","status"})
+    if obj["componentId"]!="LIFECYCLE.CORE.E2D2A" or obj["status"]!="sourceCompleteE2d2a" or obj["factId"]!="SOURCE.LIFECYCLE.CORE.E2D2A":
+        _fail(path,"core lifecycle identity/status/fact changed")
+    text=repr(obj)
+    if "playDeathEffects" in text:_fail(path,"legacy kill Boolean field is forbidden")
+    if "CombatResult" in text:_fail(path,"invented combat result enum is forbidden")
+    if any(token in text for token in ("diagnosticMetadataToken","cilInstructionsSha256","methodBodySha256","commandCallSites","invocationCensus","instructions")):
+        _fail(path,"raw lifecycle call/proof bulk leaked into compact projection")
+    api=_object(obj["api"],path+".api",{"commandDeclarations"})
+    commands=_list(api["commandDeclarations"],path+".api.commandDeclarations")
+    expected_params=[["creature","force"],["creatures","force"],["creature","force","recursion"],["creature","removeCreatureNode"]]
+    if len(commands)!=4 or [row.get("parameters") for row in commands]!=expected_params:
+        _fail(path+".api.commandDeclarations","exact force/removeCreatureNode declarations changed")
+    for index,row in enumerate(commands):
+        _object(row,f"{path}.api.commandDeclarations[{index}]",{"parameters","physicalSymbolSignature","symbolSignature"})
+        if " sig:" not in row["symbolSignature"] or " sig:" not in row["physicalSymbolSignature"]:_fail(path+".api","method signature ref is not exact")
+    refs=_object(obj["methodRefs"],path+".methodRefs",{"actionExecutor","commands","dispatch","listenerRegistries","removal","termination"})
+    if refs["commands"]!=commands or [len(refs[k]) for k in ("dispatch","listenerRegistries","removal","termination")]!=[6,3,3,7]:
+        _fail(path+".methodRefs","compact method closure denominators changed")
+    if "ActionExecutor+<ExecuteActions>" not in refs["actionExecutor"]:_fail(path+".methodRefs.actionExecutor","action executor physical ref changed")
+    den=obj["sourceDenominators"]
+    expected={"commandDeclarations":4,"commandPhysicalBodies":4,"killCallSites":21,"escapeCallSites":3,"dispatchMethods":6,
+              "listenerRegistryLogicalMethods":3,"listenerRegistryPhysicalBodies":3,"removalMethods":4,
+              "terminationDeclarations":4,"terminationPhysicalBodies":4,"terminationSupportMethods":3,
+              "centralizedCheckCallSites":14,"runtimeBoundaries":7,"dependencies":7,"invocations":707,"semanticNodes":59}
+    if den!=expected:_fail(path+".sourceDenominators","core lifecycle denominator drift")
+    core=_object(obj["core"],path+".core",{"emptyBehavior","innerDeathGraph","listKillGraph","listSnapshotOrder","singularKillContract"})
+    inner=core["innerDeathGraph"]
+    if (inner.get("directCheckWinCondition") is not False or inner.get("deadBodyEntryShortCircuit") is not False
+            or inner.get("forceContract") != 'entry guards complete regardless of force; after they pass, force bypasses only out-of-combat multiplayer player safety healing and ShouldDie/prevention; HP zeroing, BeforeDeath, Died, animation, AfterDeath, removal, Power cleanup, and player cleanup remain'):
+        _fail(path+".core.innerDeathGraph","force/entry-guard/dead-body/direct-win boundary changed")
+    if len(core["listKillGraph"].get("nodes",[]))!=10 or len(inner.get("nodes",[]))!=23:
+        _fail(path+".core","kill graph node closure changed")
+    list_edges={row.get("edgeId"):(row.get("from"),row.get("to"),row.get("kind")) for row in core["listKillGraph"].get("edges",[])}
+    expected_list_edges={
+        "LIFECYCLE.KILL.LIST.EDGE.INNER_SUCCEEDED":("LIFECYCLE.KILL.LIST.03.sequentialInner","LIFECYCLE.KILL.LIST.04.managerGuard","awaitSuccess"),
+        "LIFECYCLE.KILL.LIST.EDGE.INNER_FAILED":("LIFECYCLE.KILL.LIST.03.sequentialInner","LIFECYCLE.KILL.LIST.OUTCOME.FAULT_OR_CANCEL","faultOrCancellation"),
+        "LIFECYCLE.KILL.LIST.EDGE.LIVE_COMBAT_LOSS":("LIFECYCLE.KILL.LIST.05.allPlayersDead","LIFECYCLE.KILL.LIST.06.liveCombatLoss","conditionTrue"),
+        "LIFECYCLE.KILL.LIST.EDGE.NON_LIVE_ALL_DEAD":("LIFECYCLE.KILL.LIST.05.allPlayersDead","LIFECYCLE.KILL.LIST.07.testModeGate","conditionTrue"),
+        "LIFECYCLE.KILL.LIST.EDGE.LOSS_FALLTHROUGH":("LIFECYCLE.KILL.LIST.06.liveCombatLoss","LIFECYCLE.KILL.LIST.07.testModeGate","sourceOrder"),
+        "LIFECYCLE.KILL.LIST.EDGE.TEST_OFF":("LIFECYCLE.KILL.LIST.07.testModeGate","LIFECYCLE.KILL.LIST.08.gameOver","conditionTrue"),
+        "LIFECYCLE.KILL.LIST.EDGE.TEST_ON":("LIFECYCLE.KILL.LIST.07.testModeGate","LIFECYCLE.KILL.LIST.OUTCOME.TEST_MODE_SKIPPED","conditionFalse"),
+        "LIFECYCLE.KILL.LIST.EDGE.GAME_OVER":("LIFECYCLE.KILL.LIST.08.gameOver","LIFECYCLE.KILL.LIST.OUTCOME.GAME_OVER","sourceOrder"),
+    }
+    if any(list_edges.get(edge_id)!=contract for edge_id,contract in expected_list_edges.items()):
+        _fail(path+".core.listKillGraph","loss/test-mode fallthrough or awaited inner kill changed")
+    inner_edges={row.get("edgeId"):(row.get("from"),row.get("to"),row.get("kind")) for row in inner.get("edges",[])}
+    expected_guard_edges={
+        "LIFECYCLE.KILL.INNER.EDGE.DETACHED_NON_PLAYER_COMPLETED":("LIFECYCLE.KILL.INNER.01.entryGuards","LIFECYCLE.KILL.INNER.OUTCOME.DETACHED_NON_PLAYER_COMPLETED","conditionTrue"),
+        "LIFECYCLE.KILL.INNER.EDGE.ATTACHED_NON_LIVE_COMPLETED":("LIFECYCLE.KILL.INNER.01.entryGuards","LIFECYCLE.KILL.INNER.OUTCOME.ATTACHED_NON_LIVE_COMPLETED","conditionTrue"),
+        "LIFECYCLE.KILL.INNER.EDGE.GUARDS_PASSED":("LIFECYCLE.KILL.INNER.01.entryGuards","LIFECYCLE.KILL.INNER.02.outOfCombatPlayerSafety","guardsPassed"),
+        "LIFECYCLE.KILL.INNER.EDGE.SAFETY_RETURN":("LIFECYCLE.KILL.INNER.02.outOfCombatPlayerSafety","LIFECYCLE.KILL.INNER.OUTCOME.SAFETY_HEALED","awaitSuccess"),
+        "LIFECYCLE.KILL.INNER.EDGE.FAIL.02":("LIFECYCLE.KILL.INNER.02.outOfCombatPlayerSafety","LIFECYCLE.KILL.INNER.22.awaiterFailure","faultOrCancellation"),
+    }
+    if any(inner_edges.get(edge_id)!=contract for edge_id,contract in expected_guard_edges.items()):
+        _fail(path+".core.innerDeathGraph","completed entry guards or safety Heal success/failure changed")
+    dispatch=obj["dispatch"]
+    if dispatch.get("awaitedDispatch",{}).get("parallelism")!="none" or "one listener task at a time" not in dispatch.get("awaitedDispatch",{}).get("execution",""):
+        _fail(path+".dispatch","ordered awaited dispatch was parallelized")
+    removal=obj["removal"]
+    if removal.get("escapeDeathHooks")!=[] or removal.get("escapeResultEnum") is not None or len(removal.get("escapeGraph",{}).get("nodes",[]))!=8:
+        _fail(path+".removal","escape death/result/node contract changed")
+    termination=obj["combatTermination"]
+    if termination.get("killDirectWinCheck") is not False or termination.get("resultEnum") is not None:
+        _fail(path+".combatTermination","Kill win check or result enum invented")
+    victory=termination.get("victoryGraph",{})
+    if len(victory.get("nodes",[]))!=13:_fail(path+".combatTermination.victoryGraph","victory graph node closure changed")
+    victory_edges={row.get("edgeId"):(row.get("from"),row.get("to"),row.get("kind")) for row in victory.get("edges",[])}
+    if victory_edges.get("LIFECYCLE.COMBAT.VICTORY.EDGE.02")!=("LIFECYCLE.COMBAT.VICTORY.02.revivePlayers","LIFECYCLE.COMBAT.VICTORY.03.afterCombatEnd","awaitSuccess") or victory_edges.get("LIFECYCLE.COMBAT.VICTORY.EDGE.REVIVE_FAIL")!=("LIFECYCLE.COMBAT.VICTORY.02.revivePlayers","LIFECYCLE.COMBAT.VICTORY.OUTCOME.FAULT_OR_CANCEL","faultOrCancellation"):
+        _fail(path+".combatTermination.victoryGraph","player revive success/failure changed")
+    if termination.get("victoryPredicate",{}).get("secondaryOnlyEnemiesBlock") is not False or termination.get("victoryPredicate",{}).get("allEscaped")!="ordinary victory at the next centralized check":
+        _fail(path+".combatTermination.victoryPredicate","secondary/all-escape result semantics changed")
+    edges=termination.get("actionExecutorEdges",[])
+    if len(edges)!=4 or {row.get("edgeId") for row in edges}!={"LIFECYCLE.ACTION.NORMAL","LIFECYCLE.ACTION.LOGGED_FAULT","LIFECYCLE.ACTION.CANCEL","LIFECYCLE.AWAIT.FAILURE"}:
+        _fail(path+".combatTermination.actionExecutorEdges","normal/fault/cancel/await-failure edge closure changed")
+    boundaries=_list(obj["runtimeBoundaries"],path+".runtimeBoundaries")
+    if len(boundaries)!=7 or any(row.get("classification")!="vanillaExternalRunOrPlayerListener" or row.get("effectStatus")!="pendingE2d2b" for row in boundaries):
+        _fail(path+".runtimeBoundaries","vanilla runtime boundaries were omitted/ignored/resolved")
+    deps=_list(obj["dependencies"],path+".dependencies");dep_ids=set();fact_ids={obj["factId"]}
+    if len(deps)!=7:_fail(path+".dependencies","dependency closure changed")
+    for index,row in enumerate(deps):
+        dep=_object(row,f"{path}.dependencies[{index}]",{"dependencyId","factId","kind","status","resolvedComponentRef"}, {"dependencyId","factId","kind","status"})
+        expected_fact="SOURCE."+dep["dependencyId"]
+        if dep["factId"]!=expected_fact or dep["factId"] in fact_ids:_fail(path+".dependencies","dependency fact ID mismatch/duplicate")
+        dep_ids.add(dep["dependencyId"]);fact_ids.add(dep["factId"])
+    if {row["status"] for row in deps}!={"sourceComplete","pendingE2d2b","pendingE2d2c","pendingE2d2d"}:
+        _fail(path+".dependencies","later lifecycle families silently resolved")
+    if obj["digests"]!=source["lifecycle"]["digests"]:_fail(path+".digests","source lifecycle digest join mismatch")
+    for key in ("core","dispatch","listenerRegistry","removal","combatTermination","runtimeStateContracts","sourceDenominators"):
+        if obj[key]!=source["lifecycle"][key]:_fail(path+"."+key,"source lifecycle semantic join mismatch")
+    expected_dependencies=[{"factId":"SOURCE."+row["dependencyId"],**row} for row in source["lifecycle"]["dependencies"]]
+    if deps!=expected_dependencies:_fail(path+".dependencies","source lifecycle dependency join mismatch")
+    expected_boundaries=[{"boundaryId":row["boundaryId"],"classification":row["classification"],"effectStatus":row["effectStatus"],
+                          "sourceType":row["sourceType"],"symbolSignature":row["method"]["symbolSignature"]}
+                         for row in source["lifecycle"]["runtimeBoundaries"]]
+    if boundaries!=expected_boundaries:_fail(path+".runtimeBoundaries","source lifecycle runtime-boundary join mismatch")
+    if len(obj["runtimeStateContracts"])!=7:_fail(path+".runtimeStateContracts","runtime state contract closure changed")
+    return fact_ids
+
+
 def _validate_source_facts(source_facts: Any, source: dict[str, Any]) -> dict[str, set[str]]:
     sf = _object(source_facts, "payload.sourceFacts", SOURCE_FACT_KEYS)
     encounter_groups = _object(sf["encounters"], "payload.sourceFacts.encounters", {"event", "ordinary"})
@@ -1731,18 +1838,20 @@ def _validate_source_facts(source_facts: Any, source: dict[str, Any]) -> dict[st
         _fail("payload.sourceFacts.eventScripts","event method/call proof bulk leaked into compact projection")
     architect_fact_ids=_validate_compact_architect(event_scripts["architect"],placement_fact_ids)
     event_script_fact_ids |= architect_fact_ids
+    lifecycle_fact_ids=_validate_compact_lifecycle(sf["lifecycle"],source)
 
     all_source_facts = (
         encounter_fact_ids | monster_fact_ids | state_fact_ids | referenced_fact_ids |
         owner_fact_ids | move_fact_ids | graph_fact_ids | scaling_fact_ids | placement_fact_ids |
         identity_fact_ids | initial_fact_ids | initial_owner_fact_ids | runtime_fact_ids |
-        initial_comparison_fact_ids | event_dependency_fact_ids | event_turn_fact_ids | event_script_fact_ids |
+        initial_comparison_fact_ids | event_dependency_fact_ids | event_turn_fact_ids | event_script_fact_ids | lifecycle_fact_ids |
         production_semantic_fact_ids | {state_rules["factId"], hp_pipeline_fact_id, random_fact_id, production_fact_id}
     )
     return {
         "all": all_source_facts, "encounters": encounter_fact_ids, "models": model_ids,
         "moves": move_fact_ids, "operations": operation_ids,
         "randomSelection": {random_fact_id}, "production": {production_fact_id} | production_semantic_fact_ids,
+        "lifecycle": lifecycle_fact_ids,
     }
 
 _LEGACY_BODY_FIELDS = {
@@ -1928,10 +2037,10 @@ def _validate_evidence_and_refs(payload: dict[str, Any], source: dict[str, Any],
 
 def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts: set[str]) -> None:
     audits = _list(payload["resolvedAudits"], "payload.resolvedAudits")
-    if len(audits) != 5:
-        _fail("payload.resolvedAudits", "expected HP, production, event-turn, linked-event, and Architect resolved audits")
+    if len(audits) != 6:
+        _fail("payload.resolvedAudits", "expected HP, production, lifecycle, event-turn, linked-event, and Architect resolved audits")
     audit_ids = _unique(audits, "auditId", "payload.resolvedAudits")
-    if audit_ids != {"AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING", "AUDIT.RESOLVED.PRODUCTION_SEMANTICS", "AUDIT.RESOLVED.EVENT_TURN_MACHINES", "AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS", "AUDIT.RESOLVED.ARCHITECT_SCRIPT"}:
+    if audit_ids != {"AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING", "AUDIT.RESOLVED.PRODUCTION_SEMANTICS", "AUDIT.RESOLVED.CORE_LIFECYCLE", "AUDIT.RESOLVED.EVENT_TURN_MACHINES", "AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS", "AUDIT.RESOLVED.ARCHITECT_SCRIPT"}:
         _fail("payload.resolvedAudits", "resolved audit identity set drift")
     by_id = {row["auditId"]: row for row in audits}
     hp_audit = _object(by_id["AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING"], "payload.resolvedAudits[HP]", {"auditId", "family", "historicalStatus", "lanes", "resolution"})
@@ -1969,6 +2078,15 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     if ("source-complete" not in production_audit["boundary"] or "E2d2 dependencies" not in production_audit["boundary"]
             or "death/removal" not in production_audit["boundary"]):
         _fail("payload.resolvedAudits[production]", "production audit overclaims lifecycle closure")
+
+    lifecycle_audit=_object(by_id["AUDIT.RESOLVED.CORE_LIFECYCLE"],"payload.resolvedAudits[lifecycle]",{"auditId","boundary","classificationFactRefs","dependencyFactRefs","family","historicalStatus","sourceDenominators"})
+    lifecycle=payload["sourceFacts"]["lifecycle"]
+    if (lifecycle_audit["family"],lifecycle_audit["historicalStatus"])!=("coreLifecycle","sourceComplete"):
+        _fail("payload.resolvedAudits[lifecycle]","core lifecycle audit identity/status drift")
+    if lifecycle_audit["classificationFactRefs"]!=[lifecycle["factId"]] or set(lifecycle_audit["dependencyFactRefs"])!={row["factId"] for row in lifecycle["dependencies"]} or lifecycle_audit["sourceDenominators"]!=lifecycle["sourceDenominators"]:
+        _fail("payload.resolvedAudits[lifecycle]","core lifecycle audit fact/denominator refs drift")
+    if "source-complete E2d2a" not in lifecycle_audit["boundary"] or "remain dependencies" not in lifecycle_audit["boundary"]:
+        _fail("payload.resolvedAudits[lifecycle]","core lifecycle audit overclaims aggregate readiness")
 
     event_audit = _object(by_id["AUDIT.RESOLVED.EVENT_TURN_MACHINES"], "payload.resolvedAudits[eventTurn]",
                           {"auditId", "boundary", "classificationFactRefs", "dependencyFactRefs", "family", "historicalStatus", "sourceDenominators"})
@@ -2080,7 +2198,7 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     if missing_title_count != 18:
         _fail("payload.knownUnknowns", "all 18 missing source move titles must be individually classified")
     required_reasons = {
-        "LIFECYCLE_COVERAGE_ABSENT", "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE",
+        "LIFECYCLE_COVERAGE_REMAINING", "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE",
         "EVENT_BEHAVIOR_AGGREGATE_INCOMPLETE",
         "EVENT_LIFECYCLE_TIMEOUT_RESULT_UNEXTRACTED", "LEGACY_PER_FACT_PROVENANCE_INCOMPLETE",
         "BROADER_WORLD_MODEL_FAMILIES_ABSENT",
@@ -2106,7 +2224,7 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
         _fail("payload.readiness.runtimeScopes.encounterProjection", "independent projection section should be complete")
     if projected["requiredCoverageFamilies"] != [row["family"] for row in coverage_rows()]:
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredCoverageFamilies", "coverage gate mismatch")
-    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage", "eventTurnClassificationDependencies", "eventScriptOwnerEncounterLink", "eventScriptOptionDelegate", "eventScriptTransitionArguments", "eventScriptOutcomeDependency", "architectOwnerPlacementApplicability", "architectLocalizationStructure", "architectDialogueLineGraph", "architectOptionDelegates", "architectVisualOnlyLayout", "architectPresentationGameplayBoundary", "architectTerminalOrder", "architectDependencyRefs", "randomBranchRepeatWeight", "randomSelectionRuntime", "productionDiscovery", "coreAddDependencies", "productionProducerPool", "productionAvailabilityCapRepeat", "productionSlotFailure", "productionRuntimeState", "productionPostAddOrder", "productionLifecycleDependencies"}
+    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage", "eventTurnClassificationDependencies", "eventScriptOwnerEncounterLink", "eventScriptOptionDelegate", "eventScriptTransitionArguments", "eventScriptOutcomeDependency", "architectOwnerPlacementApplicability", "architectLocalizationStructure", "architectDialogueLineGraph", "architectOptionDelegates", "architectVisualOnlyLayout", "architectPresentationGameplayBoundary", "architectTerminalOrder", "architectDependencyRefs", "randomBranchRepeatWeight", "randomSelectionRuntime", "productionDiscovery", "coreAddDependencies", "productionProducerPool", "productionAvailabilityCapRepeat", "productionSlotFailure", "productionRuntimeState", "productionPostAddOrder", "productionLifecycleDependencies", "coreLifecycleApiDispatchRegistryRemovalTermination"}
     if set(projected["requiredJoins"]) != expected_joins or len(projected["requiredJoins"]) != len(expected_joins):
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredJoins", "join gate mismatch")
 

@@ -3,7 +3,7 @@
 `data/game-v0.111.0-source.json` is a deterministic, presentation-independent
 world model for exact public-beta v0.111.0 inputs. It contains identities,
 localization joins, formulas, roster selections, membership sets, and state
-facts—not UI sentences or layout. Schema 12 is the E2d1b boundary and remains
+facts—not UI sentences or layout. Schema 13 is the E2d2a boundary and remains
 runtime-incomplete until independently gated later E2 and consumer waves land.
 
 ## Three-wave boundary
@@ -19,7 +19,8 @@ runtime-incomplete until independently gated later E2 and consumer waves land.
 | E2c2a | Five linked event owners, 12 option/delegate constructions, seven exact combat transitions/outcomes, Foul Potion dispatch, and common framework closure | Complete for the non-Architect linked slice |
 | E2c2b | Architect placement, dialogue selection/line graph, structural localization, visual-only layout, presentation closure, and terminal sink/order | Script component complete; lifecycle producers/order and formulas remain dependencies |
 | E2d1a | Generic random repeat/float-weight repair; closed Add/Osty census; current producer roots/helper sites; shared core Add lifecycle contract | Complete for exact discovery/core denominators |
-| E2d1b | Seven producer triggers; pools/candidates; availability, slots, cardinality, cap/repeat state; ordered post-Add effects and runtime/dependency contracts | Complete for exact production denominators; E2d2 lifecycle remains pending |
+| E2d1b | Seven producer triggers; pools/candidates; availability, slots, cardinality, cap/repeat state; ordered post-Add effects and runtime/dependency contracts | Complete for exact production denominators |
+| E2d2a | Shared Kill/force/death dispatch, listener registries, Escape/removal, pending loss and centralized victory termination | Core component complete; concrete listeners, event routing, and run termination remain E2d2b/c/d |
 
 The current app does not import this artifact or the compact projection and still displays the
 wiki-derived book. Source extraction changes no routes, renderer output, event display, or
@@ -270,7 +271,7 @@ node/edge kinds, helper names, or missing provenance fail validation.
 | `addStatusCard` / `addGeneratedCard` | card pile sinks |
 | `summon` | `CreatureCmd.Add` |
 | `heal` / `escape` / `removeCard` | remaining reviewed command sinks |
-| `kill` | exact `CreatureCmd.Kill` target and play-death-effects argument |
+| `kill` | exact `CreatureCmd.Kill` target and source-named `force` argument |
 | `removePower` | generic canonical Power removal or an exact runtime-selected Power-instance contract |
 | `stateWrite` | typed monster property write with exact setter identity |
 | `helperEffect` | Reattach, Fabricator spawn, ChooseCurse, Tough Egg hatch, Waterfall pressure |
@@ -335,7 +336,7 @@ the sole `DamageCmd.Attack` argument, hit counts from the argument consumed by
 enum, and Power amount/target from the selected `Apply` overload. Summon,
 escape, and card removal do not receive dummy numeric values. `CreatureCmd.Kill`
 retains its exact creature and boolean arguments; the two explosion moves are
-source-monster self-kills with play-death-effects false. Generic `PowerCmd.Remove`
+source-monster ordinary self-kills with `force:false`; all ordinary death hooks remain. Generic `PowerCmd.Remove`
 retains canonical Power type arguments (including Soar, Adaptable, and Painful
 Stabs). The sole non-generic removal is explicitly a runtime-selected iterator
 Power instance rather than an invented model. Attack target
@@ -690,10 +691,88 @@ AfterCreatureAdded listener effects, Tough Egg Hatch, and the four classified
 death-Power Add sites for E2d2. Thus production semantics are complete while
 general lifecycle is not.
 
+## E2d2a core lifecycle contract
+
+Schema 13 replaces the incorrect normalized Kill field with the exact metadata
+name `force`. Both public overloads and the inner physical state machine preserve
+that name; schema validation rejects `playDeathEffects`. `force:false` means
+ordinary fully hooked death, including Gas Bomb and Waterfall Giant. The two
+completed entry guards apply regardless of `force`; after they pass, `force:true`
+bypasses only out-of-combat multiplayer player safety healing and the ordered
+`ShouldDie` prevention gate. It does not bypass HP zeroing, `BeforeDeath`, `Died`,
+animation, `AfterDeath`, removal, Power cleanup, or player handling.
+
+The component contains closed singular/list/inner graphs. List processing is
+snapshot-ordered and sequential, handles empty input without mutation, and has no
+direct win check. When all run players are dead, live combat calls `LoseCombat`
+and then falls through to the shared `TestMode.IsOff` gate; non-live combat skips
+only `LoseCombat`. Test-off performs music stop, synchronous `OnEnded(false)`, and
+game-over display even after live combat set `PendingLoss`; test-on skips that
+sequence. A remaining player instead takes the conditional EndTurn path.
+
+Immediately after `CurrentCombatId` capture, inner Kill returns completed without
+HP or death hooks for a detached non-player and for any body attached to a
+non-live combat. A detached player or live-attached body passes those guards into
+the exact out-of-combat player safety/death flow. Eligible positive HP is zeroed
+before the HP-change await; eligible zero HP still reaches `BeforeDeath`. The
+graph records allowed versus prevented death, recursion cap 10, recovery, and
+fault/cancellation edges. Manager removal precedes state removal; a dying Monster
+performing its move defers only state-list removal. A removed primary whose living
+teammates are all secondary triggers ordinary `Kill(teammates, force:false)`.
+No generic dead-body entry guard is invented.
+
+Generic dispatch is separately normalized from concrete E2d2b effects.
+`ShouldDie` checks early then late snapshots and returns the first preventer.
+`BeforeDeath`, `AfterDeath`, and `AfterPreventingDeath` await each listener in
+registry order and invoke execution-finished only after success. Removal is an
+all-listener predicate; stop-ending is any-listener. Combat registry order is
+allies/enemies, each body's Powers then Monster, active player inventory/combat
+cards and card attachments, combat globals, then mod subscribers. Run order is
+deck cards/enchantments, inventory, run globals, mod subscribers, then child
+combat. Membership filters, source collection order, and duplicates are retained.
+Vanilla card/relic/potion and mod subscribers are explicit dynamic boundaries,
+never an assumed empty or broad ignored set.
+
+Escape has dead/detached/non-live no-op guards, synchronous all-Power removal,
+independent `removeCreatureNode` presentation, manager Monster cleanup and tracker
+event, exact escaped-history append, then one-side state removal/unattachment and
+state event. It invokes no death hooks and has no result enum. Room exit/reset is
+a separate path.
+
+`CheckWinCondition` first processes nullable `PendingLoss`. Ordinary victory
+requires an in-progress turn, no alive primary enemy, and no stop-ending listener.
+Secondary-only living enemies do not block victory; all escaped enemies are not a
+special result. The ordered termination graph covers mark/clear/revive,
+`AfterCombatEnd`, history/room/player cleanup, `AfterCombatVictory`, turns/room/
+save/progress/achievement/scaling updates, `CombatWon`, queue synchronization,
+and final `CombatEnded`; E2d2c owns later rewards/parent routing. Centralized
+checks are source-linked from action and turn boundaries, never from Kill. Normal
+action completion and logged fault reach the check, cancellation is not success,
+and awaited failure cannot imply later stages.
+
+The source denominators are four command declarations and physical bodies, 21
+Kill-family plus three Escape call sites, six dispatchers, three logical/three
+physical registries, four removal methods, 11 termination declaration/body/support
+methods, 14 centralized check sites, seven runtime boundaries, seven dependencies, 707 classified invocations,
+and 59 semantic nodes. The compact projection keeps signatures, graphs, contracts,
+dependency facts, denominators, and digests while excluding call/proof bulk.
+`AUDIT.RESOLVED.CORE_LIFECYCLE` is complete, but aggregate lifecycle, event,
+formula, root/global, and companion readiness remain false pending E2d2b/c/d.
+
+### Reuse and authority audit
+
+E2d2a uses the existing metadata parser, async mapping, bounded symbolic CIL
+evaluator, operation AST and provenance hashes, source coverage accounting,
+canonical serializer/atomic writer, fact/evidence lanes, and projection validator.
+The validated raw CIL code reader was centralized on `AssemblyMetadata`; the HP
+scanner delegates to it. There is one checked source authority and one compact
+projection path—no second semantic extractor, model-name exception, legacy Kill
+alias, runtime assembly execution, or proprietary instruction dump.
+
 ## E2 projection boundary
 
 The checked source artifact above remains the full static evidence artifact.
-C0 introduced, E1 extended, and E2a/E2b/E2c1/E2c2a/E2c2b/E2d1a/E2d1b extend `data/encounter-facts-v0.111.0.json`, built by
+C0 introduced, E1 extended, and E2a/E2b/E2c1/E2c2a/E2c2b/E2d1a/E2d1b/E2d2a extend `data/encounter-facts-v0.111.0.json`, built by
 `tools/generate-encounter-facts.py` from that artifact and
 `data/encounters.json` only. It is a projection, not a replacement extractor
 and not a runtime consumer input.
@@ -724,7 +803,7 @@ pointed-value hashes instead of repeating CIL proof or the 6,786-invocation
 census. This makes the projection substantially smaller while retaining an
 auditable path to the full checked source artifact.
 
-E2d1b declares only the bounded encounter projection complete. The encounter
+E2d2a declares only the bounded encounter projection complete. The encounter
 companion remains hard-false/incomplete: event turn machines are source-complete,
 but referenced event lifecycle/timeout/result and formula semantics, broader lifecycle
 closure, and companion-wide formula/runtime contracts remain blockers. Global readiness also remains false

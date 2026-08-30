@@ -448,6 +448,11 @@ class CilDataFlow:
         if opcode == "stsfld":
             if not isinstance(operand, str): raise SourceExtractionError(f"unresolved static field at instruction {index}")
             frame.fields[operand] = self._pop(frame, index, "store static field").with_origins(origin); return frame
+        if opcode == "box":
+            value = self._pop(frame, index, "box value")
+            if not isinstance(operand, str):
+                raise SourceExtractionError(f"unresolved box type at instruction {index}")
+            frame.stack.append(SymbolicValue("box", CilType("object"), operand, (value,), origin | value.origins)); return frame
         if opcode == "dup":
             value = self._pop(frame, index, "duplicate")
             frame.stack.extend((value, value.with_origins(origin))); return frame
@@ -528,6 +533,27 @@ class CilDataFlow:
         if opcode in {"br", "br.s", "leave", "leave.s", "nop", "endfinally", "constrained."}:
             return frame
         raise SourceExtractionError(f"unknown stack-affecting opcode at instruction {index}: {opcode}")
+
+    def trailing_boolean_argument(self, invocation_index: int) -> SymbolicValue:
+        """Resolve an immediate final CLI Boolean argument without evaluating unrelated CFG tails.
+
+        This narrow source-slice API is used only when whole-method bounded joins
+        exceed their analysis budget. It accepts no aliases, locals, fields, or
+        defaults: the instruction immediately before the call must be ldc.i4.0/1.
+        """
+        if type(invocation_index) is not int or not (0 < invocation_index < len(self.instructions)):
+            raise SourceExtractionError("invalid trailing-Boolean invocation index")
+        call = self.instructions[invocation_index]
+        if call["opcode"] not in {"call", "callvirt", "newobj"} or not isinstance(call.get("operand"), str):
+            raise SourceExtractionError(f"trailing-Boolean target is not an invocation at instruction {invocation_index}")
+        signature = decode_method_signature(call["operand"])
+        if not signature.parameters or signature.parameters[-1].kind != "bool":
+            raise SourceExtractionError(f"invocation has no final CLI Boolean at instruction {invocation_index}")
+        producer = self.instructions[invocation_index - 1]
+        value = integer_constant(producer)
+        if value not in {0, 1}:
+            raise SourceExtractionError(f"final CLI Boolean is not an immediate constant at instruction {invocation_index}")
+        return SymbolicValue("constant", CilType("bool"), value, origins=frozenset({invocation_index - 1}))
 
     def run(self) -> dict[int, Invocation]:
         entry=_Frame([],{},{}); pending=deque([(0,entry)]); steps=0

@@ -1254,7 +1254,7 @@ def _operations(assembly: AssemblyMetadata, assembly_sha256: str,
                     elif kind=="kill":
                         if len(args)!=2: raise SourceExtractionError(f"Kill argument count {len(args)}")
                         semantic["target"]=_source_target(args[0],field_name="Kill target",instruction_index=index,record=record)
-                        semantic["playDeathEffects"]=_boolean_expression(args[1],field_name="Kill play-death-effects",instruction_index=index)
+                        semantic["force"]=_boolean_expression(args[1],field_name="Kill force",instruction_index=index)
                     elif kind=="stateWrite":
                         semantic["target"],semantic["value"]=_state_write_value(invocation)
                         semantic["memberSymbolSignature"]=invocation.symbol

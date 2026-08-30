@@ -43,15 +43,15 @@
     },
     "generator": {
       "name": "sts2-encounter-facts",
-      "version": "9.0.0"
+      "version": "10.0.0"
     },
-    "payloadSha256": "315df957d395ab2bc13fc9d0f498ed566f1bd394e6e7eaae0642ba6b8aabc845",
+    "payloadSha256": "3ed7c3e0d9a51fc87ebb7bd59f2ffbc3e918c8ad04443843bc94b166bfde37ac",
     "projectionInputs": [
       {
         "id": "INPUT.SOURCE",
         "path": "data/game-v0.111.0-source.json",
-        "sha256": "4c3b04cca82041c3156de4d3b0552eed3f9346dc1195f97e8d52b8881b74651c",
-        "size": 13399941
+        "sha256": "8fe227f7fdea18c32abd93c7c910ba861161b9ea4418b3b387030bc0e7b41ace",
+        "size": 14173997
       },
       {
         "id": "INPUT.LEGACY",
@@ -205,6 +205,13 @@
         "denominator": 11,
         "family": "coreAddSemanticFieldClosure",
         "numerator": 11,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 1,
+        "family": "coreLifecycleComponent",
+        "numerator": 1,
         "status": "complete",
         "unresolved": 0
       },
@@ -580,6 +587,97 @@
         "unresolved": 0
       },
       {
+        "denominator": 14,
+        "family": "lifecycleCentralizedCheckSites",
+        "numerator": 14,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 4,
+        "family": "lifecycleCommandDeclarations",
+        "numerator": 4,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 4,
+        "family": "lifecycleCommandPhysicalBodies",
+        "numerator": 4,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 7,
+        "family": "lifecycleDependencies",
+        "numerator": 7,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 6,
+        "family": "lifecycleDispatchMethods",
+        "numerator": 6,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 3,
+        "family": "lifecycleEscapeCallSites",
+        "numerator": 3,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 707,
+        "family": "lifecycleInvocationClassification",
+        "numerator": 707,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 21,
+        "family": "lifecycleKillCallSites",
+        "numerator": 21,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 6,
+        "family": "lifecycleListenerRegistryMethods",
+        "numerator": 6,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 4,
+        "family": "lifecycleRemovalMethods",
+        "numerator": 4,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 7,
+        "family": "lifecycleRuntimeBoundaries",
+        "numerator": 7,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 59,
+        "family": "lifecycleSemanticNodes",
+        "numerator": 59,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 11,
+        "family": "lifecycleTerminationMethods",
+        "numerator": 11,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
         "denominator": 108,
         "family": "monsterIdentitiesCurrentReachable",
         "numerator": 108,
@@ -951,8 +1049,8 @@
         "unresolved": 0
       }
     ],
-    "sourceExtractorVersion": "12.0.0",
-    "sourceSchemaVersion": 12
+    "sourceExtractorVersion": "13.0.0",
+    "sourceSchemaVersion": 13
   },
   "payload": {
     "conflicts": [
@@ -6790,7 +6888,7 @@
         "pointers": [
           {
             "jsonPointer": "/behavior/registrations/99",
-            "valueSha256": "9bbfa391c18143155c1df7a956bf086e0d486fdcc396ff5dd3b23c33570faf17"
+            "valueSha256": "efe568cf68fafba57d2189ee4dac02158808bbc461a65f4e5215dff90731d48d"
           },
           {
             "jsonPointer": "/behavior/applicability/37",
@@ -7899,6 +7997,83 @@
           {
             "jsonPointer": "/cards/8",
             "valueSha256": "bfdf1e3e594d0712f093378a662b1196fb9b9ee09fdde07993dadff4ab1c67cd"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.E2B.CONCRETE_LISTENERS",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/lifecycle/dependencies/0",
+            "valueSha256": "9f18a836caba8330024fd976326c74ad5b3587169fcd16c1787562b704fb3aac"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.E2C.EVENT_TERMINATION",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/lifecycle/dependencies/1",
+            "valueSha256": "ba30b111cef7781cd0fc53c6b8274d26aa90fb7d3e9df32127c3091ae99dd078"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.E2D.RUN_TERMINATION",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/lifecycle/dependencies/2",
+            "valueSha256": "9a637fb1b48525681e8133c2ecdbf143446cc77b26f79caeecb1616a6a655258"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.EVENT_SCRIPTS",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/lifecycle/dependencies/6",
+            "valueSha256": "644863364f690978b06ac37b0926461a3d1ce4ca2e1ba43a37b029871f7f4e33"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.HP",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/lifecycle/dependencies/3",
+            "valueSha256": "9dccc57543356f0165382b488fba80d47e68307d4997f8aa10a92f89abc27a88"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.INITIAL",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/lifecycle/dependencies/4",
+            "valueSha256": "53098c30473fbf1ed271181f04b062798447a79a6328ef1e67e47060ab6b350c"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.PRODUCTION",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/lifecycle/dependencies/5",
+            "valueSha256": "d426d26c62d0b41c00b16c52e877ecebb48d0b847bab5e026aaab935b33aed5b"
           }
         ]
       },
@@ -15179,6 +15354,17 @@
       },
       {
         "artifactInput": "INPUT.SOURCE",
+        "evidenceId": "EVIDENCE.SOURCE.LIFECYCLE.CORE.E2D2A",
+        "lane": "source",
+        "pointers": [
+          {
+            "jsonPointer": "/lifecycle",
+            "valueSha256": "9277b32b2615011f2bae51cf06009756069fa3a839cf47e4bf6a5a7a49f1addf"
+          }
+        ]
+      },
+      {
+        "artifactInput": "INPUT.SOURCE",
         "evidenceId": "EVIDENCE.SOURCE.MONSTER.AEONGLASS",
         "lane": "source",
         "pointers": [
@@ -17461,7 +17647,7 @@
         "pointers": [
           {
             "jsonPointer": "/behavior/registrations/99",
-            "valueSha256": "9bbfa391c18143155c1df7a956bf086e0d486fdcc396ff5dd3b23c33570faf17"
+            "valueSha256": "efe568cf68fafba57d2189ee4dac02158808bbc461a65f4e5215dff90731d48d"
           }
         ]
       },
@@ -19716,7 +19902,7 @@
         "pointers": [
           {
             "jsonPointer": "/behavior/registrations/310",
-            "valueSha256": "9eb80a6a6475e2075d4b7b705f7cd851eb0c1f5bf4e0d7605b17bc69154b4fd8"
+            "valueSha256": "992099ddf77883e5da27d0379049af4929e65e0fd202f59b8fb64d6feb442b88"
           }
         ]
       },
@@ -28871,6 +29057,55 @@
       },
       {
         "evidenceRefs": [
+          "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.E2B.CONCRETE_LISTENERS"
+        ],
+        "factId": "SOURCE.DEPENDENCY.LIFECYCLE.E2B.CONCRETE_LISTENERS",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.E2C.EVENT_TERMINATION"
+        ],
+        "factId": "SOURCE.DEPENDENCY.LIFECYCLE.E2C.EVENT_TERMINATION",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.E2D.RUN_TERMINATION"
+        ],
+        "factId": "SOURCE.DEPENDENCY.LIFECYCLE.E2D.RUN_TERMINATION",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.EVENT_SCRIPTS"
+        ],
+        "factId": "SOURCE.DEPENDENCY.LIFECYCLE.EVENT_SCRIPTS",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.HP"
+        ],
+        "factId": "SOURCE.DEPENDENCY.LIFECYCLE.HP",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.INITIAL"
+        ],
+        "factId": "SOURCE.DEPENDENCY.LIFECYCLE.INITIAL",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.DEPENDENCY.LIFECYCLE.PRODUCTION"
+        ],
+        "factId": "SOURCE.DEPENDENCY.LIFECYCLE.PRODUCTION",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
           "EVIDENCE.SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS"
         ],
         "factId": "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS",
@@ -33074,6 +33309,13 @@
           "EVIDENCE.SOURCE.INITIAL_OWNER.MONSTER.ZAPBOT"
         ],
         "factId": "SOURCE.INITIAL_OWNER.MONSTER.ZAPBOT",
+        "lane": "source"
+      },
+      {
+        "evidenceRefs": [
+          "EVIDENCE.SOURCE.LIFECYCLE.CORE.E2D2A"
+        ],
+        "factId": "SOURCE.LIFECYCLE.CORE.E2D2A",
         "lane": "source"
       },
       {
@@ -39663,10 +39905,18 @@
           "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS",
           "SOURCE.DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH",
           "SOURCE.DEPENDENCY.PRODUCTION.DEATH_POWER_ADD_SITES",
-          "SOURCE.PRODUCTION.DISCOVERY_CORE_ADD"
+          "SOURCE.PRODUCTION.DISCOVERY_CORE_ADD",
+          "SOURCE.LIFECYCLE.CORE.E2D2A",
+          "SOURCE.DEPENDENCY.LIFECYCLE.E2B.CONCRETE_LISTENERS",
+          "SOURCE.DEPENDENCY.LIFECYCLE.E2C.EVENT_TERMINATION",
+          "SOURCE.DEPENDENCY.LIFECYCLE.E2D.RUN_TERMINATION",
+          "SOURCE.DEPENDENCY.LIFECYCLE.HP",
+          "SOURCE.DEPENDENCY.LIFECYCLE.INITIAL",
+          "SOURCE.DEPENDENCY.LIFECYCLE.PRODUCTION",
+          "SOURCE.DEPENDENCY.LIFECYCLE.EVENT_SCRIPTS"
         ],
-        "detail": "Producer pools, availability, slots, cardinality, cap/repeat state, and ordered post-Add effects are source-complete; death/prevention, revive/hatch phase, escape/removal, listener effects, and encounter-result E2d2 lifecycle semantics remain pending.",
-        "reasonCode": "LIFECYCLE_COVERAGE_ABSENT",
+        "detail": "Core kill/escape/removal, generic dispatch/listener registry, and centralized pending-loss/victory mechanics are source-complete E2d2a; concrete listener effects/phases/relationships/death-Add, event reward/parent routing, and run termination remain E2d2b/c/d.",
+        "reasonCode": "LIFECYCLE_COVERAGE_REMAINING",
         "scope": "encounterCompanion",
         "status": "unresolved",
         "unknownId": "UNKNOWN.LIFECYCLE_COVERAGE"
@@ -60985,6 +61235,7 @@
             "coreAddMethodClosure",
             "coreAddOverloadClosure",
             "coreAddSemanticFieldClosure",
+            "coreLifecycleComponent",
             "encounterIdentities",
             "encounterInitializers",
             "encounterPlacement",
@@ -61038,6 +61289,19 @@
             "initialStateSemanticFields",
             "initialStateTransitiveInvocationClassification",
             "invocationClassification",
+            "lifecycleCentralizedCheckSites",
+            "lifecycleCommandDeclarations",
+            "lifecycleCommandPhysicalBodies",
+            "lifecycleDependencies",
+            "lifecycleDispatchMethods",
+            "lifecycleEscapeCallSites",
+            "lifecycleInvocationClassification",
+            "lifecycleKillCallSites",
+            "lifecycleListenerRegistryMethods",
+            "lifecycleRemovalMethods",
+            "lifecycleRuntimeBoundaries",
+            "lifecycleSemanticNodes",
+            "lifecycleTerminationMethods",
             "monsterIdentitiesCurrentReachable",
             "monsterNamesEnglishCurrentReachable",
             "moveActions",
@@ -61131,7 +61395,8 @@
             "productionSlotFailure",
             "productionRuntimeState",
             "productionPostAddOrder",
-            "productionLifecycleDependencies"
+            "productionLifecycleDependencies",
+            "coreLifecycleApiDispatchRegistryRemovalTermination"
           ],
           "status": "complete"
         }
@@ -61322,6 +61587,42 @@
           "runtimeContracts": 8,
           "semanticEffects": 6,
           "templates": 17
+        }
+      },
+      {
+        "auditId": "AUDIT.RESOLVED.CORE_LIFECYCLE",
+        "boundary": "Core command/dispatch/registry/removal/pending-loss/victory mechanics are source-complete E2d2a; concrete listeners, event terminal routing, and run termination remain dependencies.",
+        "classificationFactRefs": [
+          "SOURCE.LIFECYCLE.CORE.E2D2A"
+        ],
+        "dependencyFactRefs": [
+          "SOURCE.DEPENDENCY.LIFECYCLE.E2B.CONCRETE_LISTENERS",
+          "SOURCE.DEPENDENCY.LIFECYCLE.E2C.EVENT_TERMINATION",
+          "SOURCE.DEPENDENCY.LIFECYCLE.E2D.RUN_TERMINATION",
+          "SOURCE.DEPENDENCY.LIFECYCLE.HP",
+          "SOURCE.DEPENDENCY.LIFECYCLE.INITIAL",
+          "SOURCE.DEPENDENCY.LIFECYCLE.PRODUCTION",
+          "SOURCE.DEPENDENCY.LIFECYCLE.EVENT_SCRIPTS"
+        ],
+        "family": "coreLifecycle",
+        "historicalStatus": "sourceComplete",
+        "sourceDenominators": {
+          "centralizedCheckCallSites": 14,
+          "commandDeclarations": 4,
+          "commandPhysicalBodies": 4,
+          "dependencies": 7,
+          "dispatchMethods": 6,
+          "escapeCallSites": 3,
+          "invocations": 707,
+          "killCallSites": 21,
+          "listenerRegistryLogicalMethods": 3,
+          "listenerRegistryPhysicalBodies": 3,
+          "removalMethods": 4,
+          "runtimeBoundaries": 7,
+          "semanticNodes": 59,
+          "terminationDeclarations": 4,
+          "terminationPhysicalBodies": 4,
+          "terminationSupportMethods": 3
         }
       },
       {
@@ -92037,6 +92338,1672 @@
           "runtimeContracts": 47
         }
       },
+      "lifecycle": {
+        "api": {
+          "commandDeclarations": [
+            {
+              "parameters": [
+                "creature",
+                "force"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<Kill>d__13::MoveNext sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Kill sig:000212812112a7e402"
+            },
+            {
+              "parameters": [
+                "creatures",
+                "force"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<Kill>d__14::MoveNext sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Kill sig:00021281211512832d0112a7e402"
+            },
+            {
+              "parameters": [
+                "creature",
+                "force",
+                "recursion"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<KillWithoutCheckingWinCondition>d__15::MoveNext sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::KillWithoutCheckingWinCondition sig:000312812112a7e40208"
+            },
+            {
+              "parameters": [
+                "creature",
+                "removeCreatureNode"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Escape sig:000212812112a7e402",
+              "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Escape sig:000212812112a7e402"
+            }
+          ]
+        },
+        "combatTermination": {
+          "actionExecutorEdges": [
+            {
+              "edgeId": "LIFECYCLE.ACTION.NORMAL",
+              "from": "action task resolved normally",
+              "result": "check runs",
+              "to": "centralized CheckWinCondition"
+            },
+            {
+              "edgeId": "LIFECYCLE.ACTION.LOGGED_FAULT",
+              "from": "action task fault observed and logged by executor",
+              "result": "check still runs; fault is not reclassified as gameplay success",
+              "to": "centralized CheckWinCondition"
+            },
+            {
+              "edgeId": "LIFECYCLE.ACTION.CANCEL",
+              "from": "action cancellation/queue stop",
+              "result": "must not infer check or later completion from cancellation",
+              "to": "no success edge"
+            },
+            {
+              "edgeId": "LIFECYCLE.AWAIT.FAILURE",
+              "from": "awaited termination stage fault/cancel",
+              "result": "no later victory stage inferred",
+              "to": "task fault/cancel"
+            }
+          ],
+          "checkGraph": {
+            "edges": [
+              {
+                "condition": "PendingLoss != null",
+                "edgeId": "LIFECYCLE.COMBAT.CHECK.EDGE.PENDING",
+                "from": "LIFECYCLE.COMBAT.CHECK.00.resolveTurn",
+                "kind": "conditionTrue",
+                "to": "LIFECYCLE.COMBAT.CHECK.01.pendingLoss"
+              },
+              {
+                "condition": "PendingLoss == null",
+                "edgeId": "LIFECYCLE.COMBAT.CHECK.EDGE.NO_PENDING",
+                "from": "LIFECYCLE.COMBAT.CHECK.00.resolveTurn",
+                "kind": "conditionFalse",
+                "to": "LIFECYCLE.COMBAT.CHECK.02.isEnding"
+              },
+              {
+                "condition": "ProcessPendingLoss returned true",
+                "edgeId": "LIFECYCLE.COMBAT.CHECK.EDGE.LOSS",
+                "from": "LIFECYCLE.COMBAT.CHECK.01.pendingLoss",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.COMBAT.CHECK.OUTCOME.LOSS_PROCESSED"
+              },
+              {
+                "condition": "IsCombatEnding true",
+                "edgeId": "LIFECYCLE.COMBAT.CHECK.EDGE.VICTORY",
+                "from": "LIFECYCLE.COMBAT.CHECK.02.isEnding",
+                "kind": "predicateResult",
+                "to": "LIFECYCLE.COMBAT.CHECK.03.endVictory"
+              },
+              {
+                "condition": "IsCombatEnding false",
+                "edgeId": "LIFECYCLE.COMBAT.CHECK.EDGE.CONTINUE",
+                "from": "LIFECYCLE.COMBAT.CHECK.02.isEnding",
+                "kind": "predicateResult",
+                "to": "LIFECYCLE.COMBAT.CHECK.04.notEnding"
+              },
+              {
+                "condition": "EndCombatInternal succeeded",
+                "edgeId": "LIFECYCLE.COMBAT.CHECK.EDGE.ENDED",
+                "from": "LIFECYCLE.COMBAT.CHECK.03.endVictory",
+                "kind": "awaitSuccess",
+                "to": "LIFECYCLE.COMBAT.CHECK.OUTCOME.VICTORY_ENDED"
+              },
+              {
+                "condition": "return false",
+                "edgeId": "LIFECYCLE.COMBAT.CHECK.EDGE.NOT_ENDED",
+                "from": "LIFECYCLE.COMBAT.CHECK.04.notEnding",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.COMBAT.CHECK.OUTCOME.CONTINUE"
+              },
+              {
+                "condition": "EndCombatInternal faulted or cancelled",
+                "edgeId": "LIFECYCLE.COMBAT.CHECK.EDGE.FAIL",
+                "from": "LIFECYCLE.COMBAT.CHECK.03.endVictory",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.COMBAT.CHECK.OUTCOME.FAULT_OR_CANCEL"
+              }
+            ],
+            "graphId": "LIFECYCLE.COMBAT.CHECK",
+            "nodes": [
+              {
+                "condition": "CheckWinCondition entry",
+                "effect": "resolve current turn for no-argument overload; provided turn remains exact",
+                "nodeId": "LIFECYCLE.COMBAT.CHECK.00.resolveTurn",
+                "order": 0
+              },
+              {
+                "condition": "PendingLoss != null",
+                "effect": "ProcessPendingLoss and return true",
+                "nodeId": "LIFECYCLE.COMBAT.CHECK.01.pendingLoss",
+                "order": 1
+              },
+              {
+                "condition": "no pending loss",
+                "effect": "evaluate in-progress, primary-enemy, and stop-ending predicates",
+                "nodeId": "LIFECYCLE.COMBAT.CHECK.02.isEnding",
+                "order": 2
+              },
+              {
+                "condition": "IsCombatEnding == true",
+                "effect": "await EndCombatInternal(turnState), then return true",
+                "nodeId": "LIFECYCLE.COMBAT.CHECK.03.endVictory",
+                "order": 3
+              },
+              {
+                "condition": "IsCombatEnding == false",
+                "effect": "return false without termination effects",
+                "nodeId": "LIFECYCLE.COMBAT.CHECK.04.notEnding",
+                "order": 4
+              }
+            ],
+            "outcomes": [
+              {
+                "outcomeId": "LIFECYCLE.COMBAT.CHECK.OUTCOME.LOSS_PROCESSED"
+              },
+              {
+                "outcomeId": "LIFECYCLE.COMBAT.CHECK.OUTCOME.VICTORY_ENDED"
+              },
+              {
+                "outcomeId": "LIFECYCLE.COMBAT.CHECK.OUTCOME.CONTINUE"
+              },
+              {
+                "outcomeId": "LIFECYCLE.COMBAT.CHECK.OUTCOME.FAULT_OR_CANCEL"
+              }
+            ]
+          },
+          "killDirectWinCheck": false,
+          "pendingLoss": {
+            "order": [
+              "clear PendingLoss",
+              "set IsInProgress=false",
+              "invoke CombatEnded(pending.Room)",
+              "return true"
+            ],
+            "representation": "nullable PendingLoss state; no result enum exists"
+          },
+          "resultEnum": null,
+          "victoryGraph": {
+            "edges": [
+              {
+                "condition": "turn marked ended",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.00",
+                "from": "LIFECYCLE.COMBAT.VICTORY.00.markEnded",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.COMBAT.VICTORY.01.clearTurns"
+              },
+              {
+                "condition": "synchronous turn/action clearing completed",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.01",
+                "from": "LIFECYCLE.COMBAT.VICTORY.01.clearTurns",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.COMBAT.VICTORY.02.revivePlayers"
+              },
+              {
+                "condition": "all sequential ReviveBeforeCombatEnd tasks succeeded",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.02",
+                "from": "LIFECYCLE.COMBAT.VICTORY.02.revivePlayers",
+                "kind": "awaitSuccess",
+                "to": "LIFECYCLE.COMBAT.VICTORY.03.afterCombatEnd"
+              },
+              {
+                "condition": "AfterCombatEnd succeeded",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.03",
+                "from": "LIFECYCLE.COMBAT.VICTORY.03.afterCombatEnd",
+                "kind": "awaitSuccess",
+                "to": "LIFECYCLE.COMBAT.VICTORY.04.history"
+              },
+              {
+                "condition": "previous synchronous stage completed",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.04",
+                "from": "LIFECYCLE.COMBAT.VICTORY.04.history",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.COMBAT.VICTORY.05.roomEnd"
+              },
+              {
+                "condition": "previous synchronous stage completed",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.05",
+                "from": "LIFECYCLE.COMBAT.VICTORY.05.roomEnd",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.COMBAT.VICTORY.06.playerCleanup"
+              },
+              {
+                "condition": "previous synchronous stage completed",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.06",
+                "from": "LIFECYCLE.COMBAT.VICTORY.06.playerCleanup",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.COMBAT.VICTORY.07.afterVictory"
+              },
+              {
+                "condition": "AfterCombatVictory succeeded",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.07",
+                "from": "LIFECYCLE.COMBAT.VICTORY.07.afterVictory",
+                "kind": "awaitSuccess",
+                "to": "LIFECYCLE.COMBAT.VICTORY.08.record"
+              },
+              {
+                "condition": "recording completed",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.08",
+                "from": "LIFECYCLE.COMBAT.VICTORY.08.record",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.COMBAT.VICTORY.09.save"
+              },
+              {
+                "condition": "SaveRun succeeded",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.09",
+                "from": "LIFECYCLE.COMBAT.VICTORY.09.save",
+                "kind": "awaitSuccess",
+                "to": "LIFECYCLE.COMBAT.VICTORY.10.progress"
+              },
+              {
+                "condition": "previous synchronous stage completed",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.10",
+                "from": "LIFECYCLE.COMBAT.VICTORY.10.progress",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.COMBAT.VICTORY.11.events"
+              },
+              {
+                "condition": "previous synchronous stage completed",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.11",
+                "from": "LIFECYCLE.COMBAT.VICTORY.11.events",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.COMBAT.VICTORY.12.downstream"
+              },
+              {
+                "condition": "a ReviveBeforeCombatEnd task failed or cancelled",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.REVIVE_FAIL",
+                "from": "LIFECYCLE.COMBAT.VICTORY.02.revivePlayers",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.COMBAT.VICTORY.OUTCOME.FAULT_OR_CANCEL"
+              },
+              {
+                "condition": "AfterCombatEnd failed or cancelled",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.AFTER_END_FAIL",
+                "from": "LIFECYCLE.COMBAT.VICTORY.03.afterCombatEnd",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.COMBAT.VICTORY.OUTCOME.FAULT_OR_CANCEL"
+              },
+              {
+                "condition": "AfterCombatVictory failed or cancelled",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.AFTER_VICTORY_FAIL",
+                "from": "LIFECYCLE.COMBAT.VICTORY.07.afterVictory",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.COMBAT.VICTORY.OUTCOME.FAULT_OR_CANCEL"
+              },
+              {
+                "condition": "SaveRun failed or cancelled",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.SAVE_FAIL",
+                "from": "LIFECYCLE.COMBAT.VICTORY.09.save",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.COMBAT.VICTORY.OUTCOME.FAULT_OR_CANCEL"
+              },
+              {
+                "condition": "rewards and parent routing pending E2d2c",
+                "edgeId": "LIFECYCLE.COMBAT.VICTORY.EDGE.COMPLETE",
+                "from": "LIFECYCLE.COMBAT.VICTORY.12.downstream",
+                "kind": "dependencyBoundary",
+                "to": "LIFECYCLE.COMBAT.VICTORY.OUTCOME.E2D2C_BOUNDARY"
+              }
+            ],
+            "graphId": "LIFECYCLE.COMBAT.VICTORY",
+            "nodes": [
+              {
+                "condition": "victory selected",
+                "effect": "set turn IsInProgress=false",
+                "nodeId": "LIFECYCLE.COMBAT.VICTORY.00.markEnded",
+                "order": 0
+              },
+              {
+                "condition": "then",
+                "effect": "clear extra-turn state, player phases, and actions synchronously",
+                "nodeId": "LIFECYCLE.COMBAT.VICTORY.01.clearTurns",
+                "order": 1
+              },
+              {
+                "condition": "after turn/action clearing",
+                "effect": "for each player, await ReviveBeforeCombatEnd sequentially",
+                "nodeId": "LIFECYCLE.COMBAT.VICTORY.02.revivePlayers",
+                "order": 2
+              },
+              {
+                "condition": "all player revives succeeded",
+                "effect": "await AfterCombatEnd sequential dispatcher",
+                "nodeId": "LIFECYCLE.COMBAT.VICTORY.03.afterCombatEnd",
+                "order": 3
+              },
+              {
+                "condition": "AfterCombatEnd await succeeded",
+                "effect": "clear combat history",
+                "nodeId": "LIFECYCLE.COMBAT.VICTORY.04.history",
+                "order": 4
+              },
+              {
+                "condition": "then",
+                "effect": "call CombatRoom.OnCombatEnded",
+                "nodeId": "LIFECYCLE.COMBAT.VICTORY.05.roomEnd",
+                "order": 5
+              },
+              {
+                "condition": "then",
+                "effect": "perform player combat cleanup",
+                "nodeId": "LIFECYCLE.COMBAT.VICTORY.06.playerCleanup",
+                "order": 6
+              },
+              {
+                "condition": "then",
+                "effect": "await AfterCombatVictory sequential dispatcher",
+                "nodeId": "LIFECYCLE.COMBAT.VICTORY.07.afterVictory",
+                "order": 7
+              },
+              {
+                "condition": "await succeeded",
+                "effect": "record turns taken and mark room pre-finished",
+                "nodeId": "LIFECYCLE.COMBAT.VICTORY.08.record",
+                "order": 8
+              },
+              {
+                "condition": "then",
+                "effect": "save run",
+                "nodeId": "LIFECYCLE.COMBAT.VICTORY.09.save",
+                "order": 9
+              },
+              {
+                "condition": "save succeeded",
+                "effect": "update map/progress, achievements, multiplayer scaling, and progress file",
+                "nodeId": "LIFECYCLE.COMBAT.VICTORY.10.progress",
+                "order": 10
+              },
+              {
+                "condition": "then",
+                "effect": "fire CombatWon, unpause action queues, update synchronization/music, then fire CombatEnded",
+                "nodeId": "LIFECYCLE.COMBAT.VICTORY.11.events",
+                "order": 11
+              },
+              {
+                "condition": "after this E2d2a pipeline",
+                "effect": "terminal reward presentation and parent-event routing are pending E2d2c",
+                "nodeId": "LIFECYCLE.COMBAT.VICTORY.12.downstream",
+                "order": 12
+              }
+            ],
+            "outcomes": [
+              {
+                "outcomeId": "LIFECYCLE.COMBAT.VICTORY.OUTCOME.FAULT_OR_CANCEL"
+              },
+              {
+                "outcomeId": "LIFECYCLE.COMBAT.VICTORY.OUTCOME.E2D2C_BOUNDARY"
+              }
+            ]
+          },
+          "victoryPredicate": {
+            "all": [
+              "turnState.IsInProgress",
+              "no enemy where IsAlive && IsPrimaryEnemy",
+              "no current listener stops ending"
+            ],
+            "allEscaped": "ordinary victory at the next centralized check",
+            "secondaryOnlyEnemiesBlock": false
+          }
+        },
+        "componentId": "LIFECYCLE.CORE.E2D2A",
+        "core": {
+          "emptyBehavior": "completed without reading first element or mutating state",
+          "innerDeathGraph": {
+            "closedBranches": [
+              "detachedNonPlayerCompleted",
+              "attachedNonLiveCompleted",
+              "outOfCombatMultiplayerSafetyReturn",
+              "allowedDeath",
+              "preventedDeath",
+              "recoveryReturn",
+              "recursion",
+              "recursionCapException",
+              "faultOrCancellation"
+            ],
+            "deadBodyEntryShortCircuit": false,
+            "directCheckWinCondition": false,
+            "edges": [
+              {
+                "condition": "CurrentCombatId captured",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.ENTRY",
+                "from": "LIFECYCLE.KILL.INNER.00.captureCombatId",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.KILL.INNER.01.entryGuards"
+              },
+              {
+                "condition": "CombatState == null and IsPlayer == false",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.DETACHED_NON_PLAYER_COMPLETED",
+                "from": "LIFECYCLE.KILL.INNER.01.entryGuards",
+                "kind": "conditionTrue",
+                "to": "LIFECYCLE.KILL.INNER.OUTCOME.DETACHED_NON_PLAYER_COMPLETED"
+              },
+              {
+                "condition": "CombatState != null and CombatState.IsLiveCombat == false",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.ATTACHED_NON_LIVE_COMPLETED",
+                "from": "LIFECYCLE.KILL.INNER.01.entryGuards",
+                "kind": "conditionTrue",
+                "to": "LIFECYCLE.KILL.INNER.OUTCOME.ATTACHED_NON_LIVE_COMPLETED"
+              },
+              {
+                "condition": "detached player or body attached to a live combat",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.GUARDS_PASSED",
+                "from": "LIFECYCLE.KILL.INNER.01.entryGuards",
+                "kind": "guardsPassed",
+                "to": "LIFECYCLE.KILL.INNER.02.outOfCombatPlayerSafety"
+              },
+              {
+                "condition": "out-of-combat multiplayer player safety Heal succeeded",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.SAFETY_RETURN",
+                "from": "LIFECYCLE.KILL.INNER.02.outOfCombatPlayerSafety",
+                "kind": "awaitSuccess",
+                "to": "LIFECYCLE.KILL.INNER.OUTCOME.SAFETY_HEALED"
+              },
+              {
+                "condition": "safety condition false, including force == true",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.SAFETY_CONTINUE",
+                "from": "LIFECYCLE.KILL.INNER.02.outOfCombatPlayerSafety",
+                "kind": "conditionFalse",
+                "to": "LIFECYCLE.KILL.INNER.03.resolveStates"
+              },
+              {
+                "condition": "states resolved",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.RESOLVE_HP",
+                "from": "LIFECYCLE.KILL.INNER.03.resolveStates",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.KILL.INNER.04.zeroHp"
+              },
+              {
+                "condition": "HP change await completed or CurrentHp was already zero",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.HP_BEFORE",
+                "from": "LIFECYCLE.KILL.INNER.04.zeroHp",
+                "kind": "conditionOrSkip",
+                "to": "LIFECYCLE.KILL.INNER.05.beforeDeath"
+              },
+              {
+                "condition": "force == false and MaxHp > 0",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.CHECK_PREVENTION",
+                "from": "LIFECYCLE.KILL.INNER.05.beforeDeath",
+                "kind": "conditionTrue",
+                "to": "LIFECYCLE.KILL.INNER.06.preventionGate"
+              },
+              {
+                "condition": "force == true or MaxHp <= 0",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.BYPASS_PREVENTION",
+                "from": "LIFECYCLE.KILL.INNER.05.beforeDeath",
+                "kind": "conditionFalse",
+                "to": "LIFECYCLE.KILL.INNER.07.forceBoundary"
+              },
+              {
+                "condition": "ShouldDie allowed",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.DEATH_ALLOWED",
+                "from": "LIFECYCLE.KILL.INNER.06.preventionGate",
+                "kind": "predicateResult",
+                "to": "LIFECYCLE.KILL.INNER.08.died"
+              },
+              {
+                "condition": "first ShouldDie/ShouldDieLate false",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.DEATH_PREVENTED",
+                "from": "LIFECYCLE.KILL.INNER.06.preventionGate",
+                "kind": "predicateResult",
+                "to": "LIFECYCLE.KILL.INNER.18.recursionCap"
+              },
+              {
+                "condition": "prevention bypass only",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.FORCED_ALLOWED",
+                "from": "LIFECYCLE.KILL.INNER.07.forceBoundary",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.KILL.INNER.08.died"
+              },
+              {
+                "condition": "stage condition applied without reordering",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.ALLOWED.08",
+                "from": "LIFECYCLE.KILL.INNER.08.died",
+                "kind": "conditionOrSkip",
+                "to": "LIFECYCLE.KILL.INNER.09.removePredicate"
+              },
+              {
+                "condition": "stage condition applied without reordering",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.ALLOWED.09",
+                "from": "LIFECYCLE.KILL.INNER.09.removePredicate",
+                "kind": "conditionOrSkip",
+                "to": "LIFECYCLE.KILL.INNER.10.animation"
+              },
+              {
+                "condition": "stage condition applied without reordering",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.ALLOWED.10",
+                "from": "LIFECYCLE.KILL.INNER.10.animation",
+                "kind": "conditionOrSkip",
+                "to": "LIFECYCLE.KILL.INNER.11.afterDeathAllowed"
+              },
+              {
+                "condition": "stage condition applied without reordering",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.ALLOWED.11",
+                "from": "LIFECYCLE.KILL.INNER.11.afterDeathAllowed",
+                "kind": "conditionOrSkip",
+                "to": "LIFECYCLE.KILL.INNER.12.teammateSnapshot"
+              },
+              {
+                "condition": "stage condition applied without reordering",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.ALLOWED.12",
+                "from": "LIFECYCLE.KILL.INNER.12.teammateSnapshot",
+                "kind": "conditionOrSkip",
+                "to": "LIFECYCLE.KILL.INNER.13.managerRemoval"
+              },
+              {
+                "condition": "stage condition applied without reordering",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.ALLOWED.13",
+                "from": "LIFECYCLE.KILL.INNER.13.managerRemoval",
+                "kind": "conditionOrSkip",
+                "to": "LIFECYCLE.KILL.INNER.14.stateRemoval"
+              },
+              {
+                "condition": "stage condition applied without reordering",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.ALLOWED.14",
+                "from": "LIFECYCLE.KILL.INNER.14.stateRemoval",
+                "kind": "conditionOrSkip",
+                "to": "LIFECYCLE.KILL.INNER.15.powerCleanup"
+              },
+              {
+                "condition": "stage condition applied without reordering",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.ALLOWED.15",
+                "from": "LIFECYCLE.KILL.INNER.15.powerCleanup",
+                "kind": "conditionOrSkip",
+                "to": "LIFECYCLE.KILL.INNER.16.secondaryCleanup"
+              },
+              {
+                "condition": "stage condition applied without reordering",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.ALLOWED.16",
+                "from": "LIFECYCLE.KILL.INNER.16.secondaryCleanup",
+                "kind": "conditionOrSkip",
+                "to": "LIFECYCLE.KILL.INNER.17.playerCleanup"
+              },
+              {
+                "condition": "player cleanup applied or skipped",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.ALLOWED_COMPLETE",
+                "from": "LIFECYCLE.KILL.INNER.17.playerCleanup",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.KILL.INNER.OUTCOME.ALLOWED"
+              },
+              {
+                "condition": "recursion == 10",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.RECURSION_CAP",
+                "from": "LIFECYCLE.KILL.INNER.18.recursionCap",
+                "kind": "conditionTrue",
+                "to": "LIFECYCLE.KILL.INNER.OUTCOME.RECURSION_CAP_EXCEPTION"
+              },
+              {
+                "condition": "recursion < 10",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.PREVENTED_HOOKS",
+                "from": "LIFECYCLE.KILL.INNER.18.recursionCap",
+                "kind": "conditionFalse",
+                "to": "LIFECYCLE.KILL.INNER.19.afterDeathPrevented"
+              },
+              {
+                "condition": "AfterDeath(true) succeeded",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.AFTER_PREVENTED",
+                "from": "LIFECYCLE.KILL.INNER.19.afterDeathPrevented",
+                "kind": "awaitSuccess",
+                "to": "LIFECYCLE.KILL.INNER.20.afterPreventing"
+              },
+              {
+                "condition": "AfterPreventingDeath succeeded",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.RECOVERY_CHECK",
+                "from": "LIFECYCLE.KILL.INNER.20.afterPreventing",
+                "kind": "awaitSuccess",
+                "to": "LIFECYCLE.KILL.INNER.21.recurse"
+              },
+              {
+                "condition": "creature no longer dead",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.RECOVERED",
+                "from": "LIFECYCLE.KILL.INNER.21.recurse",
+                "kind": "conditionFalse",
+                "to": "LIFECYCLE.KILL.INNER.OUTCOME.RECOVERED"
+              },
+              {
+                "condition": "creature remains dead; recursive await succeeds",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.RECURSE",
+                "from": "LIFECYCLE.KILL.INNER.21.recurse",
+                "kind": "conditionTrue",
+                "to": "LIFECYCLE.KILL.INNER.OUTCOME.RECURSED"
+              },
+              {
+                "condition": "awaited stage faults or cancels",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.FAIL.02",
+                "from": "LIFECYCLE.KILL.INNER.02.outOfCombatPlayerSafety",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.KILL.INNER.22.awaiterFailure"
+              },
+              {
+                "condition": "awaited stage faults or cancels",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.FAIL.04",
+                "from": "LIFECYCLE.KILL.INNER.04.zeroHp",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.KILL.INNER.22.awaiterFailure"
+              },
+              {
+                "condition": "awaited stage faults or cancels",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.FAIL.05",
+                "from": "LIFECYCLE.KILL.INNER.05.beforeDeath",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.KILL.INNER.22.awaiterFailure"
+              },
+              {
+                "condition": "awaited stage faults or cancels",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.FAIL.11",
+                "from": "LIFECYCLE.KILL.INNER.11.afterDeathAllowed",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.KILL.INNER.22.awaiterFailure"
+              },
+              {
+                "condition": "awaited stage faults or cancels",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.FAIL.15",
+                "from": "LIFECYCLE.KILL.INNER.15.powerCleanup",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.KILL.INNER.22.awaiterFailure"
+              },
+              {
+                "condition": "awaited stage faults or cancels",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.FAIL.16",
+                "from": "LIFECYCLE.KILL.INNER.16.secondaryCleanup",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.KILL.INNER.22.awaiterFailure"
+              },
+              {
+                "condition": "awaited stage faults or cancels",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.FAIL.17",
+                "from": "LIFECYCLE.KILL.INNER.17.playerCleanup",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.KILL.INNER.22.awaiterFailure"
+              },
+              {
+                "condition": "awaited stage faults or cancels",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.FAIL.19",
+                "from": "LIFECYCLE.KILL.INNER.19.afterDeathPrevented",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.KILL.INNER.22.awaiterFailure"
+              },
+              {
+                "condition": "awaited stage faults or cancels",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.FAIL.20",
+                "from": "LIFECYCLE.KILL.INNER.20.afterPreventing",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.KILL.INNER.22.awaiterFailure"
+              },
+              {
+                "condition": "awaited stage faults or cancels",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.FAIL.21",
+                "from": "LIFECYCLE.KILL.INNER.21.recurse",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.KILL.INNER.22.awaiterFailure"
+              },
+              {
+                "condition": "no later stage inferred",
+                "edgeId": "LIFECYCLE.KILL.INNER.EDGE.FAIL_OUTCOME",
+                "from": "LIFECYCLE.KILL.INNER.22.awaiterFailure",
+                "kind": "propagate",
+                "to": "LIFECYCLE.KILL.INNER.OUTCOME.FAULT_OR_CANCEL"
+              }
+            ],
+            "forceContract": "entry guards complete regardless of force; after they pass, force bypasses only out-of-combat multiplayer player safety healing and ShouldDie/prevention; HP zeroing, BeforeDeath, Died, animation, AfterDeath, removal, Power cleanup, and player cleanup remain",
+            "graphId": "LIFECYCLE.KILL.INNER",
+            "nodes": [
+              {
+                "condition": "entry",
+                "effect": "capture CurrentCombatId before evaluating body attachment",
+                "nodeId": "LIFECYCLE.KILL.INNER.00.captureCombatId",
+                "order": 0
+              },
+              {
+                "condition": "immediately after combat ID capture",
+                "effect": "return completed without HP or death hooks for a detached non-player or any body attached to a non-live combat",
+                "nodeId": "LIFECYCLE.KILL.INNER.01.entryGuards",
+                "order": 1
+              },
+              {
+                "condition": "entry guards passed; CombatManager is not in progress, creature is a player, run player count > 1, and force == false",
+                "effect": "log error, await CreatureCmd.Heal(player, 1), and return only after success",
+                "nodeId": "LIFECYCLE.KILL.INNER.02.outOfCombatPlayerSafety",
+                "order": 2
+              },
+              {
+                "condition": "entry guards passed and safety branch did not return",
+                "effect": "resolve combatState and runState from creature",
+                "nodeId": "LIFECYCLE.KILL.INNER.03.resolveStates",
+                "order": 3
+              },
+              {
+                "condition": "CurrentHp > 0",
+                "effect": "LoseHpInternal(CurrentHp, damageType:6), then await AfterCurrentHpChanged with negative old HP",
+                "nodeId": "LIFECYCLE.KILL.INNER.04.zeroHp",
+                "order": 4
+              },
+              {
+                "condition": "always after entry guards, including entry at zero HP",
+                "effect": "await BeforeDeath sequential dispatcher",
+                "nodeId": "LIFECYCLE.KILL.INNER.05.beforeDeath",
+                "order": 5
+              },
+              {
+                "condition": "force == false and MaxHp > 0",
+                "effect": "run ordered ShouldDie early then late; first false listener is preventer",
+                "nodeId": "LIFECYCLE.KILL.INNER.06.preventionGate",
+                "order": 6
+              },
+              {
+                "condition": "force == true or MaxHp <= 0",
+                "effect": "bypass only ShouldDie/prevention and take allowed-death branch",
+                "nodeId": "LIFECYCLE.KILL.INNER.07.forceBoundary",
+                "order": 7
+              },
+              {
+                "condition": "death allowed",
+                "effect": "invoke Creature.Died synchronously",
+                "nodeId": "LIFECYCLE.KILL.INNER.08.died",
+                "order": 8
+              },
+              {
+                "condition": "death allowed",
+                "effect": "aggregate ShouldCreatureBeRemovedFromCombatAfterDeath; null combat yields false",
+                "nodeId": "LIFECYCLE.KILL.INNER.09.removePredicate",
+                "order": 9
+              },
+              {
+                "condition": "death allowed",
+                "effect": "start node death animation when present; pass shouldRemove && IsMonster; request node removal for removable monster",
+                "nodeId": "LIFECYCLE.KILL.INNER.10.animation",
+                "order": 10
+              },
+              {
+                "condition": "death allowed",
+                "effect": "await AfterDeath(wasRemovalPrevented:false, deathAnimLength)",
+                "nodeId": "LIFECYCLE.KILL.INNER.11.afterDeathAllowed",
+                "order": 11
+              },
+              {
+                "condition": "death allowed",
+                "effect": "snapshot living teammates after AfterDeath",
+                "nodeId": "LIFECYCLE.KILL.INNER.12.teammateSnapshot",
+                "order": 12
+              },
+              {
+                "condition": "removable enemy currently in enemy list",
+                "effect": "CombatManager.RemoveCreature before state-list removal",
+                "nodeId": "LIFECYCLE.KILL.INNER.13.managerRemoval",
+                "order": 13
+              },
+              {
+                "condition": "removable enemy and monster is not performing a move",
+                "effect": "CombatState.RemoveCreature(creature,true); otherwise defer state-list removal to move completion",
+                "nodeId": "LIFECYCLE.KILL.INNER.14.stateRemoval",
+                "order": 14
+              },
+              {
+                "condition": "removable",
+                "effect": "snapshot IsPrimaryEnemy; remove Powers matching death-removal predicate and await AfterRemoved for each actually removed Power",
+                "nodeId": "LIFECYCLE.KILL.INNER.15.powerCleanup",
+                "order": 15
+              },
+              {
+                "condition": "removed primary with nonempty living teammates all secondary",
+                "effect": "await Kill(teammates, force:false)",
+                "nodeId": "LIFECYCLE.KILL.INNER.16.secondaryCleanup",
+                "order": 16
+              },
+              {
+                "condition": "creature is player",
+                "effect": "clear orbs; kill living Osty with same force; deactivate player hooks; if attached await HandlePlayerDeath(captured combat ID)",
+                "nodeId": "LIFECYCLE.KILL.INNER.17.playerCleanup",
+                "order": 17
+              },
+              {
+                "condition": "death prevented and recursion == 10",
+                "effect": "throw InvalidOperationException before prevented-death hooks",
+                "nodeId": "LIFECYCLE.KILL.INNER.18.recursionCap",
+                "order": 18
+              },
+              {
+                "condition": "death prevented and recursion < 10",
+                "effect": "await AfterDeath(wasRemovalPrevented:true, deathAnimLength:0)",
+                "nodeId": "LIFECYCLE.KILL.INNER.19.afterDeathPrevented",
+                "order": 19
+              },
+              {
+                "condition": "previous await succeeded",
+                "effect": "await AfterPreventingDeath with exact preventer",
+                "nodeId": "LIFECYCLE.KILL.INNER.20.afterPreventing",
+                "order": 20
+              },
+              {
+                "condition": "creature remains dead",
+                "effect": "await KillWithoutCheckingWinCondition(creature, force, recursion+1); otherwise return",
+                "nodeId": "LIFECYCLE.KILL.INNER.21.recurse",
+                "order": 21
+              },
+              {
+                "condition": "any awaited task faults or cancels",
+                "effect": "propagate task state; retain only effects completed before failure; do not infer later stages",
+                "nodeId": "LIFECYCLE.KILL.INNER.22.awaiterFailure",
+                "order": 22
+              }
+            ],
+            "outcomes": [
+              {
+                "outcomeId": "LIFECYCLE.KILL.INNER.OUTCOME.DETACHED_NON_PLAYER_COMPLETED"
+              },
+              {
+                "outcomeId": "LIFECYCLE.KILL.INNER.OUTCOME.ATTACHED_NON_LIVE_COMPLETED"
+              },
+              {
+                "outcomeId": "LIFECYCLE.KILL.INNER.OUTCOME.SAFETY_HEALED"
+              },
+              {
+                "outcomeId": "LIFECYCLE.KILL.INNER.OUTCOME.ALLOWED"
+              },
+              {
+                "outcomeId": "LIFECYCLE.KILL.INNER.OUTCOME.RECURSION_CAP_EXCEPTION"
+              },
+              {
+                "outcomeId": "LIFECYCLE.KILL.INNER.OUTCOME.RECOVERED"
+              },
+              {
+                "outcomeId": "LIFECYCLE.KILL.INNER.OUTCOME.RECURSED"
+              },
+              {
+                "outcomeId": "LIFECYCLE.KILL.INNER.OUTCOME.FAULT_OR_CANCEL"
+              }
+            ]
+          },
+          "listKillGraph": {
+            "edges": [
+              {
+                "condition": "count == 0",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.EMPTY",
+                "from": "LIFECYCLE.KILL.LIST.00.emptyReturn",
+                "kind": "conditionTrue",
+                "to": "LIFECYCLE.KILL.LIST.OUTCOME.EMPTY"
+              },
+              {
+                "condition": "count > 0",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.NONEMPTY",
+                "from": "LIFECYCLE.KILL.LIST.00.emptyReturn",
+                "kind": "conditionFalse",
+                "to": "LIFECYCLE.KILL.LIST.01.snapshotRun"
+              },
+              {
+                "condition": "previous synchronous stage completed",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.ORDER.01",
+                "from": "LIFECYCLE.KILL.LIST.01.snapshotRun",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.KILL.LIST.02.snapshotBodies"
+              },
+              {
+                "condition": "previous synchronous stage completed",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.ORDER.02",
+                "from": "LIFECYCLE.KILL.LIST.02.snapshotBodies",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.KILL.LIST.03.sequentialInner"
+              },
+              {
+                "condition": "RunManager absent or cleaning",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.NO_MANAGER",
+                "from": "LIFECYCLE.KILL.LIST.04.managerGuard",
+                "kind": "conditionTrue",
+                "to": "LIFECYCLE.KILL.LIST.OUTCOME.MANAGER_UNAVAILABLE"
+              },
+              {
+                "condition": "RunManager available",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.MANAGER",
+                "from": "LIFECYCLE.KILL.LIST.04.managerGuard",
+                "kind": "conditionFalse",
+                "to": "LIFECYCLE.KILL.LIST.05.allPlayersDead"
+              },
+              {
+                "condition": "all players dead and combat live",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.LIVE_COMBAT_LOSS",
+                "from": "LIFECYCLE.KILL.LIST.05.allPlayersDead",
+                "kind": "conditionTrue",
+                "to": "LIFECYCLE.KILL.LIST.06.liveCombatLoss"
+              },
+              {
+                "condition": "all players dead and combat not live",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.NON_LIVE_ALL_DEAD",
+                "from": "LIFECYCLE.KILL.LIST.05.allPlayersDead",
+                "kind": "conditionTrue",
+                "to": "LIFECYCLE.KILL.LIST.07.testModeGate"
+              },
+              {
+                "condition": "at least one run player alive",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.PLAYER_REMAINS",
+                "from": "LIFECYCLE.KILL.LIST.05.allPlayersDead",
+                "kind": "conditionFalse",
+                "to": "LIFECYCLE.KILL.LIST.09.endKilledTurns"
+              },
+              {
+                "condition": "LoseCombat returned synchronously; evaluate TestMode.IsOff next",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.LOSS_FALLTHROUGH",
+                "from": "LIFECYCLE.KILL.LIST.06.liveCombatLoss",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.KILL.LIST.07.testModeGate"
+              },
+              {
+                "condition": "TestMode.IsOff",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.TEST_OFF",
+                "from": "LIFECYCLE.KILL.LIST.07.testModeGate",
+                "kind": "conditionTrue",
+                "to": "LIFECYCLE.KILL.LIST.08.gameOver"
+              },
+              {
+                "condition": "test mode is on; skip game-over sequence and EndTurn handling",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.TEST_ON",
+                "from": "LIFECYCLE.KILL.LIST.07.testModeGate",
+                "kind": "conditionFalse",
+                "to": "LIFECYCLE.KILL.LIST.OUTCOME.TEST_MODE_SKIPPED"
+              },
+              {
+                "condition": "all sequential inner kills succeeded",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.INNER_SUCCEEDED",
+                "from": "LIFECYCLE.KILL.LIST.03.sequentialInner",
+                "kind": "awaitSuccess",
+                "to": "LIFECYCLE.KILL.LIST.04.managerGuard"
+              },
+              {
+                "condition": "an inner kill faulted or cancelled; no manager, loss, game-over, or turn-ending stage is inferred",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.INNER_FAILED",
+                "from": "LIFECYCLE.KILL.LIST.03.sequentialInner",
+                "kind": "faultOrCancellation",
+                "to": "LIFECYCLE.KILL.LIST.OUTCOME.FAULT_OR_CANCEL"
+              },
+              {
+                "condition": "OnEnded(false) returned synchronously and ShowGameOverScreen was called",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.GAME_OVER",
+                "from": "LIFECYCLE.KILL.LIST.08.gameOver",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.KILL.LIST.OUTCOME.GAME_OVER"
+              },
+              {
+                "condition": "combat-live check and eligible EndTurn calls completed",
+                "edgeId": "LIFECYCLE.KILL.LIST.EDGE.COMPLETE",
+                "from": "LIFECYCLE.KILL.LIST.09.endKilledTurns",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.KILL.LIST.OUTCOME.COMPLETED"
+              }
+            ],
+            "graphId": "LIFECYCLE.KILL.LIST",
+            "nodes": [
+              {
+                "condition": "creatures.Count == 0",
+                "effect": "return completed task without mutation",
+                "nodeId": "LIFECYCLE.KILL.LIST.00.emptyReturn",
+                "order": 0
+              },
+              {
+                "condition": "nonempty",
+                "effect": "snapshot runState from first player body when present",
+                "nodeId": "LIFECYCLE.KILL.LIST.01.snapshotRun",
+                "order": 1
+              },
+              {
+                "condition": "nonempty",
+                "effect": "snapshot IReadOnlyList in source order",
+                "nodeId": "LIFECYCLE.KILL.LIST.02.snapshotBodies",
+                "order": 2
+              },
+              {
+                "condition": "for each snapshotted body",
+                "effect": "await KillWithoutCheckingWinCondition(body, force, recursion:0) sequentially",
+                "nodeId": "LIFECYCLE.KILL.LIST.03.sequentialInner",
+                "order": 3
+              },
+              {
+                "condition": "after all inner calls",
+                "effect": "return if RunManager is absent or cleaning up",
+                "nodeId": "LIFECYCLE.KILL.LIST.04.managerGuard",
+                "order": 4
+              },
+              {
+                "condition": "after manager guard",
+                "effect": "branch on whether every snapshotted run player is dead",
+                "nodeId": "LIFECYCLE.KILL.LIST.05.allPlayersDead",
+                "order": 5
+              },
+              {
+                "condition": "all players dead and combat is live",
+                "effect": "call LoseCombat, setting PendingLoss once, then continue to the test-mode gate",
+                "nodeId": "LIFECYCLE.KILL.LIST.06.liveCombatLoss",
+                "order": 6
+              },
+              {
+                "condition": "all players dead after optional live-combat LoseCombat",
+                "effect": "evaluate TestMode.IsOff for both live and non-live combat",
+                "nodeId": "LIFECYCLE.KILL.LIST.07.testModeGate",
+                "order": 7
+              },
+              {
+                "condition": "all players dead and TestMode.IsOff",
+                "effect": "stop music, call OnEnded(false) synchronously, then show game over",
+                "nodeId": "LIFECYCLE.KILL.LIST.08.gameOver",
+                "order": 8
+              },
+              {
+                "condition": "at least one run player remains alive",
+                "effect": "if combat remains live, end turn for each killed attached dead player-side player",
+                "nodeId": "LIFECYCLE.KILL.LIST.09.endKilledTurns",
+                "order": 9
+              }
+            ],
+            "outcomes": [
+              {
+                "outcomeId": "LIFECYCLE.KILL.LIST.OUTCOME.EMPTY"
+              },
+              {
+                "outcomeId": "LIFECYCLE.KILL.LIST.OUTCOME.MANAGER_UNAVAILABLE"
+              },
+              {
+                "outcomeId": "LIFECYCLE.KILL.LIST.OUTCOME.TEST_MODE_SKIPPED"
+              },
+              {
+                "outcomeId": "LIFECYCLE.KILL.LIST.OUTCOME.GAME_OVER"
+              },
+              {
+                "outcomeId": "LIFECYCLE.KILL.LIST.OUTCOME.COMPLETED"
+              },
+              {
+                "outcomeId": "LIFECYCLE.KILL.LIST.OUTCOME.FAULT_OR_CANCEL"
+              }
+            ]
+          },
+          "listSnapshotOrder": "source list snapshot; sequential await; duplicates are retained",
+          "singularKillContract": "construct one-item IReadOnlyList preserving body identity, then await list Kill with the same force"
+        },
+        "dependencies": [
+          {
+            "dependencyId": "DEPENDENCY.LIFECYCLE.E2B.CONCRETE_LISTENERS",
+            "factId": "SOURCE.DEPENDENCY.LIFECYCLE.E2B.CONCRETE_LISTENERS",
+            "kind": "listenerEffectsPhasesRelationshipsDeathAdd",
+            "status": "pendingE2d2b"
+          },
+          {
+            "dependencyId": "DEPENDENCY.LIFECYCLE.E2C.EVENT_TERMINATION",
+            "factId": "SOURCE.DEPENDENCY.LIFECYCLE.E2C.EVENT_TERMINATION",
+            "kind": "eventRewardsBattleParentRouting",
+            "status": "pendingE2d2c"
+          },
+          {
+            "dependencyId": "DEPENDENCY.LIFECYCLE.E2D.RUN_TERMINATION",
+            "factId": "SOURCE.DEPENDENCY.LIFECYCLE.E2D.RUN_TERMINATION",
+            "kind": "architectRunTermination",
+            "status": "pendingE2d2d"
+          },
+          {
+            "dependencyId": "DEPENDENCY.LIFECYCLE.HP",
+            "factId": "SOURCE.DEPENDENCY.LIFECYCLE.HP",
+            "kind": "hpMutationContract",
+            "resolvedComponentRef": "hpPipeline.assignment",
+            "status": "sourceComplete"
+          },
+          {
+            "dependencyId": "DEPENDENCY.LIFECYCLE.INITIAL",
+            "factId": "SOURCE.DEPENDENCY.LIFECYCLE.INITIAL",
+            "kind": "initialStateContract",
+            "resolvedComponentRef": "initialState",
+            "status": "sourceComplete"
+          },
+          {
+            "dependencyId": "DEPENDENCY.LIFECYCLE.PRODUCTION",
+            "factId": "SOURCE.DEPENDENCY.LIFECYCLE.PRODUCTION",
+            "kind": "productionContract",
+            "resolvedComponentRef": "production.productionSemantics",
+            "status": "sourceComplete"
+          },
+          {
+            "dependencyId": "DEPENDENCY.LIFECYCLE.EVENT_SCRIPTS",
+            "factId": "SOURCE.DEPENDENCY.LIFECYCLE.EVENT_SCRIPTS",
+            "kind": "eventScriptContract",
+            "resolvedComponentRef": "eventScripts",
+            "status": "sourceComplete"
+          }
+        ],
+        "digests": {
+          "callSiteOrderingSha256": "6bf402bbd68530f4ef2494eda294cf560bf00b60243ca7dc8d359b4a923294a1",
+          "coreSemanticsSha256": "43f55a02073898fba62eec1da4e6ee33d11a84a06ab6fb02a135ba54608eda28",
+          "dependencySha256": "42e70ef3f9b71d9062eaef76a26d4f7282228eae6ebf4971020ac197402ebac3",
+          "invocationOrderingSha256": "b3584ff36acc83e509cff984d8d905e9249cd68871d58c937f92f40322b68bc1",
+          "methodClosureSha256": "a113e46b048dbf3d1507841e89c62668b4c11307ce7c546071938675b190f473"
+        },
+        "dispatch": {
+          "awaitedDispatch": {
+            "execution": "registry order, one listener task at a time; InvokeExecutionFinished only after each successful listener task",
+            "families": [
+              "BeforeDeath",
+              "AfterDeath",
+              "AfterPreventingDeath"
+            ],
+            "parallelism": "none"
+          },
+          "failureContract": "fault/cancellation propagates; no later callback or lifecycle stage is claimed",
+          "predicates": [
+            {
+              "aggregation": "all current listeners must return true; null combat is false",
+              "family": "ShouldCreatureBeRemovedFromCombatAfterDeath"
+            },
+            {
+              "aggregation": "any current listener returning true stops ending",
+              "family": "ShouldStopCombatFromEnding"
+            }
+          ],
+          "shouldDie": {
+            "aggregation": "first false stops and becomes exact preventer",
+            "forceBypassOnly": true,
+            "order": [
+              "ShouldDie over current registry snapshot",
+              "ShouldDieLate over current registry snapshot"
+            ]
+          }
+        },
+        "factId": "SOURCE.LIFECYCLE.CORE.E2D2A",
+        "listenerRegistry": {
+          "combatOrder": [
+            {
+              "collectionOrder": "stored list order",
+              "order": 0,
+              "source": "allies then enemies"
+            },
+            {
+              "collectionOrder": "Powers then Monster model",
+              "order": 1,
+              "source": "each creature"
+            },
+            {
+              "collectionOrder": "unmelted relics, non-null potions, orbs, cards in all combat piles, each card affliction then enchantment",
+              "order": 2,
+              "source": "active player contents"
+            },
+            {
+              "collectionOrder": "combat modifiers, badges, multiplayer scaling model",
+              "order": 3,
+              "source": "combat globals"
+            },
+            {
+              "collectionOrder": "registry order; external runtime boundary",
+              "order": 4,
+              "source": "mod combat subscribers"
+            }
+          ],
+          "duplicates": "preserved; no sorting or de-duplication by model type or ID",
+          "dynamicValues": "player cards/relics/potions/orbs/enchantments and mod subscribers are runtime values, never assumed empty",
+          "membership": "yield only models still contained by the relevant current state when filtered",
+          "runOrder": [
+            {
+              "collectionOrder": "cards then each enchantment",
+              "order": 0,
+              "source": "active-player deck"
+            },
+            {
+              "collectionOrder": "relics then potions",
+              "order": 1,
+              "source": "active-player inventory"
+            },
+            {
+              "collectionOrder": "run modifiers, badges, multiplayer scaling model",
+              "order": 2,
+              "source": "run globals"
+            },
+            {
+              "collectionOrder": "registry order; external runtime boundary",
+              "order": 3,
+              "source": "mod run subscribers"
+            },
+            {
+              "collectionOrder": "combat registry order above",
+              "order": 4,
+              "source": "child combat registry"
+            }
+          ],
+          "snapshot": "dispatcher enumeration snapshots current registries at source-defined boundaries"
+        },
+        "methodRefs": {
+          "actionExecutor": "MegaCrit.Sts2.Core.GameActions.ActionExecutor+<ExecuteActions>d__28::MoveNext sig:200001",
+          "commands": [
+            {
+              "parameters": [
+                "creature",
+                "force"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<Kill>d__13::MoveNext sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Kill sig:000212812112a7e402"
+            },
+            {
+              "parameters": [
+                "creatures",
+                "force"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<Kill>d__14::MoveNext sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Kill sig:00021281211512832d0112a7e402"
+            },
+            {
+              "parameters": [
+                "creature",
+                "force",
+                "recursion"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd+<KillWithoutCheckingWinCondition>d__15::MoveNext sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::KillWithoutCheckingWinCondition sig:000312812112a7e40208"
+            },
+            {
+              "parameters": [
+                "creature",
+                "removeCreatureNode"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Escape sig:000212812112a7e402",
+              "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Escape sig:000212812112a7e402"
+            }
+          ],
+          "dispatch": [
+            {
+              "parameters": [
+                "runState",
+                "combatState",
+                "creature"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook+<BeforeDeath>d__27::MoveNext sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook::BeforeDeath sig:000312812112841c12aa8812a7e4"
+            },
+            {
+              "parameters": [
+                "runState",
+                "combatState",
+                "creature",
+                "wasRemovalPrevented",
+                "deathAnimLength"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook+<AfterDeath>d__28::MoveNext sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook::AfterDeath sig:000512812112841c12aa8812a7e4020c"
+            },
+            {
+              "parameters": [
+                "runState",
+                "combatState",
+                "preventer",
+                "creature"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook+<AfterPreventingDeath>d__66::MoveNext sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook::AfterPreventingDeath sig:000412812112841c12aa8812889c12a7e4"
+            },
+            {
+              "parameters": [
+                "combatState",
+                "creature"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook::ShouldCreatureBeRemovedFromCombatAfterDeath sig:00020212aa8812a7e4",
+              "symbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook::ShouldCreatureBeRemovedFromCombatAfterDeath sig:00020212aa8812a7e4"
+            },
+            {
+              "parameters": [
+                "runState",
+                "combatState",
+                "creature",
+                "preventer"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook::ShouldDie sig:00040212841c12aa8812a7e41012889c",
+              "symbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook::ShouldDie sig:00040212841c12aa8812a7e41012889c"
+            },
+            {
+              "parameters": [
+                "combatState"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook::ShouldStopCombatFromEnding sig:00010212aa88",
+              "symbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook::ShouldStopCombatFromEnding sig:00010212aa88"
+            }
+          ],
+          "listenerRegistries": [
+            {
+              "parameters": [
+                "combatState"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook+<IterateCombatHookListeners>d__0::MoveNext sig:200002",
+              "symbolSignature": "MegaCrit.Sts2.Core.Hooks.Hook::IterateCombatHookListeners sig:0001151281f50112889c12aa88"
+            },
+            {
+              "parameters": [],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Combat.CombatState+<IterateHookListeners>d__69::MoveNext sig:200002",
+              "symbolSignature": "MegaCrit.Sts2.Core.Combat.CombatState::IterateHookListeners sig:2000151281f50112889c"
+            },
+            {
+              "parameters": [
+                "childCombatState"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Runs.RunState+<IterateHookListeners>d__118::MoveNext sig:200002",
+              "symbolSignature": "MegaCrit.Sts2.Core.Runs.RunState::IterateHookListeners sig:2001151281f50112889c12aa88"
+            }
+          ],
+          "removal": [
+            {
+              "parameters": [
+                "creature"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager::RemoveCreature sig:20010112a7e4",
+              "symbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager::RemoveCreature sig:20010112a7e4"
+            },
+            {
+              "parameters": [
+                "creature"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Combat.CombatState::CreatureEscaped sig:20010112a7e4",
+              "symbolSignature": "MegaCrit.Sts2.Core.Combat.CombatState::CreatureEscaped sig:20010112a7e4"
+            },
+            {
+              "parameters": [
+                "creature",
+                "unattach"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Combat.CombatState::RemoveCreature sig:20020112a7e402",
+              "symbolSignature": "MegaCrit.Sts2.Core.Combat.CombatState::RemoveCreature sig:20020112a7e402"
+            }
+          ],
+          "termination": [
+            {
+              "parameters": [],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager+<CheckWinCondition>d__124::MoveNext sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager::CheckWinCondition sig:2000151282210102"
+            },
+            {
+              "parameters": [
+                "turnState"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager+<CheckWinCondition>d__125::MoveNext sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager::CheckWinCondition sig:200115128221010212aa84"
+            },
+            {
+              "parameters": [],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager+<EndCombatInternal>d__121::MoveNext sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager::EndCombatInternal sig:2000128121"
+            },
+            {
+              "parameters": [
+                "turnState"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager+<EndCombatInternal>d__122::MoveNext sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager::EndCombatInternal sig:200112812112aa84"
+            },
+            {
+              "parameters": [
+                "turnState"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager::IsCombatEnding sig:20010212aa84",
+              "symbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager::IsCombatEnding sig:20010212aa84"
+            },
+            {
+              "parameters": [],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager::LoseCombat sig:200001",
+              "symbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager::LoseCombat sig:200001"
+            },
+            {
+              "parameters": [
+                "turnState"
+              ],
+              "physicalSymbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager::ProcessPendingLoss sig:20010112aa84",
+              "symbolSignature": "MegaCrit.Sts2.Core.Combat.CombatManager::ProcessPendingLoss sig:20010112aa84"
+            }
+          ]
+        },
+        "removal": {
+          "deathMoveDeferral": "manager removal is immediate; state-list removal is deferred while a dying monster performs its move",
+          "escapeDeathHooks": [],
+          "escapeGraph": {
+            "edges": [
+              {
+                "condition": "dead, detached, or non-live",
+                "edgeId": "LIFECYCLE.ESCAPE.EDGE.NOOP",
+                "from": "LIFECYCLE.ESCAPE.00.guard",
+                "kind": "conditionTrue",
+                "to": "LIFECYCLE.ESCAPE.OUTCOME.NOOP"
+              },
+              {
+                "condition": "live and attached",
+                "edgeId": "LIFECYCLE.ESCAPE.EDGE.LIVE",
+                "from": "LIFECYCLE.ESCAPE.00.guard",
+                "kind": "conditionFalse",
+                "to": "LIFECYCLE.ESCAPE.01.powers"
+              },
+              {
+                "condition": "optional node/monster stages apply or skip without reordering",
+                "edgeId": "LIFECYCLE.ESCAPE.EDGE.ORDER.01",
+                "from": "LIFECYCLE.ESCAPE.01.powers",
+                "kind": "conditionOrOrder",
+                "to": "LIFECYCLE.ESCAPE.02.node"
+              },
+              {
+                "condition": "optional node/monster stages apply or skip without reordering",
+                "edgeId": "LIFECYCLE.ESCAPE.EDGE.ORDER.02",
+                "from": "LIFECYCLE.ESCAPE.02.node",
+                "kind": "conditionOrOrder",
+                "to": "LIFECYCLE.ESCAPE.03.manager"
+              },
+              {
+                "condition": "optional node/monster stages apply or skip without reordering",
+                "edgeId": "LIFECYCLE.ESCAPE.EDGE.ORDER.03",
+                "from": "LIFECYCLE.ESCAPE.03.manager",
+                "kind": "conditionOrOrder",
+                "to": "LIFECYCLE.ESCAPE.04.monsterManager"
+              },
+              {
+                "condition": "optional node/monster stages apply or skip without reordering",
+                "edgeId": "LIFECYCLE.ESCAPE.EDGE.ORDER.04",
+                "from": "LIFECYCLE.ESCAPE.04.monsterManager",
+                "kind": "conditionOrOrder",
+                "to": "LIFECYCLE.ESCAPE.05.tracker"
+              },
+              {
+                "condition": "optional node/monster stages apply or skip without reordering",
+                "edgeId": "LIFECYCLE.ESCAPE.EDGE.ORDER.05",
+                "from": "LIFECYCLE.ESCAPE.05.tracker",
+                "kind": "conditionOrOrder",
+                "to": "LIFECYCLE.ESCAPE.06.escapedHistory"
+              },
+              {
+                "condition": "optional node/monster stages apply or skip without reordering",
+                "edgeId": "LIFECYCLE.ESCAPE.EDGE.ORDER.06",
+                "from": "LIFECYCLE.ESCAPE.06.escapedHistory",
+                "kind": "conditionOrOrder",
+                "to": "LIFECYCLE.ESCAPE.07.stateRemoval"
+              },
+              {
+                "condition": "state removal completed synchronously",
+                "edgeId": "LIFECYCLE.ESCAPE.EDGE.COMPLETE",
+                "from": "LIFECYCLE.ESCAPE.07.stateRemoval",
+                "kind": "sourceOrder",
+                "to": "LIFECYCLE.ESCAPE.OUTCOME.COMPLETED"
+              }
+            ],
+            "graphId": "LIFECYCLE.ESCAPE",
+            "nodes": [
+              {
+                "condition": "creature dead, detached, or combat not live",
+                "effect": "return Task.CompletedTask without mutation",
+                "nodeId": "LIFECYCLE.ESCAPE.00.guard",
+                "order": 0
+              },
+              {
+                "condition": "live attached creature",
+                "effect": "synchronously remove all Powers",
+                "nodeId": "LIFECYCLE.ESCAPE.01.powers",
+                "order": 1
+              },
+              {
+                "condition": "removeCreatureNode == true and node exists",
+                "effect": "request NCombatRoom removal, disable interaction, and hide node",
+                "nodeId": "LIFECYCLE.ESCAPE.02.node",
+                "order": 2
+              },
+              {
+                "condition": "after Power removal",
+                "effect": "CombatManager.RemoveCreature",
+                "nodeId": "LIFECYCLE.ESCAPE.03.manager",
+                "order": 3
+              },
+              {
+                "condition": "creature is monster",
+                "effect": "invoke virtual BeforeRemovedFromRoom, then ResetStateMachine",
+                "nodeId": "LIFECYCLE.ESCAPE.04.monsterManager",
+                "order": 4
+              },
+              {
+                "condition": "manager removal",
+                "effect": "unsubscribe creature from CombatStateTracker, then fire manager CreaturesChanged with current state",
+                "nodeId": "LIFECYCLE.ESCAPE.05.tracker",
+                "order": 5
+              },
+              {
+                "condition": "still-attached captured state",
+                "effect": "append exact creature to EscapedCreatures",
+                "nodeId": "LIFECYCLE.ESCAPE.06.escapedHistory",
+                "order": 6
+              },
+              {
+                "condition": "after history append",
+                "effect": "CombatState.RemoveCreature(creature,true), then return completed task",
+                "nodeId": "LIFECYCLE.ESCAPE.07.stateRemoval",
+                "order": 7
+              }
+            ],
+            "outcomes": [
+              {
+                "outcomeId": "LIFECYCLE.ESCAPE.OUTCOME.NOOP"
+              },
+              {
+                "outcomeId": "LIFECYCLE.ESCAPE.OUTCOME.COMPLETED"
+              }
+            ]
+          },
+          "escapeResultEnum": null,
+          "separateCleanup": "CombatRoom.Exit/reset cleanup is not death or escape",
+          "stateRemoval": {
+            "guards": [
+              "already detached returns",
+              "different attached combat throws",
+              "absent from both side lists throws"
+            ],
+            "order": [
+              "remove from exactly one allies/enemies list",
+              "if unattach then null CombatState",
+              "fire state CreaturesChanged"
+            ]
+          }
+        },
+        "runtimeBoundaries": [
+          {
+            "boundaryId": "LIFECYCLE.BOUNDARY.BOOKREPAIRKNIFE.AFTERDIEDTODOOM",
+            "classification": "vanillaExternalRunOrPlayerListener",
+            "effectStatus": "pendingE2d2b",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Relics.BookRepairKnife",
+            "symbolSignature": "MegaCrit.Sts2.Core.Models.Relics.BookRepairKnife::AfterDiedToDoom sig:200212812112a64c151281fd0112a7e4"
+          },
+          {
+            "boundaryId": "LIFECYCLE.BOUNDARY.FAIRYINABOTTLE.AFTERPREVENTINGDEATH",
+            "classification": "vanillaExternalRunOrPlayerListener",
+            "effectStatus": "pendingE2d2b",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Potions.FairyInABottle",
+            "symbolSignature": "MegaCrit.Sts2.Core.Models.Potions.FairyInABottle::AfterPreventingDeath sig:200112812112a7e4"
+          },
+          {
+            "boundaryId": "LIFECYCLE.BOUNDARY.FAIRYINABOTTLE.SHOULDDIE",
+            "classification": "vanillaExternalRunOrPlayerListener",
+            "effectStatus": "pendingE2d2b",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Potions.FairyInABottle",
+            "symbolSignature": "MegaCrit.Sts2.Core.Models.Potions.FairyInABottle::ShouldDie sig:20010212a7e4"
+          },
+          {
+            "boundaryId": "LIFECYCLE.BOUNDARY.GREMLINHORN.AFTERDEATH",
+            "classification": "vanillaExternalRunOrPlayerListener",
+            "effectStatus": "pendingE2d2b",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Relics.GremlinHorn",
+            "symbolSignature": "MegaCrit.Sts2.Core.Models.Relics.GremlinHorn::AfterDeath sig:200412812112a64c12a7e4020c"
+          },
+          {
+            "boundaryId": "LIFECYCLE.BOUNDARY.LIZARDTAIL.AFTERPREVENTINGDEATH",
+            "classification": "vanillaExternalRunOrPlayerListener",
+            "effectStatus": "pendingE2d2b",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Relics.LizardTail",
+            "symbolSignature": "MegaCrit.Sts2.Core.Models.Relics.LizardTail::AfterPreventingDeath sig:200112812112a7e4"
+          },
+          {
+            "boundaryId": "LIFECYCLE.BOUNDARY.LIZARDTAIL.SHOULDDIELATE",
+            "classification": "vanillaExternalRunOrPlayerListener",
+            "effectStatus": "pendingE2d2b",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Relics.LizardTail",
+            "symbolSignature": "MegaCrit.Sts2.Core.Models.Relics.LizardTail::ShouldDieLate sig:20010212a7e4"
+          },
+          {
+            "boundaryId": "LIFECYCLE.BOUNDARY.MELANCHOLY.AFTERDEATH",
+            "classification": "vanillaExternalRunOrPlayerListener",
+            "effectStatus": "pendingE2d2b",
+            "sourceType": "MegaCrit.Sts2.Core.Models.Cards.Melancholy",
+            "symbolSignature": "MegaCrit.Sts2.Core.Models.Cards.Melancholy::AfterDeath sig:200412812112a64c12a7e4020c"
+          }
+        ],
+        "runtimeStateContracts": [
+          {
+            "contractId": "LIFECYCLE.STATE.FORCE",
+            "initial": "call argument",
+            "mutation": "propagated unchanged except secondary cleanup fixes false",
+            "ownership": "command invocation"
+          },
+          {
+            "cap": 10,
+            "contractId": "LIFECYCLE.STATE.RECURSION",
+            "initial": 0,
+            "mutation": "increment only after prevention while still dead",
+            "ownership": "inner kill invocation"
+          },
+          {
+            "contractId": "LIFECYCLE.STATE.PREVENTER",
+            "initial": null,
+            "mutation": "first early/late ShouldDie listener returning false",
+            "ownership": "dispatch result"
+          },
+          {
+            "contractId": "LIFECYCLE.STATE.PENDING_LOSS",
+            "initial": null,
+            "mutation": "LoseCombat sets once; ProcessPendingLoss clears",
+            "ownership": "CombatManager"
+          },
+          {
+            "contractId": "LIFECYCLE.STATE.ESCAPED_CREATURES",
+            "initial": "runtime collection",
+            "mutation": "append exact escaped body before state removal",
+            "ownership": "CombatState"
+          },
+          {
+            "contractId": "LIFECYCLE.STATE.LISTENERS",
+            "initial": "runtime collections",
+            "mutation": "dynamic source-defined membership",
+            "ownership": "run/combat/player/mod registries"
+          },
+          {
+            "contractId": "LIFECYCLE.STATE.MOVE_REMOVAL",
+            "initial": "runtime Monster performing-move state",
+            "mutation": "move completion owns deferred state-list removal",
+            "ownership": "MonsterModel/CombatState"
+          }
+        ],
+        "sourceDenominators": {
+          "centralizedCheckCallSites": 14,
+          "commandDeclarations": 4,
+          "commandPhysicalBodies": 4,
+          "dependencies": 7,
+          "dispatchMethods": 6,
+          "escapeCallSites": 3,
+          "invocations": 707,
+          "killCallSites": 21,
+          "listenerRegistryLogicalMethods": 3,
+          "listenerRegistryPhysicalBodies": 3,
+          "removalMethods": 4,
+          "runtimeBoundaries": 7,
+          "semanticNodes": 59,
+          "terminationDeclarations": 4,
+          "terminationPhysicalBodies": 4,
+          "terminationSupportMethods": 3
+        },
+        "status": "sourceCompleteE2d2a"
+      },
       "models": {
         "cards": [
           {
@@ -104497,13 +106464,13 @@
               }
             },
             {
-              "kind": "kill",
-              "operationId": "MONSTER.GAS_BOMB#EXPLODE_MOVE/op/2",
-              "playDeathEffects": {
+              "force": {
                 "kind": "constant",
                 "value": false,
                 "valueType": "boolean"
               },
+              "kind": "kill",
+              "operationId": "MONSTER.GAS_BOMB#EXPLODE_MOVE/op/2",
               "sinkSymbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Kill sig:000212812112a7e402",
               "sourceOrder": 70,
               "target": "sourceMonster"
@@ -119573,13 +121540,13 @@
               }
             },
             {
-              "kind": "kill",
-              "operationId": "MONSTER.WATERFALL_GIANT#EXPLODE_MOVE/op/1",
-              "playDeathEffects": {
+              "force": {
                 "kind": "constant",
                 "value": false,
                 "valueType": "boolean"
               },
+              "kind": "kill",
+              "operationId": "MONSTER.WATERFALL_GIANT#EXPLODE_MOVE/op/1",
               "sinkSymbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Kill sig:000212812112a7e402",
               "sourceOrder": 66,
               "target": "sourceMonster"
@@ -131875,5 +133842,5 @@
       ]
     }
   },
-  "schemaVersion": 9
+  "schemaVersion": 10
 }

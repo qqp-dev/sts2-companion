@@ -1,4 +1,4 @@
-"""Pure builder for the compact E2d1b encounter projection."""
+"""Pure builder for the compact E2d2a encounter projection."""
 
 from __future__ import annotations
 
@@ -322,6 +322,43 @@ def _source_production(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
         "ostySummonContract": osty_contract,
         "producerRoots": roots, "productionSemantics": semantics,
         "summary": deepcopy(raw["summary"]),
+    }
+
+
+def _source_lifecycle(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
+    lifecycle=source["lifecycle"]
+    fact_id="SOURCE.LIFECYCLE.CORE.E2D2A"
+    facts.add(fact_id,"source","EVIDENCE."+fact_id,"INPUT.SOURCE",["/lifecycle"])
+    def method_ref(row: dict[str, Any]) -> dict[str, Any]:
+        return {"parameters":[item["name"] for item in row["parameters"]],
+                "physicalSymbolSignature":row["physicalBody"]["symbolSignature"],
+                "symbolSignature":row["method"]["symbolSignature"]}
+    dependencies=[]
+    for index,row in enumerate(lifecycle["dependencies"]):
+        dep_fact_id="SOURCE."+row["dependencyId"]
+        facts.add(dep_fact_id,"source","EVIDENCE."+dep_fact_id,"INPUT.SOURCE",[f"/lifecycle/dependencies/{index}"])
+        dependencies.append({"factId":dep_fact_id,**deepcopy(row)})
+    method_refs={
+        "commands":[method_ref(row) for row in lifecycle["api"]["commandDeclarations"]],
+        "dispatch":[method_ref(row) for row in lifecycle["dispatchMethods"]],
+        "listenerRegistries":[method_ref(row) for row in lifecycle["listenerRegistryMethods"]],
+        "removal":[method_ref(row) for row in lifecycle["removalMethods"]],
+        "termination":[method_ref(row) for row in lifecycle["combatTerminationMethods"]],
+        "actionExecutor":lifecycle["actionExecutorMethod"]["symbolSignature"],
+    }
+    boundaries=[{"boundaryId":row["boundaryId"],"classification":row["classification"],
+                 "effectStatus":row["effectStatus"],"sourceType":row["sourceType"],
+                 "symbolSignature":row["method"]["symbolSignature"]} for row in lifecycle["runtimeBoundaries"]]
+    return {
+        "api":{"commandDeclarations":method_refs["commands"]},
+        "combatTermination":deepcopy(lifecycle["combatTermination"]),
+        "componentId":lifecycle["componentId"],"core":deepcopy(lifecycle["core"]),
+        "dependencies":dependencies,"digests":deepcopy(lifecycle["digests"]),
+        "dispatch":deepcopy(lifecycle["dispatch"]),"factId":fact_id,
+        "listenerRegistry":deepcopy(lifecycle["listenerRegistry"]),"methodRefs":method_refs,
+        "removal":deepcopy(lifecycle["removal"]),
+        "runtimeBoundaries":boundaries,"runtimeStateContracts":deepcopy(lifecycle["runtimeStateContracts"]),
+        "sourceDenominators":deepcopy(lifecycle["sourceDenominators"]),"status":lifecycle["status"],
     }
 
 
@@ -911,9 +948,10 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
         {
             "affectedFactIds": [row["factId"] for row in source_facts["initialState"]["facts"]]
                                + [row["factId"] for row in source_facts["production"]["productionSemantics"]["dependencies"]]
-                               + [source_facts["production"]["factId"]],
-            "detail": "Producer pools, availability, slots, cardinality, cap/repeat state, and ordered post-Add effects are source-complete; death/prevention, revive/hatch phase, escape/removal, listener effects, and encounter-result E2d2 lifecycle semantics remain pending.",
-            "reasonCode": "LIFECYCLE_COVERAGE_ABSENT", "scope": "encounterCompanion", "status": "unresolved",
+                               + [source_facts["production"]["factId"], source_facts["lifecycle"]["factId"]]
+                               + [row["factId"] for row in source_facts["lifecycle"]["dependencies"]],
+            "detail": "Core kill/escape/removal, generic dispatch/listener registry, and centralized pending-loss/victory mechanics are source-complete E2d2a; concrete listener effects/phases/relationships/death-Add, event reward/parent routing, and run termination remain E2d2b/c/d.",
+            "reasonCode": "LIFECYCLE_COVERAGE_REMAINING", "scope": "encounterCompanion", "status": "unresolved",
             "unknownId": "UNKNOWN.LIFECYCLE_COVERAGE",
         },
         {
@@ -1005,6 +1043,13 @@ def _resolved_audits(source_facts: dict[str, Any]) -> list[dict[str, Any]]:
         "family": "architectTerminalScript", "historicalStatus": "sourceComplete",
         "sourceDenominators": deepcopy(source_facts["eventScripts"]["architect"]["sourceDenominators"]),
     }, {
+        "auditId": "AUDIT.RESOLVED.CORE_LIFECYCLE",
+        "boundary": "Core command/dispatch/registry/removal/pending-loss/victory mechanics are source-complete E2d2a; concrete listeners, event terminal routing, and run termination remain dependencies.",
+        "classificationFactRefs": [source_facts["lifecycle"]["factId"]],
+        "dependencyFactRefs": [row["factId"] for row in source_facts["lifecycle"]["dependencies"]],
+        "family": "coreLifecycle", "historicalStatus": "sourceComplete",
+        "sourceDenominators": deepcopy(source_facts["lifecycle"]["sourceDenominators"]),
+    }, {
         "auditId": "AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING",
         "family": "hpAssignmentRounding",
         "historicalStatus": "resolved",
@@ -1062,6 +1107,7 @@ def _readiness(known_unknowns: list[dict[str, Any]]) -> dict[str, Any]:
                     "randomBranchRepeatWeight", "randomSelectionRuntime", "productionDiscovery", "coreAddDependencies",
                     "productionProducerPool", "productionAvailabilityCapRepeat", "productionSlotFailure",
                     "productionRuntimeState", "productionPostAddOrder", "productionLifecycleDependencies",
+                    "coreLifecycleApiDispatchRegistryRemovalTermination",
                 ],
                 "status": "complete",
             },
@@ -1083,6 +1129,7 @@ def build_payload(source: dict[str, Any], legacy: dict[str, Any]) -> dict[str, A
         "graphs": _source_graphs(source, facts), "models": models, "monsters": monsters, "moves": moves,
         "randomSelection": _source_random_selection(source, facts),
         "production": _source_production(source, facts),
+        "lifecycle": _source_lifecycle(source, facts),
         "observationIdentities": _source_observation_identities(source, facts),
         "placement": _source_placement(source, facts), "scaling": _source_scaling(source, facts),
         "hpPipeline": _source_hp_pipeline(source, facts),

@@ -32,8 +32,8 @@ const exactManifest = [
 
 test("source artifact is canonical, exactly pinned, partial, and raw-only", () => {
   assert.equal(artifactBytes.toString("utf8"), `${JSON.stringify(sortedValue(artifact), null, 2)}\n`);
-  assert.equal(artifact.schemaVersion, 12);
-  assert.equal(artifact.extractorVersion, "12.0.0");
+  assert.equal(artifact.schemaVersion, 13);
+  assert.equal(artifact.extractorVersion, "13.0.0");
   assert.equal(artifact.runtimeReady, false);
   assert.equal(artifact.status, "incomplete");
   assert.deepEqual(artifact.inputs, exactManifest);
@@ -120,6 +120,20 @@ test("coverage is denominator-based and current behavior families are complete o
     coreAddOverloadClosure: 3,
     coreAddMethodClosure: 6,
     coreAddSemanticFieldClosure: 11,
+    coreLifecycleComponent: 1,
+    lifecycleCommandDeclarations: 4,
+    lifecycleCommandPhysicalBodies: 4,
+    lifecycleKillCallSites: 21,
+    lifecycleEscapeCallSites: 3,
+    lifecycleDispatchMethods: 6,
+    lifecycleListenerRegistryMethods: 6,
+    lifecycleRemovalMethods: 4,
+    lifecycleTerminationMethods: 11,
+    lifecycleCentralizedCheckSites: 14,
+    lifecycleRuntimeBoundaries: 7,
+    lifecycleDependencies: 7,
+    lifecycleInvocationClassification: 707,
+    lifecycleSemanticNodes: 59,
     moveRegistrationApplicability: 315,
     observableIdentityDomain: 108,
     observableResourceRepresentations: 108,
@@ -564,7 +578,7 @@ test("direct sinks, helpers, and dynamic fixtures remain formulas", () => {
   for (const moveId of ["MONSTER.GAS_BOMB#EXPLODE_MOVE", "MONSTER.WATERFALL_GIANT#EXPLODE_MOVE"]) {
     const kill = move(moveId).operations.find((op) => op.kind === "kill");
     assert.equal(kill.target, "sourceMonster");
-    assert.deepEqual(kill.playDeathEffects, { kind: "constant", value: false, valueType: "boolean" });
+    assert.deepEqual(kill.force, { kind: "constant", value: false, valueType: "boolean" });
   }
   assert.equal(move("MONSTER.OWL_MAGISTRATE#VERDICT").operations.find((op) => op.kind === "removePower").model, "POWER.SOAR_POWER");
   assert.deepEqual(move("MONSTER.TEST_SUBJECT#RESPAWN_MOVE").operations.filter((op) => op.kind === "removePower").map((op) => op.model), ["POWER.ADAPTABLE_POWER", "POWER.PAINFUL_STABS_POWER"]);
@@ -806,6 +820,143 @@ test("selection graphs preserve topology, Flyconid/Fabricator/Decimillipede fixt
       }
     }
   }
+});
+
+test("E2d2a core lifecycle closes force, dispatch, registry, removal, and centralized termination", () => {
+  const lifecycle = artifact.lifecycle;
+  assert.equal(lifecycle.componentId, "LIFECYCLE.CORE.E2D2A");
+  assert.equal(lifecycle.status, "sourceCompleteE2d2a");
+  assert.deepEqual(lifecycle.sourceDenominators, {
+    centralizedCheckCallSites: 14, commandDeclarations: 4, commandPhysicalBodies: 4,
+    dependencies: 7, dispatchMethods: 6, escapeCallSites: 3, invocations: 707, killCallSites: 21,
+    listenerRegistryLogicalMethods: 3, listenerRegistryPhysicalBodies: 3,
+    removalMethods: 4, runtimeBoundaries: 7, semanticNodes: 59,
+    terminationDeclarations: 4, terminationPhysicalBodies: 4, terminationSupportMethods: 3,
+  });
+  const declarations = lifecycle.api.commandDeclarations;
+  assert.deepEqual(declarations.map((row) => row.parameters.map((p) => p.name)), [
+    ["creature", "force"], ["creatures", "force"], ["creature", "force", "recursion"],
+    ["creature", "removeCreatureNode"],
+  ]);
+  assert.ok(declarations.every((row) => row.method.methodBodySha256 && row.physicalBody.methodBodySha256));
+  assert.equal(lifecycle.invocationCensus.summary.denominator, 707);
+  assert.equal(lifecycle.invocationCensus.summary.resolved, 707);
+  assert.equal(lifecycle.invocationCensus.summary.unresolved, 0);
+  assert.equal(lifecycle.invocationCensus.decisions.length, 707);
+  assert.ok(lifecycle.invocationCensus.decisions.every((row) => row.classification !== "ignored"));
+  assert.doesNotMatch(artifactBytes.toString("utf8"), /playDeathEffects/);
+  const calls = lifecycle.api.commandCallSites;
+  assert.equal(calls.length, 24);
+  assert.equal(calls.filter((row) => row.target.includes("::Kill sig:") || row.target.includes("::KillWithoutCheckingWinCondition sig:")).length, 21);
+  assert.equal(calls.filter((row) => row.target.includes("::Escape sig:")).length, 3);
+  const encounterKills = calls.filter((row) => row.classification === "currentEncounterMove");
+  assert.deepEqual(encounterKills.map((row) => row.caller), [
+    "MegaCrit.Sts2.Core.Models.Monsters.GasBomb+<ExplodeMove>d__20::MoveNext sig:200001",
+    "MegaCrit.Sts2.Core.Models.Monsters.WaterfallGiant+<ExplodeMove>d__76::MoveNext sig:200001",
+  ]);
+  assert.ok(encounterKills.every((row) => row.arguments.find((arg) => arg.parameter === "force")?.value === false));
+  const listGraph = lifecycle.core.listKillGraph;
+  const listStages = listGraph.nodes.map((row) => row.nodeId.split(".").at(-1));
+  assert.deepEqual(listStages, [
+    "emptyReturn", "snapshotRun", "snapshotBodies", "sequentialInner", "managerGuard",
+    "allPlayersDead", "liveCombatLoss", "testModeGate", "gameOver", "endKilledTurns",
+  ]);
+  assert.deepEqual(new Set(listGraph.outcomes.map((row) => row.outcomeId)), new Set([
+    "LIFECYCLE.KILL.LIST.OUTCOME.EMPTY", "LIFECYCLE.KILL.LIST.OUTCOME.MANAGER_UNAVAILABLE",
+    "LIFECYCLE.KILL.LIST.OUTCOME.TEST_MODE_SKIPPED", "LIFECYCLE.KILL.LIST.OUTCOME.GAME_OVER",
+    "LIFECYCLE.KILL.LIST.OUTCOME.COMPLETED", "LIFECYCLE.KILL.LIST.OUTCOME.FAULT_OR_CANCEL",
+  ]));
+  const listEdges = new Map(listGraph.edges.map((row) => [row.edgeId, row]));
+  assert.deepEqual(
+    [listEdges.get("LIFECYCLE.KILL.LIST.EDGE.INNER_SUCCEEDED")?.kind, listEdges.get("LIFECYCLE.KILL.LIST.EDGE.INNER_SUCCEEDED")?.to],
+    ["awaitSuccess", "LIFECYCLE.KILL.LIST.04.managerGuard"],
+  );
+  assert.deepEqual(
+    [listEdges.get("LIFECYCLE.KILL.LIST.EDGE.INNER_FAILED")?.kind, listEdges.get("LIFECYCLE.KILL.LIST.EDGE.INNER_FAILED")?.to],
+    ["faultOrCancellation", "LIFECYCLE.KILL.LIST.OUTCOME.FAULT_OR_CANCEL"],
+  );
+  assert.deepEqual(
+    [listEdges.get("LIFECYCLE.KILL.LIST.EDGE.LIVE_COMBAT_LOSS")?.to, listEdges.get("LIFECYCLE.KILL.LIST.EDGE.LOSS_FALLTHROUGH")?.to],
+    ["LIFECYCLE.KILL.LIST.06.liveCombatLoss", "LIFECYCLE.KILL.LIST.07.testModeGate"],
+  );
+  assert.equal(listEdges.get("LIFECYCLE.KILL.LIST.EDGE.NON_LIVE_ALL_DEAD")?.to, "LIFECYCLE.KILL.LIST.07.testModeGate");
+  assert.deepEqual(
+    [listEdges.get("LIFECYCLE.KILL.LIST.EDGE.TEST_OFF")?.to, listEdges.get("LIFECYCLE.KILL.LIST.EDGE.TEST_ON")?.to],
+    ["LIFECYCLE.KILL.LIST.08.gameOver", "LIFECYCLE.KILL.LIST.OUTCOME.TEST_MODE_SKIPPED"],
+  );
+  assert.equal(listEdges.get("LIFECYCLE.KILL.LIST.EDGE.PLAYER_REMAINS")?.to, "LIFECYCLE.KILL.LIST.09.endKilledTurns");
+  assert.equal(listEdges.get("LIFECYCLE.KILL.LIST.EDGE.GAME_OVER")?.kind, "sourceOrder");
+  assert.doesNotMatch(listGraph.nodes.find((row) => row.nodeId.endsWith("gameOver")).effect, /await OnEnded/);
+  const inner = lifecycle.core.innerDeathGraph;
+  assert.equal(inner.directCheckWinCondition, false);
+  assert.equal(inner.deadBodyEntryShortCircuit, false);
+  assert.match(inner.forceContract, /^entry guards complete regardless of force; after they pass, force bypasses only/);
+  assert.equal(inner.nodes.find((row) => row.nodeId.endsWith("beforeDeath")).condition, "always after entry guards, including entry at zero HP");
+  assert.match(inner.nodes.find((row) => row.nodeId.endsWith("forceBoundary")).effect, /bypass only ShouldDie/);
+  assert.match(inner.nodes.find((row) => row.nodeId.endsWith("afterDeathAllowed")).effect, /wasRemovalPrevented:false/);
+  assert.match(inner.nodes.find((row) => row.nodeId.endsWith("afterDeathPrevented")).effect, /wasRemovalPrevented:true/);
+  assert.match(inner.nodes.find((row) => row.nodeId.endsWith("recursionCap")).effect, /InvalidOperationException/);
+  assert.ok(inner.edges.some((row) => row.edgeId === "LIFECYCLE.KILL.INNER.EDGE.DEATH_PREVENTED"));
+  assert.ok(inner.edges.some((row) => row.edgeId === "LIFECYCLE.KILL.INNER.EDGE.FORCED_ALLOWED"));
+  assert.ok(inner.edges.some((row) => row.kind === "faultOrCancellation"));
+  const innerEdges = new Map(inner.edges.map((row) => [row.edgeId, row]));
+  const completedGuards = [
+    innerEdges.get("LIFECYCLE.KILL.INNER.EDGE.DETACHED_NON_PLAYER_COMPLETED"),
+    innerEdges.get("LIFECYCLE.KILL.INNER.EDGE.ATTACHED_NON_LIVE_COMPLETED"),
+  ];
+  assert.deepEqual(completedGuards.map((row) => row?.to), [
+    "LIFECYCLE.KILL.INNER.OUTCOME.DETACHED_NON_PLAYER_COMPLETED",
+    "LIFECYCLE.KILL.INNER.OUTCOME.ATTACHED_NON_LIVE_COMPLETED",
+  ]);
+  const nodeIds = new Set(inner.nodes.map((row) => row.nodeId));
+  assert.ok(completedGuards.every((row) => row?.kind === "conditionTrue" && !nodeIds.has(row.to)));
+  assert.ok(completedGuards.every((guard) => inner.edges.every((row) => row.from !== guard.to)));
+  assert.equal(innerEdges.get("LIFECYCLE.KILL.INNER.EDGE.GUARDS_PASSED")?.to, "LIFECYCLE.KILL.INNER.02.outOfCombatPlayerSafety");
+  const safetyReturn = innerEdges.get("LIFECYCLE.KILL.INNER.EDGE.SAFETY_RETURN");
+  const safetyFailure = innerEdges.get("LIFECYCLE.KILL.INNER.EDGE.FAIL.02");
+  assert.deepEqual([safetyReturn.kind, safetyReturn.to], ["awaitSuccess", "LIFECYCLE.KILL.INNER.OUTCOME.SAFETY_HEALED"]);
+  assert.deepEqual([safetyFailure.kind, safetyFailure.to], ["faultOrCancellation", "LIFECYCLE.KILL.INNER.22.awaiterFailure"]);
+  const victory = lifecycle.combatTermination.victoryGraph;
+  assert.deepEqual(victory.nodes.slice(1, 4).map((row) => row.nodeId.split(".").at(-1)), ["clearTurns", "revivePlayers", "afterCombatEnd"]);
+  const victoryEdges = new Map(victory.edges.map((row) => [row.edgeId, row]));
+  assert.deepEqual(
+    [victoryEdges.get("LIFECYCLE.COMBAT.VICTORY.EDGE.02")?.kind, victoryEdges.get("LIFECYCLE.COMBAT.VICTORY.EDGE.02")?.to],
+    ["awaitSuccess", "LIFECYCLE.COMBAT.VICTORY.03.afterCombatEnd"],
+  );
+  assert.deepEqual(
+    [victoryEdges.get("LIFECYCLE.COMBAT.VICTORY.EDGE.REVIVE_FAIL")?.kind, victoryEdges.get("LIFECYCLE.COMBAT.VICTORY.EDGE.REVIVE_FAIL")?.to],
+    ["faultOrCancellation", "LIFECYCLE.COMBAT.VICTORY.OUTCOME.FAULT_OR_CANCEL"],
+  );
+  assert.equal(artifact.lifecycle.combatTermination.checkGraph.nodes.length, 5);
+  assert.deepEqual(new Set(artifact.lifecycle.combatTermination.checkGraph.outcomes.map((row) => row.outcomeId)), new Set([
+    "LIFECYCLE.COMBAT.CHECK.OUTCOME.LOSS_PROCESSED", "LIFECYCLE.COMBAT.CHECK.OUTCOME.VICTORY_ENDED",
+    "LIFECYCLE.COMBAT.CHECK.OUTCOME.CONTINUE", "LIFECYCLE.COMBAT.CHECK.OUTCOME.FAULT_OR_CANCEL",
+  ]));
+  assert.deepEqual(lifecycle.dispatch.shouldDie.order, ["ShouldDie over current registry snapshot", "ShouldDieLate over current registry snapshot"]);
+  assert.equal(lifecycle.dispatch.shouldDie.aggregation, "first false stops and becomes exact preventer");
+  assert.equal(lifecycle.dispatch.awaitedDispatch.parallelism, "none");
+  assert.match(lifecycle.dispatch.awaitedDispatch.execution, /one listener task at a time/);
+  assert.deepEqual(lifecycle.listenerRegistry.combatOrder.map((row) => row.source), ["allies then enemies", "each creature", "active player contents", "combat globals", "mod combat subscribers"]);
+  assert.deepEqual(lifecycle.listenerRegistry.runOrder.map((row) => row.source), ["active-player deck", "active-player inventory", "run globals", "mod run subscribers", "child combat registry"]);
+  assert.match(lifecycle.listenerRegistry.dynamicValues, /never assumed empty/);
+  assert.equal(lifecycle.runtimeBoundaries.length, 7);
+  assert.ok(lifecycle.runtimeBoundaries.every((row) => row.effectStatus === "pendingE2d2b"));
+  assert.deepEqual(lifecycle.removal.escapeDeathHooks, []);
+  assert.equal(lifecycle.removal.escapeResultEnum, null);
+  assert.match(lifecycle.removal.deathMoveDeferral, /deferred/);
+  assert.match(lifecycle.removal.escapeGraph.nodes.find((row) => row.nodeId.endsWith("escapedHistory")).effect, /append exact creature/);
+  assert.equal(lifecycle.combatTermination.pendingLoss.representation, "nullable PendingLoss state; no result enum exists");
+  assert.equal(lifecycle.combatTermination.victoryPredicate.secondaryOnlyEnemiesBlock, false);
+  assert.equal(lifecycle.combatTermination.victoryPredicate.allEscaped, "ordinary victory at the next centralized check");
+  assert.equal(lifecycle.combatTermination.killDirectWinCheck, false);
+  assert.equal(lifecycle.combatTermination.resultEnum, null);
+  assert.deepEqual(lifecycle.combatTermination.actionExecutorEdges.map((row) => row.edgeId), [
+    "LIFECYCLE.ACTION.NORMAL", "LIFECYCLE.ACTION.LOGGED_FAULT", "LIFECYCLE.ACTION.CANCEL", "LIFECYCLE.AWAIT.FAILURE",
+  ]);
+  assert.equal(lifecycle.centralizedCheckCallSites.length, 14);
+  assert.ok(lifecycle.centralizedCheckCallSites.every((row) => !row.caller.includes("CreatureCmd+<Kill")));
+  assert.deepEqual(new Set(lifecycle.dependencies.map((row) => row.status)), new Set(["sourceComplete", "pendingE2d2b", "pendingE2d2c", "pendingE2d2d"]));
+  assert.equal(artifact.runtimeReady, false);
 });
 
 test("E2d1b random callbacks, producer semantics, and production/core Add contracts are source-closed", () => {
@@ -1129,7 +1280,7 @@ test("README and world-model census claims match the current schema summary and 
   has(readme, `deterministic schema ${JSON.parse(readFileSync(new URL("../data/encounter-facts-v0.111.0.json", import.meta.url))).schemaVersion} compact projection`);
   has(readme, `(schema ${artifact.schemaVersion} raw source facts)`);
 
-  has(worldModel, `Schema ${artifact.schemaVersion} is the E2d1b boundary`);
+  has(worldModel, `Schema ${artifact.schemaVersion} is the E2d2a boundary`);
   has(worldModel, `exact metadata inheritance closure for all ${topology.behaviorClasses} behavior graph owners`);
   has(worldModel, `The ${summary.intentConstructorSites} constructor sites contain ${summary.requiredIntentArguments} required arguments`);
   has(worldModel, `separately count ${summary.intentConstructorSites} classified constructors and ${summary.requiredIntentArguments} resolved arguments`);

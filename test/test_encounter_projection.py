@@ -429,6 +429,129 @@ class EncounterProjectionTests(unittest.TestCase):
             "UNKNOWN.EVENT_BEHAVIOR", "UNKNOWN.EVENT_LIFECYCLE",
         })
 
+    def test_e2d2a_compact_lifecycle_and_readiness_boundary(self):
+        lifecycle=self.artifact["payload"]["sourceFacts"]["lifecycle"]
+        self.assertEqual((lifecycle["componentId"],lifecycle["status"],lifecycle["factId"]),
+                         ("LIFECYCLE.CORE.E2D2A","sourceCompleteE2d2a","SOURCE.LIFECYCLE.CORE.E2D2A"))
+        self.assertEqual([row["parameters"] for row in lifecycle["api"]["commandDeclarations"]],
+                         [["creature","force"],["creatures","force"],["creature","force","recursion"],["creature","removeCreatureNode"]])
+        self.assertEqual(lifecycle["sourceDenominators"],{
+            "centralizedCheckCallSites":14,"commandDeclarations":4,"commandPhysicalBodies":4,
+            "dependencies":7,"dispatchMethods":6,"escapeCallSites":3,"invocations":707,"killCallSites":21,
+            "listenerRegistryLogicalMethods":3,"listenerRegistryPhysicalBodies":3,"removalMethods":4,
+            "runtimeBoundaries":7,"semanticNodes":59,"terminationDeclarations":4,
+            "terminationPhysicalBodies":4,"terminationSupportMethods":3})
+        self.assertFalse(lifecycle["core"]["innerDeathGraph"]["directCheckWinCondition"])
+        self.assertFalse(lifecycle["core"]["innerDeathGraph"]["deadBodyEntryShortCircuit"])
+        list_graph=lifecycle["core"]["listKillGraph"]
+        self.assertEqual([row["nodeId"].rsplit(".",1)[-1] for row in list_graph["nodes"]],
+                         ["emptyReturn","snapshotRun","snapshotBodies","sequentialInner","managerGuard",
+                          "allPlayersDead","liveCombatLoss","testModeGate","gameOver","endKilledTurns"])
+        list_edges={row["edgeId"]:row for row in list_graph["edges"]}
+        self.assertEqual(list_edges["LIFECYCLE.KILL.LIST.EDGE.LIVE_COMBAT_LOSS"]["to"],"LIFECYCLE.KILL.LIST.06.liveCombatLoss")
+        self.assertEqual(list_edges["LIFECYCLE.KILL.LIST.EDGE.LOSS_FALLTHROUGH"]["to"],"LIFECYCLE.KILL.LIST.07.testModeGate")
+        self.assertEqual(list_edges["LIFECYCLE.KILL.LIST.EDGE.NON_LIVE_ALL_DEAD"]["to"],"LIFECYCLE.KILL.LIST.07.testModeGate")
+        self.assertEqual(list_edges["LIFECYCLE.KILL.LIST.EDGE.TEST_OFF"]["to"],"LIFECYCLE.KILL.LIST.08.gameOver")
+        self.assertEqual(list_edges["LIFECYCLE.KILL.LIST.EDGE.TEST_ON"]["to"],"LIFECYCLE.KILL.LIST.OUTCOME.TEST_MODE_SKIPPED")
+        inner=lifecycle["core"]["innerDeathGraph"]
+        inner_edges={row["edgeId"]:row for row in inner["edges"]}
+        guard_outcomes=[inner_edges[edge_id]["to"] for edge_id in (
+            "LIFECYCLE.KILL.INNER.EDGE.DETACHED_NON_PLAYER_COMPLETED",
+            "LIFECYCLE.KILL.INNER.EDGE.ATTACHED_NON_LIVE_COMPLETED")]
+        self.assertEqual(guard_outcomes,["LIFECYCLE.KILL.INNER.OUTCOME.DETACHED_NON_PLAYER_COMPLETED",
+                                        "LIFECYCLE.KILL.INNER.OUTCOME.ATTACHED_NON_LIVE_COMPLETED"])
+        self.assertFalse(any(row["from"] in guard_outcomes for row in inner["edges"]))
+        self.assertEqual(lifecycle["dispatch"]["awaitedDispatch"]["parallelism"],"none")
+        self.assertEqual([row["source"] for row in lifecycle["listenerRegistry"]["combatOrder"]],
+                         ["allies then enemies","each creature","active player contents","combat globals","mod combat subscribers"])
+        self.assertEqual(lifecycle["removal"]["escapeDeathHooks"],[])
+        self.assertIsNone(lifecycle["removal"]["escapeResultEnum"])
+        self.assertFalse(lifecycle["combatTermination"]["victoryPredicate"]["secondaryOnlyEnemiesBlock"])
+        self.assertEqual(lifecycle["combatTermination"]["victoryPredicate"]["allEscaped"],"ordinary victory at the next centralized check")
+        self.assertEqual({row["status"] for row in lifecycle["dependencies"]},{"sourceComplete","pendingE2d2b","pendingE2d2c","pendingE2d2d"})
+        self.assertEqual(len(lifecycle["runtimeBoundaries"]),7)
+        serialized=json.dumps(lifecycle)
+        for forbidden in ("playDeathEffects","diagnosticMetadataToken","cilInstructionsSha256","methodBodySha256","commandCallSites","invocationCensus"):
+            self.assertNotIn(forbidden,serialized)
+        audit=next(row for row in self.artifact["payload"]["resolvedAudits"] if row["auditId"]=="AUDIT.RESOLVED.CORE_LIFECYCLE")
+        self.assertEqual(audit["classificationFactRefs"],[lifecycle["factId"]])
+        self.assertEqual(set(audit["dependencyFactRefs"]),{row["factId"] for row in lifecycle["dependencies"]})
+        unknown=next(row for row in self.artifact["payload"]["knownUnknowns"] if row["unknownId"]=="UNKNOWN.LIFECYCLE_COVERAGE")
+        self.assertEqual(unknown["reasonCode"],"LIFECYCLE_COVERAGE_REMAINING")
+        self.assertIn("source-complete E2d2a",unknown["detail"])
+        self.assertFalse(self.artifact["payload"]["readiness"]["runtimeScopes"]["encounterCompanion"]["ready"])
+        self.assertTrue(self.artifact["payload"]["readiness"]["runtimeScopes"]["encounterProjection"]["ready"])
+
+    def test_e2d2a_compact_mutations_fail_closed(self):
+        def lifecycle(a):return a["payload"]["sourceFacts"]["lifecycle"]
+        cases=[
+            (lambda a:lifecycle(a)["api"]["commandDeclarations"][0]["parameters"].__setitem__(1,"playDeathEffects"),"legacy kill Boolean|force/removeCreatureNode"),
+            (lambda a:lifecycle(a)["core"]["innerDeathGraph"].__setitem__("forceContract","force skips all hooks"),"force/entry-guard/dead-body/direct-win"),
+            (lambda a:lifecycle(a)["core"]["innerDeathGraph"].__setitem__("directCheckWinCondition",True),"force/entry-guard/dead-body/direct-win"),
+            (lambda a:lifecycle(a)["core"]["innerDeathGraph"].__setitem__("deadBodyEntryShortCircuit",True),"force/entry-guard/dead-body/direct-win"),
+            (lambda a:next(row for row in lifecycle(a)["core"]["listKillGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.LIST.EDGE.INNER_FAILED").__setitem__("kind","sourceOrder"),"loss/test-mode fallthrough"),
+            (lambda a:next(row for row in lifecycle(a)["core"]["listKillGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.LIST.EDGE.GAME_OVER").__setitem__("kind","awaitSuccess"),"loss/test-mode fallthrough"),
+            (lambda a:next(row for row in lifecycle(a)["core"]["listKillGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.LIST.EDGE.LOSS_FALLTHROUGH").__setitem__("to","LIFECYCLE.KILL.LIST.OUTCOME.GAME_OVER"),"loss/test-mode fallthrough"),
+            (lambda a:next(row for row in lifecycle(a)["core"]["listKillGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.LIST.EDGE.NON_LIVE_ALL_DEAD").__setitem__("to","LIFECYCLE.KILL.LIST.08.gameOver"),"loss/test-mode fallthrough"),
+            (lambda a:next(row for row in lifecycle(a)["core"]["innerDeathGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.INNER.EDGE.FAIL.02").__setitem__("kind","awaitSuccess"),"entry guards or safety Heal"),
+            (lambda a:next(row for row in lifecycle(a)["core"]["innerDeathGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.INNER.EDGE.DETACHED_NON_PLAYER_COMPLETED").__setitem__("to","LIFECYCLE.KILL.INNER.04.zeroHp"),"entry guards or safety Heal"),
+            (lambda a:next(row for row in lifecycle(a)["core"]["innerDeathGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.INNER.EDGE.ATTACHED_NON_LIVE_COMPLETED").__setitem__("to","LIFECYCLE.KILL.INNER.04.zeroHp"),"entry guards or safety Heal"),
+            (lambda a:next(row for row in lifecycle(a)["combatTermination"]["victoryGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.COMBAT.VICTORY.EDGE.REVIVE_FAIL").__setitem__("kind","sourceOrder"),"player revive success/failure"),
+            (lambda a:lifecycle(a)["dispatch"]["awaitedDispatch"].__setitem__("parallelism","Task.WhenAll"),"ordered awaited dispatch"),
+            (lambda a:lifecycle(a)["listenerRegistry"]["combatOrder"].reverse(),"source lifecycle semantic join"),
+            (lambda a:lifecycle(a)["removal"]["escapeDeathHooks"].append("BeforeDeath"),"escape death/result/node"),
+            (lambda a:lifecycle(a)["removal"]["escapeGraph"]["nodes"][2].__setitem__("condition","force == true"),"source lifecycle semantic join"),
+            (lambda a:lifecycle(a)["combatTermination"].__setitem__("resultEnum","Victory"),"result enum invented"),
+            (lambda a:lifecycle(a)["combatTermination"]["victoryPredicate"].__setitem__("secondaryOnlyEnemiesBlock",True),"secondary/all-escape"),
+            (lambda a:lifecycle(a)["combatTermination"]["victoryPredicate"].__setitem__("allEscaped","special escape result"),"secondary/all-escape"),
+            (lambda a:lifecycle(a)["combatTermination"]["actionExecutorEdges"][2].__setitem__("result","success"),"source lifecycle semantic join"),
+            (lambda a:lifecycle(a)["dependencies"].pop(),"dependency closure"),
+            (lambda a:lifecycle(a)["runtimeBoundaries"].pop(),"runtime boundaries"),
+            (lambda a:lifecycle(a)["digests"].__setitem__("coreSemanticsSha256","0"*64),"digest join"),
+            (lambda a:lifecycle(a).__setitem__("commandCallSites",[]),"unknown fields"),
+            (lambda a:a["payload"]["resolvedAudits"].pop(next(i for i,row in enumerate(a["payload"]["resolvedAudits"]) if row["auditId"]=="AUDIT.RESOLVED.CORE_LIFECYCLE")),"expected HP, production, lifecycle"),
+            (lambda a:a["payload"]["readiness"]["runtimeScopes"]["encounterCompanion"].__setitem__("ready",True),"cannot be ready"),
+        ]
+        for change,pattern in cases:
+            with self.subTest(pattern=pattern):self.assert_invalid(self.mutated(change),pattern)
+
+    def test_e2d2a_raw_source_mutations_fail_closed(self):
+        def assert_bad(change,pattern):
+            source=deepcopy(self.source);change(source)
+            with self.assertRaisesRegex(SourceExtractionError,pattern):
+                validate_artifact(self.artifact,source=source,legacy=self.legacy)
+        kill=next(op for move in self.source["behavior"]["registrations"] for op in move["operations"] if op.get("kind")=="kill")
+        move_index=next(i for i,move in enumerate(self.source["behavior"]["registrations"]) if kill in move["operations"])
+        op_index=self.source["behavior"]["registrations"][move_index]["operations"].index(kill)
+        cases=[
+            (lambda s:(s["behavior"]["registrations"][move_index]["operations"][op_index].__setitem__("playDeathEffects",s["behavior"]["registrations"][move_index]["operations"][op_index].pop("force"))),"unknown fields"),
+            (lambda s:s["lifecycle"]["api"]["commandDeclarations"][0]["parameters"][1].__setitem__("name","playDeathEffects"),"parameter names/order|legacy playDeathEffects"),
+            (lambda s:s["lifecycle"]["core"]["innerDeathGraph"].__setitem__("forceContract","force skips hooks"),"force bypass/entry-guard boundary"),
+            (lambda s:s["lifecycle"]["core"]["innerDeathGraph"].__setitem__("directCheckWinCondition",True),"invented a win check"),
+            (lambda s:s["lifecycle"]["core"]["innerDeathGraph"].__setitem__("deadBodyEntryShortCircuit",True),"dead-body short circuit"),
+            (lambda s:next(row for row in s["lifecycle"]["core"]["listKillGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.LIST.EDGE.INNER_FAILED").__setitem__("kind","sourceOrder"),"loss/test-mode fallthrough"),
+            (lambda s:next(row for row in s["lifecycle"]["core"]["listKillGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.LIST.EDGE.GAME_OVER").__setitem__("kind","awaitSuccess"),"loss/test-mode fallthrough"),
+            (lambda s:next(row for row in s["lifecycle"]["core"]["listKillGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.LIST.EDGE.LOSS_FALLTHROUGH").__setitem__("to","LIFECYCLE.KILL.LIST.OUTCOME.GAME_OVER"),"loss/test-mode fallthrough"),
+            (lambda s:next(row for row in s["lifecycle"]["core"]["listKillGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.LIST.EDGE.NON_LIVE_ALL_DEAD").__setitem__("to","LIFECYCLE.KILL.LIST.08.gameOver"),"loss/test-mode fallthrough"),
+            (lambda s:next(row for row in s["lifecycle"]["core"]["innerDeathGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.INNER.EDGE.FAIL.02").__setitem__("kind","awaitSuccess"),"completed guards or safety Heal"),
+            (lambda s:(
+                next(row for row in s["lifecycle"]["core"]["innerDeathGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.INNER.EDGE.DETACHED_NON_PLAYER_COMPLETED").__setitem__("to","LIFECYCLE.KILL.INNER.04.zeroHp"),
+                next(row for row in s["lifecycle"]["core"]["innerDeathGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.INNER.EDGE.GUARDS_PASSED").__setitem__("to","LIFECYCLE.KILL.INNER.OUTCOME.DETACHED_NON_PLAYER_COMPLETED")),"completed guards or safety Heal"),
+            (lambda s:(
+                next(row for row in s["lifecycle"]["core"]["innerDeathGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.INNER.EDGE.ATTACHED_NON_LIVE_COMPLETED").__setitem__("to","LIFECYCLE.KILL.INNER.04.zeroHp"),
+                next(row for row in s["lifecycle"]["core"]["innerDeathGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.KILL.INNER.EDGE.GUARDS_PASSED").__setitem__("to","LIFECYCLE.KILL.INNER.OUTCOME.ATTACHED_NON_LIVE_COMPLETED")),"completed guards or safety Heal"),
+            (lambda s:next(row for row in s["lifecycle"]["combatTermination"]["victoryGraph"]["edges"] if row["edgeId"]=="LIFECYCLE.COMBAT.VICTORY.EDGE.REVIVE_FAIL").__setitem__("kind","sourceOrder"),"player-revive success/failure"),
+            (lambda s:s["lifecycle"]["combatTermination"]["pendingLoss"].__setitem__("representation","CombatResult.Win"),"invented CombatResult"),
+            (lambda s:s["lifecycle"]["dispatch"]["awaitedDispatch"].__setitem__("parallelism","Task.WhenAll"),"canonical digest"),
+            (lambda s:s["lifecycle"]["removal"]["escapeDeathHooks"].append("Died"),"escape invented death hooks"),
+            (lambda s:s["lifecycle"]["combatTermination"].__setitem__("resultEnum","Victory"),"result enum"),
+            (lambda s:s["lifecycle"]["runtimeBoundaries"][0].__setitem__("classification","ignored"),"broad ignored"),
+            (lambda s:s["lifecycle"]["dependencies"].pop(),"dependencies|canonical digest"),
+            (lambda s:s["lifecycle"]["digests"].__setitem__("methodClosureSha256","f"*64),"canonical digest"),
+        ]
+        for change,pattern in cases:
+            with self.subTest(pattern=pattern):assert_bad(change,pattern)
+
     def test_e2a_compact_mutations_fail_closed(self):
         def initial(a): return a["payload"]["sourceFacts"]["initialState"]
         def tough_hatch(a):
