@@ -3,7 +3,7 @@
 `data/game-v0.111.0-source.json` is a deterministic, presentation-independent
 world model for exact public-beta v0.111.0 inputs. It contains identities,
 localization joins, formulas, roster selections, membership sets, and state
-facts—not UI sentences or layout. Schema 10 is the E2c2b boundary and remains
+facts—not UI sentences or layout. Schema 11 is the E2d1a boundary and remains
 runtime-incomplete until independently gated later E2 and consumer waves land.
 
 ## Three-wave boundary
@@ -18,6 +18,7 @@ runtime-incomplete until independently gated later E2 and consumer waves land.
 | E2c1 | Event-inclusive physical turn graphs, inherited/reused applicability, event titles/intents/operations/no-op proofs, and helper-call closure | Complete for exact turn-machine denominators; scripted event and lifecycle dependencies remain |
 | E2c2a | Five linked event owners, 12 option/delegate constructions, seven exact combat transitions/outcomes, Foul Potion dispatch, and common framework closure | Complete for the non-Architect linked slice |
 | E2c2b | Architect placement, dialogue selection/line graph, structural localization, visual-only layout, presentation closure, and terminal sink/order | Script component complete; lifecycle producers/order and formulas remain dependencies |
+| E2d1a | Generic random repeat/float-weight repair; closed Add/Osty census; current producer roots/helper sites; shared core Add lifecycle contract | Complete for exact discovery/core denominators; per-producer E2d1b semantics and E2d2 lifecycle remain pending |
 
 The current app does not import this artifact or the compact projection and still displays the
 wiki-derived book. Source extraction changes no routes, renderer output, event display, or
@@ -542,7 +543,7 @@ decrement/removal, escape, and terminal combat result remain lifecycle refs. Exa
 stack extraction shows the three Battle display calls use monster V1/V2/V3 and the
 V1 encounter argument at each site; no expected polarity or argument was seeded.
 
-The schema 7 compact projection includes semantic owners/options/transitions/outcomes/
+The schema 8 compact projection includes semantic owners/options/transitions/outcomes/
 nodes/edges/effects/contracts/dependencies and fact evidence, but excludes raw method
 censuses and the 1,549 call decisions. Its linked-event component is complete.
 At the E2c2a boundary Architect remained `UNKNOWN.EVENT_SCRIPTED_BEHAVIOR`. E2c2b
@@ -598,10 +599,52 @@ the script component; aggregate event, event lifecycle, global lifecycle,
 formula/runtime-contract, title/provenance, and broader-world gaps remain. All global,
 root, encounter-companion, and source runtime readiness remains false.
 
+## E2d1a random and production contracts
+
+Every reachable `RandomBranchState.AddBranch` call is decoded from its exact CLI
+signature and named parameter metadata. The schema no longer permits an enum
+integer in `weight` or a float callback in `predicate`. Each of the 61 branches
+has target/source order, exact `MoveRepeatType` name/value, overload-supplied
+maximum/cooldown values, and either an exact float constant or a parameterless
+float delegate with receiver, target method, expression/runtime contract, and
+provenance. Boolean predicates remain a separate conditional-branch concept only.
+The complete repeat distribution is 4 forever, 10 bounded, 45 cannot-repeat, and
+2 use-once, with eight delegate weights. Rat Call is independently
+`UseOnlyOnce`; the other three Rat branches are individually `CannotRepeat`, and
+Screech alone supplies cooldown 3.
+
+The runtime component traces `StateWeight.GetWeight`, `GetStateWeight`, and
+`GetNextState`: callback evaluation is float; repeat, maximum, cooldown, and
+state-log history independently suppress effective weight; effective float
+weights are summed; and `Rng.NextFloat(total)` is consumed by source-order
+cumulative subtraction. Normalization and zeroing remain dynamic, so no callback
+constant is presented as a state-independent probability.
+
+Production discovery starts from the exact behavior registrations and their
+closed invocation decisions. It yields 6 owners/7 roots, 3 helper methods/5 helper
+edges, 6 current direct Add sinks, and 6 owner/encounter applicability joins.
+The assembly census classifies all 14 `CreatureCmd.Add` calls: six current enemy,
+two core forwarding, four death-Power, one mock, and one player-pet. All 17
+`OstyCmd.Summon` calls are separately classified and never merged. The earlier
+behavior extractor already traversed Fabricator's defensive/aggressive wrappers
+and shared `SpawnBot`, including Fabricating Strike. E2d1a reuses those exact
+invocation IDs and deduplicates them; it does not claim newly visible helpers.
+
+The core three-overload Add chain proves model/body construction, combat/side/slot
+propagation, `CreateCreature` then `EncounterModel.OnCreatureSpawned`, live and
+in-progress branches, combat/manager/room insertion, E2a addition-hook dispatch,
+unique canonical-model history, awaited `AfterCreatureAddedToCombat`, and exact
+created-body result identity. Spawn history is reward/progress model membership,
+not body count, cap, or pool depletion. Core Add has no slot validation and no
+`AfterSummon`; the latter belongs to Osty. Exceptions propagate with no rollback
+or cancellation. Producer-specific pool, availability, no-slot, cardinality, cap,
+repeat-state, and post-add facts are explicitly pending E2d1b; lifecycle outcomes
+remain E2d2.
+
 ## E2 projection boundary
 
 The checked source artifact above remains the full static evidence artifact.
-C0 introduced, E1 extended, and E2a/E2b/E2c1/E2c2a/E2c2b extend `data/encounter-facts-v0.111.0.json`, built by
+C0 introduced, E1 extended, and E2a/E2b/E2c1/E2c2a/E2c2b/E2d1a extend `data/encounter-facts-v0.111.0.json`, built by
 `tools/generate-encounter-facts.py` from that artifact and
 `data/encounters.json` only. It is a projection, not a replacement extractor
 and not a runtime consumer input.
@@ -632,7 +675,7 @@ pointed-value hashes instead of repeating CIL proof or the 6,786-invocation
 census. This makes the projection substantially smaller while retaining an
 auditable path to the full checked source artifact.
 
-E2c1 declares only the bounded encounter projection complete. The encounter
+E2d1a declares only the bounded encounter projection complete. The encounter
 companion remains hard-false/incomplete: event turn machines are source-complete,
 but scripted event behavior, event lifecycle/timeout/result semantics, broader lifecycle
 closure, and companion-wide formula/runtime contracts remain blockers. Global readiness also remains false

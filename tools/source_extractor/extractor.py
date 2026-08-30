@@ -19,6 +19,7 @@ from .identity import extract_observation_identities
 from .hp_pipeline import extract_hp_pipeline
 from .initial_state import extract_initial_state
 from .placement import extract_placement
+from .production import extract_production
 from .metadata import AssemblyMetadata, extract_encounter_census
 from .names import join_monster_names
 from .pck import read_selected
@@ -211,6 +212,10 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             initial_state, set(rosters["eventOnlyModels"]), monster_l10n, pck_sha256=pck.sha256,
             localization_blob_sha256=monster_l10n_blob["entrySha256"],
         )
+        production = extract_production(
+            assembly, dll.sha256, behavior, world["concrete"], encounters,
+            initial_state, hp_pipeline,
+        )
         # Resolve the generic E2c1 scripted boundary only after the independently
         # validated Architect component exists. Lifecycle dependencies stay open.
         scripted_dependencies = [row for row in behavior["eventDependencies"]
@@ -355,6 +360,19 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             "monsterNamesEnglishCurrentReachable": complete(name_data["joinedCount"], 108),
             "monsterNamespaceCensus": complete(121, 121),
             "blockMultiplayerScaling": complete(1, 1),
+            "randomBranchOverloadClosure": complete(len(behavior["randomSelectionContract"]["overloads"]), 10),
+            "randomBranchRepeatWeightSemantics": complete(behavior["randomSelectionContract"]["summary"]["branches"], 61),
+            "randomWeightCallbackClosure": complete(behavior["randomSelectionContract"]["summary"]["floatCallbacks"], 8),
+            "randomSelectionRuntimeContract": complete(len(behavior["randomSelectionContract"]["methods"]), 3),
+            "productionAddApiCensus": complete(production["summary"]["addAssemblySites"], 14),
+            "productionOstyApiCensus": complete(production["summary"]["ostyAssemblySites"], 17),
+            "productionOwnerRootDiscovery": complete(production["summary"]["producerRoots"], 7),
+            "productionHelperCallClosure": complete(production["summary"]["helperCallEdges"], 5),
+            "productionDirectSiteDiscovery": complete(production["summary"]["currentDirectSites"], 6),
+            "productionOwnerEncounterApplicability": complete(production["summary"]["ownerEncounterApplicability"], 6),
+            "coreAddOverloadClosure": complete(len(production["coreAddContract"]["overloads"]), 3),
+            "coreAddMethodClosure": complete(len(production["coreAddContract"]["methods"]), 6),
+            "coreAddSemanticFieldClosure": complete(11, 11),
             "moveActions": complete(behavior["summary"]["asyncActions"] + behavior["summary"]["synchronousNoOpActions"], 315),
             "moveIntentArguments": complete(behavior["summary"]["resolvedIntentArguments"], behavior["summary"]["requiredIntentArguments"]),
             "moveIntentClassification": complete(behavior["summary"]["resolvedIntentConstructorSites"], behavior["summary"]["intentConstructorSites"]),
@@ -429,6 +447,7 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
         "monsters": world["concrete"],
         "observationIdentities": observation_identities,
         "placement": placement,
+        "production": production,
         "multiplayerScaling": {"block": behavior["scaling"]["block"], "hp": hp_scaling, "power": behavior["scaling"]["power"], "ordinaryMonsterAttack": behavior["scaling"]["ordinaryMonsterAttack"]},
         "provenance": {
             "assemblyRules": {"modelDb.typeToId.v0.111.0": census["modelIdRule"]},

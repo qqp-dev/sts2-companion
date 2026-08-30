@@ -509,14 +509,73 @@ def validate_graph(node: Any, *, known_moves: set[str] | None = None, path: str 
             ids.add(n["nodeId"])
             if known_moves is not None and n["kind"] == "move" and n.get("moveId") not in known_moves:
                 _fail(f"{path}.nodes[{i}].moveId", "unresolved move")
-        if "initial" in obj and obj["initial"] not in ids:
-            _fail(path + ".initial", "unresolved initial node")
+        if "initial" in obj:
+            initials = obj["initial"] if isinstance(obj["initial"], list) else [obj["initial"]]
+            if not initials or any(initial not in ids for initial in initials):
+                _fail(path + ".initial", "unresolved initial node")
         if "edges" in obj:
             if not isinstance(obj["edges"], list):
                 _fail(path + ".edges", "must be a list")
+            repeat_names = {0: "CanRepeatForever", 1: "CanRepeatXTimes", 2: "CannotRepeat", 3: "UseOnlyOnce"}
+            def float_expression(value: Any, where: str) -> None:
+                if not isinstance(value, dict) or value.get("valueType") != "float":
+                    _fail(where, "weight expression must be typed float")
+                if value.get("kind") == "constant":
+                    if set(value) != {"kind", "value", "valueType"} or not isinstance(value["value"], (int, float)) or isinstance(value["value"], bool):
+                        _fail(where, "malformed float constant")
+                elif value.get("kind") == "conditional":
+                    if set(value) != {"condition", "kind", "valueType", "whenFalse", "whenTrue"}:
+                        _fail(where, "malformed float conditional")
+                    condition = value["condition"]
+                    if not isinstance(condition, dict) or set(condition) != {"kind", "symbolSignature", "valueType"} or condition["kind"] != "methodBoolean" or condition["valueType"] != "boolean":
+                        _fail(where + ".condition", "malformed Boolean runtime contract")
+                    float_expression(value["whenFalse"], where + ".whenFalse")
+                    float_expression(value["whenTrue"], where + ".whenTrue")
+                else:
+                    _fail(where + ".kind", "unsupported float weight expression")
             for i, item in enumerate(obj["edges"]):
-                e = _object(item, f"{path}.edges[{i}]", {"kind", "from", "to", "weight", "predicate", "order", "provenance"}, {"kind", "from", "to"})
+                where = f"{path}.edges[{i}]"
+                e = _object(item, where, {"kind", "from", "to", "weight", "predicate", "order", "provenance", "repeat", "cooldown", "overload", "sourceOrder"}, {"kind", "from", "to"})
                 if e["kind"] not in {"followUp", "randomBranch", "conditionalBranch"}:
-                    _fail(f"{path}.edges[{i}].kind", "unsupported edge")
+                    _fail(where + ".kind", "unsupported edge")
                 if e["from"] not in ids or e["to"] not in ids:
-                    _fail(f"{path}.edges[{i}]", "edge refers to unknown node")
+                    _fail(where, "edge refers to unknown node")
+                if e["kind"] == "randomBranch":
+                    required = {"kind", "from", "to", "weight", "order", "repeat", "cooldown", "overload", "sourceOrder"}
+                    if set(e) != required:
+                        _fail(where, "random branch fields are incomplete or contain legacy predicate semantics")
+                    if type(e["order"]) is not int or e["order"] < 0 or type(e["sourceOrder"]) is not int or e["sourceOrder"] < 0:
+                        _fail(where, "random branch order/sourceOrder must be nonnegative integers")
+                    if type(e["cooldown"]) is not int or e["cooldown"] < 0:
+                        _fail(where + ".cooldown", "must be a nonnegative integer")
+                    repeat = _object(e["repeat"], where + ".repeat", {"enumName", "enumValue", "maximumConsecutiveUses"}, {"enumName", "enumValue"})
+                    if repeat_names.get(repeat["enumValue"]) != repeat["enumName"]:
+                        _fail(where + ".repeat", "MoveRepeatType name/value mismatch")
+                    if repeat["enumValue"] == 1:
+                        if type(repeat.get("maximumConsecutiveUses")) is not int or repeat["maximumConsecutiveUses"] < 1:
+                            _fail(where + ".repeat", "CanRepeatXTimes requires a positive maximum")
+                    elif "maximumConsecutiveUses" in repeat:
+                        _fail(where + ".repeat", "repeat maximum supplied for wrong enum")
+                    overload = _object(e["overload"], where + ".overload", {"metadataSignature", "symbolSignature"}, {"metadataSignature", "symbolSignature"})
+                    if not overload["symbolSignature"].startswith("MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.RandomBranchState::AddBranch sig:") or overload["metadataSignature"] != overload["symbolSignature"].split(" sig:", 1)[1]:
+                        _fail(where + ".overload", "AddBranch signature mismatch")
+                    weight = e["weight"]
+                    if not isinstance(weight, dict) or weight.get("valueType") != "float":
+                        _fail(where + ".weight", "must be typed float")
+                    if weight.get("kind") == "constant":
+                        float_expression(weight, where + ".weight")
+                    elif weight.get("kind") == "delegate":
+                        allowed = {"expression", "kind", "receiver", "targetMethod", "valueType", "runtimeContract"}
+                        required_weight = {"expression", "kind", "receiver", "targetMethod", "valueType"}
+                        if set(weight) - allowed or not required_weight <= set(weight):
+                            _fail(where + ".weight", "malformed float delegate")
+                        target = weight["targetMethod"]
+                        if not isinstance(target, dict) or not target.get("symbolSignature", "").endswith(" sig:20000c"):
+                            _fail(where + ".weight.targetMethod", "delegate target is not parameterless float")
+                        float_expression(weight["expression"], where + ".weight.expression")
+                        if ("runtimeContract" in weight) != (weight["expression"].get("kind") == "conditional"):
+                            _fail(where + ".weight.runtimeContract", "runtime condition join mismatch")
+                    else:
+                        _fail(where + ".weight.kind", "unsupported random weight source")
+                elif any(key in e for key in {"repeat", "cooldown", "overload", "sourceOrder", "weight"}):
+                    _fail(where, "random-only semantic field on non-random edge")

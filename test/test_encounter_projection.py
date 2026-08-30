@@ -426,7 +426,7 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual((companion["ready"], companion["status"]), (False, "incomplete"))
         self.assertEqual(set(companion["reasonRefs"]), {
             "UNKNOWN.LIFECYCLE_COVERAGE", "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
-            "UNKNOWN.EVENT_BEHAVIOR", "UNKNOWN.EVENT_LIFECYCLE",
+            "UNKNOWN.EVENT_BEHAVIOR", "UNKNOWN.EVENT_LIFECYCLE", "UNKNOWN.PRODUCTION_SEMANTICS",
         })
 
     def test_e2a_compact_mutations_fail_closed(self):
@@ -674,6 +674,92 @@ class EncounterProjectionTests(unittest.TestCase):
                 source=deepcopy(self.source);change(source["eventScripts"])
                 with self.assertRaisesRegex(SourceExtractionError, pattern):
                     validate_artifact(self.artifact, source=source, legacy=self.legacy)
+
+    def test_e2d1a_compact_random_and_production_contracts(self):
+        source = self.artifact["payload"]["sourceFacts"]
+        random = source["randomSelection"]
+        self.assertEqual(random["summary"], {
+            "branches": 61, "floatCallbacks": 8, "graphs": 21, "overloads": 10,
+            "repeatTypeDistribution": {"CanRepeatForever": 4, "CanRepeatXTimes": 10, "CannotRepeat": 45, "UseOnlyOnce": 2},
+        })
+        self.assertIn("Rng.NextFloat", random["algorithm"]["selection"])
+        branches = [(graph, edge) for graph in source["graphs"] for edge in graph["edges"] if edge["kind"] == "randomBranch"]
+        self.assertEqual((len(branches), sum(edge["weight"]["kind"] == "delegate" for _, edge in branches)), (61, 8))
+        self.assertTrue(all("repeat" in edge and edge["weight"]["valueType"] == "float" and "predicate" not in edge for _, edge in branches))
+        rat = [(edge["to"].rsplit("/", 1)[-1], edge["repeat"]["enumName"], edge["cooldown"])
+               for graph, edge in branches if graph["graphId"] == "GRAPH.TWO_TAILED_RAT"]
+        self.assertEqual(rat, [("SCRATCH_MOVE", "CannotRepeat", 0), ("DISEASE_BITE_MOVE", "CannotRepeat", 0),
+                               ("SCREECH_MOVE", "CannotRepeat", 3), ("CALL_FOR_BACKUP_MOVE", "UseOnlyOnce", 0)])
+        production = source["production"]
+        self.assertEqual((len(production["addApiCensus"]), len(production["ostySummonCensus"]),
+                          len(production["producerRoots"]), len(production["helperCallSites"]), len(production["directSites"])),
+                         (14, 17, 7, 5, 6))
+        self.assertEqual(len({row["calleeSymbolSignature"] for row in production["helperCallSites"]}), 3)
+        self.assertTrue(all(row["candidateMembership"]["canonicalModels"] for row in production["directSites"]))
+        self.assertEqual(production["ostySummonContract"]["afterSummon"], "awaitedAfterOstyAddOrReviveHistory")
+        self.assertEqual(production["coreAddContract"]["hookBoundary"], {
+            "afterCreatureAddedToCombat": "awaited", "afterSummon": "absentSeparateOstyApi"})
+        self.assertEqual(production["coreAddContract"]["semanticBoundaries"]["coreSlotValidation"], "absent")
+        unknowns = {row["unknownId"] for row in self.artifact["payload"]["knownUnknowns"]}
+        self.assertTrue({"UNKNOWN.PRODUCTION_SEMANTICS", "UNKNOWN.LIFECYCLE_COVERAGE"} <= unknowns)
+
+    def test_e2d1a_compact_mutations_fail_closed(self):
+        def random_edge(a):
+            return next(edge for graph in a["payload"]["sourceFacts"]["graphs"] for edge in graph["edges"] if edge["kind"] == "randomBranch")
+        def delegate_edge(a):
+            return next(edge for graph in a["payload"]["sourceFacts"]["graphs"] for edge in graph["edges"] if edge["kind"] == "randomBranch" and edge["weight"]["kind"] == "delegate")
+        def production(a): return a["payload"]["sourceFacts"]["production"]
+        def legacy_weight(a): random_edge(a).__setitem__("weight", random_edge(a)["repeat"]["enumValue"])
+        def callback_predicate(a): random_edge(a).__setitem__("predicate", {"kind": "reference", "reference": "X::Weight sig:20000c", "valueType": "boolean"})
+        def repeat_swap(a): random_edge(a)["repeat"].__setitem__("enumValue", 3)
+        def callback_type(a): delegate_edge(a)["weight"]["expression"].__setitem__("valueType", "boolean")
+        def rng_rule(a): a["payload"]["sourceFacts"]["randomSelection"]["algorithm"]["selection"] = "guessed uniform probability"
+        def overload_order(a): a["payload"]["sourceFacts"]["randomSelection"]["overloads"][0]["parameters"].reverse()
+        def add_missing(a): production(a)["addApiCensus"].pop()
+        def add_reclassified(a): production(a)["addApiCensus"][0]["classification"] = "currentEnemyEncounterProduction"
+        def helper_duplicate(a): production(a)["helperCallSites"][1]["callSiteId"] = production(a)["helperCallSites"][0]["callSiteId"]
+        def root_missing(a): production(a)["producerRoots"].pop()
+        def body_identity(a): production(a)["directSites"][0]["awaitedResult"] = "newUnjoinedBody"
+        def side_changed(a): production(a)["directSites"][0]["side"] = {"enumName": "Player", "enumValue": 1}
+        def core_order(a): production(a)["coreAddContract"]["callOrder"][0:2] = reversed(production(a)["coreAddContract"]["callOrder"][0:2])
+        def after_summon(a): production(a)["coreAddContract"]["hookBoundary"]["afterSummon"] = "awaited"
+        def missing_dependency(a): production(a)["coreAddContract"]["dependencies"].pop("initialStateComponentRef")
+        def false_complete(a): production(a)["productionSemantics"]["status"] = "complete"
+        def missing_candidates(a): production(a)["directSites"][0]["candidateMembership"]["canonicalModels"] = []
+        def osty_conflation(a): production(a)["ostySummonContract"]["afterSummon"] = "partOfCreatureCmdAdd"
+        cases = [
+            (legacy_weight, "typed float"), (callback_predicate, "legacy predicate"),
+            (repeat_swap, "name/value mismatch"), (callback_type, "typed float"),
+            (rng_rule, "state-log/RNG rule differs"), (overload_order, "parameter/type/order differs"),
+            (add_missing, "denominator drift"), (add_reclassified, "classification/Osty separation"),
+            (helper_duplicate, "duplicate"), (root_missing, "denominator drift"),
+            (body_identity, "target/side/awaited"), (side_changed, "target/side/awaited"),
+            (core_order, "order/dependency/history differs"), (after_summon, "core Add boundary"),
+            (missing_dependency, "order/dependency/history differs"), (false_complete, "pending boundary"),
+            (missing_candidates, "candidate membership"), (osty_conflation, "Osty AfterSummon"),
+        ]
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern):
+                self.assert_invalid(self.mutated(change), pattern)
+
+    def test_e2d1a_raw_source_mutations_fail_closed(self):
+        def validate(change, pattern):
+            source = deepcopy(self.source); change(source)
+            with self.assertRaisesRegex(SourceExtractionError, pattern):
+                validate_artifact(self.artifact, source=source, legacy=self.legacy)
+        def raw_edge(source):
+            return next(edge for graph in source["behavior"]["graphs"] for edge in graph["edges"] if edge["kind"] == "randomBranch")
+        cases = [
+            (lambda source: raw_edge(source).__setitem__("weight", raw_edge(source)["repeat"]["enumValue"]), "typed float"),
+            (lambda source: raw_edge(source)["repeat"].__setitem__("enumName", "UseOnlyOnce"), "name/value mismatch"),
+            (lambda source: source["behavior"]["randomSelectionContract"]["algorithm"].__setitem__("selection", "missing RNG"), "state-log/effective-weight/RNG"),
+            (lambda source: source["production"]["addApiCensus"].pop(), "Add/Osty census"),
+            (lambda source: source["production"]["coreAddContract"]["callOrder"].reverse(), "core Add order"),
+            (lambda source: source["production"]["coreAddContract"]["dependencies"].pop("hpAssignmentComponentRef"), "E2a/E2b/E2d1b/E2d2"),
+            (lambda source: source["production"]["coreAddContract"]["hookBoundary"].__setitem__("afterSummon", "awaited"), "hook closure"),
+        ]
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern): validate(change, pattern)
 
     def test_metadata_manifest_payload_and_coverage_mutations_fail(self):
         cases = [

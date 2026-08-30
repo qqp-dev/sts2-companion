@@ -631,6 +631,19 @@ class CombatAstTests(unittest.TestCase):
             "edges": [{"kind": "followUp", "from": "GRAPH.X/A", "to": "GRAPH.X/A"}],
         }
         validate_graph(graph, known_moves={"MONSTER.X#A"})
+        random_edge = {
+            "cooldown": 0, "from": "GRAPH.X/A", "kind": "randomBranch", "order": 0,
+            "overload": {"metadataSignature": "20020112884811883c", "symbolSignature": "MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.RandomBranchState::AddBranch sig:20020112884811883c"},
+            "repeat": {"enumName": "CannotRepeat", "enumValue": 2}, "sourceOrder": 7,
+            "to": "GRAPH.X/A", "weight": {"kind": "constant", "value": 1, "valueType": "float"},
+        }
+        validate_graph({**graph, "edges": [random_edge]}, known_moves={"MONSTER.X#A"})
+        with self.assertRaisesRegex(SourceExtractionError, "typed float"):
+            validate_graph({**graph, "edges": [{**random_edge, "weight": 2}]})
+        with self.assertRaisesRegex(SourceExtractionError, "legacy predicate"):
+            validate_graph({**graph, "edges": [{**random_edge, "predicate": {"kind": "reference", "reference": "X::Weight sig:20000c", "valueType": "boolean"}}]})
+        with self.assertRaisesRegex(SourceExtractionError, "name/value mismatch"):
+            validate_graph({**graph, "edges": [{**random_edge, "repeat": {"enumName": "UseOnlyOnce", "enumValue": 2}}]})
         with self.assertRaisesRegex(SourceExtractionError, "unresolved move"):
             validate_graph(graph, known_moves={"MONSTER.OTHER#A"})
         with self.assertRaisesRegex(SourceExtractionError, "unsupported graph node"):
@@ -1415,7 +1428,7 @@ class BehaviorGraphCollectionTests(unittest.TestCase):
 
     def test_read_only_move_state_collection_preserves_exact_shape(self):
         graph = _compile_graph(self.record(self.rows()), "MONSTER.FIXTURE", "GRAPH.FIXTURE",
-                               "MegaCrit.Sts2.Core.Models.Monsters.Fixture")
+                               "MegaCrit.Sts2.Core.Models.Monsters.Fixture", None, "a" * 64, {}, {})
         self.assertEqual(graph["stateCollection"], {
             "cardinality": 1, "constructor": self.READ_ONLY, "elementType": "MoveState",
             "kind": "readOnlySingle", "orderedNodes": ["GRAPH.FIXTURE/NOTHING_MOVE"],
@@ -1437,7 +1450,7 @@ class BehaviorGraphCollectionTests(unittest.TestCase):
         for rows, pattern in mutations:
             with self.subTest(pattern=pattern), self.assertRaisesRegex(SourceExtractionError, pattern):
                 _compile_graph(self.record(rows), "MONSTER.FIXTURE", "GRAPH.FIXTURE",
-                               "MegaCrit.Sts2.Core.Models.Monsters.Fixture")
+                               "MegaCrit.Sts2.Core.Models.Monsters.Fixture", None, "a" * 64, {}, {})
 
 
 class ClosedWorldInvocationTests(unittest.TestCase):

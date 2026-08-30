@@ -1,18 +1,18 @@
-"""Closed E2c2b encounter projection contract and pinned v0.111.0 identities."""
+"""Closed E2d1a encounter projection contract and pinned v0.111.0 identities."""
 
 from __future__ import annotations
 
 from typing import Any
 
-SCHEMA_VERSION = 7
+SCHEMA_VERSION = 8
 GENERATOR_NAME = "sts2-encounter-facts"
-GENERATOR_VERSION = "7.0.0"
-SOURCE_SCHEMA_VERSION = 10
-SOURCE_EXTRACTOR_VERSION = "10.0.0"
+GENERATOR_VERSION = "8.0.0"
+SOURCE_SCHEMA_VERSION = 11
+SOURCE_EXTRACTOR_VERSION = "11.0.0"
 
 SOURCE_ARTIFACT = {
     "id": "INPUT.SOURCE", "path": "data/game-v0.111.0-source.json",
-    "sha256": "6b6eefa545299423546b15eaaf13b782e3178f93639559602570665a9a2aae7c", "size": 13162430,
+    "sha256": "89069872f7b100ed414ddb7583bef54dff23b32d9be6d78cdcb3d56ece94020f", "size": 13290318,
 }
 LEGACY_ARTIFACT = {
     "id": "INPUT.LEGACY", "path": "data/encounters.json",
@@ -91,6 +91,19 @@ REQUIRED_COVERAGE: dict[str, tuple[str, int, int, int]] = {
     "eventScriptStateRuntimeContracts": ("complete", 10, 10, 0),
     "eventScriptSupportMethodClosure": ("complete", 14, 14, 0),
     "eventScriptTransitionArguments": ("complete", 7, 7, 0),
+    "randomBranchOverloadClosure": ("complete", 10, 10, 0),
+    "randomBranchRepeatWeightSemantics": ("complete", 61, 61, 0),
+    "randomWeightCallbackClosure": ("complete", 8, 8, 0),
+    "randomSelectionRuntimeContract": ("complete", 3, 3, 0),
+    "productionAddApiCensus": ("complete", 14, 14, 0),
+    "productionOstyApiCensus": ("complete", 17, 17, 0),
+    "productionOwnerRootDiscovery": ("complete", 7, 7, 0),
+    "productionHelperCallClosure": ("complete", 5, 5, 0),
+    "productionDirectSiteDiscovery": ("complete", 6, 6, 0),
+    "productionOwnerEncounterApplicability": ("complete", 6, 6, 0),
+    "coreAddOverloadClosure": ("complete", 3, 3, 0),
+    "coreAddMethodClosure": ("complete", 6, 6, 0),
+    "coreAddSemanticFieldClosure": ("complete", 11, 11, 0),
     "moveRegistrationApplicability": ("complete", 315, 315, 0),
     "observableIdentityDomain": ("complete", 108, 108, 0),
     "observableResourceRepresentations": ("complete", 108, 108, 0),
@@ -152,7 +165,7 @@ METADATA_KEYS = {
     "payloadSha256", "projectionInputs", "requiredCoverage", "sourceExtractorVersion", "sourceSchemaVersion",
 }
 PAYLOAD_KEYS = {"conflicts", "evidence", "factReferences", "knownUnknowns", "laneComparisons", "legacyAnnotations", "readiness", "resolvedAudits", "sourceFacts"}
-SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states", "initialState", "hpPipeline", "eventTurnBehavior", "eventScripts"}
+SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states", "initialState", "hpPipeline", "eventTurnBehavior", "eventScripts", "randomSelection", "production"}
 
 
 def coverage_rows() -> list[dict[str, Any]]:
