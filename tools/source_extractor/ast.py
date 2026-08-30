@@ -137,10 +137,10 @@ def validate_expression(node: Any, *, path: str = "$", expected_type: str | None
         if kind == "arithmetic":
             obj = _object(value, where, {"kind", "operator", "operands", "valueType"}, {"kind", "operator", "operands", "valueType"})
             operator = obj["operator"]
-            if operator not in {"add", "subtract", "multiply", "divide"}:
+            if operator not in {"add", "subtract", "multiply", "divide", "remainder"}:
                 _fail(where + ".operator", "unsupported arithmetic operator")
             operands = obj["operands"]
-            if not isinstance(operands, list) or len(operands) < 2 or (operator in {"subtract", "divide"} and len(operands) != 2):
+            if not isinstance(operands, list) or len(operands) < 2 or (operator in {"subtract", "divide", "remainder"} and len(operands) != 2):
                 _fail(where + ".operands", "invalid operand cardinality")
             result_type = obj["valueType"]
             if result_type not in {"integer", "decimal"}:
@@ -306,7 +306,15 @@ def evaluate_expression(node: Any, state: Mapping[str, Any]) -> Any:
                 for item in values[1:]: result *= item
                 return result
             if value["operator"] == "subtract": return values[0] - values[1]
-            if values[1] == 0: raise SourceExtractionError("division by zero")
+            if values[1] == 0:
+                raise SourceExtractionError(f"{value['operator']} by zero")
+            if value["operator"] == "remainder":
+                # CLI rem truncates the quotient toward zero. Python integer
+                # modulo instead follows floor division for negative values.
+                left, right = values
+                quotient = abs(left) // abs(right)
+                if (left < 0) != (right < 0): quotient = -quotient
+                return left - quotient * right
             return Decimal(values[0]) / Decimal(values[1])
         if kind == "compare":
             left, right = visit(value["left"]), visit(value["right"])

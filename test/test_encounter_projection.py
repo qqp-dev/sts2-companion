@@ -258,6 +258,109 @@ class EncounterProjectionTests(unittest.TestCase):
             with self.subTest(pattern=pattern):
                 self.assert_invalid(self.mutated(change), pattern)
 
+    def test_e2a_initial_state_projection_comparisons_and_blockers(self):
+        payload = self.artifact["payload"]
+        initial = payload["sourceFacts"]["initialState"]
+        self.assertEqual(initial["summary"], {
+            "encounterRoots": 89, "facts": 111, "invocationDecisions": 1092,
+            "modelOwners": 108, "powerModels": 41, "runtimeContracts": 47,
+        })
+        self.assertEqual((len(initial["owners"]), len(initial["facts"]), len(initial["runtimeStateContracts"])), (108, 111, 47))
+        self.assertEqual(len(initial["powerHookClosure"]), 41)
+        self.assertEqual(sum(len(row["declarations"]) for row in initial["externalHookBoundary"]), 29)
+        self.assertNotIn("invocationDecisions", initial)
+        self.assertNotIn("constructorDecisions", initial)
+        self.assertNotIn("encounterInitializerDecisions", initial)
+        comparisons = [row for row in payload["laneComparisons"] if row["family"] == "initialStateLegacyAnnotation"]
+        self.assertEqual(len(comparisons), 57)
+        statuses = {row["status"] for row in comparisons}
+        self.assertEqual(statuses, {"agrees", "sourceSuperset", "dynamicNotComparable", "stateNotModel", "unmatchedLegacyIdentity"})
+        decim = [row for row in comparisons if "DECIMILLIPEDE_ELITE" in row["comparisonId"]]
+        self.assertEqual([row["left"]["value"]["candidateCanonicalModel"] for row in decim], [
+            "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT", "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE", "MONSTER.DECIMILLIPEDE_SEGMENT_BACK",
+        ])
+        self.assertTrue(all(row["left"]["value"]["identityJoin"] == "none" for row in decim))
+        tough = next(row for row in comparisons if row["comparisonId"] == "COMPARE.INITIAL.OVICOPTER_NORMAL.1")
+        self.assertEqual(tough["status"], "dynamicNotComparable")
+        hatchling = next(row for row in comparisons if row["comparisonId"] == "COMPARE.INITIAL.OVICOPTER_NORMAL.2")
+        self.assertEqual((hatchling["status"], hatchling["left"]["value"]["stateId"]), ("stateNotModel", "MONSTER.TOUGH_EGG#HATCHED"))
+        cubex = next(row for row in comparisons if row["comparisonId"] == "COMPARE.INITIAL.CUBEX_CONSTRUCT_NORMAL.0")
+        self.assertEqual(cubex["status"], "sourceSuperset")
+        self.assertTrue(any("GAINBLOCK" in ref for ref in cubex["left"]["value"]["additionalSourceFactRefs"]))
+        illusion = next(row for row in comparisons if row["comparisonId"] == "COMPARE.INITIAL.FOGMOG_NORMAL.1")
+        self.assertEqual(illusion["status"], "sourceSuperset")
+        self.assertTrue(any("POWER.ILLUSION_POWER" in ref and "APPLYPOWER" in ref for ref in illusion["left"]["value"]["additionalSourceFactRefs"]))
+        plating = next(row for row in comparisons if row["comparisonId"] == "COMPARE.INITIAL.FROG_KNIGHT_NORMAL.0")
+        self.assertEqual(plating["status"], "dynamicNotComparable")
+        self.assertTrue(any("POWER.PLATING_POWER" in ref for ref in plating["left"]["value"]["additionalSourceFactRefs"]))
+        self.assertEqual(payload["sourceFacts"]["observationIdentities"]["aliases"], [])
+        unknowns = {row["unknownId"]: row for row in payload["knownUnknowns"]}
+        self.assertNotIn("UNKNOWN.INITIAL_STATES", unknowns)
+        self.assertIn("UNKNOWN.LIFECYCLE_COVERAGE", unknowns)
+        self.assertIn("UNKNOWN.FORMULA_RUNTIME_CONTRACTS", unknowns)
+        self.assertIn("UNKNOWN.EVENT_BEHAVIOR", unknowns)
+        self.assertIn("UNKNOWN.HP_ROUNDING_CONFLICT", unknowns)
+        companion = payload["readiness"]["runtimeScopes"]["encounterCompanion"]
+        self.assertEqual((companion["ready"], companion["status"]), (False, "incomplete"))
+        self.assertEqual(set(companion["reasonRefs"]), {
+            "UNKNOWN.LIFECYCLE_COVERAGE", "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
+            "UNKNOWN.EVENT_BEHAVIOR", "UNKNOWN.HP_ROUNDING_CONFLICT",
+        })
+
+    def test_e2a_compact_mutations_fail_closed(self):
+        def initial(a): return a["payload"]["sourceFacts"]["initialState"]
+        cases = [
+            (lambda a: initial(a)["owners"].pop(), "all 108 owners"),
+            (lambda a: initial(a)["facts"].pop(), "111 compact facts"),
+            (lambda a: initial(a)["owners"][0].__setitem__("applicableModels", []), "applicability"),
+            (lambda a: initial(a)["runtimeStateContracts"][0].pop("domain"), "domain"),
+            (lambda a: initial(a)["runtimeStateContracts"][0].pop("sourceInputs"), "source-input inventory"),
+            (lambda a: initial(a)["facts"][0]["finalValueContract"]["runtimeModifierInputs"].append("RUNTIME.MISSING"), "unregistered compact runtime input"),
+            (lambda a: initial(a)["powerHookClosure"][0]["hooks"].pop(), "hook omitted"),
+            (lambda a: initial(a)["legacyComparisonFacts"].pop(), "all 57|expected all 57"),
+            (lambda a: initial(a)["facts"][0].__setitem__("condition", {"kind": "guessedCondition"}), "unsupported initial condition"),
+            (lambda a: initial(a).__setitem__("invocationDecisions", []), "unknown fields|proof bulk"),
+        ]
+        base_noop = next(i for i, row in enumerate(self.artifact["payload"]["sourceFacts"]["initialState"]["owners"])
+                         if row["classification"] == "sourceProvenNoOp")
+        visual = next(i for i, row in enumerate(self.artifact["payload"]["sourceFacts"]["initialState"]["owners"])
+                      if row["classification"] == "sourceProvenNonGameplayOnly")
+        cases.extend([
+            (lambda a: initial(a)["owners"][base_noop].__setitem__("classification", "sourceProvenNonGameplayOnly"), "base no-op"),
+            (lambda a: initial(a)["owners"][visual].__setitem__("classification", "orderedGameplayEffects"), "effects/classification"),
+            (lambda a: a["payload"]["laneComparisons"].pop(next(i for i, row in enumerate(a["payload"]["laneComparisons"]) if row["family"] == "initialStateLegacyAnnotation")), "57 initial-state comparisons"),
+            (lambda a: a["payload"]["readiness"]["runtimeScopes"]["encounterCompanion"].__setitem__("ready", True), "cannot be ready"),
+        ])
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern):
+                self.assert_invalid(self.mutated(change), pattern)
+
+    def test_e2a_raw_source_mutations_fail_closed(self):
+        def unregistered_field(source):
+            fact = next(row for row in source["initialState"]["initialStateFacts"] if row["baseValue"]["valueType"] == "integer")
+            fact["baseValue"]["expression"] = {"kind": "stateVariable", "name": "initial.unregistered", "valueType": "integer", "domain": {"minimum": 0}}
+
+        def assert_bad(change, pattern):
+            source = deepcopy(self.source)
+            change(source)
+            with self.assertRaisesRegex(SourceExtractionError, pattern):
+                validate_artifact(self.artifact, source=source, legacy=self.legacy)
+        cases = [
+            (lambda s: s["initialState"]["encounterInitializers"].pop(), "89 exact generator roots"),
+            (lambda s: s["initialState"]["initialStateOwners"].pop(), "108 exact reachable owners"),
+            (lambda s: s["initialState"]["initialStateFacts"].pop(), "111 ordered initial facts"),
+            (lambda s: s["initialState"]["invocationDecisions"].pop(), "1092-call census"),
+            (lambda s: s["initialState"]["constructorDecisions"].pop(), "five explicit constructor writes"),
+            (lambda s: s["initialState"]["runtimeStateContracts"][0].pop("domain"), "domain"),
+            (lambda s: s["initialState"]["runtimeStateContracts"][0]["readSites"].clear(), "read site"),
+            (unregistered_field, "unregistered source field"),
+            (lambda s: s["initialState"]["powerHookClosure"][0]["hooks"].pop(), "hook family omitted"),
+            (lambda s: s["initialState"]["initialStateFacts"][0]["provenance"].pop("methodBodySha256"), "methodBodySha256"),
+            (lambda s: s["initialState"]["initialStateFacts"][0].__setitem__("condition", {"kind": "guessed"}), "unsupported initial condition"),
+        ]
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern): assert_bad(change, pattern)
+
     def test_evidence_is_compact_stable_and_complete(self):
         payload = self.artifact["payload"]
         evidence = payload["evidence"]

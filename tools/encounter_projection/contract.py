@@ -4,15 +4,15 @@ from __future__ import annotations
 
 from typing import Any
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 GENERATOR_NAME = "sts2-encounter-facts"
-GENERATOR_VERSION = "2.0.0"
-SOURCE_SCHEMA_VERSION = 5
-SOURCE_EXTRACTOR_VERSION = "5.0.0"
+GENERATOR_VERSION = "3.0.0"
+SOURCE_SCHEMA_VERSION = 6
+SOURCE_EXTRACTOR_VERSION = "6.0.0"
 
 SOURCE_ARTIFACT = {
     "id": "INPUT.SOURCE", "path": "data/game-v0.111.0-source.json",
-    "sha256": "74f7c952d01aa1ef4fc71e0dacc787dc4ba148d4927094bb8ca7b2e6358b568f", "size": 9508636,
+    "sha256": "50e90d196fe6441d59e1864d1c21eab2b15a69cd111e41c96178c9ac23013b43", "size": 11749658,
 }
 LEGACY_ARTIFACT = {
     "id": "INPUT.LEGACY", "path": "data/encounters.json",
@@ -64,6 +64,14 @@ REQUIRED_COVERAGE: dict[str, tuple[str, int, int, int]] = {
     "hpInitialCurrentReachable": ("complete", 108, 108, 0),
     "hpMultiplayerScaling": ("complete", 1, 1, 0),
     "hpSpecialStateFormulas": ("complete", 4, 4, 0),
+    "encounterInitializers": ("complete", 89, 89, 0),
+    "initialStateOwners": ("complete", 108, 108, 0),
+    "initialStateEffectiveHooks": ("complete", 108, 108, 0),
+    "initialStateDirectSinkSites": ("complete", 57, 57, 0),
+    "initialStateTransitiveInvocationClassification": ("complete", 1092, 1092, 0),
+    "initialStatePowerHookClosure": ("complete", 41, 41, 0),
+    "initialExternalHookBoundary": ("complete", 29, 29, 0),
+    "initialStateSemanticFields": ("complete", 1554, 1554, 0),
     "invocationClassification": ("complete", 6683, 6683, 0),
     "monsterIdentitiesCurrentReachable": ("complete", 108, 108, 0),
     "monsterNamesEnglishCurrentReachable": ("complete", 108, 108, 0),
@@ -77,7 +85,7 @@ REQUIRED_COVERAGE: dict[str, tuple[str, int, int, int]] = {
     "moveTitlesEnglish": ("classified", 307, 289, 18),
     "operationDirectSinks": ("complete", 491, 491, 0),
     "operationSemanticFields": ("complete", 1081, 1081, 0),
-    "powerCardReferencedModels": ("complete", 52, 52, 0),
+    "powerCardReferencedModels": ("complete", 78, 78, 0),
     "powerMultiplayerOptIns": ("complete", 12, 12, 0),
     "powerMultiplayerOverrides": ("complete", 5, 5, 0),
 }
@@ -95,7 +103,7 @@ METADATA_KEYS = {
     "payloadSha256", "projectionInputs", "requiredCoverage", "sourceExtractorVersion", "sourceSchemaVersion",
 }
 PAYLOAD_KEYS = {"conflicts", "evidence", "factReferences", "knownUnknowns", "laneComparisons", "legacyAnnotations", "readiness", "sourceFacts"}
-SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states"}
+SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states", "initialState"}
 
 
 def coverage_rows() -> list[dict[str, Any]]:

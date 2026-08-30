@@ -16,8 +16,9 @@ sys.path.insert(0, str(REPO_ROOT / "tools"))
 from source_extractor.ast import evaluate_expression, validate_expression, validate_graph, validate_operation, validate_selection
 from source_extractor.canonical import canonical_json_bytes
 from source_extractor.cil_safety import validate_cil_slice
-from source_extractor.cil_eval import CilDataFlow, decode_method_signature, value_expression
+from source_extractor.cil_eval import CilDataFlow, CilType, Invocation, SymbolicValue, decode_method_signature, value_expression
 from source_extractor.invocations import ClosedWorldInvocationAudit
+from source_extractor.initial_state import _claim_helper, _power_apply
 from source_extractor.inheritance import attach_behavior_applicability, resolve_behavior_applicability
 from source_extractor.identity import resolve_observed_identity, validate_observation_identities
 from source_extractor.placement import decode_factory_collection, validate_placement
@@ -293,6 +294,22 @@ class NormalizedExpressionTests(unittest.TestCase):
         self.assertEqual(validate_expression(expression), "decimal")
         self.assertEqual(evaluate_expression(expression, {"actIndex": 0, "baseHp": "51", "bossRoom": False, "playerCount": 1}), Decimal("51"))
         self.assertEqual(evaluate_expression(expression, {"actIndex": 2, "baseHp": "51", "bossRoom": True, "playerCount": 2}), Decimal("132.6"))
+
+    def test_cli_remainder_is_typed_and_truncates_toward_zero(self):
+        def rem(left, right):
+            return {"kind": "arithmetic", "operator": "remainder", "operands": [
+                {"kind": "constant", "value": left, "valueType": "integer"},
+                {"kind": "constant", "value": right, "valueType": "integer"},
+            ], "valueType": "integer"}
+        self.assertEqual(validate_expression(rem(5, 3)), "integer")
+        self.assertEqual(evaluate_expression(rem(5, 3), {}), 2)
+        self.assertEqual(evaluate_expression(rem(-5, 3), {}), -2)
+        with self.assertRaisesRegex(SourceExtractionError, "remainder by zero"):
+            evaluate_expression(rem(1, 0), {})
+        bad = rem(5, 3)
+        bad["operands"].append({"kind": "constant", "value": 1, "valueType": "integer"})
+        with self.assertRaisesRegex(SourceExtractionError, "operand cardinality"):
+            validate_expression(bad)
 
     def test_explicit_rounding_modes(self):
         source = self.decimal("2.5")
@@ -757,6 +774,67 @@ class CilSemanticEvaluatorTests(unittest.TestCase):
         with self.assertRaisesRegex(SourceExtractionError, "missing fields"):
             validate_operation(operation)
 
+
+
+class InitialPowerApplyContractTests(unittest.TestCase):
+    GENERIC = (
+        "MegaCrit.Sts2.Core.Commands.PowerCmd::Apply "
+        "sig:10010615128221011e0012a64c12a7e411844912a7e41288b802 "
+        "generic:MegaCrit.Sts2.Core.Models.Powers.ArtifactPower"
+    )
+    CUSTOM = "MegaCrit.Sts2.Core.Commands.PowerCmd::Apply sig:000712812112a64c1288f412a7e411844912a7e41288b802"
+
+    @staticmethod
+    def value(kind, data=None, operands=(), cil="class", origins=frozenset({0})):
+        return SymbolicValue(kind, CilType(cil), data, tuple(operands), origins)
+
+    def setUp(self):
+        self.record = {"instructions": [{"opcode": "nop", "operand": None} for _ in range(20)]}
+        model = self.value("field", "Synthetic::<>4__this")
+        self.target = self.value(
+            "call", "MegaCrit.Sts2.Core.Models.MonsterModel::get_Creature sig:200012a7e4", (model,)
+        )
+        integer = self.value("constant", 3, cil="i4")
+        self.amount = self.value("new", "System.Decimal::.ctor sig:20010108", (integer,), cil="valuetype")
+        self.context = self.value("new", "SyntheticContext::.ctor sig:200001")
+        self.null = self.value("null")
+        self.false = self.value("constant", 0, cil="i4")
+
+    def invocation(self, symbol, arguments):
+        return Invocation(10, symbol, decode_method_signature(symbol), tuple(arguments), None, None)
+
+    def test_generic_and_custom_overloads_preserve_exact_model_target_and_amount_positions(self):
+        generic = self.invocation(self.GENERIC, [self.context, self.target, self.amount, self.target, self.null, self.false])
+        model, target, amount, _ = _power_apply(generic, self.record)
+        self.assertEqual((model, target), ("POWER.ARTIFACT_POWER", "sourceMonster"))
+        self.assertEqual(amount["expression"]["value"], 3)
+
+        power = self.value(
+            "call",
+            "MegaCrit.Sts2.Core.Models.ModelDb::Power sig:1001001e00 generic:MegaCrit.Sts2.Core.Models.Powers.WitheringPresencePower",
+        )
+        custom = self.invocation(self.CUSTOM, [self.context, power, self.target, self.amount, self.target, self.null, self.false])
+        model, target, amount, _ = _power_apply(custom, self.record)
+        self.assertEqual((model, target, amount["expression"]["value"]),
+                         ("POWER.WITHERING_PRESENCE_POWER", "sourceMonster", 3))
+
+    def test_helper_cycle_or_repeated_traversal_fails_closed(self):
+        seen = set()
+        _claim_helper(seen, 7, "Monster::Sleep sig:2000128121")
+        with self.assertRaisesRegex(SourceExtractionError, "helper cycle/repeated helper"):
+            _claim_helper(seen, 7, "Monster::Sleep sig:2000128121")
+
+    def test_unknown_overload_changed_argument_order_and_unresolved_target_fail(self):
+        unknown_symbol = "MegaCrit.Sts2.Core.Commands.PowerCmd::Apply sig:0002010808"
+        with self.assertRaisesRegex(SourceExtractionError, "unknown PowerCmd.Apply overload"):
+            _power_apply(self.invocation(unknown_symbol, [self.false, self.false]), self.record)
+        changed = self.invocation(self.GENERIC, [self.context, self.amount, self.target, self.target, self.null, self.false])
+        with self.assertRaisesRegex(SourceExtractionError, "recipient|unresolved"):
+            _power_apply(changed, self.record)
+        unresolved = self.value("unresolved", "missing target join")
+        broken = self.invocation(self.GENERIC, [self.context, unresolved, self.amount, self.target, self.null, self.false])
+        with self.assertRaisesRegex(SourceExtractionError, "missing target join"):
+            _power_apply(broken, self.record)
 
 class PlacementExtractionTests(unittest.TestCase):
     def test_literal_registry_count_order_and_unknown_structure_fail_closed(self):

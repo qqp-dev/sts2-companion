@@ -3,8 +3,8 @@
 `data/game-v0.111.0-source.json` is a deterministic, presentation-independent
 world model for exact public-beta v0.111.0 inputs. It contains identities,
 localization joins, formulas, roster selections, membership sets, and state
-facts—not UI sentences or layout. Schema 5 is the E1 boundary and remains
-runtime-incomplete until independently gated E2 and consumer waves land.
+facts—not UI sentences or layout. Schema 6 is the E2a boundary and remains
+runtime-incomplete until independently gated later E2 and consumer waves land.
 
 ## Three-wave boundary
 
@@ -13,8 +13,9 @@ runtime-incomplete until independently gated E2 and consumer waves land.
 | A | Monster/state identity and names; HP/state formulas; HP multiplayer scaling; encounter roster/pool/production facts | Complete for explicit denominators |
 | B | Move registration/title/intent; operations and helpers; move/Power scaling; selection and phase graphs | Complete for explicit denominators, with 18 classified missing titles |
 | C0/E1 | Compact fact references plus source placement, observation identity, and behavior applicability | Landed; no runtime consumer change |
+| E2a | Initial generator/constructor state, effective addition hooks, intrinsic Power hooks, runtime contracts, and 57 lane comparisons | Complete for exact denominators; no runtime consumer change |
 
-The current app does not import this artifact or the C0 compact projection and still displays the
+The current app does not import this artifact or the compact projection and still displays the
 wiki-derived book. Source extraction changes no routes, renderer output, event display, or
 `data/encounters.json` bytes.
 
@@ -99,7 +100,7 @@ arguments.
 | `reference` | Exact source method signature; every metadata-signature parameter is retained in ordered `arguments`, and a separately compiled full result may be carried in `compiled` |
 | `combatQuery` | Typed runtime query input; the pure evaluator requires it to be supplied |
 | `ascensionSelect` | Select `below` or `atOrAbove` at an observed threshold |
-| `arithmetic` | Reviewed `add`, `subtract`, `multiply`, or `divide` operation |
+| `arithmetic` | Reviewed `add`, `subtract`, `multiply`, `divide`, or CLI truncating `remainder` operation |
 | `compare` | Typed comparison producing boolean |
 | `conditional` | Typed condition with equal-typed branches |
 | `actRoomFactor` | Reviewed act-index and boss-context Decimal factor table |
@@ -361,10 +362,68 @@ explicit, visibly cited later community fallback if useful. Wave B never
 imports community/wiki data into the raw artifact and makes no XML migration
 claim.
 
-## E1 projection boundary
+
+## E2a initial-state schema
+
+`initialState` starts before the monster addition hook. Its stage chain is
+`GenerateMonsters`/constructor defaults, `CombatState.CreateCreature`,
+`EncounterModel.OnCreatureSpawned`, `StartCombatInternal` and the exact called
+`AfterCreatureAdded` overload, `Creature.AfterAddedToRoom`, effective virtual
+monster hooks, Power apply hooks, and finally `Hook.BeforeCombatStart`.
+Facts never flatten those stages or treat later `CreatureCmd.Add` calls as
+initial population.
+
+The source-discovered denominators are:
+
+- 89 generator roots, 137 model construction sites, 38 RNG call sites, five
+  non-roster RNG roots, and 25 setter sites in 13 roots;
+- four reachable constructors with five explicit writes;
+- 108 model owners, 59 effective addition implementations, 48 exact base no-op
+  models, and one shared Decimillipede implementation applying to three models;
+- 54 direct Power applications, one Block site, one max/current-HP site, and one
+  current-HP site before helper expansion;
+- 1,092 classified required invocations, 111 ordered facts, 41 initially
+  reachable Power hook closures, 29 external-boundary declarations, and 53
+  runtime contracts.
+
+Each fact has a stable ID, owner and exact applicability, stage/trigger/source
+order, a closed condition, effect and recipient kind, typed base expression and
+unit, scaling/runtime modifiers, source-state contract refs, and exact method
+and normalized-slice provenance. Runtime contracts retain source member/type,
+ownership, type/domain, read/update sites, and consumer meaning. Source-derived
+external listeners are `externalRuntimeOwned`; they are not silently omitted
+from an intrinsic baseline.
+
+Helper traversal is mandatory. Lagavulin's `Sleep` writes awake state and
+applies Plating/Asleep. Illusion `AfterApplied` applies Minion conditionally;
+Plating writes a player-count dynamic variable. Galvanic and Vital Spark afflict
+eligible player cards before combat. Tough Egg preserves both the current-side
+conditional Hatch amount and restored-hatched helper branch. Decimillipede's
+shared HP algorithm remains a dynamic source contract rather than a fabricated
+static number.
+
+All 57 legacy starts-with rows produce separate source/legacy lane comparisons.
+Statuses distinguish exact agreement, source supersets, dynamic non-comparability,
+state-not-model annotations, and unmatched legacy identity. Decimillipede
+shortcuts remain `identityJoin: none`; Hatchling and Test Subject phases remain
+states. No comparison promotes an alias or selects lane precedence.
+
+The expected Dense Vegetation “stunned setup” did not match source. Its generator
+writes `Wriggler.StartStunned = false`; Wriggler selects `SPAWNED_MOVE` only for
+true. Schema 6 records this source-proven result as an investigated audit
+difference.
+
+Extraction fails before replacement on unknown overload/opcode/target joins,
+helper repetition/cycles, omitted Power hooks, unsupported field types or
+conditions, unregistered runtime inputs, missing owners/roots/sites, broken
+applicability/evidence refs, or changed provenance. The compact projection keeps
+facts/contracts/owner/hook summaries and excludes the 1,092-call and initializer
+proof tables.
+
+## E2a projection boundary
 
 The checked source artifact above remains the full static evidence artifact.
-C0 introduced and E1 extends `data/encounter-facts-v0.111.0.json`, built by
+C0 introduced, E1 extended, and E2a extends `data/encounter-facts-v0.111.0.json`, built by
 `tools/generate-encounter-facts.py` from that artifact and
 `data/encounters.json` only. It is a projection, not a replacement extractor
 and not a runtime consumer input.
@@ -395,8 +454,9 @@ pointed-value hashes instead of repeating CIL proof or the 6,683-invocation
 census. This makes the projection substantially smaller while retaining an
 auditable path to the full checked source artifact.
 
-E1 declares only the bounded encounter projection complete. The encounter
-companion remains incomplete pending E2 initial-state/event/lifecycle coverage
-and the unresolved HP rounding conflict. Global readiness also remains false
+E2a declares only the bounded encounter projection complete. The encounter
+companion remains hard-false/incomplete pending event behavior, lifecycle
+closure, companion-wide formula/runtime contracts, and E2b downstream HP
+conversion/rounding. Global readiness also remains false
 pending the independent product-family source waves. No `src/` file imports the projection,
 so `/sts2` continues to use byte-identical `data/encounters.json`.

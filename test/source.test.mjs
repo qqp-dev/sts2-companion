@@ -32,8 +32,8 @@ const exactManifest = [
 
 test("source artifact is canonical, exactly pinned, partial, and raw-only", () => {
   assert.equal(artifactBytes.toString("utf8"), `${JSON.stringify(sortedValue(artifact), null, 2)}\n`);
-  assert.equal(artifact.schemaVersion, 5);
-  assert.equal(artifact.extractorVersion, "5.0.0");
+  assert.equal(artifact.schemaVersion, 6);
+  assert.equal(artifact.extractorVersion, "6.0.0");
   assert.equal(artifact.runtimeReady, false);
   assert.equal(artifact.status, "incomplete");
   assert.deepEqual(artifact.inputs, exactManifest);
@@ -82,6 +82,14 @@ test("coverage is denominator-based and Wave B combat families are complete or h
     moveIntentArguments: 311,
     moveIntentClassification: 387,
     moveOperations: 307,
+    encounterInitializers: 89,
+    initialStateOwners: 108,
+    initialStateEffectiveHooks: 108,
+    initialStateDirectSinkSites: 57,
+    initialStateTransitiveInvocationClassification: 1092,
+    initialStatePowerHookClosure: 41,
+    initialExternalHookBoundary: 29,
+    initialStateSemanticFields: 1554,
     invocationClassification: 6683,
     moveRegistrationCensus: 307,
     moveSelectionGraphs: 100,
@@ -481,9 +489,137 @@ test("Block and Power multiplayer formulas are distinct from ordinary attacks", 
   assert.equal(power.overrides.find((row) => row.canonicalPower === "POWER.BUFFER_POWER").active, false);
   assert.equal(power.overrides.find((row) => row.canonicalPower === "POWER.PLATING_POWER").active, true);
   assert.equal(artifact.multiplayerScaling.ordinaryMonsterAttack.scalesInMultiplayer, false);
-  assert.equal(artifact.powers.length, 43);
+  assert.equal(artifact.powers.length, 69);
   for (const removedPower of ["POWER.ADAPTABLE_POWER", "POWER.HATCH_POWER"]) {
     assert.ok(artifact.powers.some((row) => row.canonicalId === removedPower), removedPower);
   }
   assert.equal(artifact.cards.length, 9);
+});
+
+
+test("E2a initial-state denominators, stage ordering, and hook boundaries are closed", () => {
+  const initial = artifact.initialState;
+  assert.deepEqual(initial.summary, {
+    encounterRoots: 89, facts: 111, invocationDecisions: 1092,
+    modelOwners: 108, powerModels: 41, runtimeContracts: 47,
+  });
+  assert.deepEqual(initial.sourceDenominators, {
+    constructorExplicitWrites: 5, constructorOwners: 4,
+    directSinkSitesByKind: { applyPower: 54, gainBlock: 1, setCurrentHp: 1, setMaxAndCurrentHp: 1 },
+    effectiveHookImplementations: 59, encounterGenerationOwners: 89,
+    generatorConstructionSites: 137, generatorRngSites: 38,
+    generatorSetterOwners: 13, generatorSetterSites: 25,
+    initialStateModels: 108, nonRosterInitializationRngRoots: 5, powerModels: 41,
+  });
+  assert.equal(initial.encounterInitializers.length, 89);
+  assert.equal(new Set(initial.encounterInitializers.map((row) => row.canonicalEncounter)).size, 89);
+  assert.equal(initial.initialStateOwners.length, 108);
+  assert.equal(new Set(initial.initialStateOwners.map((row) => row.effectiveHook)).size, 59);
+  assert.equal(initial.initialStateOwners.filter((row) => row.classification === "sourceProvenNoOp").length, 48);
+  assert.deepEqual(initial.initializationChain.map((row) => row.stage), [
+    "creatureCreation", "encounterSpawnRegistration", "combatStart", "creatureAdded",
+    "modelAdditionHookDispatch", "effectiveMonsterAdditionHook", "beforeCombatStartDispatch",
+  ]);
+  const boundary = new Map(initial.externalHookBoundary.map((row) => [row.family, row]));
+  assert.equal(boundary.get("BeforeCombatStart").declarations.length, 23);
+  assert.equal(boundary.get("BeforeCombatStart").declarations.filter((row) => row.classification === "externalRuntimeOwned").length, 19);
+  assert.equal(boundary.get("AfterCreatureAddedToCombat").declarations.length, 6);
+  assert.ok(initial.initialStateFacts.every((row) => row.provenance.methodBodySha256.length === 64));
+  assert.ok(initial.initialStateFacts.every((row) => row.finalValueContract.classification === "intrinsicRequestedBaseline"));
+});
+
+test("E2a generator and constructor facts retain exact temporal state", () => {
+  const facts = artifact.initialState.initialStateFacts;
+  const inEncounter = (id) => facts.filter((row) => row.encounterApplicability === `ENCOUNTER.${id}`);
+  const dense = inEncounter("DENSE_VEGETATION_EVENT_ENCOUNTER");
+  assert.equal(dense.length, 1);
+  assert.equal(dense[0].ownerModel, "MONSTER.WRIGGLER");
+  assert.match(dense[0].effect.member, /::set_StartStunned /);
+  // Exact source CIL writes false; Wriggler's graph selects SPAWNED_MOVE only
+  // for true. Keep this investigated source result instead of forcing the audit expectation.
+  assert.deepEqual(dense[0].baseValue.expression, { kind: "constant", value: false, valueType: "boolean" });
+
+  const deci = inEncounter("DECIMILLIPEDE_ELITE");
+  assert.equal(deci.length, 3);
+  assert.deepEqual(deci.map((row) => row.ownerModel).sort(), [
+    "MONSTER.DECIMILLIPEDE_SEGMENT_BACK", "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT",
+    "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+  ]);
+  assert.equal(deci.filter((row) => row.baseValue.expression.operator === "remainder").length, 2);
+  assert.equal(inEncounter("SCROLLS_OF_BITING_NORMAL").length, 4);
+  assert.equal(inEncounter("TWO_TAILED_RATS_NORMAL").length, 3);
+  const punch = inEncounter("PUNCH_OFF_EVENT_ENCOUNTER");
+  assert.equal(punch.length, 3);
+  assert.ok(punch.some((row) => row.baseValue.expression.kind === "reference"));
+
+  const constructors = facts.filter((row) => row.stage === "constructorDefault");
+  assert.equal(constructors.length, 5);
+  assert.deepEqual(constructors.filter((row) => row.ownerModel === "MONSTER.TWO_TAILED_RAT").map((row) => row.baseValue.expression.value), [-1, 2]);
+  assert.equal(constructors.find((row) => row.ownerModel === "MONSTER.PHANTASMAL_GARDENER").baseValue.expression.value, "1.0");
+});
+
+test("E2a addition effects, helpers, relationships, and restored branches stay ordered", () => {
+  const initial = artifact.initialState;
+  const factsFor = (model) => initial.initialStateFacts.filter((row) => row.ownerModel === model);
+  const kinds = (model) => factsFor(model).map((row) => row.effect.kind);
+  const owner = (model) => initial.initialStateOwners.find((row) => row.ownerModel === model);
+
+  assert.deepEqual(kinds("MONSTER.AEONGLASS"), ["configurePowerTarget", "applyPower", "applyPower"]);
+  assert.deepEqual(factsFor("MONSTER.AEONGLASS").filter((row) => row.effect.kind === "applyPower").map((row) => row.effect.model), [
+    "POWER.WITHERING_PRESENCE_POWER", "POWER.ARTIFACT_POWER",
+  ]);
+  assert.deepEqual(kinds("MONSTER.CUBEX_CONSTRUCT"), ["gainBlock", "applyPower", "subscribe", "setState"]);
+  assert.equal(factsFor("MONSTER.CUBEX_CONSTRUCT")[0].baseValue.expression.expression.value, 13);
+  assert.deepEqual(kinds("MONSTER.LAGAVULIN_MATRIARCH"), ["setState", "applyPower", "applyPower"]);
+  assert.deepEqual(factsFor("MONSTER.LAGAVULIN_MATRIARCH").filter((row) => row.effect.kind === "applyPower").map((row) => row.effect.model), [
+    "POWER.PLATING_POWER", "POWER.ASLEEP_POWER",
+  ]);
+  assert.equal(owner("MONSTER.LAGAVULIN_MATRIARCH").classification, "orderedGameplayEffects");
+
+  const segments = ["FRONT", "MIDDLE", "BACK"].map((side) => owner(`MONSTER.DECIMILLIPEDE_SEGMENT_${side}`));
+  assert.equal(new Set(segments.map((row) => row.effectiveHook)).size, 1);
+  assert.ok(segments.every((row) => row.applicableModels.length === 3));
+  assert.ok(factsFor("MONSTER.DECIMILLIPEDE_SEGMENT_FRONT").some((row) => row.effect.kind === "setMaxAndCurrentHp"));
+  assert.ok(factsFor("MONSTER.QUEEN").some((row) => row.effect.kind === "relationship" && row.effect.targetModel === "MONSTER.TORCH_HEAD_AMALGAM"));
+  assert.ok(factsFor("MONSTER.PUNCH_CONSTRUCT").some((row) => row.effect.kind === "setCurrentHp"));
+
+  const tough = factsFor("MONSTER.TOUGH_EGG");
+  const hatch = tough.find((row) => row.effect.model === "POWER.HATCH_POWER");
+  assert.equal(hatch.baseValue.expression.kind, "conditional");
+  assert.equal(hatch.baseValue.expression.condition.left.name, "combat.currentSide");
+  assert.ok(tough.some((row) => row.condition.classification === "restoredHatchedState" && row.effect.kind === "setMaxAndCurrentHp"));
+  assert.ok(tough.some((row) => row.condition.classification === "restoredHatchedState" && row.effect.kind === "forceMoveState"));
+
+  assert.deepEqual(kinds("MONSTER.MYSTERIOUS_KNIGHT"), ["applyPower", "applyPower"]);
+  for (const version of [1, 2, 3]) {
+    const battle = factsFor(`MONSTER.BATTLE_FRIEND_V${version}`);
+    assert.equal(battle.length, 1);
+    assert.equal(battle[0].effect.model, "POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER");
+  }
+  assert.equal(owner("MONSTER.ARCHITECT").classification, "sourceProvenNoOp");
+  assert.equal(owner("MONSTER.BOWLBUG_EGG").classification, "sourceProvenNonGameplayOnly");
+  assert.equal(owner("MONSTER.TWO_TAILED_RAT").classification, "sourceProvenNonGameplayOnly");
+});
+
+test("E2a selected Power hooks and runtime contracts are explicit", () => {
+  const initial = artifact.initialState;
+  const byPower = new Map(initial.powerHookClosure.map((row) => [row.canonicalPower, row]));
+  const hook = (power, name) => byPower.get(power).hooks.find((row) => row.hook === name);
+  assert.equal(hook("POWER.ILLUSION_POWER", "AfterApplied").classification, "orderedGameplayEffects");
+  assert.equal(hook("POWER.PLATING_POWER", "AfterApplied").classification, "orderedGameplayEffects");
+  assert.equal(hook("POWER.GALVANIC_POWER", "BeforeCombatStart").classification, "orderedGameplayEffects");
+  assert.equal(hook("POWER.VITAL_SPARK_POWER", "BeforeCombatStart").classification, "orderedGameplayEffects");
+  for (const power of byPower.values()) assert.deepEqual(power.hooks.map((row) => row.hook), ["BeforeApplied", "AfterApplied", "BeforeCombatStart"]);
+  const byFact = new Map(initial.initialStateFacts.map((row) => [row.factId, row]));
+  assert.equal(byFact.get(hook("POWER.ILLUSION_POWER", "AfterApplied").effectFactRefs[0]).effect.model, "POWER.MINION_POWER");
+  assert.ok(byFact.get(hook("POWER.PLATING_POWER", "AfterApplied").effectFactRefs[0]).sourceStateInputs.includes("RUNTIME.RUN.PLAYER_COUNT"));
+  assert.equal(byFact.get(hook("POWER.GALVANIC_POWER", "BeforeCombatStart").effectFactRefs[0]).effect.model, "AFFLICTION.GALVANIZED");
+  assert.equal(byFact.get(hook("POWER.VITAL_SPARK_POWER", "BeforeCombatStart").effectFactRefs[0]).effect.model, "AFFLICTION.TAINTED");
+  const contracts = new Map(initial.runtimeStateContracts.map((row) => [row.contractId, row]));
+  for (const id of ["RUNTIME.COMBAT.CURRENT_SIDE", "RUNTIME.RUN.PLAYER_COUNT", "RUNTIME.INITIAL.DECIMILLIPEDE_SHARED_MAX_HP", "RUNTIME.INITIAL.TOUGH_EGG_HATCH_HP", "RUNTIME.EXTERNAL.POWER_AMOUNT_HOOKS"]) {
+    assert.ok(contracts.has(id), id);
+    assert.ok(contracts.get(id).domain);
+    assert.ok(contracts.get(id).readSites.length > 0);
+  }
+  assert.deepEqual(artifact.observationIdentities.aliases, []);
 });

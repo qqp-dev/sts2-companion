@@ -15,6 +15,7 @@ from .errors import SourceExtractionError
 from .input_gate import VerifiedInputs
 from .localization import require_localized_text
 from .identity import extract_observation_identities
+from .initial_state import extract_initial_state
 from .placement import extract_placement
 from .metadata import AssemblyMetadata, extract_encounter_census
 from .names import join_monster_names
@@ -59,12 +60,15 @@ def _localization(verified: VerifiedInputs, path: str) -> tuple[dict[str, Any], 
     return value, blob
 
 
-def _referenced_models(behavior: dict[str, Any], powers: dict[str, Any], cards: dict[str, Any],
+def _referenced_models(behavior: dict[str, Any], initial_state: dict[str, Any], powers: dict[str, Any], cards: dict[str, Any],
                        power_blob: dict[str, Any], card_blob: dict[str, Any]) -> dict[str, Any]:
     refs = {op.get("model") for move in behavior["registrations"] for op in move["operations"] if op.get("model")}
     power_refs = {x for x in refs if x.startswith("POWER.")}
     power_refs.update(x["canonicalPower"] for x in behavior["scaling"]["power"]["optIns"])
     power_refs.update(x["canonicalPower"] for x in behavior["scaling"]["power"]["overrides"])
+    power_refs.update(row["canonicalPower"] for row in initial_state["powerHookClosure"])
+    power_refs.update(fact["effect"]["model"] for fact in initial_state["initialStateFacts"]
+                      if fact["effect"]["kind"] == "applyPower")
     card_refs = {x for x in refs if x.startswith("CARD.")}
     def rows(items: set[str], localization: dict[str, Any], blob: dict[str, Any]) -> list[dict[str, Any]]:
         output=[]
@@ -189,13 +193,18 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
                                     rosters["ordinaryReachableModels"], monster_l10n,
                                     monster_l10n_blob["entrySha256"])
         behavior["scaling"] = extract_combat_scaling(assembly, dll.sha256)
+        encounters, encounter_blob = _encounter_records(verified, census, rosters)
+        initial_state = extract_initial_state(
+            assembly, dll.sha256, world["concrete"], encounters["ordinary"] + encounters["event"],
+            reachable_models=set(rosters["reachableModels"]), power_scaling=behavior["scaling"]["power"],
+        )
         for move in behavior["registrations"]:
             for index, operation in enumerate(move["operations"]):
                 validate_operation(operation, path=f"$.behavior.registrations[{move['canonicalId']!r}].operations[{index}]")
         intent_l10n, intent_l10n_blob = _localization(verified, _INTENT_LOCALIZATION)
         power_l10n, power_l10n_blob = _localization(verified, _POWER_LOCALIZATION)
         card_l10n, card_l10n_blob = _localization(verified, _CARD_LOCALIZATION)
-        referenced = _referenced_models(behavior, power_l10n, card_l10n, power_l10n_blob, card_l10n_blob)
+        referenced = _referenced_models(behavior, initial_state, power_l10n, card_l10n, power_l10n_blob, card_l10n_blob)
     finally:
         assembly.close()
     reachable = set(rosters["reachableModels"])
@@ -227,7 +236,6 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
     if len(excluded) != 12:
         raise SourceExtractionError(f"excluded concrete monster count drift: got {len(excluded)}")
 
-    encounters, encounter_blob = _encounter_records(verified, census, rosters)
     total_encounters = len(encounters["ordinary"]) + len(encounters["event"])
 
     artifact: dict[str, Any] = {
@@ -238,6 +246,7 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             "graphEdgeKinds": ["conditionalBranch", "followUp", "randomBranch"],
             "graphNodeKinds": ["conditional", "move", "random"],
             "numericTypes": ["decimal", "integer", "integerRange"],
+            "arithmeticOperators": ["add", "divide", "multiply", "remainder", "subtract"],
             "operationKinds": ["addGeneratedCard", "addStatusCard", "applyPower", "attack", "attackHitCount", "escape", "gainBlock", "heal", "helperEffect", "kill", "removeCard", "removePower", "stateWrite", "summon", "transition"],
             "rosterKinds": ["filteredChoice", "fixed", "permutation", "repeat", "sequence", "uniformChoice", "weightedChoice"],
             "rules": "docs/source-world-model.md#normalized-ast-grammar",
@@ -292,12 +301,21 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
                 kind: complete(count, count)
                 for kind, count in behavior["summary"]["directSinkCounts"].items()
             },
+            "encounterInitializers": complete(len(initial_state["encounterInitializers"]), 89),
+            "initialStateOwners": complete(len(initial_state["initialStateOwners"]), 108),
+            "initialStateEffectiveHooks": complete(len(initial_state["initialStateOwners"]), 108),
+            "initialStateDirectSinkSites": complete(sum(initial_state["sourceDenominators"]["directSinkSitesByKind"].values()), sum(initial_state["sourceDenominators"]["directSinkSitesByKind"].values())),
+            "initialStateTransitiveInvocationClassification": complete(len(initial_state["invocationDecisions"]), len(initial_state["invocationDecisions"])),
+            "initialStatePowerHookClosure": complete(len(initial_state["powerHookClosure"]), len(initial_state["powerHookClosure"])),
+            "initialExternalHookBoundary": complete(sum(len(row["declarations"]) for row in initial_state["externalHookBoundary"]), sum(len(row["declarations"]) for row in initial_state["externalHookBoundary"])),
+            "initialStateSemanticFields": complete(len(initial_state["initialStateFacts"]) * 14, len(initial_state["initialStateFacts"]) * 14),
             "powerCardReferencedModels": complete(len(referenced["powers"]) + len(referenced["cards"]), len(referenced["powers"]) + len(referenced["cards"])),
             "powerMultiplayerOptIns": complete(len(behavior["scaling"]["power"]["optIns"]), 12),
             "powerMultiplayerOverrides": complete(len(behavior["scaling"]["power"]["overrides"]), 5),
         },
         "behavior": behavior,
         "cards": referenced["cards"],
+        "initialState": initial_state,
         "intentLocalization": {"entries": intent_l10n, "provenance": intent_l10n_blob},
         "powers": referenced["powers"],
         "encounterCensus": {
