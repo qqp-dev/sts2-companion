@@ -388,7 +388,162 @@ def _is_cached_lambda_field(operand: Any) -> bool:
 
 
 
-def _compile_graph(record: dict[str, Any], canonical: str, graph_id: str, source_type: str) -> dict[str, Any]:
+_MOVE_REPEAT_TYPE = "MegaCrit.Sts2.Core.MonsterMoves.MoveRepeatType"
+_STATE_WEIGHT = "MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.RandomBranchState+StateWeight"
+_FLOAT_FUNC = CilType("genericInstance", (CilType("token:445"), CilType("r4")))
+
+
+def _repeat_type_constants(assembly: AssemblyMetadata) -> tuple[dict[int, str], dict[str, Any]]:
+    """Decode MoveRepeatType from CLI Field/Constant metadata."""
+    matches = [index for index, name in assembly.type_names.items() if name == _MOVE_REPEAT_TYPE]
+    if len(matches) != 1:
+        raise SourceExtractionError(f"MoveRepeatType declaration denominator {len(matches)}")
+    type_index = matches[0]
+    constants: dict[int, bytes] = {}
+    table = getattr(assembly.md, "Constant", None)
+    if table is None:
+        raise SourceExtractionError("MoveRepeatType Constant metadata table is absent")
+    for row in table.rows:
+        try:
+            if row.Parent.table.name == "Field":
+                constants[row.Parent.row_index] = row.Value.value
+        except AttributeError:
+            continue
+    values: dict[int, str] = {}
+    fields = []
+    for field in assembly.md.TypeDef.rows[type_index - 1].FieldList:
+        if not bool(getattr(field.row.Flags, "fdLiteral", False)):
+            continue
+        raw = constants.get(field.row_index)
+        if not isinstance(raw, bytes) or len(raw) != 4:
+            raise SourceExtractionError(f"MoveRepeatType constant {field.row.Name} is not Int32 metadata")
+        value = int.from_bytes(raw, "little", signed=True)
+        name = str(field.row.Name)
+        if value in values:
+            raise SourceExtractionError(f"duplicate MoveRepeatType value {value}")
+        values[value] = name
+        fields.append({"metadataSignature": field.row.Signature.value.hex(), "name": name, "value": value})
+    expected = {0: "CanRepeatForever", 1: "CanRepeatXTimes", 2: "CannotRepeat", 3: "UseOnlyOnce"}
+    if values != expected:
+        raise SourceExtractionError(f"unknown MoveRepeatType metadata {values!r}")
+    return values, {
+        "diagnosticMetadataToken": f"0x{0x02000000 | type_index:08x}",
+        "fields": fields, "sourceType": _MOVE_REPEAT_TYPE,
+    }
+
+
+def _random_overload_contracts(assembly: AssemblyMetadata, assembly_sha256: str) -> dict[str, dict[str, Any]]:
+    """Discover all AddBranch overloads and prove parameter/storage semantics."""
+    ids = assembly.find_methods(
+        "MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.RandomBranchState", "AddBranch"
+    )
+    if len(ids) != 10:
+        raise SourceExtractionError(f"AddBranch overload denominator {len(ids)}/10")
+    result: dict[str, dict[str, Any]] = {}
+    for index in ids:
+        symbol = assembly.method_symbol(index)
+        signature = decode_method_signature(symbol)
+        row = assembly.md.MethodDef.rows[index - 1]
+        names = [str(item.row.Name) for item in row.ParamList if item.row.Sequence]
+        if not signature.has_this or signature.returns.kind != "void" or len(names) != len(signature.parameters):
+            raise SourceExtractionError(f"invalid AddBranch metadata signature: {symbol}")
+        parameters = list(zip(names, signature.parameters, strict=True))
+        if not parameters or parameters[0][0] != "state" or parameters[0][1].kind != "class":
+            raise SourceExtractionError(f"AddBranch state parameter changed: {symbol}")
+        allowed = {"state", "cooldown", "repeatType", "maxRepeats", "weight"}
+        if set(names) - allowed or len(set(names)) != len(names):
+            raise SourceExtractionError(f"unknown AddBranch parameters: {names!r}")
+        for name, parameter in parameters[1:]:
+            if name in {"cooldown", "maxRepeats"} and parameter.kind != "i4":
+                raise SourceExtractionError(f"AddBranch {name} is not Int32: {symbol}")
+            if name == "repeatType" and parameter.kind != "valuetype":
+                raise SourceExtractionError(f"AddBranch repeatType is not enum: {symbol}")
+            if name == "weight" and parameter.kind not in {"r4", "genericInstance"}:
+                raise SourceExtractionError(f"AddBranch weight is not float/delegate: {symbol}")
+            if name == "weight" and parameter.kind == "genericInstance" and parameter != _FLOAT_FUNC:
+                raise SourceExtractionError(f"AddBranch callback is not Func<float>: {symbol}")
+        method = assembly.method_record(index, assembly_sha256)
+        forwards = [item["operand"] for item in method["instructions"]
+                    if item["opcode"] in {"call", "callvirt"} and isinstance(item["operand"], str)
+                    and item["operand"].startswith(RANDOM_ADD)]
+        stores = {item["operand"].rsplit("::", 1)[-1] for item in method["instructions"]
+                  if item["opcode"] == "stfld" and isinstance(item["operand"], str)
+                  and item["operand"].startswith(_STATE_WEIGHT + "::")}
+        if len(forwards) > 1 or (not forwards and not {"stateId", "repeatType", "weightLambda", "cooldown"} <= stores):
+            raise SourceExtractionError(f"AddBranch forwarding/storage contract changed: {symbol}")
+        result[symbol] = {"method": method, "parameters": parameters}
+    return result
+
+
+def _float_expression(value: Any) -> dict[str, Any]:
+    if not isinstance(value, (int, float)) or isinstance(value, bool):
+        raise SourceExtractionError(f"random float constant unresolved: {value!r}")
+    numeric = float(value)
+    return {"kind": "constant", "value": int(numeric) if numeric.is_integer() else numeric, "valueType": "float"}
+
+
+def _callback_expression(record: Mapping[str, Any]) -> tuple[dict[str, Any], dict[str, Any] | None]:
+    """Compile current parameterless float callbacks; unknown control flow fails."""
+    signature = decode_method_signature(record["symbolSignature"])
+    if signature.returns.kind != "r4" or signature.parameters:
+        raise SourceExtractionError(f"weight callback is not parameterless float: {record['symbolSignature']}")
+    ins = record["instructions"]
+    returns = [i for i, item in enumerate(ins) if item["opcode"] == "ret"]
+    constants = [(i, item["operand"]) for i, item in enumerate(ins) if item["opcode"] == "ldc.r4"]
+    calls = [(i, item["operand"]) for i, item in enumerate(ins)
+             if item["opcode"] in {"call", "callvirt"} and isinstance(item["operand"], str)]
+    branches = [(i, item) for i, item in enumerate(ins)
+                if item["opcode"].startswith(("brtrue", "brfalse"))]
+    if len(returns) == 1 and len(constants) == 1 and not calls and not branches:
+        return _float_expression(constants[0][1]), None
+    if len(returns) != 2 or len(constants) != 2 or len(calls) != 1 or len(branches) != 1:
+        raise SourceExtractionError(f"unsupported float callback CIL: {record['symbolSignature']}")
+    call_index, call_symbol = calls[0]
+    branch_index, branch = branches[0]
+    if call_index >= branch_index or not branch["opcode"].startswith("brtrue"):
+        raise SourceExtractionError(f"unsupported callback branch order/polarity: {record['symbolSignature']}")
+    target = next((i for i, item in enumerate(ins) if item["offsetDiagnostic"] == branch["operand"]), None)
+    if target is None:
+        raise SourceExtractionError(f"callback branch target unresolved: {record['symbolSignature']}")
+    false_value = next((v for i, v in constants if branch_index < i < target), None)
+    true_value = next((v for i, v in constants if i >= target), None)
+    if false_value is None or true_value is None:
+        raise SourceExtractionError(f"callback branch float values unresolved: {record['symbolSignature']}")
+    condition = {"kind": "methodBoolean", "symbolSignature": call_symbol, "valueType": "boolean"}
+    return {
+        "condition": condition, "kind": "conditional", "valueType": "float",
+        "whenFalse": _float_expression(false_value), "whenTrue": _float_expression(true_value),
+    }, condition
+
+
+def _resolve_weight_callback(assembly: AssemblyMetadata, assembly_sha256: str,
+                             value: Any, instruction_index: int) -> dict[str, Any]:
+    if not (isinstance(value, tuple) and len(value) == 3 and value[0] == "func"
+            and isinstance(value[1], str)):
+        raise SourceExtractionError(f"weight callback target/receiver unresolved at instruction {instruction_index}")
+    target, receiver = value[1], value[2]
+    owner, name = _owner_and_name(target)
+    matches = [index for index in assembly.find_methods(owner, name) if assembly.method_symbol(index) == target]
+    if len(matches) != 1:
+        raise SourceExtractionError(f"weight callback declaration denominator {len(matches)}: {target}")
+    record = assembly.method_record(matches[0], assembly_sha256)
+    expression, condition = _callback_expression(record)
+    if isinstance(receiver, tuple) and receiver[0] == "self":
+        binding = {"kind": "graphOwnerInstance", "sourceType": receiver[1]}
+    elif isinstance(receiver, tuple) and receiver[0] == "field" and receiver[2] is True:
+        binding = {"field": receiver[1], "kind": "compilerCachedSingleton"}
+    else:
+        raise SourceExtractionError(f"weight callback receiver unresolved at instruction {instruction_index}: {receiver!r}")
+    result = {"expression": expression, "kind": "delegate", "receiver": binding,
+              "targetMethod": _method(record, include_slice=True), "valueType": "float"}
+    if condition is not None:
+        result["runtimeContract"] = condition
+    return result
+
+
+def _compile_graph(record: dict[str, Any], canonical: str, graph_id: str, source_type: str,
+                   assembly: AssemblyMetadata, assembly_sha256: str,
+                   repeat_types: Mapping[int, str], overloads: Mapping[str, dict[str, Any]]) -> dict[str, Any]:
     instructions = record["instructions"]
     by_offset = {item["offsetDiagnostic"]: index for index, item in enumerate(instructions)}
     nodes: dict[str, dict[str, Any]] = {}
@@ -513,18 +668,47 @@ def _compile_graph(record: dict[str, Any], canonical: str, graph_id: str, source
                     nodes[node_id]["mustPerformOnce"] = True
                     push(source)
                 elif operand.startswith(RANDOM_ADD):
-                    count = _param_count(operand)
-                    if count is None:
+                    contract = overloads.get(operand)
+                    if contract is None:
                         raise SourceExtractionError(f"unrecognized AddBranch signature {operand}")
-                    args = [pop() for _ in range(count)]; receiver = pop()
-                    src, dst = node_from(receiver), next((node_from(x) for x in reversed(args) if node_from(x)), None)
+                    params = contract["parameters"]
+                    args = [pop() for _ in params][::-1]
+                    receiver = pop()
+                    src, dst = node_from(receiver), node_from(args[0]) if args else None
                     if src is None or dst is None:
                         raise SourceExtractionError("random branch unresolved")
-                    weight = next((x[1] for x in args if isinstance(x, tuple) and x[0] == "int"), None)
-                    predicate = next((x[1] for x in args if isinstance(x, tuple) and x[0] in {"ftn", "func"}), None)
-                    edge = {"kind": "randomBranch", "from": src, "to": dst, "order": sum(e["kind"]=="randomBranch" and e["from"]==src for e in edges)}
-                    if weight is not None: edge["weight"] = weight
-                    if predicate is not None: edge["predicate"] = {"kind": "reference", "reference": predicate, "valueType": "boolean"}
+                    values = {name: value for (name, _), value in zip(params, args, strict=True)}
+                    repeat_value = ("int", 1) if "maxRepeats" in values else values.get("repeatType")
+                    if not (isinstance(repeat_value, tuple) and repeat_value[0] == "int"):
+                        raise SourceExtractionError(f"AddBranch repeat enum unresolved at instruction {pc}")
+                    enum_value = repeat_value[1]
+                    if enum_value not in repeat_types:
+                        raise SourceExtractionError(f"unknown MoveRepeatType value {enum_value} at instruction {pc}")
+                    repeat = {"enumName": repeat_types[enum_value], "enumValue": enum_value}
+                    if "maxRepeats" in values:
+                        maximum = values["maxRepeats"]
+                        if not (isinstance(maximum, tuple) and maximum[0] == "int" and maximum[1] > 0):
+                            raise SourceExtractionError(f"AddBranch maxRepeats unresolved at instruction {pc}")
+                        repeat["maximumConsecutiveUses"] = maximum[1]
+                    cooldown = values.get("cooldown", ("int", 0))
+                    if not (isinstance(cooldown, tuple) and cooldown[0] == "int" and cooldown[1] >= 0):
+                        raise SourceExtractionError(f"AddBranch cooldown unresolved at instruction {pc}")
+                    weight_value = values.get("weight", ("float", 1.0))
+                    weight_type = next((kind for name, kind in params if name == "weight"), None)
+                    if weight_type is None or weight_type.kind == "r4":
+                        if not (isinstance(weight_value, tuple) and weight_value[0] == "float"):
+                            raise SourceExtractionError(f"AddBranch float weight unresolved at instruction {pc}")
+                        weight = _float_expression(weight_value[1])
+                    elif weight_type.kind == "genericInstance":
+                        weight = _resolve_weight_callback(assembly, assembly_sha256, weight_value, pc)
+                    else:
+                        raise SourceExtractionError(f"unknown AddBranch weight type at instruction {pc}")
+                    edge = {
+                        "cooldown": cooldown[1], "from": src, "kind": "randomBranch",
+                        "order": sum(e["kind"] == "randomBranch" and e["from"] == src for e in edges),
+                        "overload": {"metadataSignature": operand.split(" sig:", 1)[1], "symbolSignature": operand},
+                        "repeat": repeat, "sourceOrder": pc, "to": dst, "weight": weight,
+                    }
                     edges.append(edge)
                 elif operand.startswith(CONDITIONAL_ADD):
                     pred, target, receiver = pop(), pop(), pop()
@@ -560,7 +744,9 @@ def _compile_graph(record: dict[str, Any], canonical: str, graph_id: str, source
                     push(("machine", node_id))
                 elif operand.endswith("::.ctor sig:2002011c18") or operand.startswith("<TypeSpec:151281c102") or operand.startswith("<TypeSpec:151281bd01"):
                     method, receiver = pop(), pop()
-                    push(("func", method[1] if isinstance(method, tuple) else method))
+                    if not (isinstance(method, tuple) and method[0] == "ftn" and isinstance(method[1], str)):
+                        raise SourceExtractionError(f"delegate function target unresolved in {record['symbolSignature']}")
+                    push(("func", method[1], receiver))
                 elif "Intents." in operand and "::.ctor" in operand:
                     count = _param_count(operand) or 0
                     for _ in range(count): pop()
@@ -631,7 +817,7 @@ def _compile_graph(record: dict[str, Any], canonical: str, graph_id: str, source
     seen_edges = []
     seen_keys = set()
     for edge in edges:
-        key = (edge["kind"], edge["from"], edge["to"], edge.get("weight"), str(edge.get("predicate")))
+        key = witness_sha256(edge)
         if key in seen_keys: continue
         seen_keys.add(key); seen_edges.append(edge)
     # Topology regression pins are constructor/assignment sites, including a
@@ -660,6 +846,8 @@ def _compile_graph(record: dict[str, Any], canonical: str, graph_id: str, source
 
 def _registration_rows(assembly: AssemblyMetadata, assembly_sha256: str, source_to_model: Mapping[str, str], reachable_models: set[str], localization: Mapping[str, Any], pck_sha256: str, blob_sha256: str) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], dict[str, int]]:
     async_methods = _async_map(assembly)
+    repeat_types, _ = _repeat_type_constants(assembly)
+    random_overloads = _random_overload_contracts(assembly, assembly_sha256)
     registrations: list[dict[str, Any]] = []
     graphs: list[dict[str, Any]] = []
     excluded: list[dict[str, Any]] = []
@@ -696,7 +884,10 @@ def _registration_rows(assembly: AssemblyMetadata, assembly_sha256: str, source_
         invocations = CilDataFlow(ins).run()
         move_sites = [i for i,x in enumerate(ins) if x["opcode"] == "newobj" and isinstance(x["operand"],str) and x["operand"].startswith(MOVE_CTOR)]
         graph_id = "GRAPH." + canonical.removeprefix("MONSTER.")
-        graphs.append(_compile_graph(record, canonical, graph_id, source_type))
+        graphs.append(_compile_graph(
+            record, canonical, graph_id, source_type, assembly, assembly_sha256,
+            repeat_types, random_overloads,
+        ))
         previous = 0
         for ordinal, site in enumerate(move_sites):
             segment = ins[previous:site + 1]
@@ -1349,6 +1540,95 @@ def attach_event_turn_behavior(
     if len(event_decisions) != 103:
         raise SourceExtractionError(f"event invocation regression disagreement: {len(event_decisions)}/103")
 
+def _exact_method(assembly: AssemblyMetadata, assembly_sha256: str,
+                  owner: str, name: str) -> dict[str, Any]:
+    matches = assembly.find_methods(owner, name)
+    if len(matches) != 1:
+        raise SourceExtractionError(f"random runtime method denominator {owner}::{name} = {len(matches)}")
+    return assembly.method_record(matches[0], assembly_sha256)
+
+
+def _require_runtime_order(record: Mapping[str, Any], symbols: list[str]) -> list[int]:
+    positions = []
+    cursor = -1
+    for symbol in symbols:
+        found = next((index for index, item in enumerate(record["instructions"])
+                      if index > cursor and isinstance(item.get("operand"), str)
+                      and symbol in item["operand"]), None)
+        if found is None:
+            raise SourceExtractionError(
+                f"random runtime call/field order missing {symbol} in {record['symbolSignature']}"
+            )
+        positions.append(found); cursor = found
+    return positions
+
+
+def _extract_random_selection_contract(assembly: AssemblyMetadata, assembly_sha256: str,
+                                       graphs: list[Mapping[str, Any]]) -> dict[str, Any]:
+    repeat_types, enum_provenance = _repeat_type_constants(assembly)
+    enum_provenance["assemblySha256"] = assembly_sha256
+    overloads = _random_overload_contracts(assembly, assembly_sha256)
+    get_weight = _exact_method(assembly, assembly_sha256, _STATE_WEIGHT, "GetWeight")
+    random_owner = "MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.RandomBranchState"
+    state_weight = _exact_method(assembly, assembly_sha256, random_owner, "GetStateWeight")
+    next_state = _exact_method(assembly, assembly_sha256, random_owner, "GetNextState")
+    _require_runtime_order(get_weight, ["StateWeight::weightLambda", "::Invoke"])
+    required_state_fields = {"repeatType", "maxTimes", "stateId", "cooldown"}
+    observed_fields = {item["operand"].rsplit("::", 1)[-1]
+                       for item in state_weight["instructions"]
+                       if isinstance(item.get("operand"), str)
+                       and item["operand"].startswith(_STATE_WEIGHT + "::")}
+    if not required_state_fields <= observed_fields:
+        raise SourceExtractionError(f"random state suppression fields changed: {observed_fields!r}")
+    state_log_reads = sum(isinstance(item.get("operand"), str)
+                          and "MonsterMoveStateMachine::get_StateLog" in item["operand"]
+                          for item in state_weight["instructions"])
+    if state_log_reads != 7:
+        raise SourceExtractionError(f"random state-log read denominator {state_log_reads}/7")
+    _require_runtime_order(state_weight, ["StateWeight::repeatType", "MonsterMoveStateMachine::get_States",
+                                          "MonsterMoveStateMachine::get_StateLog"])
+    _require_runtime_order(state_weight, ["StateWeight::cooldown", "MonsterMoveStateMachine::get_StateLog",
+                                          "System.Linq.Enumerable::Where", "System.Linq.Enumerable::Reverse",
+                                          "System.Linq.Enumerable::Take", "System.Linq.Enumerable::Any",
+                                          "StateWeight::GetWeight"])
+    next_positions = _require_runtime_order(next_state, [
+        "RandomBranchState::get_States", "System.Linq.Enumerable::Sum",
+        "MegaCrit.Sts2.Core.Random.Rng::NextFloat", "RandomBranchState::get_States",
+        "RandomBranchState::GetStateWeight",
+    ])
+    sum_call = next_state["instructions"][next_positions[1]]["operand"]
+    rng_call = next_state["instructions"][next_positions[2]]["operand"]
+    if decode_method_signature(sum_call).returns.kind != "r4" or decode_method_signature(rng_call).parameters[0].kind != "r4":
+        raise SourceExtractionError("random effective-weight total/RNG type is not float")
+    branches = [edge for graph in graphs for edge in graph["edges"] if edge["kind"] == "randomBranch"]
+    callback_count = sum(edge["weight"]["kind"] == "delegate" for edge in branches)
+    distribution = Counter(edge["repeat"]["enumName"] for edge in branches)
+    if len(branches) != 61 or callback_count != 8:
+        raise SourceExtractionError(f"random branch/callback denominator {len(branches)}/{callback_count}")
+    return {
+        "algorithm": {
+            "effectiveWeight": "repeat/state-log/cooldown suppression multiplier times current float weight callback",
+            "historyInputs": ["moveStateMachine.states", "moveStateMachine.stateLog"],
+            "normalization": "dynamic effective weights are summed; zeroed branches remain unavailable",
+            "selection": "Rng.NextFloat(effectiveWeightTotal), then source-order cumulative subtraction",
+            "zeroTotal": "throws InvalidOperationException when no valid state is selected",
+        },
+        "enum": {"provenance": enum_provenance,
+                 "values": [{"name": repeat_types[value], "value": value} for value in sorted(repeat_types)]},
+        "methods": {
+            "callbackEvaluation": _method(get_weight, include_slice=True),
+            "effectiveWeight": _method(state_weight, include_slice=True),
+            "selection": _method(next_state, include_slice=True),
+        },
+        "overloads": [{"method": _method(row["method"], include_slice=True),
+                       "parameters": [{"name": name, "cliKind": kind.kind} for name, kind in row["parameters"]]}
+                      for _, row in sorted(overloads.items())],
+        "summary": {"branches": len(branches), "floatCallbacks": callback_count,
+                    "graphs": sum(any(edge["kind"] == "randomBranch" for edge in graph["edges"]) for graph in graphs),
+                    "overloads": len(overloads), "repeatTypeDistribution": dict(sorted(distribution.items()))},
+    }
+
+
 def extract_behavior(assembly: AssemblyMetadata, assembly_sha256: str, pck_sha256: str,
                      monsters: list[Mapping[str,Any]], reachable_models: list[str], localization: Mapping[str,Any],
                      localization_blob_sha256: str) -> dict[str, Any]:
@@ -1387,7 +1667,9 @@ def extract_behavior(assembly: AssemblyMetadata, assembly_sha256: str, pck_sha25
     if sink_counts!=EXPECTED_SINKS: failures.append(f"sink census {sink_counts!r}")
     if topology!=expected_topology: failures.append(f"topology census {topology!r}")
     if failures: raise SourceExtractionError("event-inclusive behavior regression disagreement: "+"; ".join(failures))
+    random_contract = _extract_random_selection_contract(assembly, assembly_sha256, graphs)
     return {"applicability":applicability,"excludedRegistrations":excluded,"graphs":graphs,"registrations":registrations,
+            "randomSelectionContract":random_contract,
             "invocationCensus":{"decisions":invocation_decisions,"summary":invocation_summary},
             "summary":{"asyncActions":async_count,"synchronousNoOpActions":sync_count,
                        "localizedTitles":localized,"missingOrInternalTitles":len(registrations)-localized,

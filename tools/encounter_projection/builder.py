@@ -1,4 +1,4 @@
-"""Pure builder for the compact E2c2b encounter projection."""
+"""Pure builder for the compact E2d1a encounter projection."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from copy import deepcopy
 import hashlib
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 from source_extractor.canonical import atomic_write, canonical_json_bytes, strict_json_bytes, witness_sha256
 from source_extractor.errors import SourceExtractionError
@@ -206,9 +206,66 @@ def _source_graphs(source: dict[str, Any], facts: _Facts) -> list[dict[str, Any]
     for index, row in enumerate(source["behavior"]["graphs"]):
         fact_id = f"SOURCE.{row['graphId']}"
         facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE", [f"/behavior/graphs/{index}"])
-        result.append({**_without_provenance(row), "factId": fact_id})
+        compact = _without_provenance(row)
+        for edge in compact["edges"]:
+            weight = edge.get("weight", {})
+            if weight.get("kind") == "delegate":
+                weight["targetMethod"] = _compact_method(weight["targetMethod"])
+        result.append({**compact, "factId": fact_id})
     return result
 
+
+
+def _compact_method(value: Mapping[str, Any]) -> dict[str, Any]:
+    return {key: value[key] for key in ("methodBodySha256", "normalizedSliceSha256", "symbolSignature") if key in value}
+
+
+def _source_random_selection(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
+    raw = source["behavior"]["randomSelectionContract"]
+    fact_id = "SOURCE.RANDOM_SELECTION.CONTRACT"
+    facts.add(fact_id, "source", "EVIDENCE." + fact_id, "INPUT.SOURCE", ["/behavior/randomSelectionContract"])
+    return {
+        "algorithm": deepcopy(raw["algorithm"]), "enumValues": deepcopy(raw["enum"]["values"]),
+        "factId": fact_id,
+        "methods": {key: _compact_method(value) for key, value in raw["methods"].items()},
+        "overloads": [{"method": _compact_method(row["method"]), "parameters": deepcopy(row["parameters"])}
+                      for row in raw["overloads"]],
+        "summary": deepcopy(raw["summary"]),
+    }
+
+
+def _source_production(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
+    raw = source["production"]
+    fact_id = "SOURCE.PRODUCTION.DISCOVERY_CORE_ADD"
+    facts.add(fact_id, "source", "EVIDENCE." + fact_id, "INPUT.SOURCE", ["/production"])
+    def site(row: dict[str, Any]) -> dict[str, Any]:
+        return {key: deepcopy(row[key]) for key in (
+            "siteId", "classification", "reason", "family", "sinkSymbolSignature", "sourceOrder"
+        )} | {"callerSymbolSignature": row["caller"]["symbolSignature"]}
+    core = deepcopy(raw["coreAddContract"])
+    core.pop("validatedOrderInstructionIndices", None)
+    core["methods"] = {key: _compact_method(value) for key, value in raw["coreAddContract"]["methods"].items()}
+    core["overloads"] = [{"method": _compact_method(row["method"]), "parameters": deepcopy(row["parameters"])}
+                         for row in raw["coreAddContract"]["overloads"]]
+    roots = []
+    for row in raw["producerRoots"]:
+        compact = {key: deepcopy(row[key]) for key in row if key != "rootMethod"}
+        compact["rootMethod"] = _compact_method(row["rootMethod"])
+        roots.append(compact)
+    helpers = [{key: deepcopy(row[key]) for key in (
+        "callSiteId", "calleeSymbolSignature", "callerSymbolSignature", "sourceOrder"
+    )} for row in raw["helperCallSites"]]
+    osty_contract = deepcopy(raw["ostySummonContract"])
+    osty_contract["methods"] = {key: _compact_method(value) for key, value in raw["ostySummonContract"]["methods"].items()}
+    return {
+        "addApiCensus": [site(row) for row in raw["addApiCensus"]],
+        "applicability": deepcopy(raw["applicability"]), "coreAddContract": core,
+        "directSites": deepcopy(raw["directSites"]), "factId": fact_id,
+        "helperCallSites": helpers, "ostySummonCensus": [site(row) for row in raw["ostySummonCensus"]],
+        "ostySummonContract": osty_contract,
+        "producerRoots": roots, "productionSemantics": deepcopy(raw["productionSemantics"]),
+        "summary": deepcopy(raw["summary"]),
+    }
 
 
 def _source_event_turn_behavior(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
@@ -795,10 +852,16 @@ def _fallback_candidates(source_facts: dict[str, Any], legacy_annotations: dict[
 def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, Any]) -> list[dict[str, Any]]:
     rows = [
         {
-            "affectedFactIds": [row["factId"] for row in source_facts["initialState"]["facts"]],
-            "detail": "Initial state is closed, but summon/production, death/prevention, revive/hatch phase, escape/removal, and encounter-result lifecycle semantics are not yet extracted.",
+            "affectedFactIds": [row["factId"] for row in source_facts["initialState"]["facts"]] + [source_facts["production"]["factId"]],
+            "detail": "Production discovery and core Add are closed, but producer-specific E2d1b semantics and death/prevention, revive/hatch phase, escape/removal, and encounter-result E2d2 lifecycle semantics remain pending.",
             "reasonCode": "LIFECYCLE_COVERAGE_ABSENT", "scope": "encounterCompanion", "status": "unresolved",
             "unknownId": "UNKNOWN.LIFECYCLE_COVERAGE",
+        },
+        {
+            "affectedFactIds": [source_facts["production"]["factId"]],
+            "detail": "The current owner/root/helper/direct-site census and shared core Add contract are complete; per-producer pools, availability, slot/no-slot behavior, cardinality, caps, repetition state, and post-add ordering remain E2d1b.",
+            "reasonCode": "PRODUCTION_SEMANTICS_PENDING_E2D1B", "scope": "encounterCompanion", "status": "unresolved",
+            "unknownId": "UNKNOWN.PRODUCTION_SEMANTICS",
         },
         {
             "affectedFactIds": [row["factId"] for row in source_facts["initialState"]["runtimeStateContracts"]]
@@ -934,6 +997,7 @@ def _readiness(known_unknowns: list[dict[str, Any]]) -> dict[str, Any]:
                     "architectOwnerPlacementApplicability", "architectLocalizationStructure",
                     "architectDialogueLineGraph", "architectOptionDelegates", "architectVisualOnlyLayout",
                     "architectPresentationGameplayBoundary", "architectTerminalOrder", "architectDependencyRefs",
+                    "randomBranchRepeatWeight", "randomSelectionRuntime", "productionDiscovery", "coreAddDependencies",
                 ],
                 "status": "complete",
             },
@@ -953,6 +1017,8 @@ def build_payload(source: dict[str, Any], legacy: dict[str, Any]) -> dict[str, A
         "eventTurnBehavior": _source_event_turn_behavior(source, facts),
         "eventScripts": _source_event_scripts(source, facts),
         "graphs": _source_graphs(source, facts), "models": models, "monsters": monsters, "moves": moves,
+        "randomSelection": _source_random_selection(source, facts),
+        "production": _source_production(source, facts),
         "observationIdentities": _source_observation_identities(source, facts),
         "placement": _source_placement(source, facts), "scaling": _source_scaling(source, facts),
         "hpPipeline": _source_hp_pipeline(source, facts),

@@ -32,8 +32,8 @@ const exactManifest = [
 
 test("source artifact is canonical, exactly pinned, partial, and raw-only", () => {
   assert.equal(artifactBytes.toString("utf8"), `${JSON.stringify(sortedValue(artifact), null, 2)}\n`);
-  assert.equal(artifact.schemaVersion, 10);
-  assert.equal(artifact.extractorVersion, "10.0.0");
+  assert.equal(artifact.schemaVersion, 11);
+  assert.equal(artifact.extractorVersion, "11.0.0");
   assert.equal(artifact.runtimeReady, false);
   assert.equal(artifact.status, "incomplete");
   assert.deepEqual(artifact.inputs, exactManifest);
@@ -99,6 +99,19 @@ test("coverage is denominator-based and current behavior families are complete o
     eventScriptStateRuntimeContracts: 10,
     eventScriptSupportMethodClosure: 14,
     eventScriptTransitionArguments: 7,
+    randomBranchOverloadClosure: 10,
+    randomBranchRepeatWeightSemantics: 61,
+    randomWeightCallbackClosure: 8,
+    randomSelectionRuntimeContract: 3,
+    productionAddApiCensus: 14,
+    productionOstyApiCensus: 17,
+    productionOwnerRootDiscovery: 7,
+    productionHelperCallClosure: 5,
+    productionDirectSiteDiscovery: 6,
+    productionOwnerEncounterApplicability: 6,
+    coreAddOverloadClosure: 3,
+    coreAddMethodClosure: 6,
+    coreAddSemanticFieldClosure: 11,
     moveRegistrationApplicability: 315,
     observableIdentityDomain: 108,
     observableResourceRepresentations: 108,
@@ -760,7 +773,17 @@ test("selection graphs preserve topology, Flyconid/Fabricator/Decimillipede fixt
   assert.equal(fly.initial, "GRAPH.FLYCONID/INITIAL");
   assert.equal(fly.topology.randomNodes, 2);
   assert.equal(fly.edges.filter((edge) => edge.kind === "randomBranch").length, 5);
-  assert.ok(fly.edges.every((edge) => edge.kind !== "randomBranch" || edge.weight === 2));
+  const allRandom = artifact.behavior.graphs.flatMap((row) => row.edges.filter((edge) => edge.kind === "randomBranch"));
+  assert.equal(allRandom.length, 61);
+  assert.ok(allRandom.every((edge) => typeof edge.repeat.enumValue === "number" && typeof edge.repeat.enumName === "string"));
+  assert.ok(allRandom.every((edge) => edge.weight.valueType === "float" && !Object.hasOwn(edge, "predicate")));
+  assert.deepEqual(artifact.behavior.randomSelectionContract.summary, {
+    branches: 61, floatCallbacks: 8, graphs: 21, overloads: 10,
+    repeatTypeDistribution: { CanRepeatForever: 4, CanRepeatXTimes: 10, CannotRepeat: 45, UseOnlyOnce: 2 },
+  });
+  const flyBranches = fly.edges.filter((edge) => edge.kind === "randomBranch");
+  assert.ok(flyBranches.every((edge) => edge.repeat.enumName === "CannotRepeat"));
+  assert.ok(flyBranches.every((edge) => edge.weight.kind === "constant" && edge.weight.value === 1));
   const fabricator = graph("GRAPH.FABRICATOR");
   assert.ok(fabricator.topology.randomNodes > 0 && fabricator.topology.conditionalNodes > 0);
   const decim = graph("GRAPH.DECIMILLIPEDE_SEGMENT");
@@ -775,6 +798,62 @@ test("selection graphs preserve topology, Flyconid/Fabricator/Decimillipede fixt
       }
     }
   }
+});
+
+test("E2d1a random callbacks, Rat repeat policy, and production/core Add contracts are source-closed", () => {
+  const random = artifact.behavior.randomSelectionContract;
+  assert.deepEqual(random.enum.values, [
+    { name: "CanRepeatForever", value: 0 }, { name: "CanRepeatXTimes", value: 1 },
+    { name: "CannotRepeat", value: 2 }, { name: "UseOnlyOnce", value: 3 },
+  ]);
+  const callbackEdges = artifact.behavior.graphs.flatMap((row) => row.edges).filter((edge) => edge.kind === "randomBranch" && edge.weight.kind === "delegate");
+  assert.equal(callbackEdges.length, 8);
+  assert.ok(callbackEdges.every((edge) => edge.weight.valueType === "float" && edge.weight.targetMethod.symbolSignature.endsWith(" sig:20000c")));
+  const fog = graph("GRAPH.FOGMOG").edges.filter((edge) => edge.kind === "randomBranch");
+  assert.deepEqual(fog.map((edge) => edge.weight.expression.value), [0.4000000059604645, 0.6000000238418579]);
+  const rat = graph("GRAPH.TWO_TAILED_RAT").edges.filter((edge) => edge.kind === "randomBranch");
+  assert.deepEqual(rat.map((edge) => [edge.to.split("/").at(-1), edge.repeat.enumName, edge.cooldown]), [
+    ["SCRATCH_MOVE", "CannotRepeat", 0], ["DISEASE_BITE_MOVE", "CannotRepeat", 0],
+    ["SCREECH_MOVE", "CannotRepeat", 3], ["CALL_FOR_BACKUP_MOVE", "UseOnlyOnce", 0],
+  ]);
+  assert.deepEqual(rat.at(-1).weight.expression, {
+    condition: { kind: "methodBoolean", symbolSignature: "MegaCrit.Sts2.Core.Models.Monsters.TwoTailedRat::CanSummon sig:200002", valueType: "boolean" },
+    kind: "conditional", valueType: "float",
+    whenFalse: { kind: "constant", value: 0, valueType: "float" },
+    whenTrue: { kind: "constant", value: 0.75, valueType: "float" },
+  });
+
+  const production = artifact.production;
+  assert.deepEqual(production.summary, {
+    addAssemblySites: 14, currentDirectSites: 6, helperCallEdges: 5, helperMethods: 3,
+    ostyAssemblySites: 17, ownerEncounterApplicability: 6, producerOwners: 6, producerRoots: 7,
+    siteClassifications: { coreAddForwarding: 2, currentEnemyEncounterProduction: 6,
+      outOfScopeDeathPower: 4, outOfScopeMock: 1, outOfScopePlayerPet: 1 },
+  });
+  assert.equal(new Set(production.helperCallSites.map((row) => row.callSiteId)).size, 5);
+  assert.equal(new Set(production.helperCallSites.map((row) => row.calleeSymbolSignature)).size, 3);
+  assert.deepEqual(production.producerRoots.filter((row) => row.ownerModel === "MONSTER.FABRICATOR").map((row) => row.moveId), [
+    "MONSTER.FABRICATOR#FABRICATE_MOVE", "MONSTER.FABRICATOR#FABRICATING_STRIKE_MOVE",
+  ]);
+  assert.equal(production.directSites.length, 6);
+  assert.ok(production.directSites.every((row) => row.candidateMembership.canonicalModels.length > 0));
+  assert.equal(production.productionSemantics.status, "pendingE2d1b");
+  assert.equal(production.ostySummonContract.afterSummon, "awaitedAfterOstyAddOrReviveHistory");
+  assert.equal(production.ostySummonContract.classification, "separateFromCreatureCmdAddEnemyProduction");
+  const core = production.coreAddContract;
+  assert.deepEqual(core.callOrder, ["createBody", "encounterOnCreatureSpawned", "coreLiveCheck", "combatBodyListInsertion",
+    "combatManagerNodeInsertion", "roomNodeInsertion", "awaitInitialStateDispatch", "prepareForNextTurn",
+    "uniqueRoomMonsterIdHistory", "awaitAfterCreatureAddedToCombat", "returnCreatedBody"]);
+  assert.equal(core.overloads.length, 3);
+  assert.equal(core.resultIdentity, "generic and explicit-model wrappers return the exact body created before awaiting core Add");
+  assert.equal(core.semanticBoundaries.coreSlotValidation, "absent");
+  assert.deepEqual(core.history.not, ["bodyCount", "productionCap", "poolDepletion"]);
+  assert.deepEqual(core.hookBoundary, { afterCreatureAddedToCombat: "awaited", afterSummon: "absentSeparateOstyApi" });
+  assert.equal(core.dependencies.initialStateOwnerModels.length, 9);
+  assert.equal(core.dependencies.initialStateFactRefs.length, 7);
+  assert.equal(core.dependencies.initialStateNoGameplayFactModels.length, 4);
+  assert.equal(core.dependencies.hpAssignmentComponentRef, "hpPipeline.assignment");
+  assert.ok(production.ostySummonCensus.every((row) => row.classification !== "currentEnemyEncounterProduction"));
 });
 
 test("Block and Power multiplayer formulas are distinct from ordinary attacks", () => {
@@ -936,7 +1015,7 @@ test("E2a selected Power hooks and runtime contracts are explicit", () => {
   assert.deepEqual(artifact.observationIdentities.aliases, []);
 });
 
-test("README and world-model census claims match schema 10 summary and coverage", () => {
+test("README and world-model census claims match schema 11 summary and coverage", () => {
   const markdown = (url) => readFileSync(new URL(url, import.meta.url), "utf8").replace(/\s+/g, " ").trim();
   const readme = markdown("../README.md");
   const worldModel = markdown("../docs/source-world-model.md");
@@ -1006,7 +1085,7 @@ test("README and world-model census claims match schema 10 summary and coverage"
   has(readme, `deterministic schema ${JSON.parse(readFileSync(new URL("../data/encounter-facts-v0.111.0.json", import.meta.url))).schemaVersion} compact projection`);
   has(readme, `(schema ${artifact.schemaVersion} raw source facts)`);
 
-  has(worldModel, `Schema ${artifact.schemaVersion} is the E2c2b boundary`);
+  has(worldModel, `Schema ${artifact.schemaVersion} is the E2d1a boundary`);
   has(worldModel, `exact metadata inheritance closure for all ${topology.behaviorClasses} behavior graph owners`);
   has(worldModel, `The ${summary.intentConstructorSites} constructor sites contain ${summary.requiredIntentArguments} required arguments`);
   has(worldModel, `separately count ${summary.intentConstructorSites} classified constructors and ${summary.requiredIntentArguments} resolved arguments`);

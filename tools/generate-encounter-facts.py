@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate or verify the checked compact E2c2b encounter projection."""
+"""Generate or verify the checked compact E2d1a encounter projection."""
 
 from __future__ import annotations
 
