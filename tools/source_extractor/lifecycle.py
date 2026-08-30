@@ -1,4 +1,4 @@
-"""Fail-closed E2d2a core lifecycle extraction from pinned CLI metadata/CIL.
+"""Fail-closed E2 consolidated lifecycle extraction from pinned CLI metadata/CIL.
 
 This slice closes shared kill/escape/removal/dispatch/combat-ending mechanics.
 Concrete listener effects, event terminal routing, and run termination remain
@@ -8,12 +8,15 @@ from __future__ import annotations
 
 from collections import Counter
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Iterable, Mapping
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Sequence
 
 from .behavior import _async_map
 from .canonical import witness_sha256
 from .cil_eval import CilDataFlow, SymbolicValue, decode_method_signature
 from .errors import SourceExtractionError
+from .lifecycle_closeout import (
+    extract_listener_closure, extract_lifecycle_closeout, validate_lifecycle_closeout,
+)
 if TYPE_CHECKING:
     from .metadata import AssemblyMetadata
 
@@ -565,14 +568,20 @@ def _boundary_declarations(assembly: AssemblyMetadata, assembly_sha256: str) -> 
         if len(indexes)!=1: raise SourceExtractionError(f"lifecycle vanilla runtime-boundary declaration drift: {owner}::{name}")
         record=assembly.method_record(indexes[0],assembly_sha256)
         result.append({"boundaryId":f"LIFECYCLE.BOUNDARY.{owner.rsplit('.',1)[-1].upper()}.{name.upper()}",
-                       "classification":"vanillaExternalRunOrPlayerListener","effectStatus":"pendingE2d2b",
+                       "classification":"vanillaExternalRunOrPlayerListener","effectStatus":"runtimeDynamicExternalBoundary",
                        "method":_proof(record),"sourceType":owner})
     result.sort(key=lambda row:row["boundaryId"])
     return result
 
 
 def extract_lifecycle(assembly: AssemblyMetadata, assembly_sha256: str,
-                      behavior: Mapping[str, Any]) -> dict[str, Any]:
+                      behavior: Mapping[str, Any], *,
+                      monsters: Sequence[Mapping[str, Any]],
+                      reachable_models: set[str],
+                      initial_state: Mapping[str, Any],
+                      hp_pipeline: Mapping[str, Any],
+                      production: Mapping[str, Any],
+                      event_scripts: Mapping[str, Any]) -> dict[str, Any]:
     async_map=_async_map(assembly)
     command=[]
     for spec in _DECLARATIONS:
@@ -612,6 +621,11 @@ def extract_lifecycle(assembly: AssemblyMetadata, assembly_sha256: str,
     check_indexes=[index for (index,row),spec in zip(termination,_TERMINATION,strict=True) if spec[1]=="CheckWinCondition"]
     check_sites=_check_call_sites(assembly,assembly_sha256,check_indexes)
     semantic=_semantic_components(); boundaries=_boundary_declarations(assembly,assembly_sha256)
+    listener_closeout = extract_listener_closure(
+        assembly, assembly_sha256, monsters=monsters,
+        reachable_models=reachable_models,
+        prior_components=(behavior, initial_state, hp_pipeline, production, event_scripts),
+    )
     invocation_census=_invocation_census(assembly,assembly_sha256)
     dependencies=[
         {"dependencyId":"DEPENDENCY.LIFECYCLE.E2B.CONCRETE_LISTENERS","kind":"listenerEffectsPhasesRelationshipsDeathAdd","status":"pendingE2d2b"},
@@ -670,6 +684,32 @@ def extract_lifecycle(assembly: AssemblyMetadata, assembly_sha256: str,
         "methodClosureSha256":witness_sha256(sorted(_BODY_PINS.items())),
         "invocationOrderingSha256":witness_sha256([(row["caller"],row["instructionIndex"],row["callee"],row["classification"]) for row in invocation_census["decisions"]]),
     }
+    closeout = extract_lifecycle_closeout(
+        assembly, assembly_sha256, listener=listener_closeout, monsters=monsters,
+        reachable_models=reachable_models, behavior=behavior, production=production,
+        event_scripts=event_scripts,
+    )
+    for key in ("cleanup", "deathProduction", "discovery", "doom", "eventCombat",
+                "invocationDecisions", "listenerCensus", "listenerImplementations",
+                "phaseSystems", "powerRetentionPolicies", "relationships",
+                "runTermination", "semanticPipelineAudit", "subscriptions"):
+        component[key] = closeout[key]
+    component["runtimeStateContracts"].extend(closeout["runtimeStateContracts"])
+    component["sourceDenominators"].update({
+        "closeout." + key: value for key, value in closeout["sourceDenominators"].items()
+    })
+    component["closeoutDependencyRefs"] = closeout["dependencyRefs"]
+    component["closeoutDigests"] = closeout["digests"]
+    for row in component["dependencies"]:
+        if row["status"].startswith("pendingE2d2"):
+            row["status"] = "sourceComplete"
+            row["resolvedComponentRef"] = {
+                "DEPENDENCY.LIFECYCLE.E2B.CONCRETE_LISTENERS": "lifecycle.listenerImplementations",
+                "DEPENDENCY.LIFECYCLE.E2C.EVENT_TERMINATION": "lifecycle.eventCombat",
+                "DEPENDENCY.LIFECYCLE.E2D.RUN_TERMINATION": "lifecycle.runTermination",
+            }[row["dependencyId"]]
+    component["status"] = "sourceCompleteE2Lifecycle"
+    component["digests"]["dependencySha256"] = witness_sha256(component["dependencies"])
     validate_lifecycle(component)
     return component
 
@@ -679,9 +719,11 @@ def validate_lifecycle(value: Any) -> None:
     required={"componentId","status","core","dispatch","listenerRegistry","removal","combatTermination","api",
               "dispatchMethods","listenerRegistryMethods","removalMethods","combatTerminationMethods",
               "centralizedCheckCallSites","actionExecutorMethod","invocationCensus","runtimeStateContracts","runtimeBoundaries",
-              "dependencies","sourceDenominators","digests"}
+              "dependencies","sourceDenominators","digests","cleanup","deathProduction","discovery","doom","eventCombat",
+              "invocationDecisions","listenerCensus","listenerImplementations","phaseSystems","powerRetentionPolicies",
+              "relationships","runTermination","semanticPipelineAudit","subscriptions","closeoutDependencyRefs","closeoutDigests"}
     if set(value)!=required: raise SourceExtractionError("lifecycle component fields changed")
-    if value["componentId"]!="LIFECYCLE.CORE.E2D2A" or value["status"]!="sourceCompleteE2d2a":
+    if value["componentId"]!="LIFECYCLE.CORE.E2D2A" or value["status"]!="sourceCompleteE2Lifecycle":
         raise SourceExtractionError("lifecycle component identity/status changed")
     text=repr(value)
     if "playDeathEffects" in text: raise SourceExtractionError("legacy playDeathEffects is forbidden in lifecycle schema")
@@ -781,7 +823,8 @@ def validate_lifecycle(value: Any) -> None:
               "removalMethods":4,"terminationDeclarations":4,"terminationPhysicalBodies":4,
               "terminationSupportMethods":3,"centralizedCheckCallSites":14,"runtimeBoundaries":7,
               "dependencies":7,"invocations":707,"semanticNodes":59}
-    if den!=expected: raise SourceExtractionError("lifecycle source denominators changed")
+    if any(den.get(key) != expected_value for key, expected_value in expected.items()):
+        raise SourceExtractionError("lifecycle core source denominators changed")
     declarations=value["api"]["commandDeclarations"]
     parameter_rows=[[p["name"] for p in row["parameters"]] for row in declarations]
     if parameter_rows!=[["creature","force"],["creatures","force"],["creature","force","recursion"],["creature","removeCreatureNode"]]:
@@ -805,8 +848,21 @@ def validate_lifecycle(value: Any) -> None:
         raise SourceExtractionError("lifecycle invocation classification denominator changed")
     if len({row.get("invocationId") for row in decisions})!=707 or any(row.get("classification")=="ignored" for row in decisions):
         raise SourceExtractionError("lifecycle invocation classification is duplicate or ignored")
-    if {row["status"] for row in value["dependencies"]}!={"sourceComplete","pendingE2d2b","pendingE2d2c","pendingE2d2d"}:
-        raise SourceExtractionError("lifecycle dependencies were silently resolved/omitted")
+    if {row["status"] for row in value["dependencies"]}!={"sourceComplete"}:
+        raise SourceExtractionError("lifecycle closeout dependency is unresolved")
+    validate_lifecycle_closeout({
+        key: value[key] for key in ("cleanup", "deathProduction", "discovery", "doom", "eventCombat",
+            "invocationDecisions", "listenerCensus", "listenerImplementations", "phaseSystems",
+            "powerRetentionPolicies", "relationships", "runTermination", "runtimeStateContracts",
+            "semanticPipelineAudit", "subscriptions")
+        if key != "runtimeStateContracts"
+    } | {
+        "runtimeStateContracts": value["runtimeStateContracts"][7:],
+        "sourceDenominators": {key.removeprefix("closeout."): item for key, item in den.items()
+                               if key.startswith("closeout.")},
+        "dependencyRefs": value["closeoutDependencyRefs"],
+        "digests": value["closeoutDigests"], "status": "sourceCompleteE2Lifecycle",
+    })
     dig=value["digests"]
     expected_dig={
         "callSiteOrderingSha256":witness_sha256([(row["caller"],row["instructionIndex"],row["target"]) for row in sites]),

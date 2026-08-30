@@ -43,15 +43,15 @@
     },
     "generator": {
       "name": "sts2-encounter-facts",
-      "version": "10.0.0"
+      "version": "11.0.0"
     },
-    "payloadSha256": "3ed7c3e0d9a51fc87ebb7bd59f2ffbc3e918c8ad04443843bc94b166bfde37ac",
+    "payloadSha256": "372752774e953cf4422a9d80a6debe864e1f467393c207747e61b157e5b7fd26",
     "projectionInputs": [
       {
         "id": "INPUT.SOURCE",
         "path": "data/game-v0.111.0-source.json",
-        "sha256": "8fe227f7fdea18c32abd93c7c910ba861161b9ea4418b3b387030bc0e7b41ace",
-        "size": 14173997
+        "sha256": "0a2e0d05b3a151f3e1c2014b4ce4305659186772900d069022fd9df028aa5aa1",
+        "size": 17057148
       },
       {
         "id": "INPUT.LEGACY",
@@ -587,9 +587,23 @@
         "unresolved": 0
       },
       {
+        "denominator": 11,
+        "family": "lifecycleBeforeRemovedCleanup",
+        "numerator": 11,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
         "denominator": 14,
         "family": "lifecycleCentralizedCheckSites",
         "numerator": 14,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 1265,
+        "family": "lifecycleCloseoutInvocationClassification",
+        "numerator": 1265,
         "status": "complete",
         "unresolved": 0
       },
@@ -608,6 +622,20 @@
         "unresolved": 0
       },
       {
+        "denominator": 4,
+        "family": "lifecycleDeathAddSites",
+        "numerator": 4,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 3,
+        "family": "lifecycleDeathProductionSystems",
+        "numerator": 3,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
         "denominator": 7,
         "family": "lifecycleDependencies",
         "numerator": 7,
@@ -622,9 +650,30 @@
         "unresolved": 0
       },
       {
+        "denominator": 1861,
+        "family": "lifecycleEffectiveListenerApplications",
+        "numerator": 1861,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
         "denominator": 3,
         "family": "lifecycleEscapeCallSites",
         "numerator": 3,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 7,
+        "family": "lifecycleEventCombatRegistrations",
+        "numerator": 7,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 71,
+        "family": "lifecycleFixedPointPowerTypes",
+        "numerator": 71,
         "status": "complete",
         "unresolved": 0
       },
@@ -643,8 +692,43 @@
         "unresolved": 0
       },
       {
+        "denominator": 80,
+        "family": "lifecycleListenerImplementations",
+        "numerator": 80,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
         "denominator": 6,
         "family": "lifecycleListenerRegistryMethods",
+        "numerator": 6,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 6,
+        "family": "lifecyclePhaseSystems",
+        "numerator": 6,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 69,
+        "family": "lifecyclePowerSeedTypes",
+        "numerator": 69,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 108,
+        "family": "lifecycleReachableListenerOwners",
+        "numerator": 108,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 6,
+        "family": "lifecycleRelationships",
         "numerator": 6,
         "status": "complete",
         "unresolved": 0
@@ -653,6 +737,13 @@
         "denominator": 4,
         "family": "lifecycleRemovalMethods",
         "numerator": 4,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 1,
+        "family": "lifecycleRunTerminationSystems",
+        "numerator": 1,
         "status": "complete",
         "unresolved": 0
       },
@@ -667,6 +758,13 @@
         "denominator": 59,
         "family": "lifecycleSemanticNodes",
         "numerator": 59,
+        "status": "complete",
+        "unresolved": 0
+      },
+      {
+        "denominator": 3,
+        "family": "lifecycleSubscriptions",
+        "numerator": 3,
         "status": "complete",
         "unresolved": 0
       },
@@ -1049,8 +1147,8 @@
         "unresolved": 0
       }
     ],
-    "sourceExtractorVersion": "13.0.0",
-    "sourceSchemaVersion": 13
+    "sourceExtractorVersion": "14.0.0",
+    "sourceSchemaVersion": 14
   },
   "payload": {
     "conflicts": [
@@ -4628,7 +4726,7 @@
         "pointers": [
           {
             "jsonPointer": "/eventScripts/architect/dependencies/4",
-            "valueSha256": "e36a84d7e7b5ee30967c075d0256c2cd58f4d10e6a9279d85075803e6ebbd577"
+            "valueSha256": "d89860f0a686d5c279fac08891b2a003ac31b8c1566e9a3bf9bbb4cd65395caf"
           }
         ]
       },
@@ -4639,7 +4737,7 @@
         "pointers": [
           {
             "jsonPointer": "/eventScripts/architect/dependencies/2",
-            "valueSha256": "e303c9db60223f2b194fd48c1994d4ede0636ea1851117a7c92d851aeb1edb29"
+            "valueSha256": "b851df7ff1b56cd6ea7c84b338cd6a8b6e61cc74e5cc953a4be4577851b324a5"
           }
         ]
       },
@@ -4650,7 +4748,7 @@
         "pointers": [
           {
             "jsonPointer": "/eventScripts/architect/dependencies/1",
-            "valueSha256": "2c3c8e9f80f2fbb30164e4d7afe9a656b7d61d1c73b8cc5b07749fafabd3c020"
+            "valueSha256": "40406c191823ee86f8f3fb631f5aba8b764036699cc1ab8d6496c8a2ae795caf"
           }
         ]
       },
@@ -4661,7 +4759,7 @@
         "pointers": [
           {
             "jsonPointer": "/eventScripts/architect/dependencies/3",
-            "valueSha256": "caafdba6155dd4ec8a97510d0ec01f42e9a49d1ed64427f84bf2fcb6c16dd37f"
+            "valueSha256": "248052ab034acd2152dea3c93d040f31c2103641ad8eb795e43d02aa008a5ad4"
           }
         ]
       },
@@ -8007,7 +8105,7 @@
         "pointers": [
           {
             "jsonPointer": "/lifecycle/dependencies/0",
-            "valueSha256": "9f18a836caba8330024fd976326c74ad5b3587169fcd16c1787562b704fb3aac"
+            "valueSha256": "790b3b05641745e79e0e1284a3fdff72805fce4c2aad168013c5465ec4829063"
           }
         ]
       },
@@ -8018,7 +8116,7 @@
         "pointers": [
           {
             "jsonPointer": "/lifecycle/dependencies/1",
-            "valueSha256": "ba30b111cef7781cd0fc53c6b8274d26aa90fb7d3e9df32127c3091ae99dd078"
+            "valueSha256": "da83df06e7d9a1b6e386b15499611d7be092f60cd67a79c33554c5a726f4cceb"
           }
         ]
       },
@@ -8029,7 +8127,7 @@
         "pointers": [
           {
             "jsonPointer": "/lifecycle/dependencies/2",
-            "valueSha256": "9a637fb1b48525681e8133c2ecdbf143446cc77b26f79caeecb1616a6a655258"
+            "valueSha256": "e8c25407b863e40c6ad51ac88ae849f2d344845d6838ed5c49a083581a540b3e"
           }
         ]
       },
@@ -8084,7 +8182,7 @@
         "pointers": [
           {
             "jsonPointer": "/production/productionSemantics/dependencies/1",
-            "valueSha256": "f37a5319dc3a6294db302afa4c6a71b05c0da841481562ea15e77a910c64ef1f"
+            "valueSha256": "d796e0071af13a4f3f3ce6282f23ecfd953dd448d2e3395610b0c1777a461cad"
           }
         ]
       },
@@ -8095,7 +8193,7 @@
         "pointers": [
           {
             "jsonPointer": "/production/productionSemantics/dependencies/0",
-            "valueSha256": "3e70ecaa7fe669d982af217027a7cb471393daacf4b9f55459f3c776cdef36a0"
+            "valueSha256": "27481ceefde6e633ddb5cebbbcae2e9be68403c519a7980136af117d9edee02c"
           }
         ]
       },
@@ -8106,7 +8204,7 @@
         "pointers": [
           {
             "jsonPointer": "/production/productionSemantics/dependencies/3",
-            "valueSha256": "c76a38756ec3b240db0630482e88a8d3c92756511f5798e283f3f339b296b6b4"
+            "valueSha256": "8e8d1a62f06194de0f5064f749d7f47e535914422d4385f3cfe0a75c595c75fe"
           }
         ]
       },
@@ -8117,7 +8215,7 @@
         "pointers": [
           {
             "jsonPointer": "/production/productionSemantics/dependencies/2",
-            "valueSha256": "e27b716b7e410309bf155459eb91b16d01772a2cea52e19e47790e72fbdcff8d"
+            "valueSha256": "e401e75b62e6c3e9bf5562d9d8c4ff0c2002fc4349702afba5c4adc2a3ba97a4"
           }
         ]
       },
@@ -9107,7 +9205,7 @@
         "pointers": [
           {
             "jsonPointer": "/behavior/eventDependencies/0",
-            "valueSha256": "9e5c2b911cb0db6b582441ac645b62424e46735afec53cf0a6233ab5b4c1eb98"
+            "valueSha256": "76247964e4a9147946664bef9648749cc2d2c4220ceee89923dcb37403114811"
           }
         ]
       },
@@ -9118,7 +9216,7 @@
         "pointers": [
           {
             "jsonPointer": "/behavior/eventDependencies/1",
-            "valueSha256": "78aaa5c981920496368baef872d48a59529b1fe676104e2e66ba1f1053c7134a"
+            "valueSha256": "2226283820b4662283d158250659b2f7a01b693f85b856699a7f7ff6a6f3e3ae"
           }
         ]
       },
@@ -9129,7 +9227,7 @@
         "pointers": [
           {
             "jsonPointer": "/behavior/eventDependencies/2",
-            "valueSha256": "2b964c76c5b1a54faafb2514893bb1469d5fa312cbfe28c5ba0c9629159730bf"
+            "valueSha256": "ae0547d1958b4829ddece0a27a64c70c00c5286cb8a692db8db7f681273c94b7"
           }
         ]
       },
@@ -9382,7 +9480,7 @@
         "pointers": [
           {
             "jsonPointer": "/eventScripts/dependencies/2",
-            "valueSha256": "5a9c9bb0f05e1a2235209c113777c06951c2cc03d3345ac07d6565fbf6664f2b"
+            "valueSha256": "aa3fccb0257b49b16a9d3b7e59a5af4cabaa5344af5d3690e01ae63ba2e5e73a"
           }
         ]
       },
@@ -9393,7 +9491,7 @@
         "pointers": [
           {
             "jsonPointer": "/eventScripts/dependencies/1",
-            "valueSha256": "0e64cc48148c021fbaa19e1b999288e0e03ba80492633961bc97121f6c525eb7"
+            "valueSha256": "025bcdb1218da12db54d1db30c120cf2aba18c21f012940dcce927c1a3194e88"
           }
         ]
       },
@@ -9404,7 +9502,7 @@
         "pointers": [
           {
             "jsonPointer": "/eventScripts/dependencies/0",
-            "valueSha256": "e6e657d252db87afdc6740a71d736002e118a491565c487a31d9ffb3d9100c12"
+            "valueSha256": "7ecf64a332e4e703d71cc6b2b6070b29ebde03d38be1b903aa56e46a579019dc"
           }
         ]
       },
@@ -9415,7 +9513,7 @@
         "pointers": [
           {
             "jsonPointer": "/eventScripts/dependencies/3",
-            "valueSha256": "d4c97e09f74411b85ece461bc258942a20d4ab71dadeb28ce2715eb4939a9d94"
+            "valueSha256": "c5274a89d8d39c05ddabf2ebb2ef8cfd39bdf797ebe7bf4415ad3d5593dcb724"
           }
         ]
       },
@@ -15359,7 +15457,7 @@
         "pointers": [
           {
             "jsonPointer": "/lifecycle",
-            "valueSha256": "9277b32b2615011f2bae51cf06009756069fa3a839cf47e4bf6a5a7a49f1addf"
+            "valueSha256": "d9002c4b2b20aa3ebaeb5fb6deb92f29b02a16ff8d531741e1691d2763e8551d"
           }
         ]
       },
@@ -24508,7 +24606,7 @@
         "pointers": [
           {
             "jsonPointer": "/production",
-            "valueSha256": "f7d3f304642a1c179a5eb859d195d409af94f29a9b64a98266780d44db632734"
+            "valueSha256": "a0c3b6e717b84de2eb86c45356b6ac4c71316e1e0d7d9f248a27eefe68b8c7f9"
           }
         ]
       },
@@ -39790,139 +39888,6 @@
     "knownUnknowns": [
       {
         "affectedFactIds": [
-          "SOURCE.INITIAL.MONSTER.AEONGLASS.AFTERADDEDTOROOM.000.CONFIGUREPOWERTARGET",
-          "SOURCE.INITIAL.MONSTER.AEONGLASS.AFTERADDEDTOROOM.001.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.AEONGLASS.AFTERADDEDTOROOM.002.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.AXEBOT.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.BATTLE_FRIEND_V1.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.BATTLE_FRIEND_V2.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.BATTLE_FRIEND_V3.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.BOWLBUG_ROCK.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.BYGONE_EFFIGY.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.BYRDONIS.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.CHOMPER.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.CHOMPER.ENCOUNTERGENERATION.000.SETSTATE.ENCOUNTER.CHOMPERS_NORMAL",
-          "SOURCE.INITIAL.MONSTER.CHOMPER.ENCOUNTERGENERATION.000.SETSTATE.ENCOUNTER.TUNNELER_NORMAL",
-          "SOURCE.INITIAL.MONSTER.CORPSE_SLUG.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.CRUSHER.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.CRUSHER.AFTERADDEDTOROOM.001.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.CUBEX_CONSTRUCT.AFTERADDEDTOROOM.000.GAINBLOCK",
-          "SOURCE.INITIAL.MONSTER.CUBEX_CONSTRUCT.AFTERADDEDTOROOM.001.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.CUBEX_CONSTRUCT.AFTERADDEDTOROOM.002.SUBSCRIBE",
-          "SOURCE.INITIAL.MONSTER.CUBEX_CONSTRUCT.AFTERADDEDTOROOM.003.SETSTATE",
-          "SOURCE.INITIAL.MONSTER.DECIMILLIPEDE_SEGMENT_BACK.AFTERADDEDTOROOM.000.SETMAXANDCURRENTHP",
-          "SOURCE.INITIAL.MONSTER.DECIMILLIPEDE_SEGMENT_BACK.AFTERADDEDTOROOM.001.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.DECIMILLIPEDE_SEGMENT_BACK.ENCOUNTERGENERATION.002.SETSTATE.ENCOUNTER.DECIMILLIPEDE_ELITE",
-          "SOURCE.INITIAL.MONSTER.DECIMILLIPEDE_SEGMENT_FRONT.AFTERADDEDTOROOM.000.SETMAXANDCURRENTHP",
-          "SOURCE.INITIAL.MONSTER.DECIMILLIPEDE_SEGMENT_FRONT.AFTERADDEDTOROOM.001.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.DECIMILLIPEDE_SEGMENT_FRONT.ENCOUNTERGENERATION.000.SETSTATE.ENCOUNTER.DECIMILLIPEDE_ELITE",
-          "SOURCE.INITIAL.MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE.AFTERADDEDTOROOM.000.SETMAXANDCURRENTHP",
-          "SOURCE.INITIAL.MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE.AFTERADDEDTOROOM.001.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE.ENCOUNTERGENERATION.001.SETSTATE.ENCOUNTER.DECIMILLIPEDE_ELITE",
-          "SOURCE.INITIAL.MONSTER.DEVOTED_SCULPTOR.CONSTRUCTORDEFAULT.000.SETSTATE",
-          "SOURCE.INITIAL.MONSTER.ENTOMANCER.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.EXOSKELETON.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.EYE_WITH_TEETH.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.FOSSIL_STALKER.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.FROG_KNIGHT.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.FROG_KNIGHT.AFTERADDEDTOROOM.001.SETSTATE",
-          "SOURCE.INITIAL.MONSTER.GAS_BOMB.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.GLOBE_HEAD.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.GREMLIN_MERC.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.GREMLIN_MERC.AFTERADDEDTOROOM.001.CONFIGUREPOWERTARGET",
-          "SOURCE.INITIAL.MONSTER.GREMLIN_MERC.AFTERADDEDTOROOM.002.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.INFESTED_PRISM.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.INKLET.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.INKLET.ENCOUNTERGENERATION.000.SETSTATE.ENCOUNTER.INKLETS_NORMAL",
-          "SOURCE.INITIAL.MONSTER.KIN_FOLLOWER.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.KIN_FOLLOWER.ENCOUNTERGENERATION.000.SETSTATE.ENCOUNTER.THE_KIN_BOSS",
-          "SOURCE.INITIAL.MONSTER.LAGAVULIN_MATRIARCH.AFTERADDEDTOROOM.500.SETSTATE",
-          "SOURCE.INITIAL.MONSTER.LAGAVULIN_MATRIARCH.AFTERADDEDTOROOM.501.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.LAGAVULIN_MATRIARCH.AFTERADDEDTOROOM.502.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.LIVING_FOG.CONSTRUCTORDEFAULT.000.SETSTATE",
-          "SOURCE.INITIAL.MONSTER.LIVING_SHIELD.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.LOUSE_PROGENITOR.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.MECHA_KNIGHT.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.MYSTERIOUS_KNIGHT.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.MYSTERIOUS_KNIGHT.AFTERADDEDTOROOM.001.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.NIBBIT.ENCOUNTERGENERATION.000.SETSTATE.ENCOUNTER.NIBBITS_NORMAL",
-          "SOURCE.INITIAL.MONSTER.NIBBIT.ENCOUNTERGENERATION.000.SETSTATE.ENCOUNTER.NIBBITS_WEAK",
-          "SOURCE.INITIAL.MONSTER.PARAFRIGHT.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.PHANTASMAL_GARDENER.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.PHANTASMAL_GARDENER.CONSTRUCTORDEFAULT.000.SETSTATE",
-          "SOURCE.INITIAL.MONSTER.PHROG_PARASITE.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.PUNCH_CONSTRUCT.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.PUNCH_CONSTRUCT.AFTERADDEDTOROOM.001.SETCURRENTHP",
-          "SOURCE.INITIAL.MONSTER.PUNCH_CONSTRUCT.ENCOUNTERGENERATION.000.SETSTATE.ENCOUNTER.PUNCH_OFF_EVENT_ENCOUNTER",
-          "SOURCE.INITIAL.MONSTER.PUNCH_CONSTRUCT.ENCOUNTERGENERATION.001.SETSTATE.ENCOUNTER.PUNCH_OFF_EVENT_ENCOUNTER",
-          "SOURCE.INITIAL.MONSTER.PUNCH_CONSTRUCT.ENCOUNTERGENERATION.002.SETSTATE.ENCOUNTER.PUNCH_OFF_EVENT_ENCOUNTER",
-          "SOURCE.INITIAL.MONSTER.QUEEN.AFTERADDEDTOROOM.000.RELATIONSHIP",
-          "SOURCE.INITIAL.MONSTER.ROCKET.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.ROCKET.AFTERADDEDTOROOM.001.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.ROCKET.AFTERADDEDTOROOM.002.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.SCROLL_OF_BITING.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.SCROLL_OF_BITING.ENCOUNTERGENERATION.000.SETSTATE.ENCOUNTER.SCROLLS_OF_BITING_NORMAL",
-          "SOURCE.INITIAL.MONSTER.SCROLL_OF_BITING.ENCOUNTERGENERATION.000.SETSTATE.ENCOUNTER.SCROLLS_OF_BITING_WEAK",
-          "SOURCE.INITIAL.MONSTER.SCROLL_OF_BITING.ENCOUNTERGENERATION.001.SETSTATE.ENCOUNTER.SCROLLS_OF_BITING_NORMAL",
-          "SOURCE.INITIAL.MONSTER.SCROLL_OF_BITING.ENCOUNTERGENERATION.001.SETSTATE.ENCOUNTER.SCROLLS_OF_BITING_WEAK",
-          "SOURCE.INITIAL.MONSTER.SCROLL_OF_BITING.ENCOUNTERGENERATION.002.SETSTATE.ENCOUNTER.SCROLLS_OF_BITING_NORMAL",
-          "SOURCE.INITIAL.MONSTER.SCROLL_OF_BITING.ENCOUNTERGENERATION.002.SETSTATE.ENCOUNTER.SCROLLS_OF_BITING_WEAK",
-          "SOURCE.INITIAL.MONSTER.SCROLL_OF_BITING.ENCOUNTERGENERATION.003.SETSTATE.ENCOUNTER.SCROLLS_OF_BITING_NORMAL",
-          "SOURCE.INITIAL.MONSTER.SEWER_CLAM.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.SKULKING_COLONY.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.SLUMBERING_BEETLE.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.SLUMBERING_BEETLE.AFTERADDEDTOROOM.001.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.SLUMBERING_BEETLE.AFTERADDEDTOROOM.002.SUBSCRIBE",
-          "SOURCE.INITIAL.MONSTER.SOUL_NEXUS.AFTERADDEDTOROOM.000.SUBSCRIBE",
-          "SOURCE.INITIAL.MONSTER.TERROR_EEL.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.TEST_SUBJECT.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.TEST_SUBJECT.AFTERADDEDTOROOM.001.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.TEST_SUBJECT.AFTERADDEDTOROOM.002.SUBSCRIBE",
-          "SOURCE.INITIAL.MONSTER.TEST_SUBJECT.AFTERADDEDTOROOM.003.SUBSCRIBE",
-          "SOURCE.INITIAL.MONSTER.THE_FORGOTTEN.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.THE_LOST.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.THIEVING_HOPPER.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.TOADPOLE.ENCOUNTERGENERATION.000.SETSTATE.ENCOUNTER.TOADPOLES_WEAK",
-          "SOURCE.INITIAL.MONSTER.TOADPOLE.ENCOUNTERGENERATION.001.SETSTATE.ENCOUNTER.TOADPOLES_WEAK",
-          "SOURCE.INITIAL.MONSTER.TORCH_HEAD_AMALGAM.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.TOUGH_EGG.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.TOUGH_EGG.AFTERADDEDTOROOM.001.FORCEMOVESTATE",
-          "SOURCE.INITIAL.MONSTER.TOUGH_EGG.AFTERADDEDTOROOM.500.SETMAXANDCURRENTHP",
-          "SOURCE.INITIAL.MONSTER.TWO_TAILED_RAT.CONSTRUCTORDEFAULT.000.SETSTATE",
-          "SOURCE.INITIAL.MONSTER.TWO_TAILED_RAT.CONSTRUCTORDEFAULT.001.SETSTATE",
-          "SOURCE.INITIAL.MONSTER.TWO_TAILED_RAT.ENCOUNTERGENERATION.000.SETSTATE.ENCOUNTER.TWO_TAILED_RATS_NORMAL",
-          "SOURCE.INITIAL.MONSTER.TWO_TAILED_RAT.ENCOUNTERGENERATION.001.SETSTATE.ENCOUNTER.TWO_TAILED_RATS_NORMAL",
-          "SOURCE.INITIAL.MONSTER.TWO_TAILED_RAT.ENCOUNTERGENERATION.002.SETSTATE.ENCOUNTER.TWO_TAILED_RATS_NORMAL",
-          "SOURCE.INITIAL.MONSTER.VANTOM.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.MONSTER.WATERFALL_GIANT.AFTERADDEDTOROOM.000.SETSTATE",
-          "SOURCE.INITIAL.MONSTER.WRIGGLER.ENCOUNTERGENERATION.000.SETSTATE.ENCOUNTER.DENSE_VEGETATION_EVENT_ENCOUNTER",
-          "SOURCE.INITIAL.MONSTER.ZAPBOT.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.INITIAL.POWER_OWNER.POWER.GALVANIC_POWER.BEFORECOMBATSTART.700.AFFLICTCARD",
-          "SOURCE.INITIAL.POWER_OWNER.POWER.ILLUSION_POWER.POWERAFTERAPPLIED.700.APPLYPOWER",
-          "SOURCE.INITIAL.POWER_OWNER.POWER.PLATING_POWER.POWERAFTERAPPLIED.700.SETSTATE",
-          "SOURCE.INITIAL.POWER_OWNER.POWER.VITAL_SPARK_POWER.BEFORECOMBATSTART.700.AFFLICTCARD",
-          "SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
-          "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS",
-          "SOURCE.DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH",
-          "SOURCE.DEPENDENCY.PRODUCTION.DEATH_POWER_ADD_SITES",
-          "SOURCE.PRODUCTION.DISCOVERY_CORE_ADD",
-          "SOURCE.LIFECYCLE.CORE.E2D2A",
-          "SOURCE.DEPENDENCY.LIFECYCLE.E2B.CONCRETE_LISTENERS",
-          "SOURCE.DEPENDENCY.LIFECYCLE.E2C.EVENT_TERMINATION",
-          "SOURCE.DEPENDENCY.LIFECYCLE.E2D.RUN_TERMINATION",
-          "SOURCE.DEPENDENCY.LIFECYCLE.HP",
-          "SOURCE.DEPENDENCY.LIFECYCLE.INITIAL",
-          "SOURCE.DEPENDENCY.LIFECYCLE.PRODUCTION",
-          "SOURCE.DEPENDENCY.LIFECYCLE.EVENT_SCRIPTS"
-        ],
-        "detail": "Core kill/escape/removal, generic dispatch/listener registry, and centralized pending-loss/victory mechanics are source-complete E2d2a; concrete listener effects/phases/relationships/death-Add, event reward/parent routing, and run termination remain E2d2b/c/d.",
-        "reasonCode": "LIFECYCLE_COVERAGE_REMAINING",
-        "scope": "encounterCompanion",
-        "status": "unresolved",
-        "unknownId": "UNKNOWN.LIFECYCLE_COVERAGE"
-      },
-      {
-        "affectedFactIds": [
           "SOURCE.RUNTIME.COMBAT.CURRENT_SIDE",
           "SOURCE.RUNTIME.EXPRESSION.141E2A2918FFC581",
           "SOURCE.RUNTIME.EXPRESSION.1E130D9D784D7D6A",
@@ -39997,62 +39962,6 @@
         "scope": "encounterCompanion",
         "status": "unresolved",
         "unknownId": "UNKNOWN.FORMULA_RUNTIME_CONTRACTS"
-      },
-      {
-        "affectedFactIds": [
-          "SOURCE.EVENT_TURN.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
-          "SOURCE.EVENT_TURN.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
-          "SOURCE.EVENT_TURN.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
-          "SOURCE.EVENT_TURN.DENSE_VEGETATION_EVENT_ENCOUNTER",
-          "SOURCE.EVENT_TURN.FAKE_MERCHANT_EVENT_ENCOUNTER",
-          "SOURCE.EVENT_TURN.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
-          "SOURCE.EVENT_TURN.PUNCH_OFF_EVENT_ENCOUNTER",
-          "SOURCE.EVENT_TURN.THE_ARCHITECT_EVENT_ENCOUNTER",
-          "SOURCE.EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
-          "SOURCE.EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
-          "SOURCE.EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
-          "SOURCE.EVENT_DEPENDENCY.SCRIPTED.THE_ARCHITECT_EVENT_ENCOUNTER",
-          "SOURCE.EVENT_SCRIPT_OWNER.BATTLEWORN_DUMMY",
-          "SOURCE.EVENT_SCRIPT_OWNER.DENSE_VEGETATION",
-          "SOURCE.EVENT_SCRIPT_OWNER.FAKE_MERCHANT",
-          "SOURCE.EVENT_SCRIPT_OWNER.PUNCH_OFF",
-          "SOURCE.EVENT_SCRIPT_OWNER.THE_LANTERN_KEY",
-          "SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
-          "SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
-          "SOURCE.EVENT_SCRIPT_OUTCOME.BATTLEWORN_DUMMY.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
-          "SOURCE.EVENT_SCRIPT_OUTCOME.DENSE_VEGETATION.DENSE_VEGETATION_EVENT_ENCOUNTER",
-          "SOURCE.EVENT_SCRIPT_OUTCOME.FAKE_MERCHANT.FAKE_MERCHANT_EVENT_ENCOUNTER",
-          "SOURCE.EVENT_SCRIPT_OUTCOME.PUNCH_OFF.PUNCH_OFF_EVENT_ENCOUNTER",
-          "SOURCE.EVENT_SCRIPT_OUTCOME.THE_LANTERN_KEY.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
-          "SOURCE.ARCHITECT.APPLICABILITY",
-          "SOURCE.ARCHITECT.TERMINAL",
-          "SOURCE.ARCHITECT.VISUALONLYCOMBAT"
-        ],
-        "detail": "All eight event turn machines, seven linked non-Architect scripts, and the Architect terminal dialogue script are source-complete; referenced event lifecycle/result and formula producers keep aggregate event behavior unresolved.",
-        "reasonCode": "EVENT_BEHAVIOR_AGGREGATE_INCOMPLETE",
-        "scope": "encounterCompanion",
-        "status": "unresolved",
-        "unknownId": "UNKNOWN.EVENT_BEHAVIOR"
-      },
-      {
-        "affectedFactIds": [
-          "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END",
-          "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMMAND.CREATURE_ESCAPE.BATTLE_FRIEND_OWNER",
-          "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT",
-          "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.RUN.ARCHITECT_TERMINAL",
-          "SOURCE.ARCHITECT.DEPENDENCY.LIFECYCLE.RUN.ON_ENDED_TRUE",
-          "SOURCE.ARCHITECT.DEPENDENCY.LIFECYCLE.RUN.GUARANTEE_KILL_ALL_PLAYERS",
-          "SOURCE.ARCHITECT.DEPENDENCY.LIFECYCLE.RUN.SERIALIZED_SCORE_STATS_HISTORY",
-          "SOURCE.ARCHITECT.DEPENDENCY.LIFECYCLE.RUN.ARCHITECT_TERMINAL_ORDER",
-          "SOURCE.EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
-          "SOURCE.EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
-          "SOURCE.EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER"
-        ],
-        "detail": "Scripts are complete, while Battle timeout/escape/common event terminal results and Architect OnEnded(true), forced-kill, and run-end ordering remain exact E2d2 lifecycle dependencies.",
-        "reasonCode": "EVENT_LIFECYCLE_TIMEOUT_RESULT_UNEXTRACTED",
-        "scope": "encounterCompanion",
-        "status": "unresolved",
-        "unknownId": "UNKNOWN.EVENT_LIFECYCLE"
       },
       {
         "affectedFactIds": [
@@ -61174,11 +61083,8 @@
         "ready": false,
         "reasonRefs": [
           "UNKNOWN.BROADER_WORLD_MODEL",
-          "UNKNOWN.EVENT_BEHAVIOR",
-          "UNKNOWN.EVENT_LIFECYCLE",
           "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
           "UNKNOWN.LEGACY_PROVENANCE",
-          "UNKNOWN.LIFECYCLE_COVERAGE",
           "UNKNOWN.MOVE_TITLE.MONSTER.AXE_RUBY_RAIDER.SWING_1",
           "UNKNOWN.MOVE_TITLE.MONSTER.AXE_RUBY_RAIDER.SWING_2",
           "UNKNOWN.MOVE_TITLE.MONSTER.BOWLBUG_NECTAR.THRASH2_MOVE",
@@ -61204,10 +61110,7 @@
         "encounterCompanion": {
           "ready": false,
           "reasonRefs": [
-            "UNKNOWN.EVENT_BEHAVIOR",
-            "UNKNOWN.EVENT_LIFECYCLE",
-            "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
-            "UNKNOWN.LIFECYCLE_COVERAGE"
+            "UNKNOWN.FORMULA_RUNTIME_CONTRACTS"
           ],
           "status": "incomplete"
         },
@@ -61289,18 +61192,32 @@
             "initialStateSemanticFields",
             "initialStateTransitiveInvocationClassification",
             "invocationClassification",
+            "lifecycleBeforeRemovedCleanup",
             "lifecycleCentralizedCheckSites",
+            "lifecycleCloseoutInvocationClassification",
             "lifecycleCommandDeclarations",
             "lifecycleCommandPhysicalBodies",
+            "lifecycleDeathAddSites",
+            "lifecycleDeathProductionSystems",
             "lifecycleDependencies",
             "lifecycleDispatchMethods",
+            "lifecycleEffectiveListenerApplications",
             "lifecycleEscapeCallSites",
+            "lifecycleEventCombatRegistrations",
+            "lifecycleFixedPointPowerTypes",
             "lifecycleInvocationClassification",
             "lifecycleKillCallSites",
+            "lifecycleListenerImplementations",
             "lifecycleListenerRegistryMethods",
+            "lifecyclePhaseSystems",
+            "lifecyclePowerSeedTypes",
+            "lifecycleReachableListenerOwners",
+            "lifecycleRelationships",
             "lifecycleRemovalMethods",
+            "lifecycleRunTerminationSystems",
             "lifecycleRuntimeBoundaries",
             "lifecycleSemanticNodes",
+            "lifecycleSubscriptions",
             "lifecycleTerminationMethods",
             "monsterIdentitiesCurrentReachable",
             "monsterNamesEnglishCurrentReachable",
@@ -61396,7 +61313,8 @@
             "productionRuntimeState",
             "productionPostAddOrder",
             "productionLifecycleDependencies",
-            "coreLifecycleApiDispatchRegistryRemovalTermination"
+            "coreLifecycleApiDispatchRegistryRemovalTermination",
+            "reachableListenerPhaseRelationshipDeathAddEventRunClosure"
           ],
           "status": "complete"
         }
@@ -61405,7 +61323,7 @@
     "resolvedAudits": [
       {
         "auditId": "AUDIT.RESOLVED.PRODUCTION_SEMANTICS",
-        "boundary": "Seven producer triggers are source-complete; death/removal, Tough Egg hatch, general AfterCreatureAdded listener effects, and four death-Power Add sites remain E2d2 dependencies.",
+        "boundary": "Seven producer triggers and their death/removal, Tough Egg hatch, AfterCreatureAdded listener, and death-Power Add lifecycle refs are source-complete and joined by refs rather than copied.",
         "classificationFactRefs": [
           "SOURCE.PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE",
           "SOURCE.PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE",
@@ -61465,7 +61383,7 @@
       },
       {
         "auditId": "AUDIT.RESOLVED.EVENT_TURN_MACHINES",
-        "boundary": "Architect scripting is separately source-complete; lifecycle/timeout/result dependencies remain unresolved.",
+        "boundary": "Architect scripting and lifecycle timeout/result refs are separately source-complete; formula boundaries remain independent.",
         "classificationFactRefs": [
           "SOURCE.EVENT_TURN.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
           "SOURCE.EVENT_TURN.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
@@ -61499,7 +61417,7 @@
       },
       {
         "auditId": "AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS",
-        "boundary": "The non-Architect scripts are source-complete; Architect is a separate resolved component and lifecycle producers/results remain unresolved.",
+        "boundary": "The non-Architect scripts, Architect component, and lifecycle producers/results are separately source-complete; formula dependencies remain explicit.",
         "classificationFactRefs": [
           "SOURCE.EVENT_SCRIPT_OWNER.BATTLEWORN_DUMMY",
           "SOURCE.EVENT_SCRIPT_OWNER.DENSE_VEGETATION",
@@ -61536,7 +61454,7 @@
       },
       {
         "auditId": "AUDIT.RESOLVED.ARCHITECT_SCRIPT",
-        "boundary": "Dialogue/control/presentation/terminal calls are source-complete; score formula values and RunManager OnEnded/forced-kill lifecycle ordering remain dependencies.",
+        "boundary": "Dialogue/control/presentation/terminal calls and RunManager OnEnded/forced-kill ordering are source-complete; score formula values remain a dependency.",
         "classificationFactRefs": [
           "SOURCE.ARCHITECT.APPLICABILITY",
           "SOURCE.ARCHITECT.PLACEMENT",
@@ -61591,7 +61509,7 @@
       },
       {
         "auditId": "AUDIT.RESOLVED.CORE_LIFECYCLE",
-        "boundary": "Core command/dispatch/registry/removal/pending-loss/victory mechanics are source-complete E2d2a; concrete listeners, event terminal routing, and run termination remain dependencies.",
+        "boundary": "Core and aggregate listener/phase/relationship/death-Add/event/run lifecycle are source-complete; formula runtime contracts remain outside this audit.",
         "classificationFactRefs": [
           "SOURCE.LIFECYCLE.CORE.E2D2A"
         ],
@@ -61608,6 +61526,20 @@
         "historicalStatus": "sourceComplete",
         "sourceDenominators": {
           "centralizedCheckCallSites": 14,
+          "closeout.beforeRemovedCleanup": 11,
+          "closeout.deathAddPhysicalSites": 4,
+          "closeout.deathProductionSystems": 3,
+          "closeout.effectiveListenerApplications": 1861,
+          "closeout.eventCombatRegistrations": 7,
+          "closeout.fixedPointPowerTypes": 71,
+          "closeout.invocationDecisions": 1265,
+          "closeout.listenerImplementations": 80,
+          "closeout.monsterOwnerTypes": 108,
+          "closeout.phaseSystems": 6,
+          "closeout.powerSeedTypes": 69,
+          "closeout.relationships": 6,
+          "closeout.runTerminationSystems": 1,
+          "closeout.subscriptions": 3,
           "commandDeclarations": 4,
           "commandPhysicalBodies": 4,
           "dependencies": 7,
@@ -65907,25 +65839,29 @@
               "dependencyId": "LIFECYCLE.RUN.ON_ENDED_TRUE",
               "factId": "SOURCE.ARCHITECT.DEPENDENCY.LIFECYCLE.RUN.ON_ENDED_TRUE",
               "kind": "lifecycle",
-              "status": "pendingE2d2"
+              "resolvedComponentRef": "lifecycle.runTermination.onEnded",
+              "status": "sourceComplete"
             },
             {
               "dependencyId": "LIFECYCLE.RUN.GUARANTEE_KILL_ALL_PLAYERS",
               "factId": "SOURCE.ARCHITECT.DEPENDENCY.LIFECYCLE.RUN.GUARANTEE_KILL_ALL_PLAYERS",
               "kind": "lifecycle",
-              "status": "pendingE2d2"
+              "resolvedComponentRef": "lifecycle.runTermination.guaranteeKillAllPlayers",
+              "status": "sourceComplete"
             },
             {
               "dependencyId": "LIFECYCLE.RUN.SERIALIZED_SCORE_STATS_HISTORY",
               "factId": "SOURCE.ARCHITECT.DEPENDENCY.LIFECYCLE.RUN.SERIALIZED_SCORE_STATS_HISTORY",
               "kind": "lifecycle",
-              "status": "pendingE2d2"
+              "resolvedComponentRef": "lifecycle.runTermination.onEnded",
+              "status": "sourceComplete"
             },
             {
               "dependencyId": "LIFECYCLE.RUN.ARCHITECT_TERMINAL_ORDER",
               "factId": "SOURCE.ARCHITECT.DEPENDENCY.LIFECYCLE.RUN.ARCHITECT_TERMINAL_ORDER",
               "kind": "lifecycle",
-              "status": "pendingE2d2"
+              "resolvedComponentRef": "lifecycle.runTermination.winRun",
+              "status": "sourceComplete"
             }
           ],
           "dialogue": {
@@ -68056,25 +67992,29 @@
             "dependencyId": "LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END",
             "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER.AFTER_SIDE_TURN_END",
             "kind": "lifecycle",
-            "status": "pendingE2d2"
+            "resolvedComponentRef": "lifecycle.eventCombat.battleTimeLimit",
+            "status": "sourceComplete"
           },
           {
             "dependencyId": "LIFECYCLE.COMMAND.CREATURE_ESCAPE/BATTLE_FRIEND_OWNER",
             "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMMAND.CREATURE_ESCAPE.BATTLE_FRIEND_OWNER",
             "kind": "lifecycle",
-            "status": "pendingE2d2"
+            "resolvedComponentRef": "lifecycle.eventCombat.battleTimeLimit",
+            "status": "sourceComplete"
           },
           {
             "dependencyId": "LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT",
             "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.COMBAT.EVENT_TERMINAL_RESULT",
             "kind": "lifecycle",
-            "status": "pendingE2d2"
+            "resolvedComponentRef": "lifecycle.eventCombat.routing",
+            "status": "sourceComplete"
           },
           {
             "dependencyId": "LIFECYCLE.RUN.ARCHITECT_TERMINAL",
             "factId": "SOURCE.EVENT_SCRIPT_DEPENDENCY.LIFECYCLE.RUN.ARCHITECT_TERMINAL",
             "kind": "lifecycle",
-            "status": "pendingE2d2"
+            "resolvedComponentRef": "lifecycle.runTermination",
+            "status": "sourceComplete"
           },
           {
             "dependencyId": "FORMULA.REST_SITE_HEAL_AMOUNT",
@@ -69833,11 +69773,12 @@
               "SOURCE.INITIAL.MONSTER.BATTLE_FRIEND_V1.AFTERADDEDTOROOM.000.APPLYPOWER"
             ],
             "kind": "eventLifecycleTimeoutResultSemantics",
+            "resolvedComponentRef": "lifecycle.eventCombat",
             "sourceRootSymbols": [
               "MegaCrit.Sts2.Core.Models.Powers.BattlewornDummyTimeLimitPower::AfterSideTurnEnd sig:200312812112a64c11aa6c151281f50112a7e4"
             ],
             "sourceType": "MegaCrit.Sts2.Core.Models.Powers.BattlewornDummyTimeLimitPower",
-            "status": "unresolved"
+            "status": "sourceComplete"
           },
           {
             "dependencyId": "EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
@@ -69846,11 +69787,12 @@
               "SOURCE.INITIAL.MONSTER.BATTLE_FRIEND_V2.AFTERADDEDTOROOM.000.APPLYPOWER"
             ],
             "kind": "eventLifecycleTimeoutResultSemantics",
+            "resolvedComponentRef": "lifecycle.eventCombat",
             "sourceRootSymbols": [
               "MegaCrit.Sts2.Core.Models.Powers.BattlewornDummyTimeLimitPower::AfterSideTurnEnd sig:200312812112a64c11aa6c151281f50112a7e4"
             ],
             "sourceType": "MegaCrit.Sts2.Core.Models.Powers.BattlewornDummyTimeLimitPower",
-            "status": "unresolved"
+            "status": "sourceComplete"
           },
           {
             "dependencyId": "EVENT_DEPENDENCY.LIFECYCLE.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
@@ -69859,11 +69801,12 @@
               "SOURCE.INITIAL.MONSTER.BATTLE_FRIEND_V3.AFTERADDEDTOROOM.000.APPLYPOWER"
             ],
             "kind": "eventLifecycleTimeoutResultSemantics",
+            "resolvedComponentRef": "lifecycle.eventCombat",
             "sourceRootSymbols": [
               "MegaCrit.Sts2.Core.Models.Powers.BattlewornDummyTimeLimitPower::AfterSideTurnEnd sig:200312812112a64c11aa6c151281f50112a7e4"
             ],
             "sourceType": "MegaCrit.Sts2.Core.Models.Powers.BattlewornDummyTimeLimitPower",
-            "status": "unresolved"
+            "status": "sourceComplete"
           },
           {
             "dependencyId": "EVENT_DEPENDENCY.SCRIPTED.THE_ARCHITECT_EVENT_ENCOUNTER",
@@ -92376,6 +92319,13 @@
             }
           ]
         },
+        "closeoutDigests": {
+          "invocationOrderingSha256": "c485ea65d3870bdf05b878191b50f69179933bb87512a0ee94ae91494626904e",
+          "listenerClosureSha256": "5d5cd859c63478010f4010af48fe07a00bedd9e0c8dad18500ff616e59a2270a",
+          "mechanicsSha256": "635f1da15ac33cb49931a1c70650dcd52b1c4adf14a20653c741fc8d022e1905",
+          "methodPinsSha256": "6cafe9043e4faa034c9895cdacad41f4e824d4923591dbabf45eca05d72614c2",
+          "runtimeContractsSha256": "67f49c34ffc3140afd672a36c3b57b20bcf5969d376d89037fd13b7492525c7d"
+        },
         "combatTermination": {
           "actionExecutorEdges": [
             {
@@ -93418,19 +93368,22 @@
             "dependencyId": "DEPENDENCY.LIFECYCLE.E2B.CONCRETE_LISTENERS",
             "factId": "SOURCE.DEPENDENCY.LIFECYCLE.E2B.CONCRETE_LISTENERS",
             "kind": "listenerEffectsPhasesRelationshipsDeathAdd",
-            "status": "pendingE2d2b"
+            "resolvedComponentRef": "lifecycle.listenerImplementations",
+            "status": "sourceComplete"
           },
           {
             "dependencyId": "DEPENDENCY.LIFECYCLE.E2C.EVENT_TERMINATION",
             "factId": "SOURCE.DEPENDENCY.LIFECYCLE.E2C.EVENT_TERMINATION",
             "kind": "eventRewardsBattleParentRouting",
-            "status": "pendingE2d2c"
+            "resolvedComponentRef": "lifecycle.eventCombat",
+            "status": "sourceComplete"
           },
           {
             "dependencyId": "DEPENDENCY.LIFECYCLE.E2D.RUN_TERMINATION",
             "factId": "SOURCE.DEPENDENCY.LIFECYCLE.E2D.RUN_TERMINATION",
             "kind": "architectRunTermination",
-            "status": "pendingE2d2d"
+            "resolvedComponentRef": "lifecycle.runTermination",
+            "status": "sourceComplete"
           },
           {
             "dependencyId": "DEPENDENCY.LIFECYCLE.HP",
@@ -93464,7 +93417,7 @@
         "digests": {
           "callSiteOrderingSha256": "6bf402bbd68530f4ef2494eda294cf560bf00b60243ca7dc8d359b4a923294a1",
           "coreSemanticsSha256": "43f55a02073898fba62eec1da4e6ee33d11a84a06ab6fb02a135ba54608eda28",
-          "dependencySha256": "42e70ef3f9b71d9062eaef76a26d4f7282228eae6ebf4971020ac197402ebac3",
+          "dependencySha256": "a450d5ea6495037cf154f5fca696cae70e73d16eaac78c4357c3b159dcb54d11",
           "invocationOrderingSha256": "b3584ff36acc83e509cff984d8d905e9249cd68871d58c937f92f40322b68bc1",
           "methodClosureSha256": "a113e46b048dbf3d1507841e89c62668b4c11307ce7c546071938675b190f473"
         },
@@ -93499,6 +93452,28 @@
           }
         },
         "factId": "SOURCE.LIFECYCLE.CORE.E2D2A",
+        "listenerCensus": {
+          "effectiveApplications": 1861,
+          "fixedPointPowerTypes": 71,
+          "implementationRecords": 80,
+          "monsterOwnerTypes": 108,
+          "postDiscoveryAssertions": {
+            "monsterAfterDeathDeclarationOwners": 10,
+            "monsterAfterDeathEffectiveModels": 12,
+            "monsterBeforeDeathDeclarations": 2,
+            "monsterBeforeRemovedDeclarations": 11,
+            "powerAfterDeathBaselineDeclarations": 16,
+            "powerBeforeDeathBaselineDeclarations": 1,
+            "powerBeforeDeathFixedPointDeclarations": 2,
+            "powerOwnerFatalDeclarations": 2,
+            "powerOwnerRetentionDeclarations": 5,
+            "powerRemovePredicateDeclarations": 5,
+            "powerRemovedOnDeathDeclarations": 1,
+            "powerStopEndingDeclarations": 5,
+            "reachableShouldDieFamilyOverrides": 0
+          },
+          "powerSeedTypes": 69
+        },
         "listenerRegistry": {
           "combatOrder": [
             {
@@ -93558,6 +93533,2649 @@
             }
           ],
           "snapshot": "dispatcher enumeration snapshots current registries at source-defined boundaries"
+        },
+        "mechanics": {
+          "cleanup": [
+            {
+              "classification": "exactPresentationOrAudioCleanup",
+              "cleanupId": "LIFECYCLE.CLEANUP.00",
+              "ownerModel": "MONSTER.CUBEX_CONSTRUCT",
+              "survivorGameplayEffects": false
+            },
+            {
+              "classification": "exactPresentationOrAudioCleanup",
+              "cleanupId": "LIFECYCLE.CLEANUP.01",
+              "ownerModel": "MONSTER.KNOWLEDGE_DEMON",
+              "survivorGameplayEffects": false
+            },
+            {
+              "classification": "exactPresentationOrAudioCleanup",
+              "cleanupId": "LIFECYCLE.CLEANUP.02",
+              "ownerModel": "MONSTER.OVICOPTER",
+              "survivorGameplayEffects": false
+            },
+            {
+              "classification": "exactPresentationOrAudioCleanup",
+              "cleanupId": "LIFECYCLE.CLEANUP.03",
+              "ownerModel": "MONSTER.OWL_MAGISTRATE",
+              "survivorGameplayEffects": false
+            },
+            {
+              "classification": "exactPresentationOrAudioCleanup",
+              "cleanupId": "LIFECYCLE.CLEANUP.04",
+              "ownerModel": "MONSTER.QUEEN",
+              "survivorGameplayEffects": false
+            },
+            {
+              "classification": "exactPresentationOrAudioCleanup",
+              "cleanupId": "LIFECYCLE.CLEANUP.05",
+              "ownerModel": "MONSTER.ROCKET",
+              "survivorGameplayEffects": false
+            },
+            {
+              "classification": "exactPresentationOrAudioCleanup",
+              "cleanupId": "LIFECYCLE.CLEANUP.06",
+              "ownerModel": "MONSTER.SNAPPING_JAXFRUIT",
+              "survivorGameplayEffects": false
+            },
+            {
+              "classification": "exactPresentationOrAudioCleanup",
+              "cleanupId": "LIFECYCLE.CLEANUP.07",
+              "ownerModel": "MONSTER.SOUL_NEXUS",
+              "survivorGameplayEffects": false
+            },
+            {
+              "classification": "exactPresentationOrAudioCleanup",
+              "cleanupId": "LIFECYCLE.CLEANUP.08",
+              "ownerModel": "MONSTER.TEST_SUBJECT",
+              "survivorGameplayEffects": false
+            },
+            {
+              "classification": "exactPresentationOrAudioCleanup",
+              "cleanupId": "LIFECYCLE.CLEANUP.09",
+              "ownerModel": "MONSTER.THIEVING_HOPPER",
+              "survivorGameplayEffects": false
+            },
+            {
+              "classification": "exactPresentationOrAudioCleanup",
+              "cleanupId": "LIFECYCLE.CLEANUP.10",
+              "ownerModel": "MONSTER.WATERFALL_GIANT",
+              "survivorGameplayEffects": false
+            }
+          ],
+          "deathProduction": [
+            {
+              "bodyIdentity": "newBodyViaCoreAdd",
+              "condition": {
+                "kind": "allOf",
+                "operands": [
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "death.wasRemovalPrevented",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": false,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  },
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "death.targetIsPowerOwner",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": true,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  }
+                ],
+                "valueType": "boolean"
+              },
+              "coreAddRef": "production.coreAddContract",
+              "d1Producer": false,
+              "deathProductionId": "LIFECYCLE.DEATH_PRODUCTION.INFESTED",
+              "hpAssignmentRef": "hpPipeline.assignment",
+              "initialStateRef": "initialState",
+              "orderedEffects": [
+                {
+                  "attemptOrder": "index ascending 0..3",
+                  "count": 4,
+                  "execution": "synchronous",
+                  "kind": "repeatAttempts",
+                  "order": 0,
+                  "owner": "POWER.INFESTED_POWER",
+                  "target": "ownerSide"
+                },
+                {
+                  "execution": "synchronous",
+                  "fieldWrite": {
+                    "StartStunned": true
+                  },
+                  "kind": "createMutableBody",
+                  "model": "MONSTER.WRIGGLER",
+                  "order": 1,
+                  "owner": "POWER.INFESTED_POWER",
+                  "target": "newBody"
+                },
+                {
+                  "execution": "awaitedSequential",
+                  "kind": "coreAddByRef",
+                  "order": 2,
+                  "owner": "POWER.INFESTED_POWER",
+                  "resultIdentity": "exact returned body",
+                  "slot": "PhrogParasiteElite.GetWrigglerSlotName(i)",
+                  "target": "ownerSide"
+                },
+                {
+                  "execution": "synchronous",
+                  "kind": "setNodeVisible",
+                  "order": 3,
+                  "owner": "POWER.INFESTED_POWER",
+                  "target": "exactReturnedBody",
+                  "value": false
+                },
+                {
+                  "execution": "fireAndForgetSafe",
+                  "faultBoundary": "TaskHelper.RunSafely",
+                  "kind": "delayedReveal",
+                  "order": 4,
+                  "owner": "POWER.INFESTED_POWER",
+                  "target": "orderedReturnedBodies"
+                }
+              ],
+              "physicalAddSites": [
+                {
+                  "addSiteId": "LIFECYCLE.DEATH_ADD.SITE.00",
+                  "producerSourceType": "MegaCrit.Sts2.Core.Models.Powers.InfestedPower",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Add sig:0004151282210112a7e41288e412aa8811aa6c0e"
+                }
+              ],
+              "producerPower": "POWER.INFESTED_POWER",
+              "replacementWindowStopsCombatEnding": true,
+              "trigger": "actualNonPreventedOwnerDeath"
+            },
+            {
+              "bodyIdentity": "newBodyViaCoreAdd",
+              "condition": {
+                "kind": "allOf",
+                "operands": [
+                  {
+                    "kind": "allOf",
+                    "operands": [
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "death.wasRemovalPrevented",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": false,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      },
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "death.targetIsPowerOwner",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": true,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      }
+                    ],
+                    "valueType": "boolean"
+                  },
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "power.amount",
+                      "valueType": "integer"
+                    },
+                    "operator": "greaterThan",
+                    "right": {
+                      "kind": "constant",
+                      "value": 0,
+                      "valueType": "integer"
+                    },
+                    "valueType": "boolean"
+                  }
+                ],
+                "valueType": "boolean"
+              },
+              "coreAddRef": "production.coreAddContract",
+              "d1Producer": false,
+              "deathProductionId": "LIFECYCLE.DEATH_PRODUCTION.STOCK",
+              "hpAssignmentRef": "hpPipeline.assignment",
+              "initialStateRef": "initialState",
+              "orderedEffects": [
+                {
+                  "execution": "synchronous",
+                  "fieldWrite": {
+                    "StockAmount": "power.amount - 1"
+                  },
+                  "kind": "createBody",
+                  "model": "MONSTER.AXEBOT",
+                  "order": 0,
+                  "owner": "POWER.STOCK_POWER",
+                  "spawnAnimation": true,
+                  "target": "newBody"
+                },
+                {
+                  "execution": "awaited",
+                  "kind": "coreAddByRef",
+                  "order": 1,
+                  "owner": "POWER.STOCK_POWER",
+                  "resultIdentity": "exact returned body",
+                  "slot": "exact owner slot",
+                  "target": "ownerSide"
+                },
+                {
+                  "execution": "synchronous",
+                  "kind": "setNodeVisible",
+                  "order": 2,
+                  "owner": "POWER.STOCK_POWER",
+                  "target": "exactReturnedBody",
+                  "value": false
+                },
+                {
+                  "execution": "fireAndForgetSafe",
+                  "faultBoundary": "TaskHelper.RunSafely",
+                  "kind": "delayedReveal",
+                  "order": 3,
+                  "owner": "POWER.STOCK_POWER",
+                  "target": "exactReturnedBody"
+                }
+              ],
+              "physicalAddSites": [
+                {
+                  "addSiteId": "LIFECYCLE.DEATH_ADD.SITE.01",
+                  "producerSourceType": "MegaCrit.Sts2.Core.Models.Powers.StockPower",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Add sig:0004151282210112a7e41288e412aa8811aa6c0e"
+                }
+              ],
+              "producerPower": "POWER.STOCK_POWER",
+              "replacementWindowStopsCombatEnding": true,
+              "trigger": "actualNonPreventedOwnerDeath"
+            },
+            {
+              "bodyIdentity": "newBodyViaCoreAdd",
+              "condition": {
+                "kind": "allOf",
+                "operands": [
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "death.wasRemovalPrevented",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": false,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  },
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "death.targetIsPowerOwner",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": true,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  }
+                ],
+                "valueType": "boolean"
+              },
+              "coreAddRef": "production.coreAddContract",
+              "d1Producer": false,
+              "deathProductionId": "LIFECYCLE.DEATH_PRODUCTION.SURPRISE",
+              "hpAssignmentRef": "hpPipeline.assignment",
+              "initialStateRef": "initialState",
+              "orderedEffects": [
+                {
+                  "execution": "synchronous",
+                  "kind": "precreateBody",
+                  "model": "MONSTER.FAT_GREMLIN",
+                  "order": 0,
+                  "owner": "POWER.SURPRISE_POWER",
+                  "slot": "fat",
+                  "target": "fatBody"
+                },
+                {
+                  "execution": "awaitedSequential",
+                  "kind": "accumulateRuntimeGold",
+                  "order": 1,
+                  "owner": "POWER.SURPRISE_POWER",
+                  "source": "each POWER.THIEVERY_POWER",
+                  "target": "runtimeAccumulator"
+                },
+                {
+                  "execution": "awaitedSequential",
+                  "kind": "applyTargetedPower",
+                  "order": 2,
+                  "owner": "POWER.SURPRISE_POWER",
+                  "power": "POWER.HEIST_POWER",
+                  "target": "exact precreated fatBody"
+                },
+                {
+                  "execution": "awaited",
+                  "kind": "coreAddByRef",
+                  "model": "MONSTER.SNEAKY_GREMLIN",
+                  "order": 3,
+                  "owner": "POWER.SURPRISE_POWER",
+                  "slot": "sneaky",
+                  "target": "ownerSide"
+                },
+                {
+                  "body": "exact precreated fatBody",
+                  "execution": "awaited",
+                  "kind": "coreAddByRef",
+                  "order": 4,
+                  "owner": "POWER.SURPRISE_POWER",
+                  "slot": "fat",
+                  "target": "ownerSide"
+                },
+                {
+                  "condition": "totalStolen != 0 and encounter is GremlinMercNormal",
+                  "execution": "synchronous",
+                  "kind": "markGoldStolen",
+                  "order": 5,
+                  "owner": "POWER.SURPRISE_POWER",
+                  "target": "encounter"
+                }
+              ],
+              "physicalAddSites": [
+                {
+                  "addSiteId": "LIFECYCLE.DEATH_ADD.SITE.02",
+                  "producerSourceType": "MegaCrit.Sts2.Core.Models.Powers.SurprisePower",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Add sig:100102151282210112a7e412aa880e generic:MegaCrit.Sts2.Core.Models.Monsters.SneakyGremlin"
+                },
+                {
+                  "addSiteId": "LIFECYCLE.DEATH_ADD.SITE.03",
+                  "producerSourceType": "MegaCrit.Sts2.Core.Models.Powers.SurprisePower",
+                  "symbolSignature": "MegaCrit.Sts2.Core.Commands.CreatureCmd::Add sig:000112812112a7e4"
+                }
+              ],
+              "producerPower": "POWER.SURPRISE_POWER",
+              "replacementWindowStopsCombatEnding": true,
+              "trigger": "actualNonPreventedOwnerDeath"
+            }
+          ],
+          "doom": {
+            "doomContractId": "LIFECYCLE.DOOM.LIST_KILL",
+            "failureContract": "a failed/cancelled awaited body stage prevents inference of later bodies or post-batch hook",
+            "inputCardinality": "original selected body list, 0..N",
+            "listIdentity": "same original list passed to one post-batch hook",
+            "orderedEffects": [
+              {
+                "execution": "awaitedSequential",
+                "kind": "doomVfx",
+                "order": 0,
+                "owner": "POWER.DOOM_POWER",
+                "target": "each selected body in source order"
+              },
+              {
+                "execution": "awaitedSequential",
+                "force": false,
+                "kind": "kill",
+                "lifecycleRef": "lifecycle.core",
+                "order": 1,
+                "owner": "POWER.DOOM_POWER",
+                "target": "same selected body"
+              },
+              {
+                "execution": "awaitedOnceAfterCompleteList",
+                "kind": "afterDiedToDoom",
+                "order": 2,
+                "owner": "Hook",
+                "perBody": false,
+                "target": "combatState and originalList"
+              }
+            ]
+          },
+          "eventCombat": {
+            "battleTimeLimit": {
+              "branches": [
+                {
+                  "branchId": "LIFECYCLE.EVENT.BATTLEWORN.NONPARTICIPANT",
+                  "condition": {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "participants.containsOwner",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": false,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [],
+                  "outcome": "completedNoOp"
+                },
+                {
+                  "branchId": "LIFECYCLE.EVENT.BATTLEWORN.DECREMENT",
+                  "condition": {
+                    "kind": "allOf",
+                    "operands": [
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "participants.containsOwner",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": true,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      },
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "power.amount",
+                          "valueType": "integer"
+                        },
+                        "operator": "greaterThan",
+                        "right": {
+                          "kind": "constant",
+                          "value": 1,
+                          "valueType": "integer"
+                        },
+                        "valueType": "boolean"
+                      }
+                    ],
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "amount": 1,
+                      "execution": "awaited",
+                      "kind": "decrementPower",
+                      "order": 0,
+                      "owner": "POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER",
+                      "target": "exactOwnerBody"
+                    }
+                  ]
+                },
+                {
+                  "branchId": "LIFECYCLE.EVENT.BATTLEWORN.INVALID_ENCOUNTER_CAST",
+                  "condition": {
+                    "kind": "allOf",
+                    "operands": [
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "participants.containsOwner",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": true,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      },
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "power.amount",
+                          "valueType": "integer"
+                        },
+                        "operator": "lessThanOrEqual",
+                        "right": {
+                          "kind": "constant",
+                          "value": 1,
+                          "valueType": "integer"
+                        },
+                        "valueType": "boolean"
+                      },
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "owner.encounterExactCastSucceeds",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": false,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      }
+                    ],
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [],
+                  "outcome": "completedWithoutWriteOrEscape"
+                },
+                {
+                  "branchId": "LIFECYCLE.EVENT.BATTLEWORN.TIMEOUT",
+                  "condition": {
+                    "kind": "allOf",
+                    "operands": [
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "participants.containsOwner",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": true,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      },
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "power.amount",
+                          "valueType": "integer"
+                        },
+                        "operator": "lessThanOrEqual",
+                        "right": {
+                          "kind": "constant",
+                          "value": 1,
+                          "valueType": "integer"
+                        },
+                        "valueType": "boolean"
+                      },
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "owner.encounterExactCastSucceeds",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": true,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      }
+                    ],
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "decrementBeforeWrite": false,
+                      "execution": "synchronous",
+                      "field": "RanOutOfTime",
+                      "kind": "writeState",
+                      "order": 0,
+                      "owner": "POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER",
+                      "target": "exactEncounter",
+                      "value": true
+                    },
+                    {
+                      "execution": "awaited",
+                      "kind": "escape",
+                      "lifecycleRef": "lifecycle.removal.escapeGraph",
+                      "order": 1,
+                      "owner": "POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER",
+                      "removeCreatureNode": true,
+                      "target": "exactOwnerBody"
+                    },
+                    {
+                      "execution": "synchronous",
+                      "kind": "ordinaryCentralizedVictoryByRef",
+                      "lifecycleRef": "lifecycle.combatTermination",
+                      "order": 2,
+                      "owner": "coreLifecycle",
+                      "target": "combat",
+                      "timeoutResultEnum": null
+                    }
+                  ]
+                }
+              ],
+              "listener": "POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER",
+              "participantPolicy": "only when participants contains exact Power owner",
+              "trigger": "AfterSideTurnEnd"
+            },
+            "ranOutOfTime": {
+              "contractId": "LIFECYCLE.STATE.BATTLEWORN.RAN_OUT_OF_TIME",
+              "default": false,
+              "defaultProof": "CLI zero-initialized Boolean backing field",
+              "field": "_ranOutOfTime",
+              "observationAvailability": "future adapter only",
+              "read": {
+                "logicalSymbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventEncounter::get_RanOutOfTime sig:200002",
+                "physicalSymbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventEncounter::get_RanOutOfTime sig:200002"
+              },
+              "resumeReadRefs": [
+                "EVENT_OUTCOME.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+                "EVENT_OUTCOME.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+                "EVENT_OUTCOME.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER"
+              ],
+              "serializationRefs": [
+                "eventScripts.stateContracts.encounter.RanOutOfTime",
+                "eventScripts.invocationCensus serialization/save/load witnesses"
+              ],
+              "valueType": "boolean",
+              "write": {
+                "logicalSymbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventEncounter::set_RanOutOfTime sig:20010102",
+                "physicalSymbolSignature": "MegaCrit.Sts2.Core.Models.Encounters.BattlewornDummyEventEncounter::set_RanOutOfTime sig:20010102"
+              }
+            },
+            "registrations": [
+              {
+                "canonicalEncounter": "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+                "eventId": "EVENT.BATTLEWORN_DUMMY",
+                "eventTransitionRef": "EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+                "rewardEffectsRef": "eventScripts.transitions[EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER].addedRewards",
+                "routeAfterTerminalRewards": "awaitResumePreviousRoom",
+                "shouldResumeParentEventAfterCombat": true
+              },
+              {
+                "canonicalEncounter": "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+                "eventId": "EVENT.BATTLEWORN_DUMMY",
+                "eventTransitionRef": "EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+                "rewardEffectsRef": "eventScripts.transitions[EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER].addedRewards",
+                "routeAfterTerminalRewards": "awaitResumePreviousRoom",
+                "shouldResumeParentEventAfterCombat": true
+              },
+              {
+                "canonicalEncounter": "ENCOUNTER.BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+                "eventId": "EVENT.BATTLEWORN_DUMMY",
+                "eventTransitionRef": "EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+                "rewardEffectsRef": "eventScripts.transitions[EVENT_TRANSITION.BATTLEWORN_DUMMY/BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER].addedRewards",
+                "routeAfterTerminalRewards": "awaitResumePreviousRoom",
+                "shouldResumeParentEventAfterCombat": true
+              },
+              {
+                "canonicalEncounter": "ENCOUNTER.DENSE_VEGETATION_EVENT_ENCOUNTER",
+                "eventId": "EVENT.DENSE_VEGETATION",
+                "eventTransitionRef": "EVENT_TRANSITION.DENSE_VEGETATION/DENSE_VEGETATION_EVENT_ENCOUNTER",
+                "rewardEffectsRef": "eventScripts.transitions[EVENT_TRANSITION.DENSE_VEGETATION/DENSE_VEGETATION_EVENT_ENCOUNTER].addedRewards",
+                "routeAfterTerminalRewards": "normalMapTravel",
+                "shouldResumeParentEventAfterCombat": false
+              },
+              {
+                "canonicalEncounter": "ENCOUNTER.FAKE_MERCHANT_EVENT_ENCOUNTER",
+                "eventId": "EVENT.FAKE_MERCHANT",
+                "eventTransitionRef": "EVENT_TRANSITION.FAKE_MERCHANT/FAKE_MERCHANT_EVENT_ENCOUNTER",
+                "rewardEffectsRef": "eventScripts.transitions[EVENT_TRANSITION.FAKE_MERCHANT/FAKE_MERCHANT_EVENT_ENCOUNTER].addedRewards",
+                "routeAfterTerminalRewards": "normalMapTravel",
+                "shouldResumeParentEventAfterCombat": false
+              },
+              {
+                "canonicalEncounter": "ENCOUNTER.PUNCH_OFF_EVENT_ENCOUNTER",
+                "eventId": "EVENT.PUNCH_OFF",
+                "eventTransitionRef": "EVENT_TRANSITION.PUNCH_OFF/PUNCH_OFF_EVENT_ENCOUNTER",
+                "rewardEffectsRef": "eventScripts.transitions[EVENT_TRANSITION.PUNCH_OFF/PUNCH_OFF_EVENT_ENCOUNTER].addedRewards",
+                "routeAfterTerminalRewards": "normalMapTravel",
+                "shouldResumeParentEventAfterCombat": false
+              },
+              {
+                "canonicalEncounter": "ENCOUNTER.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+                "eventId": "EVENT.THE_LANTERN_KEY",
+                "eventTransitionRef": "EVENT_TRANSITION.THE_LANTERN_KEY/MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+                "rewardEffectsRef": "eventScripts.transitions[EVENT_TRANSITION.THE_LANTERN_KEY/MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER].addedRewards",
+                "routeAfterTerminalRewards": "normalMapTravel",
+                "shouldResumeParentEventAfterCombat": false
+              }
+            ],
+            "routing": {
+              "battleResumeMethod": {
+                "logicalSymbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy::Resume sig:2001128121128494",
+                "physicalSymbolSignature": "MegaCrit.Sts2.Core.Models.Events.BattlewornDummy+<Resume>d__11::MoveNext sig:200001"
+              },
+              "eventEffectsCopied": false,
+              "falseBranch": "normal map travel after terminal rewards",
+              "resumePreviousRoomMethod": {
+                "logicalSymbolSignature": "MegaCrit.Sts2.Core.Runs.RunManager::ResumePreviousRoom sig:2000128121",
+                "physicalSymbolSignature": "MegaCrit.Sts2.Core.Runs.RunManager+<ResumePreviousRoom>d__212::MoveNext sig:200001"
+              },
+              "terminalRewardsMethod": {
+                "logicalSymbolSignature": "MegaCrit.Sts2.Core.Runs.RunManager::ProceedFromTerminalRewardsScreen sig:2000128121",
+                "physicalSymbolSignature": "MegaCrit.Sts2.Core.Runs.RunManager+<ProceedFromTerminalRewardsScreen>d__211::MoveNext sig:200001"
+              },
+              "trueBranch": "await ResumePreviousRoom; existing Resume selects DEFEAT/no effects when RanOutOfTime else version VICTORY reward"
+            }
+          },
+          "phaseSystems": [
+            {
+              "bodyIdentity": {
+                "kind": "sameBody",
+                "newBodyCreated": false,
+                "positionChanged": false,
+                "slotChanged": false
+              },
+              "capField": null,
+              "derivedCompletedReviveCount": 2,
+              "ownerModel": "MONSTER.TEST_SUBJECT",
+              "phaseSystemId": "LIFECYCLE.PHASE.TEST_SUBJECT_ADAPTABLE",
+              "sourceSignals": [
+                "POWER.ADAPTABLE_POWER"
+              ],
+              "stateReset": false,
+              "transitions": [
+                {
+                  "condition": {
+                    "kind": "allOf",
+                    "operands": [
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "death.wasRemovalPrevented",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": false,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      },
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "death.targetIsPowerOwner",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": true,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      }
+                    ],
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "synchronous",
+                      "field": "AdaptablePower.Data.isReviving",
+                      "kind": "writeState",
+                      "order": 0,
+                      "owner": "POWER.ADAPTABLE_POWER",
+                      "target": "sameOwnerBody",
+                      "value": true
+                    },
+                    {
+                      "execution": "awaited",
+                      "kind": "awaitMethod",
+                      "method": "TestSubject.TriggerDeadState",
+                      "order": 1,
+                      "owner": "POWER.ADAPTABLE_POWER",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "attribution": "TriggerDeadState",
+                      "execution": "synchronous",
+                      "field": "ExtraRunFields.TestSubjectKills",
+                      "kind": "incrementState",
+                      "order": 2,
+                      "owner": "MONSTER.TEST_SUBJECT",
+                      "target": "runState"
+                    },
+                    {
+                      "animation": "DeadTrigger",
+                      "attribution": "TriggerDeadState",
+                      "execution": "awaited",
+                      "kind": "triggerAnimation",
+                      "order": 3,
+                      "owner": "MONSTER.TEST_SUBJECT",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "attribution": "TriggerDeadState",
+                      "execution": "synchronous",
+                      "kind": "forceMove",
+                      "move": "DeadState",
+                      "order": 4,
+                      "owner": "MONSTER.TEST_SUBJECT",
+                      "target": "sameOwnerBody",
+                      "transition": true
+                    }
+                  ],
+                  "repeatability": "while Adaptable Power remains",
+                  "transitionId": "LIFECYCLE.TRANSITION.TEST_SUBJECT.ACTUAL_DEATH_TO_DEAD_STATE",
+                  "trigger": "fourArgumentAfterDeath"
+                },
+                {
+                  "condition": {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "monster.Respawns",
+                      "valueType": "integer"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": 1,
+                      "valueType": "integer"
+                    },
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "synchronous",
+                      "field": "Respawns",
+                      "kind": "incrementState",
+                      "order": 0,
+                      "owner": "MONSTER.TEST_SUBJECT",
+                      "target": "sameOwnerBody",
+                      "timing": "beforeSwitch"
+                    },
+                    {
+                      "execution": "synchronous",
+                      "field": "AdaptablePower.Data.isReviving",
+                      "kind": "writeState",
+                      "order": 1,
+                      "owner": "POWER.ADAPTABLE_POWER",
+                      "target": "sameOwnerBody",
+                      "value": false
+                    },
+                    {
+                      "baseHp": {
+                        "atOrAboveA8": 212,
+                        "belowA8": 200
+                      },
+                      "execution": "awaited",
+                      "hpPipelineRef": "hpPipeline.assignment",
+                      "kind": "reviveHpByRef",
+                      "order": 2,
+                      "orderWithinRef": [
+                        "awaitSetMaxHp",
+                        "awaitHealScaledTrue"
+                      ],
+                      "owner": "MONSTER.TEST_SUBJECT",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "execution": "awaited",
+                      "initialStateRef": "initialState.powerHookClosure",
+                      "kind": "applyPowerByRef",
+                      "order": 3,
+                      "owner": "MONSTER.TEST_SUBJECT",
+                      "power": "POWER.PAINFUL_STABS_POWER",
+                      "target": "sameOwnerBody"
+                    }
+                  ],
+                  "repeatability": "first completed revive",
+                  "transitionId": "LIFECYCLE.TRANSITION.TEST_SUBJECT.REVIVE_FORM_1",
+                  "trigger": "RespawnMove"
+                },
+                {
+                  "condition": {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "monster.Respawns",
+                      "valueType": "integer"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": 2,
+                      "valueType": "integer"
+                    },
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "synchronous",
+                      "field": "Respawns",
+                      "kind": "incrementState",
+                      "order": 0,
+                      "owner": "MONSTER.TEST_SUBJECT",
+                      "target": "sameOwnerBody",
+                      "timing": "beforeSwitch"
+                    },
+                    {
+                      "execution": "synchronous",
+                      "field": "AdaptablePower.Data.isReviving",
+                      "kind": "writeState",
+                      "order": 1,
+                      "owner": "POWER.ADAPTABLE_POWER",
+                      "target": "sameOwnerBody",
+                      "value": false
+                    },
+                    {
+                      "baseHp": {
+                        "atOrAboveA8": 313,
+                        "belowA8": 300
+                      },
+                      "execution": "awaited",
+                      "hpPipelineRef": "hpPipeline.assignment",
+                      "kind": "reviveHpByRef",
+                      "order": 2,
+                      "orderWithinRef": [
+                        "awaitSetMaxHp",
+                        "awaitHealScaledTrue"
+                      ],
+                      "owner": "MONSTER.TEST_SUBJECT",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "execution": "awaited",
+                      "initialStateRef": "initialState.powerHookClosure",
+                      "kind": "applyPowerByRef",
+                      "order": 3,
+                      "owner": "MONSTER.TEST_SUBJECT",
+                      "power": "POWER.NEMESIS_POWER",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "execution": "awaited",
+                      "kind": "removePower",
+                      "order": 4,
+                      "owner": "MONSTER.TEST_SUBJECT",
+                      "power": "POWER.ADAPTABLE_POWER",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "execution": "awaited",
+                      "kind": "removePower",
+                      "order": 5,
+                      "owner": "MONSTER.TEST_SUBJECT",
+                      "power": "POWER.PAINFUL_STABS_POWER",
+                      "target": "sameOwnerBody"
+                    }
+                  ],
+                  "repeatability": "second and final completed revive",
+                  "transitionId": "LIFECYCLE.TRANSITION.TEST_SUBJECT.REVIVE_FORM_2",
+                  "trigger": "RespawnMove"
+                },
+                {
+                  "condition": {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "owner.hasAdaptablePower",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": false,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "awaited",
+                      "kind": "coreDeathByRef",
+                      "lifecycleRef": "lifecycle.core.innerDeathGraph",
+                      "order": 0,
+                      "owner": "coreLifecycle",
+                      "target": "sameOwnerBody"
+                    }
+                  ],
+                  "repeatability": "terminal after two completed revives",
+                  "transitionId": "LIFECYCLE.TRANSITION.TEST_SUBJECT.FINAL_ORDINARY_DEATH",
+                  "trigger": "subsequentActualDeath"
+                }
+              ]
+            },
+            {
+              "bodyIdentity": {
+                "kind": "sameBody",
+                "newBodyCreated": false,
+                "positionChanged": false,
+                "slotChanged": false
+              },
+              "deathOrAdd": false,
+              "ownerModel": "MONSTER.TOUGH_EGG",
+              "phaseSystemId": "LIFECYCLE.PHASE.TOUGH_EGG_HATCH",
+              "sourceSignals": [
+                "DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH"
+              ],
+              "titleContract": {
+                "getterField": "_hatched",
+                "hatchWritesTitle": false,
+                "isHatchedField": "_isHatched"
+              },
+              "transitions": [
+                {
+                  "condition": {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "sideTurn.participantsContainsOwner",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": true,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "amount": 1,
+                      "execution": "awaited",
+                      "kind": "decrementPower",
+                      "order": 0,
+                      "owner": "POWER.HATCH_POWER",
+                      "target": "sameOwnerBody"
+                    }
+                  ],
+                  "repeatability": "each owner-participating side turn end",
+                  "transitionId": "LIFECYCLE.TRANSITION.TOUGH_EGG.HATCH_COUNTDOWN",
+                  "trigger": "ownerSideTurnEnd"
+                },
+                {
+                  "condition": {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "monster.IsHatched",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": false,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "synchronous",
+                      "field": "IsHatched/_isHatched",
+                      "kind": "writeState",
+                      "order": 0,
+                      "owner": "MONSTER.TOUGH_EGG",
+                      "target": "sameOwnerBody",
+                      "value": true
+                    },
+                    {
+                      "execution": "awaited",
+                      "kind": "removePower",
+                      "order": 1,
+                      "owner": "MONSTER.TOUGH_EGG",
+                      "power": "POWER.HATCH_POWER",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "distinctFrom": "IsHatched/_isHatched",
+                      "execution": "synchronous",
+                      "field": "_hatched",
+                      "kind": "writeState",
+                      "order": 2,
+                      "owner": "MONSTER.TOUGH_EGG",
+                      "target": "sameOwnerBody",
+                      "value": true
+                    },
+                    {
+                      "execution": "synchronous",
+                      "kind": "playSfx",
+                      "order": 3,
+                      "owner": "MONSTER.TOUGH_EGG",
+                      "target": "presentation"
+                    },
+                    {
+                      "execution": "synchronous",
+                      "filter": "all except MinionPower",
+                      "kind": "snapshotPowers",
+                      "order": 4,
+                      "owner": "MONSTER.TOUGH_EGG",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "execution": "awaitedSequential",
+                      "kind": "removeSnapshottedPowers",
+                      "order": 5,
+                      "owner": "MONSTER.TOUGH_EGG",
+                      "retainedPower": "POWER.MINION_POWER",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "execution": "awaited",
+                      "hpInclusiveRange": {
+                        "atOrAboveA8": [
+                          20,
+                          23
+                        ],
+                        "belowA8": [
+                          19,
+                          22
+                        ]
+                      },
+                      "hpPipelineRef": "hpPipeline.assignment.setMaxAndCurrentHp",
+                      "kind": "hatch",
+                      "order": 6,
+                      "owner": "MONSTER.TOUGH_EGG",
+                      "target": "sameOwnerBody"
+                    }
+                  ],
+                  "repeatability": "once",
+                  "transitionId": "LIFECYCLE.TRANSITION.TOUGH_EGG.NORMAL_HATCH",
+                  "trigger": "HatchMove"
+                },
+                {
+                  "condition": {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "monster.IsHatched",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": true,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "synchronous",
+                      "kind": "skipPowerApplication",
+                      "order": 0,
+                      "owner": "MONSTER.TOUGH_EGG",
+                      "power": "POWER.HATCH_POWER",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "execution": "awaited",
+                      "kind": "hatch",
+                      "order": 1,
+                      "owner": "MONSTER.TOUGH_EGG",
+                      "rerunsPowerRemovalLoop": false,
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "execution": "synchronous",
+                      "kind": "forceMove",
+                      "move": "stored AfterHatchedState",
+                      "order": 2,
+                      "owner": "MONSTER.TOUGH_EGG",
+                      "target": "sameOwnerBody"
+                    }
+                  ],
+                  "repeatability": "on restored hatched body",
+                  "transitionId": "LIFECYCLE.TRANSITION.TOUGH_EGG.RESTORED_HATCH",
+                  "trigger": "AfterAddedToRoom"
+                }
+              ]
+            },
+            {
+              "addOrSlotChange": false,
+              "bodyIdentity": {
+                "kind": "sameBody",
+                "newBodyCreated": false,
+                "positionChanged": false,
+                "slotChanged": false
+              },
+              "fatalPredicate": "true exactly when all other same-side segments are dead",
+              "initialStateRefs": [
+                "initialState.setMaxAndCurrentHp.base25BeforeScaling",
+                "initialState.applyPower.POWER.REATTACH_POWER"
+              ],
+              "modelAfterDeathClassification": "exactPresentationTextureOnly",
+              "ownerModels": [
+                "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT",
+                "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+                "MONSTER.DECIMILLIPEDE_SEGMENT_BACK"
+              ],
+              "phaseSystemId": "LIFECYCLE.PHASE.DECIMILLIPEDE_REATTACH",
+              "sourceSignals": [
+                "POWER.REATTACH_POWER"
+              ],
+              "transitions": [
+                {
+                  "condition": {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "sameSide.anyOtherSegmentAlive",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": true,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "synchronous",
+                      "field": "Data.isReviving",
+                      "kind": "writeState",
+                      "order": 0,
+                      "owner": "POWER.REATTACH_POWER",
+                      "target": "sameOwnerBody",
+                      "value": true
+                    },
+                    {
+                      "execution": "synchronous",
+                      "kind": "forceMove",
+                      "move": "DeadState",
+                      "order": 1,
+                      "owner": "POWER.REATTACH_POWER",
+                      "target": "sameOwnerBody",
+                      "transition": false
+                    },
+                    {
+                      "enabled": false,
+                      "execution": "synchronous",
+                      "kind": "setInteraction",
+                      "order": 2,
+                      "owner": "POWER.REATTACH_POWER",
+                      "target": "sameOwnerBody"
+                    }
+                  ],
+                  "repeatability": "while another same-side segment lives",
+                  "transitionId": "LIFECYCLE.TRANSITION.DECIMILLIPEDE.DEAD_STATE",
+                  "trigger": "actualOwnerDeath"
+                },
+                {
+                  "condition": {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "sameSide.anyOtherSegmentAliveAtMove",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": true,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "synchronous",
+                      "kind": "playVfx",
+                      "order": 0,
+                      "owner": "POWER.REATTACH_POWER",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "execution": "synchronous",
+                      "field": "Data.isReviving",
+                      "kind": "writeState",
+                      "order": 1,
+                      "owner": "POWER.REATTACH_POWER",
+                      "target": "sameOwnerBody",
+                      "value": false
+                    },
+                    {
+                      "enabled": true,
+                      "execution": "synchronous",
+                      "kind": "setInteraction",
+                      "order": 2,
+                      "owner": "POWER.REATTACH_POWER",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "amountRef": "POWER.REATTACH_POWER.currentAmount",
+                      "commandFlag": true,
+                      "execution": "awaited",
+                      "kind": "heal",
+                      "order": 3,
+                      "owner": "POWER.REATTACH_POWER",
+                      "target": "sameOwnerBody"
+                    }
+                  ],
+                  "repeatability": "reattach move recheck",
+                  "transitionId": "LIFECYCLE.TRANSITION.DECIMILLIPEDE.REATTACH",
+                  "trigger": "DoReattach"
+                },
+                {
+                  "condition": {
+                    "kind": "allOf",
+                    "operands": [
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "sameSide.allOtherSegmentsDead",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": true,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      },
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "owner.isDead",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": true,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      }
+                    ],
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "fireAndForgetSafe",
+                      "gameplayEffect": false,
+                      "kind": "presentationFade",
+                      "order": 0,
+                      "owner": "POWER.REATTACH_POWER",
+                      "target": "allSegments"
+                    }
+                  ],
+                  "repeatability": "terminal",
+                  "transitionId": "LIFECYCLE.TRANSITION.DECIMILLIPEDE.ALL_DEAD",
+                  "trigger": "AfterDeath"
+                }
+              ]
+            },
+            {
+              "bodyIdentity": {
+                "kind": "sameBody",
+                "newBodyCreated": false,
+                "positionChanged": false,
+                "slotChanged": false
+              },
+              "ownerModels": [
+                "MONSTER.EYE_WITH_TEETH",
+                "MONSTER.PARAFRIGHT"
+              ],
+              "phaseSystemId": "LIFECYCLE.PHASE.ILLUSION_REVIVE",
+              "sourceSignals": [
+                "POWER.ILLUSION_POWER"
+              ],
+              "transitions": [
+                {
+                  "condition": {
+                    "kind": "allOf",
+                    "operands": [
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "death.wasRemovalPrevented",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": false,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      },
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "death.targetIsPowerOwner",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": true,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      }
+                    ],
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "synchronous",
+                      "field": "Data.isReviving",
+                      "kind": "writeState",
+                      "order": 0,
+                      "owner": "POWER.ILLUSION_POWER",
+                      "target": "sameOwnerBody",
+                      "value": true
+                    },
+                    {
+                      "execution": "synchronous",
+                      "followUp": "configured FollowUpStateId else previous StateLog last ID",
+                      "kind": "configureMove",
+                      "move": "REVIVE_MOVE",
+                      "mustPerformOnce": true,
+                      "order": 1,
+                      "owner": "POWER.ILLUSION_POWER",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "execution": "synchronous",
+                      "kind": "forceMove",
+                      "move": "REVIVE_MOVE",
+                      "order": 2,
+                      "owner": "POWER.ILLUSION_POWER",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "amountExpression": "MaxHp - CurrentHp",
+                      "execution": "awaited",
+                      "kind": "heal",
+                      "order": 3,
+                      "owner": "POWER.ILLUSION_POWER",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "execution": "synchronous",
+                      "field": "Data.isReviving",
+                      "kind": "writeState",
+                      "order": 4,
+                      "owner": "POWER.ILLUSION_POWER",
+                      "target": "sameOwnerBody",
+                      "value": false
+                    }
+                  ],
+                  "repeatability": "while Illusion remains",
+                  "transitionId": "LIFECYCLE.TRANSITION.ILLUSION.REVIVE_MOVE",
+                  "trigger": "fourArgumentAfterDeath"
+                }
+              ]
+            },
+            {
+              "bodyIdentity": {
+                "kind": "sameBody",
+                "newBodyCreated": false,
+                "positionChanged": false,
+                "slotChanged": false
+              },
+              "ownerModel": "MONSTER.WATERFALL_GIANT",
+              "phaseSystemId": "LIFECYCLE.PHASE.WATERFALL_GIANT_STEAM_ERUPTION",
+              "runtimePressure": "dynamic",
+              "sourceSignals": [
+                "POWER.STEAM_ERUPTION_POWER",
+                "MONSTER.WATERFALL_GIANT"
+              ],
+              "transitions": [
+                {
+                  "condition": {
+                    "kind": "allOf",
+                    "operands": [
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "death.wasRemovalPrevented",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": false,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      },
+                      {
+                        "kind": "comparison",
+                        "left": {
+                          "kind": "runtimeInput",
+                          "name": "death.targetIsPowerOwner",
+                          "valueType": "boolean"
+                        },
+                        "operator": "equal",
+                        "right": {
+                          "kind": "constant",
+                          "value": true,
+                          "valueType": "boolean"
+                        },
+                        "valueType": "boolean"
+                      }
+                    ],
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "synchronous",
+                      "field": "IsAboutToBlow",
+                      "kind": "writeState",
+                      "order": 0,
+                      "owner": "MONSTER.WATERFALL_GIANT",
+                      "target": "sameOwnerBody",
+                      "value": true
+                    },
+                    {
+                      "execution": "awaited",
+                      "hpPipelineRef": "hpPipeline.assignment",
+                      "kind": "setMaxAndCurrentHp",
+                      "order": 1,
+                      "owner": "MONSTER.WATERFALL_GIANT",
+                      "target": "sameOwnerBody",
+                      "value": 999999999
+                    },
+                    {
+                      "execution": "synchronous",
+                      "kind": "changeHpDisplay",
+                      "order": 2,
+                      "owner": "MONSTER.WATERFALL_GIANT",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "execution": "synchronous",
+                      "kind": "forceMove",
+                      "move": "AboutToBlow",
+                      "order": 3,
+                      "owner": "MONSTER.WATERFALL_GIANT",
+                      "target": "sameOwnerBody"
+                    }
+                  ],
+                  "repeatability": "once while Steam Eruption exists",
+                  "transitionId": "LIFECYCLE.TRANSITION.WATERFALL_GIANT.ABOUT_TO_BLOW",
+                  "trigger": "fourArgumentAfterDeath"
+                },
+                {
+                  "condition": {
+                    "kind": "constant",
+                    "value": true,
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "synchronous",
+                      "kind": "snapshotDamage",
+                      "order": 0,
+                      "owner": "MONSTER.WATERFALL_GIANT",
+                      "source": "POWER.STEAM_ERUPTION_POWER.currentAmount",
+                      "target": "runtimeState"
+                    },
+                    {
+                      "execution": "awaited",
+                      "kind": "removePower",
+                      "order": 1,
+                      "owner": "MONSTER.WATERFALL_GIANT",
+                      "power": "POWER.STEAM_ERUPTION_POWER",
+                      "target": "sameOwnerBody"
+                    },
+                    {
+                      "amountRef": "snapshotted Steam amount",
+                      "execution": "awaited",
+                      "kind": "attack",
+                      "order": 2,
+                      "owner": "MONSTER.WATERFALL_GIANT",
+                      "target": "players"
+                    },
+                    {
+                      "execution": "awaited",
+                      "force": false,
+                      "kind": "kill",
+                      "lifecycleRef": "lifecycle.core",
+                      "order": 3,
+                      "owner": "MONSTER.WATERFALL_GIANT",
+                      "target": "sameOwnerBody"
+                    }
+                  ],
+                  "repeatability": "terminal because Power removed",
+                  "transitionId": "LIFECYCLE.TRANSITION.WATERFALL_GIANT.EXPLODE",
+                  "trigger": "AboutToBlowMoveThenExplodeMove"
+                }
+              ]
+            },
+            {
+              "bodyIdentity": {
+                "kind": "sameBody",
+                "newBodyCreated": false,
+                "positionChanged": false,
+                "slotChanged": false
+              },
+              "ownerModel": "MONSTER.GAS_BOMB",
+              "phaseSystemId": "LIFECYCLE.PHASE.GAS_BOMB_EXPLOSION",
+              "provenanceRefs": [
+                "behavior.MONSTER.GAS_BOMB operations.attack",
+                "behavior.MONSTER.GAS_BOMB operations.kill"
+              ],
+              "sourceSignals": [
+                "MONSTER.GAS_BOMB"
+              ],
+              "transitions": [
+                {
+                  "condition": {
+                    "kind": "constant",
+                    "value": true,
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "awaited",
+                      "kind": "attack",
+                      "order": 0,
+                      "owner": "MONSTER.GAS_BOMB",
+                      "sourceRef": "behavior.operations.attack",
+                      "target": "players"
+                    },
+                    {
+                      "execution": "awaited",
+                      "force": false,
+                      "kind": "kill",
+                      "lifecycleRef": "lifecycle.core",
+                      "order": 1,
+                      "owner": "MONSTER.GAS_BOMB",
+                      "target": "sameOwnerBody"
+                    }
+                  ],
+                  "repeatability": "terminal",
+                  "transitionId": "LIFECYCLE.TRANSITION.GAS_BOMB.EXPLODE_AND_DIE",
+                  "trigger": "explosionMove"
+                }
+              ]
+            }
+          ],
+          "powerRetentionPolicies": [
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldCreatureBeRemovedFromCombatAfterDeath",
+              "policyId": "LIFECYCLE.RETENTION.POWER.ADAPTABLE_POWER.SHOULDCREATUREBEREMOVEDFROMCOMBATAFTERDEATH",
+              "power": "POWER.ADAPTABLE_POWER",
+              "result": false,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDCREATUREBEREMOVEDFROMCOMBATAFTERDEATH.056"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
+              "policyId": "LIFECYCLE.RETENTION.POWER.ADAPTABLE_POWER.SHOULDPOWERBEREMOVEDAFTEROWNERDEATH",
+              "power": "POWER.ADAPTABLE_POWER",
+              "result": false,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDPOWERBEREMOVEDAFTEROWNERDEATH.067"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldStopCombatFromEnding",
+              "policyId": "LIFECYCLE.RETENTION.POWER.ADAPTABLE_POWER.SHOULDSTOPCOMBATFROMENDING",
+              "power": "POWER.ADAPTABLE_POWER",
+              "result": true,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDSTOPCOMBATFROMENDING.075"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldCreatureBeRemovedFromCombatAfterDeath",
+              "policyId": "LIFECYCLE.RETENTION.POWER.ILLUSION_POWER.SHOULDCREATUREBEREMOVEDFROMCOMBATAFTERDEATH",
+              "power": "POWER.ILLUSION_POWER",
+              "result": false,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDCREATUREBEREMOVEDFROMCOMBATAFTERDEATH.057"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldPowerBeRemovedOnDeath",
+              "policyId": "LIFECYCLE.RETENTION.POWER.ILLUSION_POWER.SHOULDPOWERBEREMOVEDONDEATH",
+              "power": "POWER.ILLUSION_POWER",
+              "result": false,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDPOWERBEREMOVEDONDEATH.073"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldStopCombatFromEnding",
+              "policyId": "LIFECYCLE.RETENTION.POWER.INFESTED_POWER.SHOULDSTOPCOMBATFROMENDING",
+              "power": "POWER.INFESTED_POWER",
+              "result": true,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDSTOPCOMBATFROMENDING.076"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldOwnerDeathTriggerFatal",
+              "policyId": "LIFECYCLE.RETENTION.POWER.MINION_POWER.SHOULDOWNERDEATHTRIGGERFATAL",
+              "power": "POWER.MINION_POWER",
+              "result": true,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDOWNERDEATHTRIGGERFATAL.064"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
+              "policyId": "LIFECYCLE.RETENTION.POWER.MINION_POWER.SHOULDPOWERBEREMOVEDAFTEROWNERDEATH",
+              "power": "POWER.MINION_POWER",
+              "result": false,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDPOWERBEREMOVEDAFTEROWNERDEATH.068"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldCreatureBeRemovedFromCombatAfterDeath",
+              "policyId": "LIFECYCLE.RETENTION.POWER.PAINFUL_STABS_POWER.SHOULDCREATUREBEREMOVEDFROMCOMBATAFTERDEATH",
+              "power": "POWER.PAINFUL_STABS_POWER",
+              "result": false,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDCREATUREBEREMOVEDFROMCOMBATAFTERDEATH.058"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
+              "policyId": "LIFECYCLE.RETENTION.POWER.PAINFUL_STABS_POWER.SHOULDPOWERBEREMOVEDAFTEROWNERDEATH",
+              "power": "POWER.PAINFUL_STABS_POWER",
+              "result": false,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDPOWERBEREMOVEDAFTEROWNERDEATH.069"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldCreatureBeRemovedFromCombatAfterDeath",
+              "policyId": "LIFECYCLE.RETENTION.POWER.REATTACH_POWER.SHOULDCREATUREBEREMOVEDFROMCOMBATAFTERDEATH",
+              "power": "POWER.REATTACH_POWER",
+              "result": false,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDCREATUREBEREMOVEDFROMCOMBATAFTERDEATH.059"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "sameSide.allOtherSegmentsDead",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldOwnerDeathTriggerFatal",
+              "policyId": "LIFECYCLE.RETENTION.POWER.REATTACH_POWER.SHOULDOWNERDEATHTRIGGERFATAL",
+              "power": "POWER.REATTACH_POWER",
+              "result": true,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDOWNERDEATHTRIGGERFATAL.065"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
+              "policyId": "LIFECYCLE.RETENTION.POWER.REATTACH_POWER.SHOULDPOWERBEREMOVEDAFTEROWNERDEATH",
+              "power": "POWER.REATTACH_POWER",
+              "result": false,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDPOWERBEREMOVEDAFTEROWNERDEATH.070"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldCreatureBeRemovedFromCombatAfterDeath",
+              "policyId": "LIFECYCLE.RETENTION.POWER.STEAM_ERUPTION_POWER.SHOULDCREATUREBEREMOVEDFROMCOMBATAFTERDEATH",
+              "power": "POWER.STEAM_ERUPTION_POWER",
+              "result": false,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDCREATUREBEREMOVEDFROMCOMBATAFTERDEATH.060"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
+              "policyId": "LIFECYCLE.RETENTION.POWER.STEAM_ERUPTION_POWER.SHOULDPOWERBEREMOVEDAFTEROWNERDEATH",
+              "power": "POWER.STEAM_ERUPTION_POWER",
+              "result": false,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDPOWERBEREMOVEDAFTEROWNERDEATH.071"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldStopCombatFromEnding",
+              "policyId": "LIFECYCLE.RETENTION.POWER.STEAM_ERUPTION_POWER.SHOULDSTOPCOMBATFROMENDING",
+              "power": "POWER.STEAM_ERUPTION_POWER",
+              "result": true,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDSTOPCOMBATFROMENDING.077"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldStopCombatFromEnding",
+              "policyId": "LIFECYCLE.RETENTION.POWER.STOCK_POWER.SHOULDSTOPCOMBATFROMENDING",
+              "power": "POWER.STOCK_POWER",
+              "result": true,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDSTOPCOMBATFROMENDING.078"
+            },
+            {
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsPowerOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "hook": "ShouldStopCombatFromEnding",
+              "policyId": "LIFECYCLE.RETENTION.POWER.SURPRISE_POWER.SHOULDSTOPCOMBATFROMENDING",
+              "power": "POWER.SURPRISE_POWER",
+              "result": true,
+              "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDSTOPCOMBATFROMENDING.079"
+            }
+          ],
+          "relationships": [
+            {
+              "bodyIdentity": "existingBodyReference",
+              "classification": "gameplay",
+              "condition": {
+                "kind": "allOf",
+                "operands": [
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "target.isTorchHeadAmalgam",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": true,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  },
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "queen.isAlive",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": true,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  }
+                ],
+                "valueType": "boolean"
+              },
+              "orderedEffects": [
+                {
+                  "execution": "synchronous",
+                  "field": "HasAmalgamDied",
+                  "kind": "writeState",
+                  "order": 0,
+                  "owner": "MONSTER.QUEEN",
+                  "target": "sameQueenBody",
+                  "value": true
+                },
+                {
+                  "execution": "synchronous",
+                  "field": "Amalgam",
+                  "kind": "clearRelationship",
+                  "order": 1,
+                  "owner": "MONSTER.QUEEN",
+                  "target": "exactAmalgamBody"
+                },
+                {
+                  "execution": "synchronous",
+                  "kind": "musicAndTalk",
+                  "order": 2,
+                  "owner": "MONSTER.QUEEN",
+                  "target": "presentation"
+                },
+                {
+                  "condition": "next move is BurnBrightForMe",
+                  "execution": "synchronous",
+                  "kind": "forceMoveConditional",
+                  "move": "Enraged",
+                  "order": 3,
+                  "owner": "MONSTER.QUEEN",
+                  "target": "sameQueenBody"
+                }
+              ],
+              "publisherBody": "MONSTER.TORCH_HEAD_AMALGAM",
+              "relationshipId": "LIFECYCLE.RELATIONSHIP.QUEEN_AMALGAM_DEATH",
+              "repeatability": "once per matching body death",
+              "restoredBehavior": "runtime body relation rebuilt from current teammates",
+              "source": "MONSTER.QUEEN",
+              "subscriber": "MONSTER.QUEEN",
+              "target": "MONSTER.TORCH_HEAD_AMALGAM",
+              "targetSide": "sameSideOrExactBodyAsConditioned",
+              "trigger": "fourArgumentAfterDeath",
+              "unsubscribe": null
+            },
+            {
+              "bodyIdentity": "existingBodyReference",
+              "classification": "exactPresentationOrAudioCleanup",
+              "condition": {
+                "kind": "comparison",
+                "left": {
+                  "kind": "runtimeInput",
+                  "name": "targetIsQueenOwner",
+                  "valueType": "boolean"
+                },
+                "operator": "equal",
+                "right": {
+                  "kind": "constant",
+                  "value": true,
+                  "valueType": "boolean"
+                },
+                "valueType": "boolean"
+              },
+              "orderedEffects": [
+                {
+                  "execution": "synchronous",
+                  "kind": "presentationCleanup",
+                  "order": 0,
+                  "owner": "MONSTER.QUEEN",
+                  "target": "sameQueenBody"
+                }
+              ],
+              "publisherBody": "sameQueenBody",
+              "relationshipId": "LIFECYCLE.RELATIONSHIP.QUEEN_OWN_DEATH",
+              "repeatability": "once per dispatch",
+              "restoredBehavior": "not applicable after removal",
+              "source": "MONSTER.QUEEN",
+              "subscriber": "MONSTER.QUEEN",
+              "target": "sameQueenBody",
+              "targetSide": "sameSideOrExactBodyAsConditioned",
+              "trigger": "fourArgumentAfterDeath",
+              "unsubscribe": null
+            },
+            {
+              "bodyIdentity": "existingBodyReference",
+              "classification": "gameplay",
+              "condition": {
+                "kind": "allOf",
+                "operands": [
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "target.isKinFollower",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": true,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  },
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "orderedCurrentTeammates.anyLivingFollower",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": false,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  }
+                ],
+                "valueType": "boolean"
+              },
+              "orderedEffects": [
+                {
+                  "execution": "synchronous",
+                  "kind": "orderedTeammateQuery",
+                  "order": 0,
+                  "owner": "each applicable alive MONSTER.KIN_PRIEST",
+                  "singleton": false,
+                  "target": "currentSameSideTeammates"
+                },
+                {
+                  "execution": "synchronous",
+                  "kind": "allFollowerDeathResponse",
+                  "order": 1,
+                  "owner": "each applicable alive MONSTER.KIN_PRIEST",
+                  "target": "samePriestBody"
+                }
+              ],
+              "publisherBody": "matching Kin follower",
+              "relationshipId": "LIFECYCLE.RELATIONSHIP.KIN_FOLLOWER_PRIESTS",
+              "repeatability": "multi-Priest applicability retained",
+              "restoredBehavior": "queries current teammates at dispatch",
+              "singletonAssumption": false,
+              "source": "each applicable alive MONSTER.KIN_PRIEST",
+              "subscriber": "each applicable alive MONSTER.KIN_PRIEST",
+              "target": "matching Kin follower",
+              "targetSide": "sameSideOrExactBodyAsConditioned",
+              "trigger": "fourArgumentAfterDeath",
+              "unsubscribe": null
+            },
+            {
+              "bodyIdentity": "existingBodyReference",
+              "classification": "exactPresentationOrAudioCleanup",
+              "condition": {
+                "kind": "constant",
+                "value": true,
+                "valueType": "boolean"
+              },
+              "orderedEffects": [
+                {
+                  "execution": "synchronous",
+                  "kind": "backgroundAnimation",
+                  "order": 0,
+                  "owner": "MONSTER.CRUSHER",
+                  "target": "presentation"
+                },
+                {
+                  "execution": "synchronous",
+                  "kind": "musicAndSfx",
+                  "order": 1,
+                  "owner": "MONSTER.CRUSHER",
+                  "target": "presentation"
+                }
+              ],
+              "publisherBody": "sameCrusherBody",
+              "relationshipId": "LIFECYCLE.RELATIONSHIP.KAISER_CRUSHER",
+              "repeatability": "per dispatch",
+              "restoredBehavior": "presentation only",
+              "source": "MONSTER.CRUSHER",
+              "subscriber": "MONSTER.CRUSHER",
+              "target": "sameCrusherBody",
+              "targetSide": "sameSideOrExactBodyAsConditioned",
+              "trigger": "BeforeDeath",
+              "unsubscribe": null
+            },
+            {
+              "bodyIdentity": "existingBodyReference",
+              "classification": "exactPresentationOrAudioCleanup",
+              "condition": {
+                "kind": "constant",
+                "value": true,
+                "valueType": "boolean"
+              },
+              "orderedEffects": [
+                {
+                  "execution": "synchronous",
+                  "kind": "backgroundAnimation",
+                  "order": 0,
+                  "owner": "MONSTER.ROCKET",
+                  "target": "presentation"
+                },
+                {
+                  "execution": "synchronous",
+                  "kind": "musicAndSfx",
+                  "order": 1,
+                  "owner": "MONSTER.ROCKET",
+                  "target": "presentation"
+                }
+              ],
+              "publisherBody": "sameRocketBody",
+              "relationshipId": "LIFECYCLE.RELATIONSHIP.KAISER_ROCKET",
+              "repeatability": "per dispatch",
+              "restoredBehavior": "presentation only",
+              "source": "MONSTER.ROCKET",
+              "subscriber": "MONSTER.ROCKET",
+              "target": "sameRocketBody",
+              "targetSide": "sameSideOrExactBodyAsConditioned",
+              "trigger": "BeforeDeath",
+              "unsubscribe": null
+            },
+            {
+              "bodyIdentity": "existingBodyReference",
+              "classification": "exactPresentationOrAudioCleanup",
+              "condition": {
+                "kind": "constant",
+                "value": true,
+                "valueType": "boolean"
+              },
+              "gameplayPhaseRef": "LIFECYCLE.PHASE.WATERFALL_GIANT_STEAM_ERUPTION",
+              "orderedEffects": [
+                {
+                  "execution": "synchronous",
+                  "kind": "ambientAndMusicCleanup",
+                  "order": 0,
+                  "owner": "MONSTER.WATERFALL_GIANT",
+                  "target": "presentation"
+                }
+              ],
+              "publisherBody": "sameWaterfallGiantBody",
+              "relationshipId": "LIFECYCLE.RELATIONSHIP.WATERFALL_AMBIENT_CLEANUP",
+              "repeatability": "once on removal",
+              "restoredBehavior": "ambient setup is separate",
+              "source": "MONSTER.WATERFALL_GIANT",
+              "subscriber": "MONSTER.WATERFALL_GIANT",
+              "target": "sameWaterfallGiantBody",
+              "targetSide": "sameSideOrExactBodyAsConditioned",
+              "trigger": "BeforeRemovedFromRoom",
+              "unsubscribe": null
+            }
+          ],
+          "runTermination": {
+            "architectVisualBoundary": {
+              "activeCombat": false,
+              "attackAnimationsDealDamage": false,
+              "classification": "visualPseudoCombat",
+              "eventTerminalRef": "eventScripts.architect.terminal"
+            },
+            "guaranteeKillAllPlayers": {
+              "enumeration": "RunState.Players snapshot/enumerator in source order",
+              "faultContract": "fault/cancellation stops later waits/players; no success inference",
+              "method": {
+                "logicalSymbolSignature": "MegaCrit.Sts2.Core.Runs.RunManager::GuaranteeKillAllPlayers sig:2000128121",
+                "physicalSymbolSignature": "MegaCrit.Sts2.Core.Runs.RunManager+<GuaranteeKillAllPlayers>d__217::MoveNext sig:200001"
+              },
+              "orderedPerPlayer": [
+                {
+                  "bypasses": "prevention only",
+                  "execution": "awaitedSequential",
+                  "force": true,
+                  "hooksRetained": [
+                    "BeforeDeath",
+                    "Died",
+                    "AfterDeath",
+                    "cleanup"
+                  ],
+                  "kind": "kill",
+                  "lifecycleRef": "lifecycle.core",
+                  "order": 0,
+                  "owner": "RunManager",
+                  "target": "player.Creature"
+                },
+                {
+                  "customScaledRange": [
+                    0.25,
+                    0.5
+                  ],
+                  "execution": "awaitedSequential",
+                  "kind": "presentationWait",
+                  "order": 1,
+                  "owner": "RunManager",
+                  "target": "presentation"
+                }
+              ]
+            },
+            "onEnded": {
+              "externalSideEffects": [
+                {
+                  "kind": "platformStats",
+                  "remoteSuccessClaimed": false,
+                  "resultClaim": "attemptedExternalSideEffect"
+                },
+                {
+                  "kind": "metricsUpload",
+                  "remoteSuccessClaimed": false,
+                  "resultClaim": "attemptedExternalSideEffect"
+                },
+                {
+                  "faultBoundary": "TaskHelper.RunSafely",
+                  "kind": "dailyUpload",
+                  "remoteSuccessClaimed": false
+                }
+              ],
+              "method": {
+                "logicalSymbolSignature": "MegaCrit.Sts2.Core.Runs.RunManager::OnEnded sig:20011282b402",
+                "physicalSymbolSignature": "MegaCrit.Sts2.Core.Runs.RunManager::OnEnded sig:20011282b402"
+              },
+              "orderedEffects": [
+                "update player/map-point history and turns",
+                "serialize winning run with ToSave",
+                "guard one run-history upload",
+                "update enemy/epoch discovery, progress, and achievements",
+                "create run-history entry and upload metrics",
+                "delete current single/multiplayer saves as applicable",
+                "calculate score from serialized winning run and increment Architect damage",
+                "launch applicable daily uploads through TaskHelper.RunSafely"
+              ],
+              "scoreSerializationOrder": "serialization before forced player kills",
+              "winningArgument": true
+            },
+            "winRun": {
+              "branches": [
+                {
+                  "condition": {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "RunManager.State.isNull",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": true,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [],
+                  "outcome": "completedWithoutOnEndedOrKills"
+                },
+                {
+                  "condition": {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "RunManager.State.isNull",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": false,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  },
+                  "orderedEffects": [
+                    {
+                      "execution": "synchronous",
+                      "kind": "onEnded",
+                      "order": 0,
+                      "owner": "RunManager",
+                      "target": "currentRun",
+                      "winning": true
+                    },
+                    {
+                      "execution": "awaited",
+                      "kind": "guaranteeKillAllPlayers",
+                      "order": 1,
+                      "owner": "RunManager",
+                      "target": "runPlayers"
+                    }
+                  ],
+                  "outcome": "completedOnlyAfterForcedKills"
+                }
+              ],
+              "method": {
+                "logicalSymbolSignature": "MegaCrit.Sts2.Core.Runs.RunManager::WinRun sig:2000128121",
+                "physicalSymbolSignature": "MegaCrit.Sts2.Core.Runs.RunManager+<WinRun>d__207::MoveNext sig:200001"
+              }
+            }
+          },
+          "subscriptions": [
+            {
+              "addSite": {
+                "method": {
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.CubexConstruct+<AfterAddedToRoom>d__27::MoveNext sig:200001"
+                }
+              },
+              "callbackSignature": "MegaCrit.Sts2.Core.Models.Monsters.CubexConstruct::OnHpChanged sig:2002010808",
+              "classification": "exactPresentationOrAudioCleanup",
+              "condition": {
+                "kind": "constant",
+                "value": true,
+                "valueType": "boolean"
+              },
+              "event": "CurrentHpChanged",
+              "orderedEffects": [
+                {
+                  "execution": "synchronous",
+                  "kind": "playHpChangeSfx",
+                  "order": 0,
+                  "owner": "MONSTER.CUBEX_CONSTRUCT",
+                  "target": "sameOwnerBody"
+                }
+              ],
+              "publisherBody": "sameOwnerBody",
+              "repeatability": "untilRemoval",
+              "restoredBehavior": "AfterAddedToRoom resubscribes exact callback",
+              "subscriber": "MONSTER.CUBEX_CONSTRUCT",
+              "subscriptionId": "LIFECYCLE.SUBSCRIPTION.00.CURRENTHPCHANGED",
+              "unsubscribeSite": {
+                "method": {
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.CubexConstruct::BeforeRemovedFromRoom sig:200001"
+                }
+              }
+            },
+            {
+              "addSite": {
+                "method": {
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.SlumberingBeetle+<AfterAddedToRoom>d__22::MoveNext sig:200001"
+                }
+              },
+              "callbackSignature": "MegaCrit.Sts2.Core.Models.Monsters.SlumberingBeetle::AfterDeath sig:20010112a7e4",
+              "classification": "exactPresentationOrAudioCleanup",
+              "condition": {
+                "kind": "constant",
+                "value": true,
+                "valueType": "boolean"
+              },
+              "event": "Died",
+              "orderedEffects": [
+                {
+                  "execution": "synchronous",
+                  "kind": "unsubscribeSelf",
+                  "order": 0,
+                  "owner": "MONSTER.SLUMBERING_BEETLE",
+                  "target": "sameOwnerBody"
+                },
+                {
+                  "detail": "stop sleeping or clear exact animation",
+                  "execution": "synchronous",
+                  "kind": "presentationCleanup",
+                  "order": 1,
+                  "owner": "MONSTER.SLUMBERING_BEETLE",
+                  "target": "sameOwnerBody"
+                }
+              ],
+              "publisherBody": "sameOwnerBody",
+              "repeatability": "oneShot",
+              "restoredBehavior": "AfterAddedToRoom resubscribes exact callback",
+              "subscriber": "MONSTER.SLUMBERING_BEETLE",
+              "subscriptionId": "LIFECYCLE.SUBSCRIPTION.01.DIED",
+              "unsubscribeSite": {
+                "method": {
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.SlumberingBeetle::AfterDeath sig:20010112a7e4"
+                }
+              }
+            },
+            {
+              "addSite": {
+                "method": {
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.SoulNexus+<AfterAddedToRoom>d__18::MoveNext sig:200001"
+                }
+              },
+              "callbackSignature": "MegaCrit.Sts2.Core.Models.Monsters.SoulNexus::AfterDeath sig:20010112a7e4",
+              "classification": "exactPresentationOrAudioCleanup",
+              "condition": {
+                "kind": "constant",
+                "value": true,
+                "valueType": "boolean"
+              },
+              "event": "Died",
+              "orderedEffects": [
+                {
+                  "execution": "synchronous",
+                  "kind": "unsubscribeSelf",
+                  "order": 0,
+                  "owner": "MONSTER.SOUL_NEXUS",
+                  "target": "sameOwnerBody"
+                },
+                {
+                  "detail": "stop sleeping or clear exact animation",
+                  "execution": "synchronous",
+                  "kind": "presentationCleanup",
+                  "order": 1,
+                  "owner": "MONSTER.SOUL_NEXUS",
+                  "target": "sameOwnerBody"
+                }
+              ],
+              "publisherBody": "sameOwnerBody",
+              "repeatability": "oneShot",
+              "restoredBehavior": "AfterAddedToRoom resubscribes exact callback",
+              "subscriber": "MONSTER.SOUL_NEXUS",
+              "subscriptionId": "LIFECYCLE.SUBSCRIPTION.02.DIED",
+              "unsubscribeSite": {
+                "method": {
+                  "symbolSignature": "MegaCrit.Sts2.Core.Models.Monsters.SoulNexus::AfterDeath sig:20010112a7e4"
+                }
+              }
+            }
+          ]
         },
         "methodRefs": {
           "actionExecutor": "MegaCrit.Sts2.Core.GameActions.ActionExecutor+<ExecuteActions>d__28::MoveNext sig:200001",
@@ -93892,49 +96510,49 @@
           {
             "boundaryId": "LIFECYCLE.BOUNDARY.BOOKREPAIRKNIFE.AFTERDIEDTODOOM",
             "classification": "vanillaExternalRunOrPlayerListener",
-            "effectStatus": "pendingE2d2b",
+            "effectStatus": "runtimeDynamicExternalBoundary",
             "sourceType": "MegaCrit.Sts2.Core.Models.Relics.BookRepairKnife",
             "symbolSignature": "MegaCrit.Sts2.Core.Models.Relics.BookRepairKnife::AfterDiedToDoom sig:200212812112a64c151281fd0112a7e4"
           },
           {
             "boundaryId": "LIFECYCLE.BOUNDARY.FAIRYINABOTTLE.AFTERPREVENTINGDEATH",
             "classification": "vanillaExternalRunOrPlayerListener",
-            "effectStatus": "pendingE2d2b",
+            "effectStatus": "runtimeDynamicExternalBoundary",
             "sourceType": "MegaCrit.Sts2.Core.Models.Potions.FairyInABottle",
             "symbolSignature": "MegaCrit.Sts2.Core.Models.Potions.FairyInABottle::AfterPreventingDeath sig:200112812112a7e4"
           },
           {
             "boundaryId": "LIFECYCLE.BOUNDARY.FAIRYINABOTTLE.SHOULDDIE",
             "classification": "vanillaExternalRunOrPlayerListener",
-            "effectStatus": "pendingE2d2b",
+            "effectStatus": "runtimeDynamicExternalBoundary",
             "sourceType": "MegaCrit.Sts2.Core.Models.Potions.FairyInABottle",
             "symbolSignature": "MegaCrit.Sts2.Core.Models.Potions.FairyInABottle::ShouldDie sig:20010212a7e4"
           },
           {
             "boundaryId": "LIFECYCLE.BOUNDARY.GREMLINHORN.AFTERDEATH",
             "classification": "vanillaExternalRunOrPlayerListener",
-            "effectStatus": "pendingE2d2b",
+            "effectStatus": "runtimeDynamicExternalBoundary",
             "sourceType": "MegaCrit.Sts2.Core.Models.Relics.GremlinHorn",
             "symbolSignature": "MegaCrit.Sts2.Core.Models.Relics.GremlinHorn::AfterDeath sig:200412812112a64c12a7e4020c"
           },
           {
             "boundaryId": "LIFECYCLE.BOUNDARY.LIZARDTAIL.AFTERPREVENTINGDEATH",
             "classification": "vanillaExternalRunOrPlayerListener",
-            "effectStatus": "pendingE2d2b",
+            "effectStatus": "runtimeDynamicExternalBoundary",
             "sourceType": "MegaCrit.Sts2.Core.Models.Relics.LizardTail",
             "symbolSignature": "MegaCrit.Sts2.Core.Models.Relics.LizardTail::AfterPreventingDeath sig:200112812112a7e4"
           },
           {
             "boundaryId": "LIFECYCLE.BOUNDARY.LIZARDTAIL.SHOULDDIELATE",
             "classification": "vanillaExternalRunOrPlayerListener",
-            "effectStatus": "pendingE2d2b",
+            "effectStatus": "runtimeDynamicExternalBoundary",
             "sourceType": "MegaCrit.Sts2.Core.Models.Relics.LizardTail",
             "symbolSignature": "MegaCrit.Sts2.Core.Models.Relics.LizardTail::ShouldDieLate sig:20010212a7e4"
           },
           {
             "boundaryId": "LIFECYCLE.BOUNDARY.MELANCHOLY.AFTERDEATH",
             "classification": "vanillaExternalRunOrPlayerListener",
-            "effectStatus": "pendingE2d2b",
+            "effectStatus": "runtimeDynamicExternalBoundary",
             "sourceType": "MegaCrit.Sts2.Core.Models.Cards.Melancholy",
             "symbolSignature": "MegaCrit.Sts2.Core.Models.Cards.Melancholy::AfterDeath sig:200412812112a64c12a7e4020c"
           }
@@ -93982,10 +96600,114 @@
             "initial": "runtime Monster performing-move state",
             "mutation": "move completion owns deferred state-list removal",
             "ownership": "MonsterModel/CombatState"
+          },
+          {
+            "contractId": "LIFECYCLE.STATE.TEST_SUBJECT_RESPAWNS",
+            "default": 0,
+            "observationAvailability": false,
+            "reset": null,
+            "update": "+1 at RespawnMove start",
+            "valueType": "integer"
+          },
+          {
+            "contractId": "LIFECYCLE.STATE.TEST_SUBJECT_KILLS",
+            "default": "runtime run field",
+            "observationAvailability": false,
+            "reset": "run lifecycle",
+            "update": "+1 in TriggerDeadState",
+            "valueType": "integer"
+          },
+          {
+            "contractId": "LIFECYCLE.STATE.REVIVING",
+            "default": false,
+            "observationAvailability": false,
+            "owners": [
+              "AdaptablePower.Data",
+              "ReattachPower.Data",
+              "IllusionPower.Data"
+            ],
+            "update": "true on qualifying death; false in revive/reattach",
+            "valueType": "boolean"
+          },
+          {
+            "backingField": "_isHatched",
+            "contractId": "LIFECYCLE.STATE.TOUGH_EGG_IS_HATCHED",
+            "default": false,
+            "observationAvailability": false,
+            "serialized": true,
+            "update": "true before Hatch Power removal",
+            "valueType": "boolean"
+          },
+          {
+            "backingField": "_hatched",
+            "contractId": "LIFECYCLE.STATE.TOUGH_EGG_TITLE_HATCHED",
+            "default": false,
+            "distinctFrom": "_isHatched",
+            "observationAvailability": false,
+            "update": "true after awaited Hatch Power removal",
+            "valueType": "boolean"
+          },
+          {
+            "contractId": "LIFECYCLE.STATE.TOUGH_EGG_AFTER_HATCHED_STATE",
+            "default": "generated graph state",
+            "observationAvailability": false,
+            "update": "forced after restored Hatch",
+            "valueType": "moveStateRef"
+          },
+          {
+            "contractId": "LIFECYCLE.STATE.DEATH_POWER_RUNTIME",
+            "default": "source runtime",
+            "fields": [
+              "amount",
+              "slots",
+              "targets",
+              "returnedBodyIdentity",
+              "dynamicGold"
+            ],
+            "observationAvailability": false,
+            "valueType": "typedRuntimeValues"
+          },
+          {
+            "contractId": "LIFECYCLE.STATE.EVENT_PARENT_REWARD",
+            "default": "source runtime",
+            "observationAvailability": false,
+            "update": "terminal reward/room routing",
+            "valueType": "runtimeCollectionsAndRoomStack"
+          },
+          {
+            "contractId": "LIFECYCLE.STATE.ARCHITECT_EXTERNAL",
+            "default": "runtime",
+            "remoteOutcomeObservable": false,
+            "update": "OnEnded(true) before kills",
+            "valueType": "nullableRunAndExternalResults"
           }
         ],
+        "semanticPipelineAudit": {
+          "coreAddRef": "production.coreAddContract",
+          "coreDeathEvaluatorRef": "lifecycle.core",
+          "duplicateAddEvaluator": false,
+          "duplicateDeathEvaluator": false,
+          "duplicateHpEvaluator": false,
+          "eventEffectsCopied": false,
+          "eventEffectsRef": "eventScripts",
+          "hpAssignmentRef": "hpPipeline.assignment"
+        },
         "sourceDenominators": {
           "centralizedCheckCallSites": 14,
+          "closeout.beforeRemovedCleanup": 11,
+          "closeout.deathAddPhysicalSites": 4,
+          "closeout.deathProductionSystems": 3,
+          "closeout.effectiveListenerApplications": 1861,
+          "closeout.eventCombatRegistrations": 7,
+          "closeout.fixedPointPowerTypes": 71,
+          "closeout.invocationDecisions": 1265,
+          "closeout.listenerImplementations": 80,
+          "closeout.monsterOwnerTypes": 108,
+          "closeout.phaseSystems": 6,
+          "closeout.powerSeedTypes": 69,
+          "closeout.relationships": 6,
+          "closeout.runTerminationSystems": 1,
+          "closeout.subscriptions": 3,
           "commandDeclarations": 4,
           "commandPhysicalBodies": 4,
           "dependencies": 7,
@@ -94002,7 +96724,7 @@
           "terminationPhysicalBodies": 4,
           "terminationSupportMethods": 3
         },
-        "status": "sourceCompleteE2d2a"
+        "status": "sourceCompleteE2Lifecycle"
       },
       "models": {
         "cards": [
@@ -130218,7 +132940,7 @@
               "MONSTER.TWO_TAILED_RAT",
               "MONSTER.ZAPBOT"
             ],
-            "lifecycle": "pendingE2d2",
+            "lifecycle": "sourceCompleteE2d2",
             "producerSemantics": "sourceCompleteE2d1b"
           },
           "failureSemantics": {
@@ -130802,11 +133524,12 @@
               "dependencyId": "DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
               "factId": "SOURCE.DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE",
               "kind": "deathRemovalSlotAvailability",
+              "resolvedComponentRef": "lifecycle.core.removal",
               "sourceRefs": [
                 "production.runtimeStateContracts.CURRENT_ENEMIES",
                 "production.slotStrategies"
               ],
-              "status": "pendingE2d2"
+              "status": "sourceComplete"
             },
             {
               "affectedProducerRefs": [
@@ -130821,10 +133544,11 @@
               "dependencyId": "DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS",
               "factId": "SOURCE.DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS",
               "kind": "awaitedHookListenerEffects",
+              "resolvedComponentRef": "lifecycle.listenerImplementations",
               "sourceRefs": [
                 "production.coreAddContract.hookBoundary.afterCreatureAddedToCombat"
               ],
-              "status": "pendingE2d2"
+              "status": "sourceComplete"
             },
             {
               "affectedProducerRefs": [
@@ -130833,21 +133557,23 @@
               "dependencyId": "DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH",
               "factId": "SOURCE.DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH",
               "kind": "sameBodyHatchStateTransitionNotAdd",
+              "resolvedComponentRef": "lifecycle.phaseSystems.LIFECYCLE.PHASE.TOUGH_EGG_HATCH",
               "sourceRefs": [
                 "initialState",
                 "behavior.MONSTER.TOUGH_EGG#HATCH_MOVE"
               ],
-              "status": "pendingE2d2"
+              "status": "sourceComplete"
             },
             {
               "affectedProducerRefs": [],
               "dependencyId": "DEPENDENCY.PRODUCTION.DEATH_POWER_ADD_SITES",
               "factId": "SOURCE.DEPENDENCY.PRODUCTION.DEATH_POWER_ADD_SITES",
               "kind": "fourExplicitOutOfDomainAddSites",
+              "resolvedComponentRef": "lifecycle.deathProduction",
               "sourceRefs": [
                 "production.addApiCensus.outOfScopeDeathPower"
               ],
-              "status": "pendingE2d2"
+              "status": "sourceComplete"
             }
           ],
           "pools": [
@@ -133842,5 +136568,5 @@
       ]
     }
   },
-  "schemaVersion": 10
+  "schemaVersion": 11
 }

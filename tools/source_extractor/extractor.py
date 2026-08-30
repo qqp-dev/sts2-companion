@@ -217,7 +217,11 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             assembly, dll.sha256, behavior, world["concrete"], encounters,
             initial_state, hp_pipeline,
         )
-        lifecycle = extract_lifecycle(assembly, dll.sha256, behavior)
+        lifecycle = extract_lifecycle(
+            assembly, dll.sha256, behavior, monsters=world["concrete"],
+            reachable_models=set(rosters["reachableModels"]), initial_state=initial_state,
+            hp_pipeline=hp_pipeline, production=production, event_scripts=event_scripts,
+        )
         # Resolve the generic E2c1 scripted boundary only after the independently
         # validated Architect component exists. Lifecycle dependencies stay open.
         scripted_dependencies = [row for row in behavior["eventDependencies"]
@@ -397,6 +401,20 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             "lifecycleDependencies": complete(lifecycle["sourceDenominators"]["dependencies"], lifecycle["sourceDenominators"]["dependencies"]),
             "lifecycleInvocationClassification": complete(lifecycle["sourceDenominators"]["invocations"], lifecycle["sourceDenominators"]["invocations"]),
             "lifecycleSemanticNodes": complete(lifecycle["sourceDenominators"]["semanticNodes"], lifecycle["sourceDenominators"]["semanticNodes"]),
+            "lifecycleReachableListenerOwners": complete(lifecycle["sourceDenominators"]["closeout.monsterOwnerTypes"], 108),
+            "lifecyclePowerSeedTypes": complete(lifecycle["sourceDenominators"]["closeout.powerSeedTypes"], 69),
+            "lifecycleFixedPointPowerTypes": complete(lifecycle["sourceDenominators"]["closeout.fixedPointPowerTypes"], 71),
+            "lifecycleEffectiveListenerApplications": complete(lifecycle["sourceDenominators"]["closeout.effectiveListenerApplications"], 1861),
+            "lifecycleListenerImplementations": complete(lifecycle["sourceDenominators"]["closeout.listenerImplementations"], 80),
+            "lifecyclePhaseSystems": complete(lifecycle["sourceDenominators"]["closeout.phaseSystems"], 6),
+            "lifecycleRelationships": complete(lifecycle["sourceDenominators"]["closeout.relationships"], 6),
+            "lifecycleSubscriptions": complete(lifecycle["sourceDenominators"]["closeout.subscriptions"], 3),
+            "lifecycleBeforeRemovedCleanup": complete(lifecycle["sourceDenominators"]["closeout.beforeRemovedCleanup"], 11),
+            "lifecycleDeathAddSites": complete(lifecycle["sourceDenominators"]["closeout.deathAddPhysicalSites"], 4),
+            "lifecycleDeathProductionSystems": complete(lifecycle["sourceDenominators"]["closeout.deathProductionSystems"], 3),
+            "lifecycleEventCombatRegistrations": complete(lifecycle["sourceDenominators"]["closeout.eventCombatRegistrations"], 7),
+            "lifecycleRunTerminationSystems": complete(lifecycle["sourceDenominators"]["closeout.runTerminationSystems"], 1),
+            "lifecycleCloseoutInvocationClassification": complete(lifecycle["sourceDenominators"]["closeout.invocationDecisions"], lifecycle["sourceDenominators"]["closeout.invocationDecisions"]),
             "moveActions": complete(behavior["summary"]["asyncActions"] + behavior["summary"]["synchronousNoOpActions"], 315),
             "moveIntentArguments": complete(behavior["summary"]["resolvedIntentArguments"], behavior["summary"]["requiredIntentArguments"]),
             "moveIntentClassification": complete(behavior["summary"]["resolvedIntentConstructorSites"], behavior["summary"]["intentConstructorSites"]),
