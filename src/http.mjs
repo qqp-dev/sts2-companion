@@ -1,8 +1,10 @@
 import { readFileSync } from "node:fs";
 
 import { bookForState, bookMeta } from "./book.mjs";
+import { createSourceAdapter } from "./source-adapter.mjs";
 
 const CLIENT = readFileSync(new URL("./client.js", import.meta.url), "utf8");
+const SOURCE_CLIENT = readFileSync(new URL("./source-client.js", import.meta.url), "utf8");
 const SECURITY_HEADERS = Object.freeze({
   "Cache-Control": "no-store",
   "Content-Security-Policy": "default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'",
@@ -184,31 +186,66 @@ function payload(reader, players) {
   return { ...state, ascension: 9, players, version, encounter: bookForState(state, { players }) };
 }
 
+
+const SOURCE_CSS = `
+:root{color-scheme:dark;--bg:#070707;--card:#111;--line:#303030;--text:#f2eee7;--muted:#aaa39a;--source:#66e3a4;--observed:#73baff;--legacy:#d6aaff;--unknown:#ffbd70}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 ui-sans-serif,system-ui,sans-serif}.source-shell{max-width:52rem;margin:auto;padding:1rem}.shadow-top{display:flex;justify-content:space-between;color:var(--muted);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;padding:.3rem 0 1rem}.source-header,.hero,.source-section,.empty{border:1px solid var(--line);background:var(--card);padding:1rem;margin-bottom:.8rem}.badges,.chips{display:flex;gap:.4rem;flex-wrap:wrap}.badge,.chip{border:1px solid currentColor;padding:.15rem .42rem;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase}.badge-source{color:var(--source)}.badge-observed{color:var(--observed)}.badge-legacy{color:var(--legacy)}.badge-unknown{color:var(--unknown)}.badge-manual{color:#f7e481}.authority-line,.canonical,.model-id,.fact-ref{color:var(--muted);font-size:.75rem;overflow-wrap:anywhere;margin-top:.6rem}.eyebrow,.section-heading{color:var(--muted);text-transform:uppercase;font-size:.72rem;letter-spacing:.07em}.hero h1{font-size:1.8rem;margin:.2rem 0}.notice{border-left:2px solid var(--unknown);padding-left:.65rem;color:var(--muted)}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem}.section-heading h2{color:var(--text);font-size:1.05rem;margin:.1rem 0 .8rem}.lead{color:var(--muted)}.chip{color:var(--source);overflow-wrap:anywhere}.chip.produced{color:var(--unknown)}details{border-top:1px solid var(--line);margin-top:.7rem;padding-top:.65rem}summary{cursor:pointer;color:var(--source);font-weight:650}.tree{overflow-wrap:anywhere}.tree .tree{border-left:1px solid var(--line);padding-left:.6rem;margin:.25rem 0}.tree-key{color:var(--muted)}.tree-value{color:var(--text)}.monster-card{border-top:2px solid var(--line);padding:1rem 0}.monster-card:first-of-type{border-top:0}.monster-head{display:flex;justify-content:space-between;gap:1rem;align-items:baseline}.monster-head h3{font-size:1.15rem;margin:.1rem 0}.model-id{text-align:right}.formula{color:var(--unknown)}.mechanic-line{margin:.5rem 0}.subsection,.moves{margin-top:1rem}.subsection h4,.moves h4{font-size:.82rem;text-transform:uppercase;color:var(--muted)}.state-row,.observed-row,.placement{padding:.4rem 0;border-bottom:1px solid var(--line)}.operation{display:grid;gap:.25rem;padding:.65rem 0;border-bottom:1px solid var(--line)}.operation>span{overflow-wrap:anywhere}.intent{display:block;color:var(--unknown);font-size:.72rem;margin-top:.15rem}.unknown{color:var(--unknown)}.move-summary{display:flex;justify-content:space-between;gap:1rem}.empty{padding:2rem 1rem}@media(min-width:44rem){.source-shell{padding:1.5rem}.source-section,.hero,.source-header{padding:1.2rem 1.35rem}}
+`;
+
+function sourcePage(basePath) {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#070707"><title>sts2 source shadow</title><style>${SOURCE_CSS}</style></head><body><div class="source-shell"><div class="shadow-top"><span>sts2 · source shadow</span><span>non-default · static</span></div><main id="source-encounter" data-base-path="${escapeHtml(basePath)}" class="source-state"><section class="empty"><h1>Loading source mechanics…</h1><p>No live tactical state is inferred.</p></section></main></div><script src="${escapeHtml(basePath)}/source/client.js" defer></script></body></html>`;
+}
+function readSourceObservation(reader) {
+  try { return reader.read(); }
+  catch { return { status: "idle", encounterId: null, monsterIds: [], actId: null, roomType: null, source: null, releaseInfo: null }; }
+}
+function manualSelector(url) {
+  const selectors = url.searchParams.getAll("encounter");
+  if (selectors.length > 1) return { error: "Ambiguous selector: provide one exact canonical encounter" };
+  return { value: selectors.length ? selectors[0] : null };
+}
+
 export function createSts2Handler(reader, options = {}) {
   const basePath = String(options.basePath ?? "/sts2").replace(/\/$/, "") || "/sts2";
   const players = Number(options.players ?? 2);
+  const sourceAdapter = options.sourceAdapter ?? createSourceAdapter(options.sourceOptions ?? {});
   return function sts2Handler(req, res) {
     const head = req.method === "HEAD";
-    let pathname;
-    try { pathname = new URL(req.url ?? basePath, "http://sts2.invalid").pathname; }
+    let url;
+    try { url = new URL(req.url ?? basePath, "http://sts2.invalid"); }
     catch { text(res, 400, "Malformed request URL", head); return; }
+    const pathname = url.pathname;
     const route = pathname === basePath || pathname === `${basePath}/` ? "page"
       : pathname === `${basePath}/state` ? "state"
-        : pathname === `${basePath}/client.js` ? "client" : null;
+        : pathname === `${basePath}/client.js` ? "client"
+          : pathname === `${basePath}/source` || pathname === `${basePath}/source/` ? "source-page"
+            : pathname === `${basePath}/source/state` ? "source-state"
+              : pathname === `${basePath}/source/client.js` ? "source-client" : null;
     if (!route) { text(res, 404, "Not found", head); return; }
     if (req.method !== "GET" && !head) {
       write(res, 405, { Allow: "GET, HEAD", "Content-Type": "text/plain; charset=utf-8" }, "Method not allowed\n", head);
       return;
     }
-    if (route === "client") {
-      write(res, 200, { "Content-Type": "text/javascript; charset=utf-8" }, CLIENT, head); return;
+    if (route === "client") { write(res, 200, { "Content-Type": "text/javascript; charset=utf-8" }, CLIENT, head); return; }
+    if (route === "source-client") {
+      if (!sourceAdapter.available) { text(res, 503, sourceAdapter.error, head); return; }
+      write(res, 200, { "Content-Type": "text/javascript; charset=utf-8" }, SOURCE_CLIENT, head); return;
+    }
+    if (route === "source-page" || route === "source-state") {
+      if (!sourceAdapter.available) { text(res, 503, sourceAdapter.error, head); return; }
+      const selector = manualSelector(url);
+      if (selector.error) { text(res, 400, selector.error, head); return; }
+      const sourceState = sourceAdapter.view(readSourceObservation(reader), selector.value);
+      if (sourceState.status === "invalid-selector") { text(res, 400, sourceState.error, head); return; }
+      if (sourceState.status === "unknown-selector") { text(res, 404, sourceState.error, head); return; }
+      if (route === "source-state") {
+        write(res, 200, { "Content-Type": "application/json; charset=utf-8" }, `${JSON.stringify(sourceState)}\n`, head); return;
+      }
+      write(res, 200, { "Content-Type": "text/html; charset=utf-8" }, sourcePage(basePath), head); return;
     }
     const state = payload(reader, players);
-    if (route === "state") {
-      write(res, 200, { "Content-Type": "application/json; charset=utf-8" }, `${JSON.stringify(state)}\n`, head); return;
-    }
+    if (route === "state") { write(res, 200, { "Content-Type": "application/json; charset=utf-8" }, `${JSON.stringify(state)}\n`, head); return; }
     write(res, 200, { "Content-Type": "text/html; charset=utf-8" }, page(state, basePath), head);
   };
 }
 
-export const internals = Object.freeze({ SECURITY_HEADERS, escapeHtml, renderState, renderVersion, payload });
+export const internals = Object.freeze({ SECURITY_HEADERS, escapeHtml, renderState, renderVersion, payload, sourcePage, manualSelector, readSourceObservation });

@@ -12,6 +12,11 @@ function unprefix(value, prefix) {
   return text.startsWith(prefix) ? text.slice(prefix.length) : text;
 }
 
+/** Convert an exact saved monster ModelId wire value to the stable reader representation. */
+export function normalizeMonsterWireIdForState(value) {
+  return unprefix(value, "MONSTER.") || null;
+}
+
 /** Parse combat lifecycle only. Move logs are deliberately ignored. */
 export function parseLog(text) {
   let encounterId = null;
@@ -63,7 +68,7 @@ export function parseSave(input) {
           status: "last",
           encounterId,
           monsterIds: Array.isArray(room.monster_ids)
-            ? room.monster_ids.map((id) => unprefix(id, "MONSTER.")).filter(Boolean)
+            ? room.monster_ids.map(normalizeMonsterWireIdForState).filter(Boolean)
             : [],
           actId: unprefix(act?.id, "ACT.") || null,
           roomType,

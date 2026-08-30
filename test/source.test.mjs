@@ -1210,9 +1210,10 @@ test("E2a selected Power hooks and runtime contracts are explicit", () => {
   assert.deepEqual(artifact.observationIdentities.aliases, []);
 });
 
-test("README and world-model census claims match the current schema summary and coverage", () => {
+test("migration ledger and world-model census claims match the current schema summary and coverage", () => {
   const markdown = (url) => readFileSync(new URL(url, import.meta.url), "utf8").replace(/\s+/g, " ").trim();
   const readme = markdown("../README.md");
+  const ledger = markdown("../docs/source-migration-ledger.md");
   const worldModel = markdown("../docs/source-world-model.md");
   const has = (document, claim) => assert.ok(document.includes(claim.replace(/\s+/g, " ").trim()), claim);
   const count = (value) => value.toLocaleString("en-US");
@@ -1263,22 +1264,24 @@ test("README and world-model census claims match the current schema summary and 
     - summary.directSinkCounts.stateWrite;
   assert.equal(summary.directSinkSites, Object.values(summary.directSinkCounts).reduce((total, value) => total + value, 0));
 
-  has(readme, `Schema ${artifact.schemaVersion} remains deliberately`);
-  has(readme, `Title localization is classified ${summary.localizedTitles}/${topology.moveConstructors} with ${summary.missingOrInternalTitles} explicit missing/internal keys`);
-  has(readme, `${topology.moveConstructors} current move registrations from all reachable behavior classes plus the abstract Decimillipede segment implementation (${summary.asyncActions} async via \`AsyncStateMachineAttribute\`, ${word(summary.synchronousNoOpActions)} exact \`Task.CompletedTask\` no-ops)`);
-  has(readme, `${summary.localizedTitles} shipped English titles joined by localization root/state`);
-  has(readme, `${summary.intentConstructorSites} constructed intent sites across all ${topology.moveConstructors} moves and all ${summary.requiredIntentArguments} constructor arguments`);
-  has(readme, `a closed census of ${count(invocations.denominator)} invocations: ${count(invocations.directDenominator)} direct sites in the ${summary.asyncActions} generated move bodies plus ${invocations.helperDenominator} unique recursively traversed helper sites`);
-  has(readme, `the combined ${count(invocations.vocabularySize)}-symbol census contains ${invocations.classificationCounts.normalizedGameplayOperation} normalized gameplay operations/effects, ${count(invocations.classificationCounts.traversedGameplayHelper)} traversed gameplay/support helpers, and ${count(invocations.classificationCounts.provenNonGameplayPlumbing)} source-proven compiler, async, collection, formula, wait, or presentation calls`);
-  has(readme, `${summary.directSinkSites} direct normalized sites: the prior ${priorDirectSites} (the original ${originalDirectSites} sinks plus ${summary.directSinkCounts.kill} self-kills, ${summary.directSinkCounts.removePower} Power removals, and ${summary.directSinkCounts.stateWrite} typed monster state writes) plus ${word(eventSummary.eventTurnDirectOperations)} Fake Merchant sites (${operationCount("attack")} attacks, ${operationCount("attackHitCount")} hit-count site, Frail \`applyPower\`, and Strength \`applyPower\`)`);
-  has(readme, `with all ${count(summary.requiredSemanticFields)} required semantic fields resolved`);
-  has(readme, `${topology.behaviorClasses} selection graphs with ${topology.moveConstructors} move constructors, ${topology.followUpAssignments} follow-up assignments, ${topology.randomNodes} random nodes, ${topology.conditionalNodes} conditional nodes, ${word(topology.mustOnceFlags)} must-once flags`);
-  has(readme, `${topology.behaviorClasses} behavior owners/graphs and all ${topology.moveConstructors} registrations to reachable concrete models`);
-  has(readme, `Source enumeration yields ${topology.behaviorClasses} physical graph owners and ${topology.moveConstructors} registrations. ${word(eventSummary.physicalOwners)[0].toUpperCase()}${word(eventSummary.physicalOwners).slice(1)} physical graphs and ${word(eventSummary.physicalRegistrations)} registrations are newly included`);
-  has(readme, `Fake Merchant | \`normalTurnMachine\` | ${word(fake.registrationIds.length)[0].toUpperCase()}${word(fake.registrationIds.length).slice(1)} localized moves, ${word(fakeGraph.topology.randomNodes)} random nodes, ${word(fakeMoves.flatMap((row) => row.intents).length)} intent constructors, ${word(operationCount("attack"))} attacks, ${word(operationCount("attackHitCount"))} hit count, Frail, and Strength are closed.`);
-  has(readme, `The event slice closes ${eventInvocations.denominator} invocation sites, ${word(eventSummary.eventTurnDirectOperations)} direct gameplay operations, and ${word(eventSummary.noOpProofs)} explicit no-op proofs with zero unresolved.`);
-  has(readme, `deterministic schema ${JSON.parse(readFileSync(new URL("../data/encounter-facts-v0.111.0.json", import.meta.url))).schemaVersion} compact projection`);
-  has(readme, `(schema ${artifact.schemaVersion} raw source facts)`);
+  has(readme, "docs/source-migration-ledger.md");
+  has(readme, "docs/source-world-model.md");
+  has(ledger, `Schema ${artifact.schemaVersion} remains deliberately`);
+  has(ledger, `Title localization is classified ${summary.localizedTitles}/${topology.moveConstructors} with ${summary.missingOrInternalTitles} explicit missing/internal keys`);
+  has(ledger, `${topology.moveConstructors} current move registrations from all reachable behavior classes plus the abstract Decimillipede segment implementation (${summary.asyncActions} async via \`AsyncStateMachineAttribute\`, ${word(summary.synchronousNoOpActions)} exact \`Task.CompletedTask\` no-ops)`);
+  has(ledger, `${summary.localizedTitles} shipped English titles joined by localization root/state`);
+  has(ledger, `${summary.intentConstructorSites} constructed intent sites across all ${topology.moveConstructors} moves and all ${summary.requiredIntentArguments} constructor arguments`);
+  has(ledger, `a closed census of ${count(invocations.denominator)} invocations: ${count(invocations.directDenominator)} direct sites in the ${summary.asyncActions} generated move bodies plus ${invocations.helperDenominator} unique recursively traversed helper sites`);
+  has(ledger, `the combined ${count(invocations.vocabularySize)}-symbol census contains ${invocations.classificationCounts.normalizedGameplayOperation} normalized gameplay operations/effects, ${count(invocations.classificationCounts.traversedGameplayHelper)} traversed gameplay/support helpers, and ${count(invocations.classificationCounts.provenNonGameplayPlumbing)} source-proven compiler, async, collection, formula, wait, or presentation calls`);
+  has(ledger, `${summary.directSinkSites} direct normalized sites: the prior ${priorDirectSites} (the original ${originalDirectSites} sinks plus ${summary.directSinkCounts.kill} self-kills, ${summary.directSinkCounts.removePower} Power removals, and ${summary.directSinkCounts.stateWrite} typed monster state writes) plus ${word(eventSummary.eventTurnDirectOperations)} Fake Merchant sites (${operationCount("attack")} attacks, ${operationCount("attackHitCount")} hit-count site, Frail \`applyPower\`, and Strength \`applyPower\`)`);
+  has(ledger, `with all ${count(summary.requiredSemanticFields)} required semantic fields resolved`);
+  has(ledger, `${topology.behaviorClasses} selection graphs with ${topology.moveConstructors} move constructors, ${topology.followUpAssignments} follow-up assignments, ${topology.randomNodes} random nodes, ${topology.conditionalNodes} conditional nodes, ${word(topology.mustOnceFlags)} must-once flags`);
+  has(ledger, `${topology.behaviorClasses} behavior owners/graphs and all ${topology.moveConstructors} registrations to reachable concrete models`);
+  has(ledger, `Source enumeration yields ${topology.behaviorClasses} physical graph owners and ${topology.moveConstructors} registrations. ${word(eventSummary.physicalOwners)[0].toUpperCase()}${word(eventSummary.physicalOwners).slice(1)} physical graphs and ${word(eventSummary.physicalRegistrations)} registrations are newly included`);
+  has(ledger, `Fake Merchant | \`normalTurnMachine\` | ${word(fake.registrationIds.length)[0].toUpperCase()}${word(fake.registrationIds.length).slice(1)} localized moves, ${word(fakeGraph.topology.randomNodes)} random nodes, ${word(fakeMoves.flatMap((row) => row.intents).length)} intent constructors, ${word(operationCount("attack"))} attacks, ${word(operationCount("attackHitCount"))} hit count, Frail, and Strength are closed.`);
+  has(ledger, `The event slice closes ${eventInvocations.denominator} invocation sites, ${word(eventSummary.eventTurnDirectOperations)} direct gameplay operations, and ${word(eventSummary.noOpProofs)} explicit no-op proofs with zero unresolved.`);
+  has(ledger, `deterministic schema ${JSON.parse(readFileSync(new URL("../data/encounter-facts-v0.111.0.json", import.meta.url))).schemaVersion} compact projection`);
+  has(ledger, `(schema ${artifact.schemaVersion} raw source facts)`);
 
   has(worldModel, `Schema ${artifact.schemaVersion} is the E2d2a boundary`);
   has(worldModel, `exact metadata inheritance closure for all ${topology.behaviorClasses} behavior graph owners`);
