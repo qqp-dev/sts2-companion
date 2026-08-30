@@ -55,8 +55,8 @@ The projection is not:
 - a probability estimator when exact choice weights, eligibility, and relevant
   history are not all known;
 - a static time-to-kill estimate. Fight-level race output requires an explicit
-  player policy and closed production/lifecycle semantics; otherwise the surface
-  shows clocks, windows, and removal deltas instead; or
+  player policy and closed production/lifecycle semantics; otherwise expanded
+  detail retains clocks, windows, and removal deltas instead; or
 - a change to `/sts2`, its state reader, source migration artifacts, or the
   C1/C2/C3 cutover plan.
 
@@ -67,14 +67,82 @@ energy, Block, intent, or Power rows merely to look complete. `NOW` repeats an
 observed value only when the value is needed to understand a derived threshold,
 resolve ambiguity, establish freshness, or identify a less-visible state.
 
-The collapsed phone surface targets one viewport and six stable chunks. A chunk
-may wrap, but the order and meaning remain stable:
+### Collapsed micro-card contract
 
-| Chunk | Question answered | Content |
+The previous six-row surface was still too much. The future default is **zero or
+one room-level tactical micro-card for the whole encounter**—not one card per
+enemy and not six simultaneous rows. A card answers; it does not prove.
+
+A selected card has this visible shape:
+
+1. **Headline:** one answer or threshold, such as `FOCUS A`, `BLOCK 18`,
+   `NO FOCUS`, `A ↔ B`, or `UNKNOWN`.
+2. **Why:** at most one short effect delta containing the decisive number/effect
+   and, when it is not already unambiguous, the one primary horizon.
+3. **Flip/next:** optionally, one short line naming the single uncertainty,
+   condition, or competing fact that can reverse the headline.
+
+The hard collapsed budget is:
+
+- at most **three visible text rows including the headline**, with two rows the
+  target;
+- at most one primary horizon, selected because it changes the current decision;
+- at most two consequence coordinates total, with one preferred;
+- at most one alternative or runner-up, omitted under strict dominance;
+- at most one visible uncertainty or condition. If several material unknowns can
+  change the answer, the headline becomes `UNKNOWN` and the reason names only the
+  highest-priority unresolved boundary or says `multiple decisive inputs
+  unresolved`, never a caveat list; and
+- no catalogs, per-target tables, source/lane labels, confidence prose, enemy
+  move titles/IDs, full effect sequences, audit refs, or repeated visible game
+  state.
+
+A compact target locator—portrait, left/middle/right, or a short enemy name—is
+allowed only when needed to make the answer actionable. It identifies a target,
+not an enemy move. The full target frontier MUST NOT appear collapsed.
+
+`NOW`, `IN`, `BREAK`/`FOCUS`, `OUT`/`NEXT`, `CLOCK`, and `?` have no reserved
+visible rows. One may appear only when it is itself the selected answer or the
+single flip line. Empty chunks are forbidden. If nothing crosses the relevance
+threshold, rendering no tactical card is valid and preferable to filler.
+
+### Deterministic card selection
+
+Selection is a reducer operation over typed claims, not a renderer inference:
+
+1. **Safety gate.** First reject a contradiction or stale required input that
+   invalidates the cut; it fails closed to `UNKNOWN`, and no derived conclusion
+   may survive it. Among valid claims, a decision-relevant lethal result or
+   safety-critical unknown wins over every ordinary candidate.
+2. **Relevance gate.** Discard claims that do not satisfy the relevance predicate
+   at the observation cut. Admit `FOCUS` only when a realized multi-enemy
+   frontier changes the current action class; enemy count alone is insufficient.
+3. **Sensitivity rank.** Select the eligible claim with the greatest decision
+   sensitivity: the one whose truth or threshold changes the current action
+   class. Ties go to the earliest decision-changing consequence
+   boundary, then to an irreversible consequence over a reversible one. A final
+   exact tie uses stable `claimId` order only to make display deterministic; it
+   does not imply mechanical superiority.
+4. **Answer form.** Proven strict dominance gets a direct headline and no
+   runner-up. A Pareto tradeoff gets `A ↔ B` and one differentiating coordinate
+   per candidate; policy and all other candidates remain tap-through. If no
+   removal is reachable, or a non-removal scenario dominates, emit `NO FOCUS`
+   with one reason. More than one material uncertainty emits `UNKNOWN`, not a
+   list.
+5. **Null result.** If no candidate changes the current action class, return no
+   card. The reducer MUST NOT promote a lower-value fact merely to occupy space.
+
+### Internal query taxonomy and expanded model
+
+The six questions remain the internal reducer taxonomy and tap-through expansion
+model. They describe what the rigorous frame can answer, not what must render at
+once:
+
+| Query | Question answered | Expanded content |
 |---|---|---|
-| `NOW` | What observation cut makes these claims valid? | Only required observation context, parameters, freshness, and state ambiguity. Absent in a static capsule. |
+| `NOW` | What observation cut makes these claims valid? | Required observation context, parameters, freshness, and state ambiguity. Absent in a static capsule. |
 | `IN` | What happens before I can decide again under the baseline? | Source-ordered raw/net threat and non-damage consequences, including cards, Powers, summons, state, and lifecycle. |
-| `BREAK` | Which counterfactual boundary changes that result? | Kill, Block, strip, or interrupt thresholds and their consequence deltas; in a decision-sensitive multi-enemy state this anchors the optional `FOCUS` removal-frontier expansion. These are mechanical levers and scenarios, not presumed card lines. |
+| `BREAK` | Which counterfactual boundary changes that result? | Kill, Block, strip, or interrupt thresholds and consequence deltas; decision-sensitive multi-enemy states may supply a `FOCUS` removal frontier. These are mechanical levers and scenarios, not presumed card lines. |
 | `OUT/NEXT` | Where does the baseline leave the fight, and what follows? | Post-turn deltas and the next consequence envelope, expressed as effect signatures with conditions or branch structure. |
 | `CLOCK` | Which timer/window changes the fight? | Escalation, phase, spawn, escape, revive, recurrence, and expiring opportunity clocks. |
 | `?` | What unresolved fact could change a decision? | Hidden, stale, random, conflicting, unsupported, or unobserved inputs, named rather than guessed. |
@@ -84,40 +152,33 @@ signature states the target, amount and hit structure, ordered status/card/Power
 state/lifecycle effects, and their timing and conditions. It is the canonical
 human projection for both current and future enemy consequences.
 
-The collapsed six-chunk surface MUST NOT display enemy move IDs or titles. Names
-are excluded by default, not an optional renderer preference, and must not consume
-the phone thinking window. Move IDs and titles are **audit/navigation metadata
-only**. They are available in exact-detail drill-down when needed to join source
-facts or disambiguate traces; their presence in support data never licenses them
-as collapsed explanatory text. If a number, effect, target, order, timing, or
+The collapsed card MUST NOT display enemy move IDs or titles. Names are excluded
+by default, not an optional renderer preference, and must not consume the phone
+thinking window. Move IDs and titles are **audit/navigation metadata only**.
+They are available in exact-detail drill-down when needed to join source facts or
+disambiguate traces; their presence in support data never licenses them as
+collapsed explanatory text. If a number, effect, target, order, timing, or
 condition is unresolved, it remains typed as conditional/set/range/unknown. The
 renderer MUST NOT fall back to a move ID or title as if the name explained the
 missing semantics.
 
-`IN` and `OUT` may render as separate rows when space allows. Otherwise
-`OUT/NEXT` is one chunk. `FOCUS` is a conditional expansion of `BREAK`/fight
-detail, not a seventh always-present chunk: when its frontier changes a live
-multi-enemy decision, the collapsed renderer MAY label that slot `FOCUS` or show
-an expansion affordance; otherwise it is absent. A renderer SHOULD prefer one
-baseline, at most the few non-dominated decision-sensitive breakpoints or focus
-rows, and an effect-signature branch envelope over an action catalog. It MUST NOT
-remove uncertainty merely to meet the viewport budget. Overflow becomes a
-tap-through layer, not silent omission.
-
 Information is progressively disclosed:
 
-1. **Decision surface:** the six chunks, consequence-first and terse.
-2. **Fight expansion:** race only under a declared policy; otherwise windows,
-   clocks, a horizon-qualified removal frontier, recurrence, and persistent or
-   irreversible costs.
+1. **Decision surface:** zero or one room-level micro-card, normally a headline
+   and one decisive effect line, with an optional single flip line.
+2. **Expanded decision/fight view:** the six query families; race only under a
+   declared policy; otherwise windows, clocks, the complete horizon-qualified
+   removal frontier, recurrence, and persistent or irreversible costs.
 3. **Exact detail:** ordered operations, formulas, branch conditions, missing
    inputs, rule/input references, and any action ID/title needed for source joins
-   or trace disambiguation for each displayed claim.
+   or trace disambiguation for each claim.
 4. **Audit:** untouched lane facts, conflicts, checked evidence pointers, and raw
    source projection objects.
 
-Suppression at a higher level is view compression only. It MUST NOT delete or
-rewrite lower-level facts.
+Suppression at a higher level is view compression only. Every headline, reason,
+and flip MUST link through one tap to its exact claim, full frontier where
+applicable, provenance, and raw facts. Omission MUST NOT delete or rewrite
+lower-level facts.
 
 ## 3. The two products
 
@@ -167,9 +228,10 @@ turn. This definition avoids an implicit “typical play” policy and makes eve
 `BREAK` delta auditable.
 
 If the live observation cannot identify a required state, the result remains a
-set, conditional, range, or unknown. If no safe live frame can be formed, the UI
-falls back to the capsule with a visible reason; it does not make the capsule
-look current.
+set, conditional, range, or unknown. If no safe live frame can be formed, the
+selector emits `UNKNOWN` with one reason when the failure is safety-critical, or
+no tactical card otherwise. A `NOT LIVE` capsule remains available in expanded
+reference detail; it never looks current.
 
 ## 4. What matters at each horizon
 
@@ -307,7 +369,7 @@ reports **deltas**, not raw totals. The full vector contains at least:
 - the effective damage, control, timing, and resource requirements of reaching
   the settled removal cut.
 
-A compact target row is a projection of that vector and answers:
+A tap-through target row is a projection of that vector and answers:
 
 - **NOW:** what current-turn consequence disappears or is triggered at the cut;
 - **H2/H3/HN:** cumulative typed deltas by each selected horizon;
@@ -318,6 +380,10 @@ A compact target row is a projection of that vector and answers:
   delayed to later legal boundaries; and
 - **TRUTH:** the observation, RNG, lifecycle, formula, player-throughput, or
   source gap that could change the comparison.
+
+This vocabulary belongs to the expanded frontier. The collapsed card selects at
+most one horizon and two consequence coordinates from it; it never renders these
+columns or one row per target.
 
 “Effective HP” may be rendered as a scalar only when all cost components reduce
 to closed damage under the declared cut. Otherwise the cost remains a typed
@@ -342,11 +408,12 @@ forbidden: deadlines and removal thresholds are discontinuous, while death
 links, survivor rules, branch correlations, and lifecycle transitions are
 non-additive.
 
-When no scenario dominates, the renderer shows the two or three most
-decision-sensitive nondominated rows as a **Pareto frontier** and retains the
-rest in exact detail. It may explain “survival-first favors A” or “clean deck
-favors B” only after applying the visibly named user-selected policy. Without
-that policy it says `no strict winner`, not `best target`.
+When no scenario dominates, expanded detail preserves the complete **Pareto
+frontier**. The collapsed card may show only the selected pair as `A ↔ B`, with
+one differentiating coordinate per candidate; all other rows and policy details
+remain behind the tap. An expanded view may explain “survival-first favors A” or
+“clean deck favors B” only after applying the visibly named user-selected
+policy. Without that policy it says `no strict winner`, not `best target`.
 
 A `no-focus` result is also first-class. It is emitted when a declared feasible
 AoE, setup, defense, split-damage, or waiting scenario mechanically dominates
@@ -358,8 +425,8 @@ cost and throughput are declared, not generic advice.
 
 ### Relevance predicate
 
-A fact or trace distinction survives the collapsed reducer only when, before the
-declared horizon, it:
+A fact or trace distinction becomes eligible for collapsed-card selection only
+when, before the declared horizon, it:
 
 1. changes a player-relevant consequence;
 2. crosses a relevant HP, Block, lethal, hand-size, energy, or other mechanical
@@ -788,13 +855,15 @@ does not assign confidence or upgrade its inputs.
 ## 6. Phone DSL
 
 The renderer is a projection of the typed claims, not a second inference engine.
-Badges may be abbreviated visually, but tap-through MUST expose their full labels
+The collapsed card has no source/lane badges. Tap-through MUST expose full labels
 and lane refs.
 
 ### Static capsule available from the current knowledge boundary
 
-This six-line Axebot capsule is illustrative output that could be built offline
-from E1. It never says which branch is current and uses only effect signatures:
+This six-line Axebot capsule is illustrative **expanded reference detail** that
+could be built offline from E1. It is not a collapsed tactical card. With no live
+observation the default tactical surface may be empty; opening reference detail
+never says which branch is current and uses only effect signatures:
 
 ```text
 CAPSULE Axebot · Glory regular · A9/1P params · NOT LIVE
@@ -812,67 +881,83 @@ at 2, how its hooks order death/replacement, or the full spawn lifecycle. The A9
 numbers and detailed Stock prose above are visibly from the legacy annotation
 lane. They are useful reference material, not authoritative lifecycle closure.
 
-### Future live frame, using the fictional JSON fixture
+### Future live micro-card, using the fictional JSON fixture
+
+The fictional frame above contains all six internal query families. The default
+surface selects only the answer that changes the immediate action class. For a
+Block breakpoint that answer is two rows:
 
 ```text
-NOW      fixture only · obs #42 @ 00:00:00Z · A9/1P · you 50 HP/0 Block · Axebot 17 HP/0 Block, Stock 2
-IN       END NOW → 18 raw / 18 net, then Weak 2 + Frail 2 [derived; damage=legacyAnnotations:A9]
-BREAK    Block ≥18 → net 0; deal ≥17 → removal delta ? (Stock hooks) [derived, not advice]
-OUT/NEXT baseline you 50→32; then you: 11×2 [sequence=source-certain; value=legacyAnnotations:A9]
-CLOCK    Stock 2 observed; replacement/self: 15 Block + Strength 4/8 window is legacy-only until lifecycle gates close [observed, unknown]
-?        current app cannot observe these facts; formula closure, respawn count, Stock ordering, hand/feasibility missing [unknown]
+BLOCK 18
+0 HP loss · Weak/Frail remain
 ```
 
-`NOW` repeats HP/Block here only because those values explain both thresholds and
-the baseline delta. A real screen should omit any visible value that does not do
-such explanatory work.
-
-### Future multi-enemy `FOCUS` expansion
-
-These are separate fictional render fixtures, not current output. `A`, `B`, and
-`C` are stable observed body labels, not move names. The collapsed row exposes
-the selected horizon and decisive deltas; tapping it opens the complete
-`NOW/H2/H3/HN · LINK · COST · WINDOW · TRUTH` table and support refs.
-
-A nondominated tradeoff can render:
+No `NOW`, baseline, next envelope, clock, source label, or general unknown row is
+added merely because the frame contains one. Tapping the card opens those typed
+claims and their support. If the Stock lifecycle instead becomes the material
+fact blocking the current decision, the selected card fails closed:
 
 ```text
-FOCUS H2=end enemy turn 2 · feasible cuts only
-      remove A before act → −28 team dmg by H2; +0 statuses; cost 34 effective HP
-      remove B by H2       → −6 team dmg; −6 Wounds to draw pile/rotation; cost 19 effective HP
-      LINK remove C → stun A next turn
-      no strict winner · user policy: survival-first favors A; clean-deck favors B
+UNKNOWN
+Stock removal effect unresolved
 ```
 
-The two policy conclusions appear only when those profiles were explicitly
-selected. Without one, the final line stops at `no strict winner`. Exact detail
-retains `remove A first`, `remove B first`, and any decision-sensitive `do not
-split` allocation as separate scenarios, with per-player lethal margin, future
-Block/heal/scaling, body count, and persistent resource deltas even when the
-collapsed lines omit equivalent coordinates.
+### Future multi-enemy `FOCUS` micro-cards
 
-Closed inputs can prove dominance, but only for the displayed scope:
+These are separate fictional cards, never simultaneous cards and never one card
+per enemy. `A`, `B`, and `C` are compact observed target locators, not move names.
+Each card uses one primary horizon at most; tapping anywhere opens the complete
+`NOW/H2/H3/HN · LINK · COST · WINDOW · TRUTH` frontier and support refs.
+
+Strict dominance has no runner-up:
 
 ```text
-FOCUS H3=end enemy turn 3 · reachable cuts · declared mechanical ordering
-      A dominates through H3: −31 hostile dmg, −3 Wounds to discard, same removal cost
+FOCUS A
+−28 dmg by T2 · kill 34
 ```
 
-A non-removal policy can win the comparison without being disguised as a target:
+A nondominated pair uses one differentiating coordinate per candidate:
 
 ```text
-FOCUS no-focus through H2: reachable AoE scenario dominates every remove-first cut
-      −18 team dmg, same status pollution, 7 less resource; removes A+B at H2
+A ↔ B
+A: −28 dmg · B: −6 Wounds
 ```
 
-And incomplete lifecycle authority fails closed:
+A non-removal result is an answer, not a synthetic target:
 
 ```text
-FOCUS removal delta unknown · C death hook/replacement and survivor rule unresolved
+NO FOCUS
+defend survives · no kill reachable
 ```
 
-None of these rows names an enemy action. Every number expands to its paired END
-NOW trace, legal settled cut, observation/policy inputs, and source/lane support.
+Incomplete lifecycle authority fails closed without a caveat catalog:
+
+```text
+UNKNOWN
+C death effect unresolved
+```
+
+### Tap-through `FOCUS` detail (never collapsed)
+
+The rich frontier is retained exactly behind the card. For example, tapping the
+tradeoff above may open this matrix; it MUST NOT appear on the collapsed surface:
+
+```text
+FOCUS DETAIL · H2=end enemy turn 2 · feasible cuts only
+remove A before act → −28 team dmg by H2; +0 statuses; cost 34 effective HP
+remove B by H2       → −6 team dmg; −6 Wounds to draw pile/rotation; cost 19 effective HP
+LINK remove C → stun A next turn
+no strict winner · user policy: survival-first favors A; clean-deck favors B
+```
+
+The policy conclusions appear only when those profiles were explicitly selected.
+Without one, the final detail line stops at `no strict winner`. Exact detail
+retains `remove A first`, `remove B first`, every other frontier candidate, and
+any decision-sensitive `do not split` allocation as separate scenarios, with
+per-player lethal margin, future Block/heal/scaling, body count, persistent
+resource deltas, legal settled cuts, observation/policy inputs, and source/lane
+support. None of these rows names an enemy move; move IDs/titles remain audit-only
+join metadata.
 
 ## 7. Compiler and reducer pipeline
 
@@ -1044,16 +1129,22 @@ state- and horizon-dependent and must be recomputed after every observation cut.
 Facts used only to establish a displayed derivation remain available in its
 tap-through support even if they are not rendered as their own row.
 
-### 7.10 Render and retain audit paths
+### 7.10 Select one card and retain audit paths
 
-Render the stable six chunks from typed claims. In a decision-sensitive
-multi-enemy frame, the `BREAK` slot may collapse to `FOCUS`; the deeper horizon
-matrix remains tap-through rather than displacing the one-viewport budget. The
-renderer may abbreviate effect notation and combine equivalent rows, but cannot
-calculate new outcomes, scalarize the frontier, collapse uncertainty, introduce
-enemy move IDs/titles, or change labels. Every
-derived surface claim links to exact rule/input refs; every lane badge links to
-lane facts; conflicts link to both sides. Raw facts are the final audit layer.
+Apply the deterministic safety, relevance, and sensitivity priority in
+[Collapsed micro-card contract](#collapsed-micro-card-contract), returning
+`null` when no claim qualifies. Render at most one room-level card from the
+selected typed claim: a headline, at most one reason, and optionally one flip
+line. Enforce the three-row/two-row-target, one-horizon, two-coordinate,
+one-alternative, and one-uncertainty limits before output. A decision-sensitive
+frontier may produce `FOCUS A`, `A ↔ B`, `NO FOCUS`, or `UNKNOWN`; its complete
+horizon/target matrix always remains tap-through.
+
+The renderer may abbreviate effect notation, but cannot calculate new outcomes,
+scalarize the frontier, hide multiple material unknowns behind a positive
+conclusion, introduce enemy move IDs/titles, or change labels. Every derived
+surface claim links to exact rule/input refs; expanded lane badges link to lane
+facts; conflicts link to both sides. Raw facts are the final audit layer.
 
 ## 8. Uncertainty, provenance, and fail-closed rules
 
@@ -1063,10 +1154,10 @@ lane facts; conflicts link to both sides. Raw facts are the final audit layer.
 |---|---|
 | `observed` | Directly present in a time-stamped observation at the declared cut. It says nothing about static source certainty. |
 | `source-certain` | An unconditional authoritative rule under bound parameters. It does not claim that the rule's state is current. |
-| `source-conditional` | An authoritative rule whose condition or required runtime input is not fully selected. Show the condition/input. |
+| `source-conditional` | An authoritative rule whose condition or required runtime input is not fully selected. Preserve the condition/input in detail; show it collapsed only when selected as the one flip. |
 | `source-random` | Multiple source-declared eligible branches remain. It does not imply equal likelihood. |
 | `derived` | Computed from cited rules and inputs. This is provenance, not confidence. |
-| `unknown` | A missing, stale, conflicting, unsupported, or unclosed fact can affect the claim. Name it. |
+| `unknown` | A missing, stale, conflicting, unsupported, or unclosed fact can affect the claim. Name every gap in detail; the collapsed card may name only its one selected reason. |
 
 A claim may have multiple labels, such as `derived` + `unknown`. Lane identity is
 separate from labels. The visible `legacyAnnotations` badge in the examples is a
@@ -1104,8 +1195,8 @@ source probability.
 
 | Condition | Required output |
 |---|---|
-| No live turn observation (the current product) | Encounter capsule with `NOT LIVE`; no `NOW`, incoming prediction, or current threshold. |
-| Authority manifest/version mismatch or mod ambiguity | No source-derived live frame; show mismatch and capsule only if its version is explicit. |
+| No live turn observation (the current product) | No tactical card. An optional expanded encounter capsule says `NOT LIVE`; it has no `NOW`, incoming prediction, or current threshold. |
+| Authority manifest/version mismatch or mod ambiguity | No source-derived live frame. A safety-critical card says `UNKNOWN` with one mismatch reason; a version-explicit capsule is expanded detail only. |
 | Missing typed formula input | Preserve conditional/set/range/unknown and list the input; never use zero, midpoint, or legacy default. |
 | Unknown numeric/effect semantics | Preserve the known target/order/condition coordinates and mark the unresolved coordinates unknown; MUST NOT fall back to a move ID or title. |
 | Unsupported operation/hook/lifecycle | Stop affected traces at that boundary and mark downstream consequences unknown; never treat it as a no-op. |
@@ -1124,7 +1215,11 @@ source probability.
 
 Unknown is not zero damage, “probably no effect,” an empty list, or an enemy
 move name presented as explanation. Conditions, targets, hit structure, ordering,
-and ranges MUST remain machine-readable through rendering and tap-through.
+and ranges MUST remain machine-readable through rendering and tap-through. The
+failure table governs the rigorous frame and expanded detail; it does not require
+a collapsed caveat list. Safety-critical contradiction or staleness selects an
+`UNKNOWN` card with one decisive reason. If several material gaps remain, the
+card still says `UNKNOWN` and the tap-through lists them all.
 
 ## 9. Validation and usability criteria
 
@@ -1133,8 +1228,8 @@ and ranges MUST remain machine-readable through rendering and tap-through.
 A future implementation is acceptable only when automated fixtures establish:
 
 1. lane objects remain separate and every conflict keeps both refs/values;
-2. an input with no live turn observation produces a `NOT LIVE` capsule and
-   never current language;
+2. an input with no live turn observation produces no tactical card; any expanded
+   capsule says `NOT LIVE` and never uses current language;
 3. END NOW means no further actions from the exact observation cut;
 4. ordered operations produce ordered consequences, including between-hit hooks;
 5. missing HP/Block suppresses lethal/Block thresholds that require it;
@@ -1144,44 +1239,43 @@ A future implementation is acceptable only when automated fixtures establish:
 8. model identity never selects a hidden phase/state;
 9. distinct actions coalesce only by complete relevant consequence-vector
    equivalence for the declared horizon, never by equal name or intent;
-10. all six collapsed chunks exclude enemy move IDs/titles and express action
-    information as typed effect signatures;
-11. an unknown number or effect remains unknown instead of becoming a named-action
+10. an unknown number or effect remains unknown instead of becoming a named-action
     fallback;
-12. correlated branches do not become independent numeric ranges;
-13. probabilities appear only under the five closure conditions;
-14. stale, contradictory, unsupported, and trace-truncated inputs fail closed;
-15. every derived claim resolves all rule/input/lane refs;
-16. ascension, player count, act, and room parameters alter frames only through
+11. correlated branches do not become independent numeric ranges;
+12. probabilities appear only under the five closure conditions;
+13. stale, contradictory, unsupported, and trace-truncated inputs fail closed;
+14. every derived claim resolves all rule/input/lane refs;
+15. ascension, player count, act, and room parameters alter frames only through
     cited formulas/rules, with no hidden defaults;
-17. a focus candidate is drawn only from the realized lineup and its legal cut
+16. a focus candidate is drawn only from the realized lineup and its legal cut
     includes atomic-hit boundaries plus all ordered death, replacement, survivor,
     cross-body, and encounter-completion hooks;
-18. H1/H2/H3/HN focus rows compare paired scenario-minus-baseline deltas and keep
-    cumulative per-player HP/lethal, damage, card zone/rotation, Power/scaling,
-    body/lifecycle, cross-enemy, and persistent-cost coordinates;
-19. a fixture where removing C stuns A changes A's later branch and `LINK`, while
+17. internal H1/H2/H3/HN focus rows compare paired scenario-minus-baseline deltas
+    and retain cumulative per-player HP/lethal, damage, card zone/rotation,
+    Power/scaling, body/lifecycle, cross-enemy, and persistent-cost coordinates;
+18. a fixture where removing C stuns A changes A's later branch and `LINK`, while
     a revive/replacement fixture charges every required removal event to `COST`;
-20. invulnerability, Block, overkill, control immunity, target legality, and
+19. invulnerability, Block, overkill, control immunity, target legality, and
     observed/policy throughput can independently make cost or feasibility differ;
-21. delaying a cut across an act, spawn, scaling, or status-production boundary
+20. delaying a cut across an act, spawn, scaling, or status-production boundary
     recomputes `WINDOW` rather than linearly extrapolating the earliest delta;
-22. mechanical dominance appears only for the declared horizons, feasible set,
+21. mechanical dominance appears only for the declared horizons, feasible set,
     partial outcome ordering, and branch-wise closed comparison—never from an
     additive threat/HP score;
-23. incomparable reachable scenarios remain a Pareto frontier; “best target” is
-    absent unless dominance is proven or a visible user-selected policy is
-    applied;
-24. a declared AoE/setup/defense/split/wait scenario can produce `no-focus` only
+22. incomparable reachable scenarios remain a complete Pareto frontier internally;
+    “best target” is absent unless dominance is proven or a user-selected policy
+    is applied in expanded detail;
+23. a declared AoE/setup/defense/split/wait scenario can produce `no-focus` only
     when it dominates every immediate removal scenario, while a nondominated
-    non-removal case remains a tradeoff row;
-25. high hypothetical impact plus unknown/unreachable throughput never becomes
-    an actionable focus conclusion;
-26. unknown state, formula, branch coupling, lifecycle, or survivor behavior
-    blocks only affected deltas/comparisons and names the truth gap; and
-27. `FOCUS` replaces or expands `BREAK` only for a decision-sensitive realized
-    multi-enemy frame and its collapsed/tap-through render never introduces an
-    enemy move ID/title.
+    non-removal case remains a tradeoff;
+24. high hypothetical impact plus unknown/unreachable throughput never becomes an
+    actionable focus conclusion;
+25. unknown state, formula, branch coupling, lifecycle, or survivor behavior
+    blocks only affected deltas/comparisons and retains every truth gap in detail;
+    and
+26. `FOCUS` is eligible for card selection only for a decision-sensitive realized
+    multi-enemy frame; target/action titles cannot affect frontier membership or
+    selection, and enemy move IDs/titles never become human explanation.
 
 Closed trace fixtures should be compared with an independently reviewed oracle
 or captured deterministic game traces only after the observation and E2 source
@@ -1199,41 +1293,65 @@ Property tests SHOULD verify that adding a previously unknown belief branch
 cannot make the displayed envelope narrower or create a new dominance edge
 unless a cited observation/rule excludes that branch. They SHOULD also verify
 that every focus delta is paired to the same END NOW baseline cut and that
-permuting enemy action titles cannot change grouping, frontier membership, or
-rendered focus text.
+permuting enemy move titles cannot change grouping, frontier membership,
+card selection, or rendered text.
 
-Golden tests SHOULD lock the reducer and renderer separately. A renderer golden
-cannot substitute for trace correctness; a correct trace dump cannot substitute
-for cognitive usability.
+Golden tests SHOULD lock the authoritative reducer, card selector, collapsed
+renderer, and expanded renderer separately. A renderer golden cannot substitute
+for trace correctness; a correct trace dump cannot substitute for cognitive
+usability.
+
+### Collapsed-card validation
+
+Automated selector and renderer fixtures MUST establish that:
+
+1. the output is `null` or exactly one room-level tactical card, never one card
+   per enemy;
+2. a card has one headline, at most one reason, and at most one flip line: three
+   visible text rows maximum including the headline, with two the target;
+3. a card contains at most one primary horizon, two consequence coordinates, one
+   alternative/runner-up, and one uncertainty/condition;
+4. strict dominance has a direct headline with no runner-up; a Pareto card has
+   only `A ↔ B` and one differentiating coordinate per candidate; `NO FOCUS` has
+   one reason; and multiple material unknowns produce `UNKNOWN` rather than a
+   caveat list;
+5. safety-critical contradiction, staleness, lethal, and uncertainty follow the
+   safety gate before ordinary sensitivity ranking; all other ties follow the
+   declared boundary, reversibility, and stable-ID order;
+6. a multi-enemy frame does not imply a `FOCUS` card, and the absence of any
+   relevant claim produces `null` rather than filler;
+7. no empty query row, catalog, per-target table, source/lane label, confidence
+   prose, move title/ID, full effect sequence, audit ref, or repeated visible game
+   state appears;
+8. no collapsed card contains a full target frontier or more than two candidates;
+   and
+9. every omitted query, horizon, target, coordinate, condition, provenance ref,
+   and raw fact remains exact and reachable through the card's single tap target.
 
 ### Phone usability
 
 At a representative narrow phone viewport, without horizontal scrolling, a
 player should be able to:
 
-- identify END NOW raw/net incoming threat and ordered non-damage effects;
-- read each target, hit count, condition, and next consequence without enemy move
-  titles;
-- find the smallest displayed breakpoint and its delta without reading move ASTs;
-- in a decision-sensitive multi-enemy state, compare the two or three frontier
-  rows, selected horizon, removal cost, feasibility, and decisive `LINK` without
-  reading a static priority label;
-- distinguish mechanical dominance from a Pareto tradeoff or user-selected
-  preference, and recognize a valid `no-focus` result;
-- distinguish a condition/random set from a prediction;
-- identify the one or two `TRUTH` gaps that can change the immediate decision;
-- inspect fight clocks/windows/removal consequences without encountering a fake
-  TTK; and
-- tap from a derived number to its full horizon table, legal cut, rule, observed
-  inputs, policy, lane, and raw evidence.
+- read the answer and decisive reason in the target two rows;
+- recognize strict focus, a two-candidate tradeoff, `NO FOCUS`, a breakpoint, or
+  `UNKNOWN` without reading proof text;
+- understand the single displayed horizon and one or two decisive coordinates
+  without enemy move titles;
+- see at most one fact that can flip the answer and never mistake possibility for
+  prediction;
+- accept the absence of a card when no tactical claim is decision-sensitive; and
+- tap once from any displayed claim to the complete horizon/target frontier,
+  legal cut, ordered effects, conditions, rule and observed inputs, policy, lane,
+  and raw evidence.
 
-The collapsed view should fit roughly one viewport and six chunks. `FOCUS` uses
-the `BREAK` slot or its expansion affordance; its H2/H3/HN matrix does not become
-an always-visible seventh chunk. This is not a license to conceal a seventh
-decision-changing unknown: combine or abbreviate presentation, or expose a clear
-overflow indicator. Tests with experienced and
-new players should measure answer correctness first and speed/scrolling second.
-A surface that is terse but causes possibility to be read as prediction fails.
+Usability tests with experienced and new players SHOULD measure answer
+correctness, time-to-answer, scrolling, and row count. A build fails the collapsed
+contract if any card exceeds three visible text rows, if the normal design targets
+more than two, or if users must read a target table to recover the headline's
+meaning. Extra accurate information is not a defense for exceeding the budget.
+A surface that is terse but causes possibility to be read as prediction also
+fails.
 
 ## 10. Staged implementation plan
 
@@ -1297,8 +1415,9 @@ does not trigger state inference from screen conventions or model IDs.
   frontier classifications, and fail-closed reasons, and collect no unsupported
   confidence/probability metric. Stable output remains unchanged.
 - **C2 staged source-first UI:** render only claim families whose E2 and
-  observation gates are green; a partially green frontier exposes typed unknowns,
-  not a priority. Retain immediate rollback and visible legacy lane boundaries.
+  observation gates are green; a partially green frontier retains typed unknowns
+  and cannot become a positive focus conclusion. Retain immediate rollback and
+  expose legacy lane boundaries in tap-through detail only.
 - **C3/default switch:** require semantic fixtures (including dominance, Pareto,
   no-focus, infeasible, and lifecycle-unknown cases), trace-oracle validation,
   phone usability results, version/mismatch behavior, and QA approval before any
