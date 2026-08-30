@@ -1,4 +1,4 @@
-"""Pure builder for the compact E1 encounter projection."""
+"""Pure builder for the compact E2c1 encounter projection."""
 
 from __future__ import annotations
 
@@ -187,7 +187,11 @@ def _source_moves(source: dict[str, Any], monster_models: set[str], facts: _Fact
         applicable_models = [row["canonicalMonster"] for row in relation["applicableConcreteModels"]]
         owner = {
             "applicableConcreteModels": applicable_models,
-            "applicabilityKind": "directModel" if concrete and applicable_models == [canonical_monster] else "inheritedBehavior",
+            "applicabilityKind": (
+                "directModel" if concrete and applicable_models == [canonical_monster]
+                else "directModelWithInheritedApplicability" if concrete and canonical_monster in applicable_models
+                else "inheritedBehavior"
+            ),
             "canonicalMonster": canonical_monster, "classification": "concreteModel" if concrete else "abstractBehavior",
             "factId": fact_id, "sourceType": source_type,
         }
@@ -205,6 +209,54 @@ def _source_graphs(source: dict[str, Any], facts: _Facts) -> list[dict[str, Any]
         result.append({**_without_provenance(row), "factId": fact_id})
     return result
 
+
+
+def _source_event_turn_behavior(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
+    behavior = source["behavior"]
+    dependency_fact_ids: dict[str, str] = {}
+    dependencies = []
+    for index, row in enumerate(behavior["eventDependencies"]):
+        fact_id = "SOURCE." + row["dependencyId"]
+        dependency_fact_ids[row["dependencyId"]] = fact_id
+        facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE",
+                  [f"/behavior/eventDependencies/{index}"])
+        compact = {
+            "dependencyId": row["dependencyId"], "factId": fact_id,
+            "kind": row["kind"], "sourceRootSymbols": [root["symbolSignature"] for root in row["sourceRoots"]],
+            "sourceType": row["sourceType"], "status": row["status"],
+            "initialStateFactRefs": ["SOURCE." + ref for ref in row.get("initialStateFactRefs", [])],
+        }
+        dependencies.append(compact)
+
+    encounters = []
+    for index, row in enumerate(behavior["eventTurnMachines"]):
+        encounter_id = row["canonicalEncounter"]
+        fact_id = "SOURCE.EVENT_TURN." + encounter_id
+        facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE",
+                  [f"/behavior/eventTurnMachines/{index}"])
+        encounters.append({
+            "applicability": row["applicability"],
+            "behaviorClassification": row["behaviorClassification"],
+            "behaviorOwner": row["behaviorOwner"],
+            "behaviorOwnerRef": "SOURCE.BEHAVIOR_OWNER." + row["behaviorOwner"],
+            "behaviorOwnerSourceType": row["behaviorOwnerSourceType"],
+            "canonicalEncounter": encounter_id, "canonicalEvent": row["canonicalEvent"],
+            "canonicalModel": row["canonicalModel"],
+            "dependencyRefs": [dependency_fact_ids[ref] for ref in row["dependencyRefs"]],
+            "encounterRef": "SOURCE.ENCOUNTER." + encounter_id,
+            "eventLinkRef": "SOURCE.EVENT_LINK." + encounter_id,
+            "eventSourceType": row["eventSourceType"], "factId": fact_id,
+            "graphId": row["graphId"], "graphRef": "SOURCE." + row["graphId"],
+            "initialStateFactRefs": ["SOURCE." + ref for ref in row["initialStateFactRefs"]],
+            "modelRef": "SOURCE." + row["canonicalModel"],
+            "registrationRefs": ["SOURCE.MOVE." + ref.replace("#", ".") for ref in row["registrationIds"]],
+            "titles": _without_provenance(row["titles"]),
+        })
+    return {
+        "dependencies": dependencies, "encounters": encounters,
+        "invocationSummary": deepcopy(behavior["eventTurnInvocationCensus"]["summary"]),
+        "sourceDenominators": deepcopy(behavior["eventTurnSummary"]),
+    }
 
 
 def _source_placement(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
@@ -650,9 +702,6 @@ def _fallback_candidates(source_facts: dict[str, Any], legacy_annotations: dict[
     return result
 
 def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, Any]) -> list[dict[str, Any]]:
-    encounter_facts = [row["factId"] for kind in ("ordinary", "event") for row in source_facts["encounters"][kind]]
-    event_facts = [row["factId"] for row in source_facts["encounters"]["event"]]
-    monster_facts = [row["factId"] for row in source_facts["monsters"]]
     rows = [
         {
             "affectedFactIds": [row["factId"] for row in source_facts["initialState"]["facts"]],
@@ -667,10 +716,23 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
             "unknownId": "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
         },
         {
-            "affectedFactIds": event_facts,
-            "detail": "Event encounter identities and rosters are present, but event-model behavior coverage is an E2 prerequisite.",
-            "reasonCode": "EVENT_BEHAVIOR_COVERAGE_ABSENT", "scope": "encounterCompanion", "status": "unresolved",
+            "affectedFactIds": [row["factId"] for row in source_facts["eventTurnBehavior"]["encounters"]]
+                               + [row["factId"] for row in source_facts["eventTurnBehavior"]["dependencies"]],
+            "detail": "All eight normal/inherited/no-op event turn machines are source-complete, but scripted event behavior and event lifecycle/timeout/result semantics remain unresolved dependencies.",
+            "reasonCode": "EVENT_BEHAVIOR_AGGREGATE_INCOMPLETE", "scope": "encounterCompanion", "status": "unresolved",
             "unknownId": "UNKNOWN.EVENT_BEHAVIOR",
+        },
+        {
+            "affectedFactIds": [row["factId"] for row in source_facts["eventTurnBehavior"]["dependencies"] if row["kind"] == "scriptedEventSemantics"],
+            "detail": "The Architect's hidden no-op turn graph is not the externally scripted event state machine; dialogue, score, transition, and result semantics are reserved for E2c2.",
+            "reasonCode": "SCRIPTED_EVENT_BEHAVIOR_UNEXTRACTED", "scope": "encounterCompanion", "status": "unresolved",
+            "unknownId": "UNKNOWN.EVENT_SCRIPTED_BEHAVIOR",
+        },
+        {
+            "affectedFactIds": [row["factId"] for row in source_facts["eventTurnBehavior"]["dependencies"] if row["kind"] == "eventLifecycleTimeoutResultSemantics"],
+            "detail": "Battle Friend timeout Power hooks, escape, event resume, and result semantics remain lifecycle dependencies; synchronous no-op moves are not complete encounters.",
+            "reasonCode": "EVENT_LIFECYCLE_TIMEOUT_RESULT_UNEXTRACTED", "scope": "encounterCompanion", "status": "unresolved",
+            "unknownId": "UNKNOWN.EVENT_LIFECYCLE",
         },
         {
             "affectedFactIds": [row["factId"] for row in legacy_annotations["current"] + legacy_annotations["archive"]],
@@ -702,7 +764,15 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
 def _resolved_audits(source_facts: dict[str, Any]) -> list[dict[str, Any]]:
     helper = source_facts["scaling"]["hp"]
     pipeline = source_facts["hpPipeline"]
+    event_turn = source_facts["eventTurnBehavior"]
     return [{
+        "auditId": "AUDIT.RESOLVED.EVENT_TURN_MACHINES",
+        "boundary": "Scripted event behavior and lifecycle/timeout/result dependencies remain unresolved.",
+        "classificationFactRefs": [row["factId"] for row in event_turn["encounters"]],
+        "dependencyFactRefs": [row["factId"] for row in event_turn["dependencies"]],
+        "family": "eventTurnMachines", "historicalStatus": "sourceComplete",
+        "sourceDenominators": deepcopy(event_turn["sourceDenominators"]),
+    }, {
         "auditId": "AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING",
         "family": "hpAssignmentRounding",
         "historicalStatus": "resolved",
@@ -752,6 +822,7 @@ def _readiness(known_unknowns: list[dict[str, Any]]) -> dict[str, Any]:
                     "eventEncounterLinkage", "observationIdentity", "behaviorApplicability",
                     "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure",
                     "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage",
+                    "eventTurnClassificationDependencies",
                 ],
                 "status": "complete",
             },
@@ -767,8 +838,9 @@ def build_payload(source: dict[str, Any], legacy: dict[str, Any]) -> dict[str, A
     models = _source_models(source, facts)
     moves, owners = _source_moves(source, {row["canonicalModel"] for row in monsters}, facts)
     source_facts = {
-        "behaviorOwners": owners, "encounters": encounters, "graphs": _source_graphs(source, facts),
-        "models": models, "monsters": monsters, "moves": moves,
+        "behaviorOwners": owners, "encounters": encounters,
+        "eventTurnBehavior": _source_event_turn_behavior(source, facts),
+        "graphs": _source_graphs(source, facts), "models": models, "monsters": monsters, "moves": moves,
         "observationIdentities": _source_observation_identities(source, facts),
         "placement": _source_placement(source, facts), "scaling": _source_scaling(source, facts),
         "hpPipeline": _source_hp_pipeline(source, facts),

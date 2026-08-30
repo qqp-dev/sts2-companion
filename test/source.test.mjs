@@ -32,8 +32,8 @@ const exactManifest = [
 
 test("source artifact is canonical, exactly pinned, partial, and raw-only", () => {
   assert.equal(artifactBytes.toString("utf8"), `${JSON.stringify(sortedValue(artifact), null, 2)}\n`);
-  assert.equal(artifact.schemaVersion, 7);
-  assert.equal(artifact.extractorVersion, "7.0.0");
+  assert.equal(artifact.schemaVersion, 8);
+  assert.equal(artifact.extractorVersion, "8.0.0");
   assert.equal(artifact.runtimeReady, false);
   assert.equal(artifact.status, "incomplete");
   assert.deepEqual(artifact.inputs, exactManifest);
@@ -51,14 +51,26 @@ test("source artifact is canonical, exactly pinned, partial, and raw-only", () =
   assert.doesNotMatch(artifactBytes.toString("utf8"), /(?:generated|extracted|created)(?:At|_at)|timestamp/i);
 });
 
-test("coverage is denominator-based and Wave B combat families are complete or honestly classified", () => {
+test("coverage is denominator-based and current behavior families are complete or honestly classified", () => {
   const complete = {
     actCensus: 4,
-    behaviorGraphApplicability: 100,
-    behaviorOwnerApplicability: 100,
+    behaviorGraphApplicability: 105,
+    behaviorOwnerApplicability: 105,
     encounterPlacement: 89,
     eventEncounterLinkage: 8,
-    moveRegistrationApplicability: 307,
+    eventTurnClassifications: 8,
+    eventTurnDependencyClassifications: 4,
+    eventTurnDirectOperations: 6,
+    eventTurnIntentArguments: 5,
+    eventTurnIntentClassification: 6,
+    eventTurnInvocationClassification: 103,
+    eventTurnNoOpProofs: 4,
+    eventTurnOperations: 10,
+    eventTurnPhysicalOwners: 5,
+    eventTurnPhysicalRegistrations: 8,
+    eventTurnPhysicalTitlesEnglish: 8,
+    eventTurnReuseInheritanceApplicability: 3,
+    moveRegistrationApplicability: 315,
     observableIdentityDomain: 108,
     observableResourceRepresentations: 108,
     observableStateContracts: 8,
@@ -85,10 +97,10 @@ test("coverage is denominator-based and Wave B combat families are complete or h
     monsterNamesEnglishCurrentReachable: 108,
     monsterNamespaceCensus: 121,
     blockMultiplayerScaling: 1,
-    moveActions: 307,
-    moveIntentArguments: 311,
-    moveIntentClassification: 387,
-    moveOperations: 307,
+    moveActions: 315,
+    moveIntentArguments: 316,
+    moveIntentClassification: 393,
+    moveOperations: 315,
     encounterInitializers: 89,
     initialStateOwners: 108,
     initialStateEffectiveHooks: 108,
@@ -97,19 +109,19 @@ test("coverage is denominator-based and Wave B combat families are complete or h
     initialStatePowerHookClosure: 41,
     initialExternalHookBoundary: 29,
     initialStateSemanticFields: 1554,
-    invocationClassification: 6683,
-    moveRegistrationCensus: 307,
-    moveSelectionGraphs: 100,
-    moveTitleClassification: 307,
-    operationDirectSinks: 491,
-    operationSemanticFields: 1081,
+    invocationClassification: 6786,
+    moveRegistrationCensus: 315,
+    moveSelectionGraphs: 105,
+    moveTitleClassification: 315,
+    operationDirectSinks: 497,
+    operationSemanticFields: 1094,
     powerMultiplayerOptIns: 12,
     powerMultiplayerOverrides: 5,
   };
   for (const [family, denominator] of Object.entries(complete)) {
     assert.deepEqual(artifact.coverage[family], { denominator, numerator: denominator, status: "complete", unresolved: 0 }, family);
   }
-  assert.deepEqual(artifact.coverage.moveTitlesEnglish, { denominator: 307, numerator: 289, status: "classified", unresolved: 18 });
+  assert.deepEqual(artifact.coverage.moveTitlesEnglish, { denominator: 315, numerator: 297, status: "classified", unresolved: 18 });
   assert.equal(artifact.coverage.powerCardReferencedModels.status, "complete");
 });
 
@@ -175,7 +187,7 @@ test("E1 observation IDs are exact canonical models and states do not invent ali
 });
 
 test("E1 behavior applicability closes all owners, graphs, and registrations", () => {
-  assert.equal(artifact.behavior.applicability.length, 100);
+  assert.equal(artifact.behavior.applicability.length, 105);
   const byOwner = new Map(artifact.behavior.applicability.map((row) => [row.behaviorOwnerSourceType, row.applicableConcreteModels.map((item) => item.canonicalMonster)]));
   for (const row of [...artifact.behavior.graphs, ...artifact.behavior.registrations]) {
     assert.deepEqual(row.applicableConcreteModels, byOwner.get(row.sourceType), row.sourceType);
@@ -185,6 +197,8 @@ test("E1 behavior applicability closes all owners, graphs, and registrations", (
     "MONSTER.DECIMILLIPEDE_SEGMENT_BACK", "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT", "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
   ]);
   assert.equal(artifact.behavior.registrations.filter((row) => row.sourceType.endsWith(".DecimillipedeSegment") && row.applicableConcreteModels.length === 3).length, 5);
+  assert.deepEqual(byOwner.get("MegaCrit.Sts2.Core.Models.Monsters.FlailKnight"), ["MONSTER.FLAIL_KNIGHT", "MONSTER.MYSTERIOUS_KNIGHT"]);
+  assert.equal(artifact.behavior.graphs.filter((row) => row.canonicalMonster === "MONSTER.MYSTERIOUS_KNIGHT").length, 0);
 });
 
 test("monster census, identities, reachability, and exclusions are exact", () => {
@@ -383,13 +397,13 @@ test("source artifact is not consumed and runtime wiki book remains byte-identic
 const move = (id) => artifact.behavior.registrations.find((row) => row.canonicalId === id);
 const graph = (id) => artifact.behavior.graphs.find((row) => row.graphId === id);
 
-test("Wave B registrations, async split, titles, and intents are exact", () => {
-  assert.equal(artifact.behavior.registrations.length, 307);
-  assert.equal(artifact.behavior.summary.asyncActions, 301);
-  assert.equal(artifact.behavior.summary.synchronousNoOpActions, 6);
-  assert.equal(artifact.behavior.summary.localizedTitles, 289);
+test("event-inclusive registrations, async split, titles, and intents are exact", () => {
+  assert.equal(artifact.behavior.registrations.length, 315);
+  assert.equal(artifact.behavior.summary.asyncActions, 305);
+  assert.equal(artifact.behavior.summary.synchronousNoOpActions, 10);
+  assert.equal(artifact.behavior.summary.localizedTitles, 297);
   assert.equal(artifact.behavior.summary.missingOrInternalTitles, 18);
-  assert.equal(artifact.behavior.graphs.length, 100);
+  assert.equal(artifact.behavior.graphs.length, 105);
   const missing = artifact.behavior.registrations.filter((row) => row.title.classification !== "localized");
   assert.equal(missing.length, 18);
   for (const row of missing) {
@@ -403,10 +417,10 @@ test("Wave B registrations, async split, titles, and intents are exact", () => {
   assert.equal(ebb.intents[1].kind, "block");
   assert.equal(move("MONSTER.WRIGGLER#SPAWNED_MOVE").execution.kind, "synchronousNoOp");
 
-  assert.equal(artifact.behavior.summary.intentConstructorSites, 387);
-  assert.equal(artifact.behavior.summary.resolvedIntentConstructorSites, 387);
-  assert.equal(artifact.behavior.summary.requiredIntentArguments, 311);
-  assert.equal(artifact.behavior.summary.resolvedIntentArguments, 311);
+  assert.equal(artifact.behavior.summary.intentConstructorSites, 393);
+  assert.equal(artifact.behavior.summary.resolvedIntentConstructorSites, 393);
+  assert.equal(artifact.behavior.summary.requiredIntentArguments, 316);
+  assert.equal(artifact.behavior.summary.resolvedIntentArguments, 316);
   const delegateArgument = (moveId) => move(moveId).intents.flatMap((intent) => intent.arguments)
     .find((argument) => argument.kind === "sourceDelegate");
   const multiClaw = move("MONSTER.TEST_SUBJECT#MULTI_CLAW_MOVE").intents[0];
@@ -433,25 +447,25 @@ test("Wave B registrations, async split, titles, and intents are exact", () => {
 
 test("direct sinks, helpers, and dynamic fixtures remain formulas", () => {
   assert.deepEqual(artifact.behavior.summary.directSinkCounts, {
-    addGeneratedCard: 6, addStatusCard: 14, applyPower: 126, attack: 204,
-    attackHitCount: 49, escape: 2, gainBlock: 23, heal: 2, kill: 2,
+    addGeneratedCard: 6, addStatusCard: 14, applyPower: 128, attack: 207,
+    attackHitCount: 50, escape: 2, gainBlock: 23, heal: 2, kill: 2,
     removeCard: 1, removePower: 6, stateWrite: 51, summon: 5,
   });
-  assert.equal(artifact.behavior.summary.directSinkSites, 491);
-  assert.equal(artifact.behavior.summary.requiredSemanticFields, 1081);
-  assert.equal(artifact.behavior.summary.resolvedSemanticFields, 1081);
+  assert.equal(artifact.behavior.summary.directSinkSites, 497);
+  assert.equal(artifact.behavior.summary.requiredSemanticFields, 1094);
+  assert.equal(artifact.behavior.summary.resolvedSemanticFields, 1094);
   assert.deepEqual(artifact.behavior.invocationCensus.summary, {
     classificationCounts: {
-      normalizedGameplayOperation: 508,
-      provenNonGameplayPlumbing: 5095,
-      traversedGameplayHelper: 1080,
+      normalizedGameplayOperation: 514,
+      provenNonGameplayPlumbing: 5171,
+      traversedGameplayHelper: 1101,
     },
-    denominator: 6683, directDenominator: 6332, helperDenominator: 351,
-    resolved: 6683, unresolved: 0, vocabularySize: 1156, directVocabularySize: 1041,
+    denominator: 6786, directDenominator: 6418, helperDenominator: 368,
+    resolved: 6786, unresolved: 0, vocabularySize: 1172, directVocabularySize: 1049,
   });
-  assert.equal(artifact.behavior.invocationCensus.decisions.length, 6683);
-  assert.equal(new Set(artifact.behavior.invocationCensus.decisions.map((row) => row.invocationId)).size, 6683);
-  assert.equal(artifact.behavior.invocationCensus.decisions.filter((row) => row.invocationId.startsWith("HELPER.")).length, 351);
+  assert.equal(artifact.behavior.invocationCensus.decisions.length, 6786);
+  assert.equal(new Set(artifact.behavior.invocationCensus.decisions.map((row) => row.invocationId)).size, 6786);
+  assert.equal(artifact.behavior.invocationCensus.decisions.filter((row) => row.invocationId.startsWith("HELPER.")).length, 368);
   for (const [kind, count] of Object.entries(artifact.behavior.summary.directSinkCounts)) {
     assert.deepEqual(artifact.coverage.operationDirectSinksByKind[kind], { denominator: count, numerator: count, status: "complete", unresolved: 0 });
   }
@@ -522,11 +536,74 @@ test("direct sinks, helpers, and dynamic fixtures remain formulas", () => {
   }
 });
 
+test("E2c1 event turn machines close all eight links without claiming script or lifecycle", () => {
+  const eventRows = new Map(artifact.behavior.eventTurnMachines.map((row) => [row.canonicalEncounter, row]));
+  assert.equal(eventRows.size, 8);
+  assert.deepEqual([...eventRows.values()].map((row) => row.behaviorClassification).sort(), [
+    "inheritedTurnMachine", "noOpTurnMachineWithLifecycle", "noOpTurnMachineWithLifecycle",
+    "noOpTurnMachineWithLifecycle", "normalTurnMachine", "normalTurnMachine", "normalTurnMachine",
+    "scriptedNonTurnCombat",
+  ]);
+  for (const version of [1, 2, 3]) {
+    const row = eventRows.get(`BATTLEWORN_DUMMY_EVENT_V${version}_ENCOUNTER`);
+    assert.equal(row.behaviorClassification, "noOpTurnMachineWithLifecycle");
+    assert.deepEqual(row.registrationIds, [`MONSTER.BATTLE_FRIEND_V${version}#NOTHING_MOVE`]);
+    assert.equal(move(row.registrationIds[0]).operations[0].transition, "noOp");
+    assert.deepEqual(graph(row.graphId).stateCollection, {
+      cardinality: 1,
+      constructor: "<TypeSpec:1512b75001128848>::.ctor sig:2001011300",
+      elementType: "MoveState", kind: "readOnlySingle",
+      orderedNodes: [`GRAPH.BATTLE_FRIEND_V${version}/NOTHING_MOVE`],
+    });
+    assert.equal(row.dependencyRefs.length, 1);
+    assert.equal(row.initialStateFactRefs.length, 1);
+  }
+  const fake = eventRows.get("FAKE_MERCHANT_EVENT_ENCOUNTER");
+  assert.equal(fake.behaviorClassification, "normalTurnMachine");
+  assert.deepEqual(fake.registrationIds.map((id) => id.split("#")[1]), ["SWIPE_MOVE", "SPEW_COINS_MOVE", "THROW_RELIC_MOVE", "ENRAGE_MOVE"]);
+  assert.deepEqual(fake.titles.map((row) => row.title.english), ["Swipe", "Spew Coins", "Throw Relic", "Enrage"]);
+  const fakeGraph = graph(fake.graphId);
+  assert.deepEqual(fakeGraph.topology, { conditionalBranches: 0, conditionalNodes: 0, followUpEdges: 4, moveNodes: 4, mustOnceFlags: 0, randomBranches: 7, randomNodes: 2 });
+  assert.deepEqual(fakeGraph.stateCollection.orderedNodes.map((id) => id.split("/")[1]), ["SWIPE_MOVE", "SPEW_COINS_MOVE", "THROW_RELIC_MOVE", "ENRAGE_MOVE", "RAND_MOVE", "RAND_ATTACK_MOVE"]);
+  assert.equal(fakeGraph.edges.filter((edge) => edge.kind === "randomBranch").length, 7);
+  const fakeMoves = fake.registrationIds.map(move);
+  assert.equal(fakeMoves.flatMap((row) => row.intents).length, 5);
+  assert.deepEqual(fakeMoves.flatMap((row) => row.operations).map((op) => op.kind), ["attack", "attack", "attackHitCount", "attack", "applyPower", "applyPower"]);
+  assert.deepEqual(fakeMoves.flatMap((row) => row.operations).filter((op) => op.kind === "applyPower").map((op) => op.model), ["POWER.FRAIL_POWER", "POWER.STRENGTH_POWER"]);
+  const concat = artifact.behavior.invocationCensus.decisions.find((row) => row.evidence.symbolSignature.startsWith("System.String::Concat"));
+  assert.equal(concat.role, "dialogueLocalizationKeyConstruction");
+  assert.match(concat.sourceMethod, /FakeMerchantMonster::GetLinesForMove/);
+
+  const mysterious = eventRows.get("MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER");
+  assert.equal(mysterious.behaviorClassification, "inheritedTurnMachine");
+  assert.equal(mysterious.behaviorOwner, "MONSTER.FLAIL_KNIGHT");
+  assert.equal(artifact.behavior.graphs.filter((row) => row.canonicalMonster === "MONSTER.MYSTERIOUS_KNIGHT").length, 0);
+  assert.deepEqual(mysterious.titles.map((row) => row.title.localizationRoot), Array(3).fill("MYSTERIOUS_KNIGHT"));
+  assert.ok(graph("GRAPH.FLAIL_KNIGHT").applicableConcreteModels.includes("MONSTER.MYSTERIOUS_KNIGHT"));
+  assert.equal(eventRows.get("DENSE_VEGETATION_EVENT_ENCOUNTER").graphId, "GRAPH.WRIGGLER");
+  assert.equal(eventRows.get("PUNCH_OFF_EVENT_ENCOUNTER").graphId, "GRAPH.PUNCH_CONSTRUCT");
+  const architect = eventRows.get("THE_ARCHITECT_EVENT_ENCOUNTER");
+  assert.equal(architect.behaviorClassification, "scriptedNonTurnCombat");
+  assert.equal(move(architect.registrationIds[0]).intents[0].kind, "hidden");
+  assert.equal(move(architect.registrationIds[0]).operations[0].transition, "noOp");
+  assert.equal(architect.dependencyRefs.length, 1);
+  assert.deepEqual(artifact.behavior.eventTurnSummary, {
+    classifications: 8, eventIntentArguments: 5, eventIntentConstructorSites: 6,
+    eventTurnDirectOperations: 6, eventTurnOperationsIncludingNoOpProofs: 10,
+    noOpProofs: 4, physicalOwners: 5, physicalRegistrations: 8,
+    physicalTitles: 8, reuseOrInheritanceApplicability: 3,
+  });
+  assert.deepEqual(artifact.behavior.eventTurnInvocationCensus.summary, {
+    classificationCounts: { normalizedGameplayOperation: 6, provenNonGameplayPlumbing: 76, traversedGameplayHelper: 21 },
+    denominator: 103, resolved: 103, unresolved: 0,
+  });
+});
+
 test("selection graphs preserve topology, Flyconid/Fabricator/Decimillipede fixtures, and referential integrity", () => {
   const topo = artifact.behavior.summary.topology;
   assert.deepEqual(topo, {
-    behaviorClasses: 100, bothBranchKinds: 2, conditionalClasses: 16, conditionalNodes: 17,
-    followUpAssignments: 309, moveConstructors: 307, mustOnceFlags: 4, randomClasses: 20, randomNodes: 22,
+    behaviorClasses: 105, bothBranchKinds: 2, conditionalClasses: 16, conditionalNodes: 17,
+    followUpAssignments: 317, moveConstructors: 315, mustOnceFlags: 4, randomClasses: 21, randomNodes: 24,
   });
   const fly = graph("GRAPH.FLYCONID");
   assert.equal(fly.initial, "GRAPH.FLYCONID/INITIAL");
@@ -706,4 +783,89 @@ test("E2a selected Power hooks and runtime contracts are explicit", () => {
   assert.deepEqual(contracts.get("RUNTIME.COMBAT.CURRENT_SIDE").domain,
     { maximum: 2, minimum: 0 });
   assert.deepEqual(artifact.observationIdentities.aliases, []);
+});
+
+test("E2c1 README and world-model census claims match schema 8 summary and coverage", () => {
+  const markdown = (url) => readFileSync(new URL(url, import.meta.url), "utf8").replace(/\s+/g, " ").trim();
+  const readme = markdown("../README.md");
+  const worldModel = markdown("../docs/source-world-model.md");
+  const has = (document, claim) => assert.ok(document.includes(claim.replace(/\s+/g, " ").trim()), claim);
+  const count = (value) => value.toLocaleString("en-US");
+  const word = (value) => ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"][value] ?? String(value);
+
+  const behavior = artifact.behavior;
+  const summary = behavior.summary;
+  const topology = summary.topology;
+  const invocations = behavior.invocationCensus.summary;
+  const eventSummary = behavior.eventTurnSummary;
+  const eventInvocations = behavior.eventTurnInvocationCensus.summary;
+  const coverage = artifact.coverage;
+
+  // Bind every documented E2c1 family to both the source summary and its coverage denominator.
+  assert.equal(coverage.moveRegistrationCensus.denominator, topology.moveConstructors);
+  assert.equal(coverage.moveRegistrationCensus.denominator, behavior.registrations.length);
+  assert.equal(coverage.moveSelectionGraphs.denominator, topology.behaviorClasses);
+  assert.equal(coverage.moveSelectionGraphs.denominator, behavior.graphs.length);
+  assert.equal(coverage.moveIntentClassification.denominator, summary.intentConstructorSites);
+  assert.equal(coverage.moveIntentArguments.denominator, summary.requiredIntentArguments);
+  assert.equal(coverage.invocationClassification.denominator, invocations.denominator);
+  assert.equal(coverage.operationDirectSinks.denominator, summary.directSinkSites);
+  assert.equal(coverage.operationSemanticFields.denominator, summary.requiredSemanticFields);
+  assert.equal(coverage.moveTitlesEnglish.denominator, topology.moveConstructors);
+  assert.equal(coverage.moveTitlesEnglish.numerator, summary.localizedTitles);
+  assert.equal(coverage.moveTitlesEnglish.unresolved, summary.missingOrInternalTitles);
+  assert.equal(coverage.eventTurnClassifications.denominator, behavior.eventTurnMachines.length);
+  assert.equal(coverage.eventTurnPhysicalOwners.denominator, eventSummary.physicalOwners);
+  assert.equal(coverage.eventTurnPhysicalRegistrations.denominator, eventSummary.physicalRegistrations);
+  assert.equal(coverage.eventTurnInvocationClassification.denominator, eventInvocations.denominator);
+  assert.equal(coverage.eventTurnDirectOperations.denominator, eventSummary.eventTurnDirectOperations);
+  assert.equal(coverage.eventTurnNoOpProofs.denominator, eventSummary.noOpProofs);
+
+  const registrations = new Map(behavior.registrations.map((row) => [row.canonicalId, row]));
+  const graphs = new Map(behavior.graphs.map((row) => [row.graphId, row]));
+  const fake = behavior.eventTurnMachines.find((row) => row.canonicalEncounter === "FAKE_MERCHANT_EVENT_ENCOUNTER");
+  const fakeMoves = fake.registrationIds.map((id) => registrations.get(id));
+  const fakeOperations = fakeMoves.flatMap((row) => row.operations);
+  const operationCount = (kind) => fakeOperations.filter((row) => row.kind === kind).length;
+  const fakePowers = fakeOperations.filter((row) => row.kind === "applyPower").map((row) => row.model);
+  const fakeGraph = graphs.get(fake.graphId);
+  assert.deepEqual(fakePowers, ["POWER.FRAIL_POWER", "POWER.STRENGTH_POWER"]);
+
+  const priorDirectSites = summary.directSinkSites - eventSummary.eventTurnDirectOperations;
+  const originalDirectSites = priorDirectSites
+    - summary.directSinkCounts.kill
+    - summary.directSinkCounts.removePower
+    - summary.directSinkCounts.stateWrite;
+  assert.equal(summary.directSinkSites, Object.values(summary.directSinkCounts).reduce((total, value) => total + value, 0));
+
+  has(readme, `Schema ${artifact.schemaVersion} remains deliberately`);
+  has(readme, `Title localization is classified ${summary.localizedTitles}/${topology.moveConstructors} with ${summary.missingOrInternalTitles} explicit missing/internal keys`);
+  has(readme, `${topology.moveConstructors} current move registrations from all reachable behavior classes plus the abstract Decimillipede segment implementation (${summary.asyncActions} async via \`AsyncStateMachineAttribute\`, ${word(summary.synchronousNoOpActions)} exact \`Task.CompletedTask\` no-ops)`);
+  has(readme, `${summary.localizedTitles} shipped English titles joined by localization root/state`);
+  has(readme, `${summary.intentConstructorSites} constructed intent sites across all ${topology.moveConstructors} moves and all ${summary.requiredIntentArguments} constructor arguments`);
+  has(readme, `a closed census of ${count(invocations.denominator)} invocations: ${count(invocations.directDenominator)} direct sites in the ${summary.asyncActions} generated move bodies plus ${invocations.helperDenominator} unique recursively traversed helper sites`);
+  has(readme, `the combined ${count(invocations.vocabularySize)}-symbol census contains ${invocations.classificationCounts.normalizedGameplayOperation} normalized gameplay operations/effects, ${count(invocations.classificationCounts.traversedGameplayHelper)} traversed gameplay/support helpers, and ${count(invocations.classificationCounts.provenNonGameplayPlumbing)} source-proven compiler, async, collection, formula, wait, or presentation calls`);
+  has(readme, `${summary.directSinkSites} direct normalized sites: the prior ${priorDirectSites} (the original ${originalDirectSites} sinks plus ${summary.directSinkCounts.kill} self-kills, ${summary.directSinkCounts.removePower} Power removals, and ${summary.directSinkCounts.stateWrite} typed monster state writes) plus ${word(eventSummary.eventTurnDirectOperations)} Fake Merchant sites (${operationCount("attack")} attacks, ${operationCount("attackHitCount")} hit-count site, Frail \`applyPower\`, and Strength \`applyPower\`)`);
+  has(readme, `with all ${count(summary.requiredSemanticFields)} required semantic fields resolved`);
+  has(readme, `${topology.behaviorClasses} selection graphs with ${topology.moveConstructors} move constructors, ${topology.followUpAssignments} follow-up assignments, ${topology.randomNodes} random nodes, ${topology.conditionalNodes} conditional nodes, ${word(topology.mustOnceFlags)} must-once flags`);
+  has(readme, `${topology.behaviorClasses} behavior owners/graphs and all ${topology.moveConstructors} registrations to reachable concrete models`);
+  has(readme, `Source enumeration yields ${topology.behaviorClasses} physical graph owners and ${topology.moveConstructors} registrations. ${word(eventSummary.physicalOwners)[0].toUpperCase()}${word(eventSummary.physicalOwners).slice(1)} physical graphs and ${word(eventSummary.physicalRegistrations)} registrations are newly included`);
+  has(readme, `Fake Merchant | \`normalTurnMachine\` | ${word(fake.registrationIds.length)[0].toUpperCase()}${word(fake.registrationIds.length).slice(1)} localized moves, ${word(fakeGraph.topology.randomNodes)} random nodes, ${word(fakeMoves.flatMap((row) => row.intents).length)} intent constructors, ${word(operationCount("attack"))} attacks, ${word(operationCount("attackHitCount"))} hit count, Frail, and Strength are closed.`);
+  has(readme, `The event slice closes ${eventInvocations.denominator} invocation sites, ${word(eventSummary.eventTurnDirectOperations)} direct gameplay operations, and ${word(eventSummary.noOpProofs)} explicit no-op proofs with zero unresolved.`);
+  has(readme, `deterministic schema ${JSON.parse(readFileSync(new URL("../data/encounter-facts-v0.111.0.json", import.meta.url))).schemaVersion} compact projection`);
+  has(readme, `(schema ${artifact.schemaVersion} raw source facts)`);
+
+  has(worldModel, `Schema ${artifact.schemaVersion} is the E2c1 boundary`);
+  has(worldModel, `exact metadata inheritance closure for all ${topology.behaviorClasses} behavior graph owners`);
+  has(worldModel, `The ${summary.intentConstructorSites} constructor sites contain ${summary.requiredIntentArguments} required arguments`);
+  has(worldModel, `separately count ${summary.intentConstructorSites} classified constructors and ${summary.requiredIntentArguments} resolved arguments`);
+  has(worldModel, `Every one of the ${count(invocations.directDenominator)} direct \`call\`, \`callvirt\`, and \`newobj\` sites in the ${summary.asyncActions} current \`MoveNext\` bodies, plus ${invocations.helperDenominator} unique recursively reached helper sites`);
+  has(worldModel, `The combined ${count(invocations.denominator)}-site census contains ${count(invocations.vocabularySize)} exact source symbols and resolves ${invocations.classificationCounts.normalizedGameplayOperation} / ${count(invocations.classificationCounts.traversedGameplayHelper)} / ${count(invocations.classificationCounts.provenNonGameplayPlumbing)} sites respectively`);
+  has(worldModel, `The ${count(invocations.denominator)}-site combined invocation census (${count(invocations.directDenominator)} direct plus ${invocations.helperDenominator} helper), ${summary.directSinkSites} direct-operation census`);
+  has(worldModel, `separately from ${count(summary.requiredSemanticFields)}/${count(summary.resolvedSemanticFields)} required semantic fields`);
+  has(worldModel, `The physical domain is ${topology.behaviorClasses} owners/graphs and ${topology.moveConstructors} registrations. ${word(eventSummary.physicalOwners)[0].toUpperCase()}${word(eventSummary.physicalOwners).slice(1)} owners and ${word(eventSummary.physicalRegistrations)} registrations are event additions`);
+  has(worldModel, `Fake Merchant contributes ${word(fake.registrationIds.length)} localized moves, ${word(fakeGraph.topology.randomNodes)} random nodes/${word(fakeGraph.topology.randomBranches)} random branches, ${word(fakeMoves.flatMap((row) => row.intents).length)} intent sites/${word(eventSummary.eventIntentArguments)} arguments, ${word(operationCount("attack"))} attacks, ${word(operationCount("attackHitCount"))} attack hit-count, Frail, and Strength.`);
+  has(worldModel, `The event subset classifies ${eventInvocations.denominator} calls (${word(eventInvocations.classificationCounts.normalizedGameplayOperation)} gameplay, ${eventInvocations.classificationCounts.traversedGameplayHelper} traversed helpers, ${eventInvocations.classificationCounts.provenNonGameplayPlumbing} narrow non-gameplay plumbing)`);
+  has(worldModel, `projects ${word(eventSummary.classifications)} classification facts, ${word(behavior.eventDependencies.length)} unresolved dependency facts`);
+  has(worldModel, `the ${count(invocations.denominator)}-invocation census`);
 });

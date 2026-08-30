@@ -7,6 +7,7 @@ after all records have been derived from the assembly.
 """
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass
 import copy
 import hashlib
@@ -27,6 +28,12 @@ from .cil_eval import (CilDataFlow, CilType, Invocation, SymbolicValue, contains
 MONSTER_NS = "MegaCrit.Sts2.Core.Models.Monsters."
 MOVE_CTOR = "MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.MoveState::.ctor sig:200301"
 MACHINE_CTOR = "MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.MonsterMoveStateMachine::.ctor"
+MOVE_STATE_LIST_CTOR = "<TypeSpec:1512809901128848>::.ctor sig:200001"
+MOVE_STATE_LIST_ADD = "<TypeSpec:1512809901128848>::Add sig:2001011300"
+# ReadOnlyCollection<MoveState>(MoveState).  Both the generic element TypeSpec
+# and exact one-argument overload are part of the accepted source shape.
+MOVE_STATE_READ_ONLY_SINGLE_CTOR = "<TypeSpec:1512b75001128848>::.ctor sig:2001011300"
+ABSTRACT_INTENT_ARRAY_TYPE = "MegaCrit.Sts2.Core.MonsterMoves.Intents.AbstractIntent"
 FOLLOW_UP = "MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.MoveState::set_FollowUpState"
 MUST_ONCE = "MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.MoveState::set_MustPerformOnceBeforeTransitioning"
 RANDOM_CTOR = "MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine.RandomBranchState::.ctor"
@@ -46,7 +53,7 @@ REQUIRED_SEMANTIC_FIELDS = {
     "removePower": 2, "stateWrite": 2,
 }
 EXPECTED_SINKS = {
-    "attack": 204, "applyPower": 126, "attackHitCount": 49,
+    "attack": 207, "applyPower": 128, "attackHitCount": 50,
     "gainBlock": 23, "addStatusCard": 14, "addGeneratedCard": 6,
     "summon": 5, "escape": 2, "heal": 2, "removeCard": 1,
     "kill": 2, "removePower": 6, "stateWrite": 51,
@@ -387,6 +394,7 @@ def _compile_graph(record: dict[str, Any], canonical: str, graph_id: str, source
     nodes: dict[str, dict[str, Any]] = {}
     edges: list[dict[str, Any]] = []
     initials: list[str] = []
+    machine_collections: list[dict[str, Any]] = []
     seen: set[tuple[Any, ...]] = set()
 
     def node_from(value: Any) -> str | None:
@@ -462,9 +470,21 @@ def _compile_graph(record: dict[str, Any], canonical: str, graph_id: str, source
             elif opcode in {"ldfld", "ldflda"}:
                 pop(); push(("field", operand, False))
             elif opcode == "newarr":
-                pop(); push(("array", operand))
+                count = pop()
+                if not (isinstance(count, tuple) and count[0] == "int" and count[1] >= 0):
+                    raise SourceExtractionError("array cardinality unresolved")
+                if operand != ABSTRACT_INTENT_ARRAY_TYPE:
+                    raise SourceExtractionError(f"unknown graph array element type {operand}")
+                push({"kind": "array", "elementType": operand, "elements": [None] * count[1]})
             elif opcode == "stelem.ref":
-                pop(); pop(); pop()
+                value, index, array = pop(), pop(), pop()
+                if not (isinstance(array, dict) and array.get("kind") == "array"):
+                    raise SourceExtractionError("array join unresolved")
+                if not (isinstance(index, tuple) and index[0] == "int" and 0 <= index[1] < len(array["elements"])):
+                    raise SourceExtractionError("array index/cardinality unresolved")
+                if array["elements"][index[1]] is not None:
+                    raise SourceExtractionError("duplicate graph array element assignment")
+                array["elements"][index[1]] = value
             elif opcode == "rem":
                 right, left = pop(), pop(); push(("rem", left, right))
             elif opcode in {"call", "callvirt", "newobj"}:
@@ -517,11 +537,26 @@ def _compile_graph(record: dict[str, Any], canonical: str, graph_id: str, source
                         edge["predicate"] = {"kind": "reference", "reference": predicate_symbol, "valueType": "boolean"}
                     edges.append(edge)
                 elif operand.startswith(MACHINE_CTOR):
+                    if operand != MACHINE_CTOR + " sig:200201151281f501128848128848":
+                        raise SourceExtractionError(f"unknown machine constructor overload {operand}")
                     initial, listing = pop(), pop()
                     node_id = node_from(initial)
                     if node_id is None:
                         raise SourceExtractionError("machine initial state unresolved")
+                    if not (isinstance(listing, dict) and listing.get("kind") in {"genericList", "readOnlySingle"}
+                            and listing.get("elementType") == "MoveState"):
+                        raise SourceExtractionError("machine state collection shape unresolved")
+                    ordered_nodes = [node_from(value) for value in listing["elements"]]
+                    if not ordered_nodes or any(value is None for value in ordered_nodes):
+                        raise SourceExtractionError("machine state collection element join unresolved")
+                    if len(ordered_nodes) != len(set(ordered_nodes)):
+                        raise SourceExtractionError("machine state collection has duplicate nodes")
                     initials.append(node_id)
+                    machine_collections.append({
+                        "cardinality": len(ordered_nodes), "constructor": listing["constructor"],
+                        "elementType": listing["elementType"], "kind": listing["kind"],
+                        "orderedNodes": ordered_nodes,
+                    })
                     push(("machine", node_id))
                 elif operand.endswith("::.ctor sig:2002011c18") or operand.startswith("<TypeSpec:151281c102") or operand.startswith("<TypeSpec:151281bd01"):
                     method, receiver = pop(), pop()
@@ -530,12 +565,25 @@ def _compile_graph(record: dict[str, Any], canonical: str, graph_id: str, source
                     count = _param_count(operand) or 0
                     for _ in range(count): pop()
                     push(("intent", operand))
-                elif operand.startswith("<TypeSpec:1512809901128848>::.ctor"):
-                    push(("list", []))
-                elif operand.startswith("<TypeSpec:1512809901128848>::Add"):
-                    pop(); pop()
+                elif operand == MOVE_STATE_LIST_CTOR:
+                    push({"kind": "genericList", "elementType": "MoveState", "elements": [], "constructor": operand})
+                elif operand == MOVE_STATE_LIST_ADD:
+                    value, listing = pop(), pop()
+                    if not (isinstance(listing, dict) and listing.get("kind") == "genericList"
+                            and listing.get("elementType") == "MoveState" and node_from(value) is not None):
+                        raise SourceExtractionError("generic move-state collection Add join unresolved")
+                    listing["elements"].append(value)
+                elif operand == MOVE_STATE_READ_ONLY_SINGLE_CTOR:
+                    value = pop()
+                    if node_from(value) is None:
+                        raise SourceExtractionError("read-only move-state collection element join unresolved")
+                    push({"kind": "readOnlySingle", "elementType": "MoveState", "elements": [value], "constructor": operand})
+                elif operand.startswith("<TypeSpec:1512b75001128848>::.ctor"):
+                    raise SourceExtractionError(f"unknown read-only move-state collection overload {operand}")
                 elif "System.Array::Empty" in operand:
-                    push(("array", "empty"))
+                    if operand != "System.Array::Empty sig:1001001d1e00 generic:MegaCrit.Sts2.Core.MonsterMoves.Intents.AbstractIntent":
+                        raise SourceExtractionError(f"unknown empty graph array element type or overload {operand}")
+                    push({"kind": "array", "elementType": ABSTRACT_INTENT_ARRAY_TYPE, "elements": []})
                 elif "::get_" in operand or "::set_" in operand or "HasValue" in operand or "GetValueOrDefault" in operand:
                     count = _param_count(operand)
                     if count is None:
@@ -576,6 +624,10 @@ def _compile_graph(record: dict[str, Any], canonical: str, graph_id: str, source
     if not nodes:
         raise SourceExtractionError(f"no graph nodes in {record['symbolSignature']}")
     unique_initials = list(dict.fromkeys(initials))
+    unique_collections = {witness_sha256(row): row for row in machine_collections}
+    if len(unique_collections) != 1:
+        raise SourceExtractionError(f"machine state collection join is ambiguous in {record['symbolSignature']}")
+    state_collection = next(iter(unique_collections.values()))
     seen_edges = []
     seen_keys = set()
     for edge in edges:
@@ -599,7 +651,8 @@ def _compile_graph(record: dict[str, Any], canonical: str, graph_id: str, source
         "graphId": graph_id,
         "initial": unique_initials[0] if len(unique_initials)==1 else unique_initials,
         "nodes": sorted(nodes.values(), key=lambda n: n["nodeId"]),
-        "provenance": _slice_provenance(record, instructions, {"initial": unique_initials, "topology": topology}),
+        "stateCollection": state_collection,
+        "provenance": _slice_provenance(record, instructions, {"initial": unique_initials, "stateCollection": state_collection, "topology": topology}),
         "sourceType": source_type,
         "topology": topology,
     }
@@ -1080,6 +1133,222 @@ def _operations(assembly: AssemblyMetadata, assembly_sha256: str,
     return operations,counts,semantic_fields,semantic_denominator,audit.decisions,audit_summary
 
 
+
+def attach_event_turn_behavior(
+    assembly: AssemblyMetadata,
+    assembly_sha256: str,
+    behavior: dict[str, Any],
+    event_encounters: list[Mapping[str, Any]],
+    event_linkage: list[Mapping[str, Any]],
+    initial_state: Mapping[str, Any],
+    event_only_models: set[str],
+    localization: Mapping[str, Any],
+    *,
+    pck_sha256: str,
+    localization_blob_sha256: str,
+) -> None:
+    """Join every source event encounter to its reachable physical turn machine.
+
+    This closes only normal/inherited/no-op turn graphs.  Script and lifecycle
+    roots are retained as explicit unresolved dependencies for later slices.
+    """
+    links = {row["canonicalEncounter"].removeprefix("ENCOUNTER."): row for row in event_linkage}
+    if len(links) != len(event_linkage) or set(links) != {row["canonicalId"] for row in event_encounters}:
+        raise SourceExtractionError("event turn linkage/encounter domain mismatch")
+    relations = behavior["applicability"]
+    graphs_by_type = {row["sourceType"]: row for row in behavior["graphs"]}
+    registrations_by_type: dict[str, list[dict[str, Any]]] = {}
+    for row in behavior["registrations"]:
+        registrations_by_type.setdefault(row["sourceType"], []).append(row)
+    initial_facts = {row["factId"]: row for row in initial_state["initialStateFacts"]}
+
+    def method(owner: str, name: str) -> dict[str, Any]:
+        matches = assembly.find_methods(owner, name)
+        if len(matches) != 1:
+            raise SourceExtractionError(f"event dependency method is unresolved: {owner}::{name}")
+        return _method(assembly.method_record(matches[0], assembly_sha256), include_slice=True)
+
+    timeout_owner = "MegaCrit.Sts2.Core.Models.Powers.BattlewornDummyTimeLimitPower"
+    timeout_hook: dict[str, Any] | None = None
+    dependencies: dict[str, dict[str, Any]] = {}
+    rows: list[dict[str, Any]] = []
+    physical_owner_types: set[str] = set()
+    physical_registration_ids: set[str] = set()
+    event_intent_sites = 0
+    event_intent_arguments = 0
+    no_op_proofs = 0
+    reused_or_inherited = 0
+
+    for encounter in sorted(event_encounters, key=lambda row: row["canonicalId"]):
+        encounter_id = encounter["canonicalId"]
+        link = links[encounter_id]
+        models = encounter["possibleMonsters"]
+        if not isinstance(models, list) or len(models) != 1 or not isinstance(models[0], str):
+            raise SourceExtractionError(f"event turn model domain is not a unique source model: {encounter_id}")
+        model = models[0]
+        matching_relations = [
+            relation for relation in relations
+            if any(item["canonicalMonster"] == model for item in relation["applicableConcreteModels"])
+        ]
+        if len(matching_relations) != 1:
+            raise SourceExtractionError(f"event model has {len(matching_relations)} behavior-owner joins: {model}")
+        relation = matching_relations[0]
+        owner_type = relation["behaviorOwnerSourceType"]
+        graph = graphs_by_type.get(owner_type)
+        registrations = registrations_by_type.get(owner_type)
+        if graph is None or not registrations:
+            raise SourceExtractionError(f"event behavior owner graph/registrations unresolved: {owner_type}")
+        applicable = [item["canonicalMonster"] for item in relation["applicableConcreteModels"]]
+        if model not in applicable or graph["applicableConcreteModels"] != applicable:
+            raise SourceExtractionError(f"event graph applicability mismatch: {encounter_id}")
+        if any(row["applicableConcreteModels"] != applicable for row in registrations):
+            raise SourceExtractionError(f"event registration applicability mismatch: {encounter_id}")
+
+        event_titles = []
+        for registration in registrations:
+            resolved_title = _title(
+                registration["stateId"], model, localization,
+                pck_sha256=pck_sha256, blob_sha256=localization_blob_sha256,
+            )
+            if resolved_title["classification"] != "localized":
+                raise SourceExtractionError(f"event move title is not localized: {model}#{registration['stateId']}")
+            event_titles.append({"stateId": registration["stateId"], "title": resolved_title})
+
+        direct = graph["canonicalMonster"] == model
+        all_no_op = all(row["execution"]["kind"] == "synchronousNoOp" for row in registrations)
+        no_op_shape = (
+            all_no_op
+            and all(
+                len(row["operations"]) == 1
+                and row["operations"][0].get("kind") == "transition"
+                and row["operations"][0].get("operationId") == row["canonicalId"] + "/op/0"
+                and "sourceOrder" not in row["operations"][0]
+                and row["operations"][0].get("transition") == "noOp"
+                and isinstance(row["operations"][0].get("provenance"), dict)
+                for row in registrations
+            )
+            and all(node["kind"] == "move" for node in graph["nodes"])
+        )
+        dependency_refs: list[str] = []
+        initial_fact_refs: list[str] = []
+        if not direct:
+            classification = "inheritedTurnMachine"
+            reused_or_inherited += 1
+        elif no_op_shape and link.get("nonPoolPlacement", {}).get("kind") == "scriptedRunTransition":
+            classification = "scriptedNonTurnCombat"
+            dependency_id = "EVENT_DEPENDENCY.SCRIPTED." + encounter_id
+            roots = [method(link["eventSourceType"], name) for name in ("OnRoomEnter", "AdvanceDialogue", "WinRun")]
+            dependencies[dependency_id] = {
+                "dependencyId": dependency_id, "kind": "scriptedEventSemantics",
+                "sourceType": link["eventSourceType"], "status": "unresolved", "sourceRoots": roots,
+            }
+            dependency_refs.append(dependency_id)
+            no_op_proofs += len(registrations)
+        elif no_op_shape:
+            timeout_facts = [
+                fact for fact in initial_facts.values()
+                if model in fact["applicableModels"]
+                and fact["effect"] == {"kind": "applyPower", "model": "POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER"}
+            ]
+            if len(timeout_facts) != 1:
+                raise SourceExtractionError(f"synchronous event no-op lacks exact timeout lifecycle fact: {encounter_id}")
+            if timeout_hook is None:
+                timeout_hook = method(timeout_owner, "AfterSideTurnEnd")
+            classification = "noOpTurnMachineWithLifecycle"
+            dependency_id = "EVENT_DEPENDENCY.LIFECYCLE." + encounter_id
+            initial_fact_refs = [timeout_facts[0]["factId"]]
+            dependencies[dependency_id] = {
+                "dependencyId": dependency_id, "initialStateFactRefs": initial_fact_refs,
+                "kind": "eventLifecycleTimeoutResultSemantics", "sourceType": timeout_owner,
+                "status": "unresolved", "sourceRoots": [timeout_hook],
+            }
+            dependency_refs.append(dependency_id)
+            no_op_proofs += len(registrations)
+        else:
+            classification = "normalTurnMachine"
+            if graph["canonicalMonster"] != model:
+                raise SourceExtractionError(f"normal event behavior is not directly applicable: {encounter_id}")
+            if model not in event_only_models:
+                reused_or_inherited += 1
+
+        if classification in {"normalTurnMachine", "inheritedTurnMachine"} and dependency_refs:
+            raise SourceExtractionError(f"complete turn-machine classification has dependency refs: {encounter_id}")
+        if classification in {"noOpTurnMachineWithLifecycle", "scriptedNonTurnCombat"} and len(dependency_refs) != 1:
+            raise SourceExtractionError(f"incomplete event classification lacks dependency ref: {encounter_id}")
+        rows.append({
+            "applicability": "direct" if direct else "inherited",
+            "behaviorClassification": classification,
+            "behaviorOwner": graph["canonicalMonster"], "behaviorOwnerSourceType": owner_type,
+            "canonicalEncounter": encounter_id, "canonicalEvent": link["canonicalEvent"],
+            "canonicalModel": model, "dependencyRefs": dependency_refs,
+            "eventSourceType": link["eventSourceType"], "graphId": graph["graphId"],
+            "initialStateFactRefs": initial_fact_refs,
+            "registrationIds": [registration["canonicalId"] for registration in registrations],
+            "titles": event_titles,
+        })
+        if direct and model in event_only_models:
+            physical_owner_types.add(owner_type)
+            physical_registration_ids.update(row["canonicalId"] for row in registrations)
+            event_intent_sites += sum(len(row["intents"]) for row in registrations)
+            event_intent_arguments += sum(len(intent["arguments"]) for row in registrations for intent in row["intents"])
+
+    event_owner_models = {row["canonicalModel"] for row in rows if row["behaviorOwnerSourceType"] in physical_owner_types}
+    all_decisions = behavior["invocationCensus"]["decisions"]
+    direct_event_decisions = [
+        decision for decision in all_decisions
+        if any(decision["invocationId"].startswith(model + "#") for model in event_owner_models)
+    ]
+    traversed_event_methods = {
+        method["symbolSignature"]
+        for decision in direct_event_decisions
+        if decision["classification"] == "traversedGameplayHelper"
+        and decision.get("role") == "sourceMethodBody"
+        for method in decision["evidence"]["traversedMethods"]
+    }
+    event_decisions = direct_event_decisions + [
+        decision for decision in all_decisions
+        if decision.get("sourceMethod") in traversed_event_methods
+    ]
+    event_decision_ids = {row["invocationId"] for row in event_decisions}
+    if len(event_decision_ids) != len(event_decisions):
+        raise SourceExtractionError("event invocation decision IDs are not unique")
+    event_direct_operations = sum(
+        len(row["operations"]) for row in behavior["registrations"]
+        if row["canonicalId"] in physical_registration_ids
+        and row["execution"]["kind"] != "synchronousNoOp"
+    )
+    physical_titles = sum(
+        len(row["titles"]) for row in rows if row["behaviorOwnerSourceType"] in physical_owner_types
+    )
+    behavior["eventDependencies"] = sorted(dependencies.values(), key=lambda row: row["dependencyId"])
+    behavior["eventTurnMachines"] = rows
+    behavior["eventTurnInvocationCensus"] = {
+        "decisionRefs": sorted(event_decision_ids),
+        "summary": {
+            "denominator": len(event_decisions), "resolved": len(event_decisions), "unresolved": 0,
+            "classificationCounts": dict(sorted(Counter(row["classification"] for row in event_decisions).items())),
+        },
+    }
+    behavior["eventTurnSummary"] = {
+        "classifications": len(rows), "eventIntentArguments": event_intent_arguments,
+        "eventIntentConstructorSites": event_intent_sites,
+        "eventTurnDirectOperations": event_direct_operations,
+        "eventTurnOperationsIncludingNoOpProofs": event_direct_operations + no_op_proofs,
+        "noOpProofs": no_op_proofs, "physicalOwners": len(physical_owner_types),
+        "physicalRegistrations": len(physical_registration_ids), "physicalTitles": physical_titles,
+        "reuseOrInheritanceApplicability": reused_or_inherited,
+    }
+    expected = {
+        "classifications": 8, "eventIntentArguments": 5, "eventIntentConstructorSites": 6,
+        "eventTurnDirectOperations": 6, "eventTurnOperationsIncludingNoOpProofs": 10,
+        "noOpProofs": 4, "physicalOwners": 5, "physicalRegistrations": 8,
+        "physicalTitles": 8, "reuseOrInheritanceApplicability": 3,
+    }
+    if behavior["eventTurnSummary"] != expected:
+        raise SourceExtractionError(f"event turn regression disagreement: {behavior['eventTurnSummary']!r}")
+    if len(event_decisions) != 103:
+        raise SourceExtractionError(f"event invocation regression disagreement: {len(event_decisions)}/103")
+
 def extract_behavior(assembly: AssemblyMetadata, assembly_sha256: str, pck_sha256: str,
                      monsters: list[Mapping[str,Any]], reachable_models: list[str], localization: Mapping[str,Any],
                      localization_blob_sha256: str) -> dict[str, Any]:
@@ -1109,15 +1378,15 @@ def extract_behavior(assembly: AssemblyMetadata, assembly_sha256: str, pck_sha25
         "conditionalClasses":sum(x["topology"]["conditionalNodes"]>0 for x in graphs),
         "bothBranchKinds":sum(x["topology"]["randomNodes"]>0 and x["topology"]["conditionalNodes"]>0 for x in graphs),
     }
-    expected_topology={"behaviorClasses":100,"moveConstructors":307,"followUpAssignments":309,
-                       "randomNodes":22,"conditionalNodes":17,"mustOnceFlags":4,
-                       "randomClasses":20,"conditionalClasses":16,"bothBranchKinds":2}
+    expected_topology={"behaviorClasses":105,"moveConstructors":315,"followUpAssignments":317,
+                       "randomNodes":24,"conditionalNodes":17,"mustOnceFlags":4,
+                       "randomClasses":21,"conditionalClasses":16,"bothBranchKinds":2}
     failures=[]
-    if (len(registrations),async_count,sync_count)!=(307,301,6): failures.append(f"registration census {len(registrations)}/{async_count}/{sync_count}")
-    if localized!=289: failures.append(f"localized move titles {localized}/307")
+    if (len(registrations),async_count,sync_count)!=(315,305,10): failures.append(f"registration census {len(registrations)}/{async_count}/{sync_count}")
+    if localized!=297: failures.append(f"localized move titles {localized}/315")
     if sink_counts!=EXPECTED_SINKS: failures.append(f"sink census {sink_counts!r}")
     if topology!=expected_topology: failures.append(f"topology census {topology!r}")
-    if failures: raise SourceExtractionError("Wave B regression disagreement: "+"; ".join(failures))
+    if failures: raise SourceExtractionError("event-inclusive behavior regression disagreement: "+"; ".join(failures))
     return {"applicability":applicability,"excludedRegistrations":excluded,"graphs":graphs,"registrations":registrations,
             "invocationCensus":{"decisions":invocation_decisions,"summary":invocation_summary},
             "summary":{"asyncActions":async_count,"synchronousNoOpActions":sync_count,

@@ -330,7 +330,26 @@ class ClosedWorldInvocationAudit:
             "symbolSignature": invocation.symbol,
         }
         command_kind = GAMEPLAY_COMMANDS.get((owner, member))
-        if command_kind is not None:
+        fake_merchant_key_context = (
+            owner == "System.String" and member == "Concat" and signature == "00040e0e0e0e0e"
+            and method_symbol == "MegaCrit.Sts2.Core.Models.Monsters.FakeMerchantMonster::GetLinesForMove sig:2001151281f50112a4480e"
+            and len(invocation.arguments) == 4
+            and invocation.arguments[0].kind == "call"
+            and invocation.arguments[0].data == "MegaCrit.Sts2.Core.Models.ModelId::get_Entry sig:20000e"
+            and len(invocation.arguments[0].operands) == 1
+            and invocation.arguments[0].operands[0].kind == "call"
+            and invocation.arguments[0].operands[0].data == "MegaCrit.Sts2.Core.Models.AbstractModel::get_Id sig:20001288dc"
+            and len(invocation.arguments[0].operands[0].operands) == 1
+            and invocation.arguments[0].operands[0].operands[0].kind == "argument"
+            and invocation.arguments[0].operands[0].operands[0].data == "0"
+            and invocation.arguments[1].kind == "string" and invocation.arguments[1].data == ".moves."
+            and invocation.arguments[2].kind == "argument" and invocation.arguments[2].data == "1"
+            and invocation.arguments[3].kind == "string" and invocation.arguments[3].data == ".speakLine"
+        )
+        if fake_merchant_key_context:
+            result = {"classification": "provenNonGameplayPlumbing", "role": "dialogueLocalizationKeyConstruction",
+                      "evidence": {**identity, "rule": "exactFakeMerchantDialogueLocalizationKeyConcatContext"}}
+        elif command_kind is not None:
             result = {"classification": "normalizedGameplayOperation", "normalizedKind": command_kind,
                       "evidence": {**identity, "rule": "exactGameplayCommandDeclaration"}}
         elif owner.startswith(_COMMAND_PREFIX):

@@ -7,7 +7,7 @@ from typing import Any
 
 from . import EXTRACTOR_VERSION, SCHEMA_VERSION
 from .canonical import canonical_json_bytes, strict_json_bytes, witness_sha256
-from .behavior import extract_behavior
+from .behavior import attach_event_turn_behavior, extract_behavior
 from .ast import validate_operation
 from .combat_scaling import extract_combat_scaling
 from .encounters import extract_rosters
@@ -192,13 +192,18 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
         hp_pipeline = extract_hp_pipeline(assembly, dll.sha256)
         monster_l10n, monster_l10n_blob = _localization(verified, _MONSTER_LOCALIZATION)
         behavior = extract_behavior(assembly, dll.sha256, pck.sha256, world["concrete"],
-                                    rosters["ordinaryReachableModels"], monster_l10n,
+                                    rosters["reachableModels"], monster_l10n,
                                     monster_l10n_blob["entrySha256"])
         behavior["scaling"] = extract_combat_scaling(assembly, dll.sha256)
         encounters, encounter_blob = _encounter_records(verified, census, rosters)
         initial_state = extract_initial_state(
             assembly, dll.sha256, world["concrete"], encounters["ordinary"] + encounters["event"],
             reachable_models=set(rosters["reachableModels"]), power_scaling=behavior["scaling"]["power"],
+        )
+        attach_event_turn_behavior(
+            assembly, dll.sha256, behavior, encounters["event"], placement["eventLinkage"],
+            initial_state, set(rosters["eventOnlyModels"]), monster_l10n, pck_sha256=pck.sha256,
+            localization_blob_sha256=monster_l10n_blob["entrySha256"],
         )
         for move in behavior["registrations"]:
             for index, operation in enumerate(move["operations"]):
@@ -268,6 +273,18 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             "behaviorOwnerApplicability": complete(len(behavior["applicability"]), len(behavior["graphs"])),
             "encounterPlacement": complete(len(placement["encounters"]), placement["sourceDenominators"]["currentEncounterPlacements"]),
             "eventEncounterLinkage": complete(len(placement["eventLinkage"]), placement["sourceDenominators"]["eventEncounterLinks"]),
+            "eventTurnClassifications": complete(behavior["eventTurnSummary"]["classifications"], len(encounters["event"])),
+            "eventTurnDependencyClassifications": complete(len(behavior["eventDependencies"]), len(behavior["eventDependencies"])),
+            "eventTurnDirectOperations": complete(behavior["eventTurnSummary"]["eventTurnDirectOperations"], behavior["eventTurnSummary"]["eventTurnDirectOperations"]),
+            "eventTurnIntentArguments": complete(behavior["eventTurnSummary"]["eventIntentArguments"], behavior["eventTurnSummary"]["eventIntentArguments"]),
+            "eventTurnIntentClassification": complete(behavior["eventTurnSummary"]["eventIntentConstructorSites"], behavior["eventTurnSummary"]["eventIntentConstructorSites"]),
+            "eventTurnInvocationClassification": complete(behavior["eventTurnInvocationCensus"]["summary"]["resolved"], behavior["eventTurnInvocationCensus"]["summary"]["denominator"]),
+            "eventTurnNoOpProofs": complete(behavior["eventTurnSummary"]["noOpProofs"], behavior["eventTurnSummary"]["noOpProofs"]),
+            "eventTurnOperations": complete(behavior["eventTurnSummary"]["eventTurnOperationsIncludingNoOpProofs"], behavior["eventTurnSummary"]["eventTurnOperationsIncludingNoOpProofs"]),
+            "eventTurnPhysicalOwners": complete(behavior["eventTurnSummary"]["physicalOwners"], behavior["eventTurnSummary"]["physicalOwners"]),
+            "eventTurnPhysicalRegistrations": complete(behavior["eventTurnSummary"]["physicalRegistrations"], behavior["eventTurnSummary"]["physicalRegistrations"]),
+            "eventTurnPhysicalTitlesEnglish": complete(behavior["eventTurnSummary"]["physicalTitles"], behavior["eventTurnSummary"]["physicalTitles"]),
+            "eventTurnReuseInheritanceApplicability": complete(behavior["eventTurnSummary"]["reuseOrInheritanceApplicability"], behavior["eventTurnSummary"]["reuseOrInheritanceApplicability"]),
             "observableIdentityDomain": complete(len(observation_identities["entries"]), observation_identities["sourceDenominators"]["observableIds"]),
             "observableResourceRepresentations": complete(len(observation_identities["resourceRepresentations"]), observation_identities["sourceDenominators"]["resourceRepresentations"]),
             "observableStateContracts": complete(len(observation_identities["stateObservationContracts"]), observation_identities["sourceDenominators"]["stateObservationContracts"]),
@@ -295,16 +312,16 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             "monsterNamesEnglishCurrentReachable": complete(name_data["joinedCount"], 108),
             "monsterNamespaceCensus": complete(121, 121),
             "blockMultiplayerScaling": complete(1, 1),
-            "moveActions": complete(behavior["summary"]["asyncActions"] + behavior["summary"]["synchronousNoOpActions"], 307),
+            "moveActions": complete(behavior["summary"]["asyncActions"] + behavior["summary"]["synchronousNoOpActions"], 315),
             "moveIntentArguments": complete(behavior["summary"]["resolvedIntentArguments"], behavior["summary"]["requiredIntentArguments"]),
             "moveIntentClassification": complete(behavior["summary"]["resolvedIntentConstructorSites"], behavior["summary"]["intentConstructorSites"]),
-            "moveOperations": complete(len(behavior["registrations"]), 307),
-            "moveRegistrationCensus": complete(len(behavior["registrations"]), 307),
-            "moveSelectionGraphs": complete(len(behavior["graphs"]), 100),
-            "moveTitleClassification": complete(len(behavior["registrations"]), 307),
-            "moveTitlesEnglish": {"denominator": 307, "numerator": behavior["summary"]["localizedTitles"], "status": "classified", "unresolved": 18},
+            "moveOperations": complete(len(behavior["registrations"]), 315),
+            "moveRegistrationCensus": complete(len(behavior["registrations"]), 315),
+            "moveSelectionGraphs": complete(len(behavior["graphs"]), 105),
+            "moveTitleClassification": complete(len(behavior["registrations"]), 315),
+            "moveTitlesEnglish": {"denominator": 315, "numerator": behavior["summary"]["localizedTitles"], "status": "classified", "unresolved": 18},
             "invocationClassification": complete(behavior["invocationCensus"]["summary"]["resolved"], behavior["invocationCensus"]["summary"]["denominator"]),
-            "operationDirectSinks": complete(behavior["summary"]["directSinkSites"], 491),
+            "operationDirectSinks": complete(behavior["summary"]["directSinkSites"], 497),
             "operationSemanticFields": complete(behavior["summary"]["resolvedSemanticFields"], behavior["summary"]["requiredSemanticFields"]),
             "operationDirectSinksByKind": {
                 kind: complete(count, count)

@@ -151,6 +151,26 @@ def _initial_state_variable_names(value: Any) -> set[str]:
     walk(value)
     return result
 
+
+def _validate_state_collection(value: Any, path: str, node_ids: set[str]) -> None:
+    row = _object(value, path, {"cardinality", "constructor", "elementType", "kind", "orderedNodes"})
+    if row["elementType"] != "MoveState":
+        _fail(path + ".elementType", "unknown graph collection element type")
+    constructors = {
+        "genericList": "<TypeSpec:1512809901128848>::.ctor sig:200001",
+        "readOnlySingle": "<TypeSpec:1512b75001128848>::.ctor sig:2001011300",
+    }
+    if row["kind"] not in constructors or row["constructor"] != constructors[row["kind"]]:
+        _fail(path, "unknown graph collection constructor/overload")
+    ordered = _list(row["orderedNodes"], path + ".orderedNodes")
+    cardinality = _integer(row["cardinality"], path + ".cardinality", minimum=1)
+    if cardinality != len(ordered) or len(ordered) != len(set(ordered)):
+        _fail(path, "graph collection order/cardinality is inconsistent")
+    if row["kind"] == "readOnlySingle" and cardinality != 1:
+        _fail(path + ".cardinality", "read-only single-element constructor cardinality changed")
+    if any(node not in node_ids for node in ordered):
+        _fail(path + ".orderedNodes", "graph collection element join is unknown")
+
 def _validate_source_document(source: dict[str, Any]) -> None:
     if source.get("schemaVersion") != SOURCE_SCHEMA_VERSION:
         _fail("source.schemaVersion", f"expected {SOURCE_SCHEMA_VERSION}")
@@ -214,8 +234,8 @@ def _validate_source_document(source: dict[str, Any]) -> None:
         if f"MONSTER.{row['canonicalId']}" in current_models:
             _validate_name(row["name"], path + ".name")
     registrations = source["behavior"]["registrations"]
-    if len(registrations) != 307:
-        _fail("source.behavior.registrations", "expected 307 registrations")
+    if len(registrations) != 315:
+        _fail("source.behavior.registrations", "expected 315 registrations")
     move_ids = _unique(registrations, "canonicalId", "source.behavior.registrations")
     operation_ids: set[str] = set()
     for index, row in enumerate(registrations):
@@ -225,9 +245,40 @@ def _validate_source_document(source: dict[str, Any]) -> None:
             if op_id in operation_ids:
                 _fail(f"source.behavior.registrations[{index}].operations[{op_index}].operationId", "duplicate operation ID")
             operation_ids.add(op_id)
+    behavior_summary = source["behavior"].get("summary", {})
+    derived_intents = sum(len(row["intents"]) for row in registrations)
+    derived_intent_arguments = sum(len(intent["arguments"]) for row in registrations for intent in row["intents"])
+    derived_async = sum(row["execution"]["kind"] == "asyncStateMachine" for row in registrations)
+    derived_no_op = sum(row["execution"]["kind"] == "synchronousNoOp" for row in registrations)
+    derived_localized = sum(row["title"]["classification"] == "localized" for row in registrations)
+    if (derived_intents, derived_intent_arguments, derived_async, derived_no_op, derived_localized) != (393, 316, 305, 10, 297):
+        _fail("source.behavior.registrations", "intent/action/title denominator drift")
+    if (behavior_summary.get("intentConstructorSites"), behavior_summary.get("resolvedIntentConstructorSites"),
+        behavior_summary.get("requiredIntentArguments"), behavior_summary.get("resolvedIntentArguments"),
+        behavior_summary.get("asyncActions"), behavior_summary.get("synchronousNoOpActions"),
+        behavior_summary.get("localizedTitles"), behavior_summary.get("missingOrInternalTitles")) != (393, 393, 316, 316, 305, 10, 297, 18):
+        _fail("source.behavior.summary", "behavior summary denominator drift")
+    expected_sink_counts = {"addGeneratedCard": 6, "addStatusCard": 14, "applyPower": 128, "attack": 207,
+                            "attackHitCount": 50, "escape": 2, "gainBlock": 23, "heal": 2, "kill": 2,
+                            "removeCard": 1, "removePower": 6, "stateWrite": 51, "summon": 5}
+    derived_sinks = {kind: 0 for kind in expected_sink_counts}
+    for row in registrations:
+        if not row["operations"]:
+            _fail("source.behavior.registrations", "registration operation closure missing")
+        for operation in row["operations"]:
+            if operation["kind"] in derived_sinks:
+                derived_sinks[operation["kind"]] += 1
+    if derived_sinks != expected_sink_counts or behavior_summary.get("directSinkCounts") != expected_sink_counts:
+        _fail("source.behavior.summary.directSinkCounts", "operation sink denominator drift")
+    invocation_census = source["behavior"].get("invocationCensus", {})
+    invocation_decisions = invocation_census.get("decisions", [])
+    invocation_ids = {row.get("invocationId") for row in invocation_decisions}
+    if len(invocation_decisions) != 6786 or len(invocation_ids) != 6786 or invocation_census.get("summary", {}).get("denominator") != 6786 or invocation_census.get("summary", {}).get("resolved") != 6786 or invocation_census.get("summary", {}).get("unresolved") != 0:
+        _fail("source.behavior.invocationCensus", "closed invocation denominator drift")
+
     graphs = source["behavior"]["graphs"]
-    if len(graphs) != 100:
-        _fail("source.behavior.graphs", "expected 100 behavior graphs")
+    if len(graphs) != 105:
+        _fail("source.behavior.graphs", "expected 105 behavior graphs")
     _unique(graphs, "graphId", "source.behavior.graphs")
     applicability = source["behavior"].get("applicability")
     if not isinstance(applicability, list) or len(applicability) != len(graphs):
@@ -251,6 +302,107 @@ def _validate_source_document(source: dict[str, Any]) -> None:
     if any(row["canonicalId"] not in move_ids for row in registrations):
         raise AssertionError("unreachable")
 
+    graph_by_id = {row["graphId"]: row for row in graphs}
+    registration_by_id = {row["canonicalId"]: row for row in registrations}
+    for index, graph in enumerate(graphs):
+        node_ids = {node["nodeId"] for node in graph["nodes"]}
+        _validate_state_collection(graph.get("stateCollection"), f"source.behavior.graphs[{index}].stateCollection", node_ids)
+
+    dependencies = _list(source["behavior"].get("eventDependencies"), "source.behavior.eventDependencies")
+    if len(dependencies) != 4:
+        _fail("source.behavior.eventDependencies", "expected four explicit script/lifecycle dependency boundaries")
+    dependency_ids = _unique(dependencies, "dependencyId", "source.behavior.eventDependencies")
+    initial_source_fact_ids = {row["factId"] for row in source["initialState"]["initialStateFacts"]}
+    for index, dependency in enumerate(dependencies):
+        path = f"source.behavior.eventDependencies[{index}]"
+        obj = _object(dependency, path, {"dependencyId", "initialStateFactRefs", "kind", "sourceRoots", "sourceType", "status"},
+                      {"dependencyId", "kind", "sourceRoots", "sourceType", "status"})
+        if obj["kind"] not in {"scriptedEventSemantics", "eventLifecycleTimeoutResultSemantics"} or obj["status"] != "unresolved":
+            _fail(path, "event dependency kind/status is not explicit")
+        roots = _list(obj["sourceRoots"], path + ".sourceRoots")
+        if not roots or any(not isinstance(root.get("methodBodySha256"), str) or not isinstance(root.get("symbolSignature"), str) for root in roots):
+            _fail(path + ".sourceRoots", "event dependency source roots/provenance missing")
+        refs = obj.get("initialStateFactRefs", [])
+        if not set(refs) <= initial_source_fact_ids:
+            _fail(path + ".initialStateFactRefs", "unknown event lifecycle initial-state fact")
+        if obj["kind"] == "eventLifecycleTimeoutResultSemantics" and len(refs) != 1:
+            _fail(path + ".initialStateFactRefs", "event lifecycle dependency needs one timeout initial-state fact")
+        if obj["kind"] == "scriptedEventSemantics" and refs:
+            _fail(path + ".initialStateFactRefs", "scripted event dependency cannot guess lifecycle facts")
+
+    event_turn = _list(source["behavior"].get("eventTurnMachines"), "source.behavior.eventTurnMachines")
+    event_ids = {row["canonicalId"] for row in encounters["event"]}
+    if len(event_turn) != 8 or {row.get("canonicalEncounter") for row in event_turn} != event_ids:
+        _fail("source.behavior.eventTurnMachines", "expected one classification for every event encounter")
+    classifications = {"normalTurnMachine", "inheritedTurnMachine", "noOpTurnMachineWithLifecycle", "scriptedNonTurnCombat"}
+    event_only_models = set(source["reachability"]["eventOnlyModels"])
+    physical_owners: set[str] = set(); physical_registrations: set[str] = set()
+    reuse_count = no_op_count = physical_title_count = 0
+    encounter_by_id = {row["canonicalId"]: row for row in encounters["event"]}
+    link_by_id = {row["canonicalEncounter"].removeprefix("ENCOUNTER."): row for row in source["placement"]["eventLinkage"]}
+    for index, row in enumerate(event_turn):
+        path = f"source.behavior.eventTurnMachines[{index}]"
+        obj = _object(row, path, {"applicability", "behaviorClassification", "behaviorOwner", "behaviorOwnerSourceType", "canonicalEncounter", "canonicalEvent", "canonicalModel", "dependencyRefs", "eventSourceType", "graphId", "initialStateFactRefs", "registrationIds", "titles"})
+        encounter = encounter_by_id[obj["canonicalEncounter"]]; link = link_by_id.get(obj["canonicalEncounter"])
+        if encounter["possibleMonsters"] != [obj["canonicalModel"]] or link is None or obj["canonicalEvent"] != link["canonicalEvent"] or obj["eventSourceType"] != link["eventSourceType"]:
+            _fail(path, "event encounter/model/link join mismatch")
+        graph = graph_by_id.get(obj["graphId"])
+        if graph is None or graph["canonicalMonster"] != obj["behaviorOwner"] or graph["sourceType"] != obj["behaviorOwnerSourceType"] or obj["canonicalModel"] not in graph["applicableConcreteModels"]:
+            _fail(path, "event graph/owner/applicability join mismatch")
+        regs = [registration_by_id.get(ref) for ref in obj["registrationIds"]]
+        if not regs or any(reg is None or reg["graphId"] != obj["graphId"] or obj["canonicalModel"] not in reg["applicableConcreteModels"] for reg in regs):
+            _fail(path + ".registrationIds", "event registration/applicability join mismatch")
+        direct = obj["canonicalModel"] == obj["behaviorOwner"]
+        if obj["applicability"] != ("direct" if direct else "inherited"):
+            _fail(path + ".applicability", "event applicability kind mismatch")
+        if obj["behaviorClassification"] not in classifications:
+            _fail(path + ".behaviorClassification", "unknown event turn classification")
+        dependency_refs = obj["dependencyRefs"]
+        if not set(dependency_refs) <= dependency_ids:
+            _fail(path + ".dependencyRefs", "unknown event classification dependency")
+        incomplete = obj["behaviorClassification"] in {"noOpTurnMachineWithLifecycle", "scriptedNonTurnCombat"}
+        if len(dependency_refs) != (1 if incomplete else 0):
+            _fail(path + ".dependencyRefs", "event classification dependency cardinality mismatch")
+        if obj["behaviorClassification"] == "inheritedTurnMachine" and direct:
+            _fail(path, "inherited event graph has no inherited owner edge")
+        if obj["behaviorClassification"] == "normalTurnMachine" and not direct:
+            _fail(path, "normal event graph silently guessed an inherited owner")
+        if incomplete:
+            if any(reg["execution"]["kind"] != "synchronousNoOp" or reg["operations"][0].get("transition") != "noOp" for reg in regs):
+                _fail(path, "no-op/scripted graph was not source-inspected as an explicit no-op")
+            no_op_count += len(regs)
+        titles = _list(obj["titles"], path + ".titles")
+        if len(titles) != len(regs):
+            _fail(path + ".titles", "event title/registration denominator mismatch")
+        title_by_state = {item["stateId"]: item["title"] for item in titles}
+        expected_root = obj["canonicalModel"].removeprefix("MONSTER.")
+        if set(title_by_state) != {reg["stateId"] for reg in regs}:
+            _fail(path + ".titles", "event title state join mismatch")
+        for title in title_by_state.values():
+            if title.get("classification") != "localized" or title.get("localizationRoot") != expected_root:
+                _fail(path + ".titles", "event localization root/title join mismatch")
+        if direct and obj["canonicalModel"] in event_only_models:
+            physical_owners.add(obj["behaviorOwnerSourceType"]); physical_registrations.update(obj["registrationIds"]); physical_title_count += len(titles)
+        else:
+            reuse_count += 1
+    if (len(physical_owners), len(physical_registrations), physical_title_count, no_op_count, reuse_count) != (5, 8, 8, 4, 3):
+        _fail("source.behavior.eventTurnMachines", "event physical/reuse/no-op denominator drift")
+    event_invocations = source["behavior"].get("eventTurnInvocationCensus", {})
+    event_decision_refs = event_invocations.get("decisionRefs", [])
+    if (event_invocations.get("summary") != {
+            "classificationCounts": {"normalizedGameplayOperation": 6, "provenNonGameplayPlumbing": 76, "traversedGameplayHelper": 21},
+            "denominator": 103, "resolved": 103, "unresolved": 0,
+        } or len(event_decision_refs) != 103 or len(set(event_decision_refs)) != 103
+            or not set(event_decision_refs) <= invocation_ids):
+        _fail("source.behavior.eventTurnInvocationCensus", "event helper invocation classification is incomplete")
+    expected_event_summary = {
+        "classifications": 8, "eventIntentArguments": 5, "eventIntentConstructorSites": 6,
+        "eventTurnDirectOperations": 6, "eventTurnOperationsIncludingNoOpProofs": 10,
+        "noOpProofs": 4, "physicalOwners": 5, "physicalRegistrations": 8,
+        "physicalTitles": 8, "reuseOrInheritanceApplicability": 3,
+    }
+    if source["behavior"].get("eventTurnSummary") != expected_event_summary:
+        _fail("source.behavior.eventTurnSummary", "event turn source denominator drift")
 
     initial = _object(source.get("initialState"), "source.initialState", {
         "constructorDecisions", "encounterInitializerDecisions", "encounterInitializers", "externalHookBoundary",
@@ -531,8 +683,8 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
             _string(obj["englishTitle"], path + ".englishTitle")
 
     owners = _list(sf["behaviorOwners"], "payload.sourceFacts.behaviorOwners")
-    if len(owners) != 100:
-        _fail("payload.sourceFacts.behaviorOwners", "expected 100 behavior owners")
+    if len(owners) != 105:
+        _fail("payload.sourceFacts.behaviorOwners", "expected 105 behavior owners")
     owner_ids = set()
     owner_fact_ids = set()
     for index, row in enumerate(owners):
@@ -547,8 +699,11 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
         if not applicable or len(applicable) != len(set(applicable)) or not set(applicable) <= model_ids:
             _fail(path + ".applicableConcreteModels", "missing, duplicate, or unknown concrete applicability")
         if obj["classification"] == "concreteModel":
-            if obj.get("modelRef") != f"SOURCE.{owner}" or owner not in model_ids or obj["applicabilityKind"] != "directModel" or applicable != [owner]:
-                _fail(path, "broken direct behavior-owner model join")
+            expected_kind = "directModel" if applicable == [owner] else "directModelWithInheritedApplicability"
+            if (obj.get("modelRef") != f"SOURCE.{owner}" or owner not in model_ids
+                    or obj["applicabilityKind"] != expected_kind or owner not in applicable
+                    or (expected_kind == "directModelWithInheritedApplicability" and len(applicable) < 2)):
+                _fail(path, "broken direct/inherited concrete behavior-owner model join")
         elif obj["classification"] == "abstractBehavior":
             if "modelRef" in obj or obj["applicabilityKind"] != "inheritedBehavior":
                 _fail(path, "abstract behavior owner lacks explicit inheritance applicability")
@@ -558,8 +713,8 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
     owner_applicability = {row["canonicalMonster"]: row["applicableConcreteModels"] for row in owners}
 
     move_rows = _list(sf["moves"], "payload.sourceFacts.moves")
-    if len(move_rows) != 307:
-        _fail("payload.sourceFacts.moves", "expected 307 move registrations")
+    if len(move_rows) != 315:
+        _fail("payload.sourceFacts.moves", "expected 315 move registrations")
     move_ids = set()
     move_fact_ids = set()
     operation_ids = set()
@@ -600,13 +755,13 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
         _validate_title(obj["title"], path + ".title")
 
     graph_rows = _list(sf["graphs"], "payload.sourceFacts.graphs")
-    if len(graph_rows) != 100:
-        _fail("payload.sourceFacts.graphs", "expected 100 graphs")
+    if len(graph_rows) != 105:
+        _fail("payload.sourceFacts.graphs", "expected 105 graphs")
     graph_ids = set()
     graph_fact_ids = set()
     for index, row in enumerate(graph_rows):
         path = f"payload.sourceFacts.graphs[{index}]"
-        obj = _object(row, path, {"applicableConcreteModels", "canonicalMonster", "edges", "factId", "graphId", "initial", "nodes", "sourceType", "topology"})
+        obj = _object(row, path, {"applicableConcreteModels", "canonicalMonster", "edges", "factId", "graphId", "initial", "nodes", "sourceType", "stateCollection", "topology"})
         graph_id = _string(obj["graphId"], path + ".graphId", prefix="GRAPH.")
         if graph_id in graph_ids:
             _fail(path + ".graphId", "duplicate graph ID")
@@ -632,6 +787,7 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
                 _fail(np + ".stateId", "move graph node has no registration")
             if "mustPerformOnce" in no and type(no["mustPerformOnce"]) is not bool:
                 _fail(np + ".mustPerformOnce", "must be boolean")
+        _validate_state_collection(obj["stateCollection"], path + ".stateCollection", node_ids)
         initial = obj["initial"]
         initials = initial if isinstance(initial, list) else [initial]
         if not initials or any(item not in node_ids for item in initials):
@@ -807,11 +963,109 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
     if any(key in projected_initial for key in {"invocationDecisions", "constructorDecisions", "encounterInitializerDecisions"}):
         _fail("payload.sourceFacts.initialState", "proof bulk leaked")
 
+    event_behavior = _object(sf["eventTurnBehavior"], "payload.sourceFacts.eventTurnBehavior",
+                             {"dependencies", "encounters", "invocationSummary", "sourceDenominators"})
+    dependency_rows = _list(event_behavior["dependencies"], "payload.sourceFacts.eventTurnBehavior.dependencies")
+    if len(dependency_rows) != 4:
+        _fail("payload.sourceFacts.eventTurnBehavior.dependencies", "expected four dependency boundaries")
+    event_dependency_fact_ids = _unique(dependency_rows, "factId", "payload.sourceFacts.eventTurnBehavior.dependencies")
+    dependency_by_fact = {}
+    for index, row in enumerate(dependency_rows):
+        path = f"payload.sourceFacts.eventTurnBehavior.dependencies[{index}]"
+        obj = _object(row, path, {"dependencyId", "factId", "initialStateFactRefs", "kind", "sourceRootSymbols", "sourceType", "status"})
+        if obj["factId"] != "SOURCE." + obj["dependencyId"] or obj["kind"] not in {"scriptedEventSemantics", "eventLifecycleTimeoutResultSemantics"} or obj["status"] != "unresolved":
+            _fail(path, "event dependency identity/kind/status mismatch")
+        roots = _list(obj["sourceRootSymbols"], path + ".sourceRootSymbols")
+        if not roots or any(not isinstance(root, str) or "::" not in root or " sig:" not in root for root in roots):
+            _fail(path + ".sourceRootSymbols", "event dependency roots missing")
+        if not set(obj["initialStateFactRefs"]) <= initial_fact_ids:
+            _fail(path + ".initialStateFactRefs", "event dependency initial-state ref is unknown")
+        expected_refs = 1 if obj["kind"] == "eventLifecycleTimeoutResultSemantics" else 0
+        if len(obj["initialStateFactRefs"]) != expected_refs:
+            _fail(path + ".initialStateFactRefs", "event dependency initial-state ref cardinality mismatch")
+        dependency_by_fact[obj["factId"]] = obj
+
+    event_rows = _list(event_behavior["encounters"], "payload.sourceFacts.eventTurnBehavior.encounters")
+    if len(event_rows) != 8:
+        _fail("payload.sourceFacts.eventTurnBehavior.encounters", "expected all eight event turn classifications")
+    event_turn_fact_ids = _unique(event_rows, "factId", "payload.sourceFacts.eventTurnBehavior.encounters")
+    event_encounter_ids = {row["canonicalId"] for row in encounter_groups["event"]}
+    compact_moves_by_fact = {row["factId"]: row for row in move_rows}
+    compact_graphs_by_fact = {row["factId"]: row for row in graph_rows}
+    class_counts: dict[str, int] = {}
+    for index, row in enumerate(event_rows):
+        path = f"payload.sourceFacts.eventTurnBehavior.encounters[{index}]"
+        obj = _object(row, path, {
+            "applicability", "behaviorClassification", "behaviorOwner", "behaviorOwnerRef", "behaviorOwnerSourceType",
+            "canonicalEncounter", "canonicalEvent", "canonicalModel", "dependencyRefs", "encounterRef", "eventLinkRef",
+            "eventSourceType", "factId", "graphId", "graphRef", "initialStateFactRefs", "modelRef", "registrationRefs", "titles",
+        })
+        encounter_id = obj["canonicalEncounter"]
+        if encounter_id not in event_encounter_ids or obj["factId"] != "SOURCE.EVENT_TURN." + encounter_id:
+            _fail(path, "event turn fact/encounter identity mismatch")
+        expected_refs = {
+            "encounterRef": "SOURCE.ENCOUNTER." + encounter_id,
+            "eventLinkRef": "SOURCE.EVENT_LINK." + encounter_id,
+            "modelRef": "SOURCE." + obj["canonicalModel"],
+            "behaviorOwnerRef": "SOURCE.BEHAVIOR_OWNER." + obj["behaviorOwner"],
+            "graphRef": "SOURCE." + obj["graphId"],
+        }
+        for key, expected in expected_refs.items():
+            if obj[key] != expected:
+                _fail(path + "." + key, "event turn fact join mismatch")
+        if obj["encounterRef"] not in encounter_fact_ids or obj["eventLinkRef"] not in placement_fact_ids or obj["modelRef"] not in monster_fact_ids or obj["behaviorOwnerRef"] not in owner_fact_ids or obj["graphRef"] not in graph_fact_ids:
+            _fail(path, "event turn fact has an unknown encounter/link/model/owner/graph ref")
+        graph = compact_graphs_by_fact[obj["graphRef"]]
+        if graph["canonicalMonster"] != obj["behaviorOwner"] or graph["sourceType"] != obj["behaviorOwnerSourceType"] or obj["canonicalModel"] not in graph["applicableConcreteModels"]:
+            _fail(path, "event turn graph applicability/ref mismatch")
+        registrations = [compact_moves_by_fact.get(ref) for ref in obj["registrationRefs"]]
+        if not registrations or any(reg is None or reg["graphId"] != obj["graphId"] or obj["canonicalModel"] not in reg["applicableConcreteModels"] for reg in registrations):
+            _fail(path + ".registrationRefs", "event turn registration/applicability ref mismatch")
+        if not set(obj["dependencyRefs"]) <= event_dependency_fact_ids or not set(obj["initialStateFactRefs"]) <= initial_fact_ids:
+            _fail(path, "event classification dependency/initial-state ref mismatch")
+        classification = obj["behaviorClassification"]
+        class_counts[classification] = class_counts.get(classification, 0) + 1
+        incomplete = classification in {"noOpTurnMachineWithLifecycle", "scriptedNonTurnCombat"}
+        if len(obj["dependencyRefs"]) != (1 if incomplete else 0):
+            _fail(path + ".dependencyRefs", "event classification dependency cardinality mismatch")
+        direct = obj["canonicalModel"] == obj["behaviorOwner"]
+        if obj["applicability"] != ("direct" if direct else "inherited") or (classification == "inheritedTurnMachine") != (not direct):
+            _fail(path + ".applicability", "event inherited applicability edge missing or guessed")
+        if incomplete and any(reg["action"]["executionKind"] != "synchronousNoOp" or reg["operations"][0].get("transition") != "noOp" for reg in registrations):
+            _fail(path, "hidden/no-op graph was not explicitly source-inspected")
+        titles = _list(obj["titles"], path + ".titles")
+        if len(titles) != len(registrations) or {title["stateId"] for title in titles} != {reg["stateId"] for reg in registrations}:
+            _fail(path + ".titles", "event title/registration join mismatch")
+        expected_root = obj["canonicalModel"].removeprefix("MONSTER.")
+        for title_index, title_row in enumerate(titles):
+            title = title_row["title"]
+            _validate_title(title, f"{path}.titles[{title_index}].title")
+            if title.get("classification") != "localized" or title.get("localizationRoot") != expected_root:
+                _fail(f"{path}.titles[{title_index}]", "event title-root collision or guessed owner title")
+    if class_counts != {"inheritedTurnMachine": 1, "noOpTurnMachineWithLifecycle": 3, "normalTurnMachine": 3, "scriptedNonTurnCombat": 1}:
+        _fail("payload.sourceFacts.eventTurnBehavior.encounters", "event classification distribution drift")
+    if event_behavior["invocationSummary"] != {
+        "classificationCounts": {"normalizedGameplayOperation": 6, "provenNonGameplayPlumbing": 76, "traversedGameplayHelper": 21},
+        "denominator": 103, "resolved": 103, "unresolved": 0,
+    }:
+        _fail("payload.sourceFacts.eventTurnBehavior.invocationSummary", "event helper invocation census drift")
+    expected_event_denominators = {
+        "classifications": 8, "eventIntentArguments": 5, "eventIntentConstructorSites": 6,
+        "eventTurnDirectOperations": 6, "eventTurnOperationsIncludingNoOpProofs": 10,
+        "noOpProofs": 4, "physicalOwners": 5, "physicalRegistrations": 8,
+        "physicalTitles": 8, "reuseOrInheritanceApplicability": 3,
+    }
+    if event_behavior["sourceDenominators"] != expected_event_denominators:
+        _fail("payload.sourceFacts.eventTurnBehavior.sourceDenominators", "event turn source denominator drift")
+    if any(key in event_behavior for key in {"decisionRefs", "eventTurnInvocationCensus", "sourceRoots"}):
+        _fail("payload.sourceFacts.eventTurnBehavior", "event proof/call bulk leaked")
+
     all_source_facts = (
         encounter_fact_ids | monster_fact_ids | state_fact_ids | referenced_fact_ids |
         owner_fact_ids | move_fact_ids | graph_fact_ids | scaling_fact_ids | placement_fact_ids |
         identity_fact_ids | initial_fact_ids | initial_owner_fact_ids | runtime_fact_ids |
-        initial_comparison_fact_ids | {state_rules["factId"], hp_pipeline_fact_id}
+        initial_comparison_fact_ids | event_dependency_fact_ids | event_turn_fact_ids |
+        {state_rules["factId"], hp_pipeline_fact_id}
     )
     return {
         "all": all_source_facts, "encounters": encounter_fact_ids, "models": model_ids,
@@ -1001,28 +1255,49 @@ def _validate_evidence_and_refs(payload: dict[str, Any], source: dict[str, Any],
 
 def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts: set[str]) -> None:
     audits = _list(payload["resolvedAudits"], "payload.resolvedAudits")
-    if len(audits) != 1:
-        _fail("payload.resolvedAudits", "expected one historical HP resolution audit")
-    audit = _object(audits[0], "payload.resolvedAudits[0]", {"auditId", "family", "historicalStatus", "lanes", "resolution"})
-    if (audit["auditId"], audit["family"], audit["historicalStatus"]) != (
-        "AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING", "hpAssignmentRounding", "resolved"
-    ):
-        _fail("payload.resolvedAudits[0]", "HP audit identity/status drift")
+    if len(audits) != 2:
+        _fail("payload.resolvedAudits", "expected HP and event-turn resolved audits")
+    audit_ids = _unique(audits, "auditId", "payload.resolvedAudits")
+    if audit_ids != {"AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING", "AUDIT.RESOLVED.EVENT_TURN_MACHINES"}:
+        _fail("payload.resolvedAudits", "resolved audit identity set drift")
+    by_id = {row["auditId"]: row for row in audits}
+    hp_audit = _object(by_id["AUDIT.RESOLVED.HP_ASSIGNMENT_ROUNDING"], "payload.resolvedAudits[HP]", {"auditId", "family", "historicalStatus", "lanes", "resolution"})
+    if (hp_audit["family"], hp_audit["historicalStatus"]) != ("hpAssignmentRounding", "resolved"):
+        _fail("payload.resolvedAudits[HP]", "HP audit identity/status drift")
     expected_lanes = [
         {"factId": "SOURCE.SCALING.HP", "lane": "rawSourceHelper", "statement": {"arithmeticRounding": "none", "outputType": "System.Decimal"}},
         {"factId": "SOURCE.HP_ASSIGNMENT_PIPELINE", "lane": "rawSourceAssignment", "statement": {"assignmentConversion": "truncateTowardZero", "nonNegativeEquivalence": "floor", "storageType": "Int32"}},
         {"implementationPath": "src/book.mjs::scaleRange", "lane": "stableLegacyConsumer", "statement": {"conversion": "Math.floor", "domain": "displayedNonNegativeHp"}},
     ]
-    if audit["lanes"] != expected_lanes:
-        _fail("payload.resolvedAudits[0].lanes", "authority lanes/history changed")
-    if any(row.get("factId") not in all_facts for row in audit["lanes"] if "factId" in row):
-        _fail("payload.resolvedAudits[0].lanes", "broken source fact reference")
-    if audit["resolution"] != {
+    if hp_audit["lanes"] != expected_lanes:
+        _fail("payload.resolvedAudits[HP].lanes", "authority lanes/history changed")
+    if any(row.get("factId") not in all_facts for row in hp_audit["lanes"] if "factId" in row):
+        _fail("payload.resolvedAudits[HP].lanes", "broken source fact reference")
+    if hp_audit["resolution"] != {
         "classification": "agreementForNonNegativeFinalAssignedHp",
         "detail": "The helper performs no rounding; downstream assignment truncates toward zero, which equals floor only for source-proven non-negative HP. The stable legacy consumer floors displayed non-negative HP.",
         "negativeValuesGeneralized": False, "precedenceSelected": False,
     }:
-        _fail("payload.resolvedAudits[0].resolution", "must resolve by non-negative agreement without precedence")
+        _fail("payload.resolvedAudits[HP].resolution", "must resolve by non-negative agreement without precedence")
+
+    event_audit = _object(by_id["AUDIT.RESOLVED.EVENT_TURN_MACHINES"], "payload.resolvedAudits[eventTurn]",
+                          {"auditId", "boundary", "classificationFactRefs", "dependencyFactRefs", "family", "historicalStatus", "sourceDenominators"})
+    if (event_audit["family"], event_audit["historicalStatus"], event_audit["boundary"]) != (
+        "eventTurnMachines", "sourceComplete", "Scripted event behavior and lifecycle/timeout/result dependencies remain unresolved."
+    ):
+        _fail("payload.resolvedAudits[eventTurn]", "event turn completion/boundary drift")
+    if len(event_audit["classificationFactRefs"]) != 8 or len(event_audit["dependencyFactRefs"]) != 4:
+        _fail("payload.resolvedAudits[eventTurn]", "event turn audit denominator drift")
+    if not set(event_audit["classificationFactRefs"] + event_audit["dependencyFactRefs"]) <= all_facts:
+        _fail("payload.resolvedAudits[eventTurn]", "event turn audit has broken fact refs")
+    expected_event_denominators = {
+        "classifications": 8, "eventIntentArguments": 5, "eventIntentConstructorSites": 6,
+        "eventTurnDirectOperations": 6, "eventTurnOperationsIncludingNoOpProofs": 10,
+        "noOpProofs": 4, "physicalOwners": 5, "physicalRegistrations": 8,
+        "physicalTitles": 8, "reuseOrInheritanceApplicability": 3,
+    }
+    if event_audit["sourceDenominators"] != expected_event_denominators:
+        _fail("payload.resolvedAudits[eventTurn].sourceDenominators", "event turn audit source denominators drift")
 
     comparisons = _list(payload["laneComparisons"], "payload.laneComparisons")
     comparison_ids = _unique(comparisons, "comparisonId", "payload.laneComparisons")
@@ -1088,8 +1363,9 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     if missing_title_count != 18:
         _fail("payload.knownUnknowns", "all 18 missing source move titles must be individually classified")
     required_reasons = {
-        "LIFECYCLE_COVERAGE_ABSENT", "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE", "EVENT_BEHAVIOR_COVERAGE_ABSENT",
-        "LEGACY_PER_FACT_PROVENANCE_INCOMPLETE",
+        "LIFECYCLE_COVERAGE_ABSENT", "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE",
+        "EVENT_BEHAVIOR_AGGREGATE_INCOMPLETE", "SCRIPTED_EVENT_BEHAVIOR_UNEXTRACTED",
+        "EVENT_LIFECYCLE_TIMEOUT_RESULT_UNEXTRACTED", "LEGACY_PER_FACT_PROVENANCE_INCOMPLETE",
         "BROADER_WORLD_MODEL_FAMILIES_ABSENT",
     }
     actual_reasons = {row["reasonCode"] for row in unknowns}
@@ -1113,7 +1389,7 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
         _fail("payload.readiness.runtimeScopes.encounterProjection", "independent projection section should be complete")
     if projected["requiredCoverageFamilies"] != [row["family"] for row in coverage_rows()]:
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredCoverageFamilies", "coverage gate mismatch")
-    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage"}
+    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage", "eventTurnClassificationDependencies"}
     if set(projected["requiredJoins"]) != expected_joins or len(projected["requiredJoins"]) != len(expected_joins):
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredJoins", "join gate mismatch")
 
