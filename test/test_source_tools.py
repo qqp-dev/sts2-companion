@@ -18,7 +18,10 @@ from source_extractor.canonical import canonical_json_bytes
 from source_extractor.cil_safety import validate_cil_slice
 from source_extractor.cil_eval import CilDataFlow, decode_method_signature, value_expression
 from source_extractor.invocations import ClosedWorldInvocationAudit
-from source_extractor.behavior import _intent_records
+from source_extractor.inheritance import attach_behavior_applicability, resolve_behavior_applicability
+from source_extractor.identity import resolve_observed_identity, validate_observation_identities
+from source_extractor.placement import decode_factory_collection, validate_placement
+from source_extractor.behavior import _canonical_for_type, _intent_records
 from source_extractor.encounters import _compile_fixed_selection, _derive_fixed_slot_names
 from source_extractor.localization import require_localized_text
 from source_extractor.errors import SourceExtractionError
@@ -753,6 +756,271 @@ class CilSemanticEvaluatorTests(unittest.TestCase):
                      "value": {"kind": "constant", "value": "1", "valueType": "decimal"}}
         with self.assertRaisesRegex(SourceExtractionError, "missing fields"):
             validate_operation(operation)
+
+
+class PlacementExtractionTests(unittest.TestCase):
+    def test_literal_registry_count_order_and_unknown_structure_fail_closed(self):
+        record = {
+            "symbolSignature": "Game.Act::GenerateAllEncounters sig:x",
+            "instructions": [
+                {"opcode": "ldc.i4.2", "operand": None},
+                {"opcode": "newarr", "operand": "Game.Encounter"},
+                {"opcode": "call", "operand": "Game.Db::Encounter sig:x generic:Game.Encounter.A"},
+                {"opcode": "call", "operand": "Game.Db::Encounter sig:x generic:Game.Encounter.B"},
+            ],
+        }
+        self.assertEqual(
+            decode_factory_collection(record, factory="Game.Db::Encounter ", element_type="Game.Encounter"),
+            ["Game.Encounter.A", "Game.Encounter.B"],
+        )
+        broken = json.loads(json.dumps(record))
+        broken["instructions"][0]["opcode"] = "ldc.i4.1"
+        with self.assertRaisesRegex(SourceExtractionError, "cardinality mismatch"):
+            decode_factory_collection(broken, factory="Game.Db::Encounter ", element_type="Game.Encounter")
+        ambiguous = json.loads(json.dumps(record))
+        ambiguous["instructions"][3]["operand"] += " trailing"
+        with self.assertRaisesRegex(SourceExtractionError, "ambiguous generic"):
+            decode_factory_collection(ambiguous, factory="Game.Db::Encounter ", element_type="Game.Encounter")
+
+    @staticmethod
+    def placement_fixture():
+        return {
+            "acts": [
+                {"canonicalId": "ACT.A"}, {"canonicalId": "ACT.B"},
+            ],
+            "pools": [
+                {
+                    "actId": "ACT.A", "canonicalMembers": [{"weight": {"kind": "uniform"}}],
+                    "poolId": "POOL.A", "selection": {"kind": "uniformSingle"},
+                },
+                {
+                    "actId": "ACT.B", "canonicalMembers": [{"weight": {"kind": "none"}}],
+                    "poolId": "POOL.B", "selection": {"kind": "shuffleThenCyclicEligible"},
+                },
+            ],
+            "encounters": [{
+                "canonicalEncounter": "ENCOUNTER.X", "classification": "poolMember",
+                "memberships": [
+                    {"actId": "ACT.A", "poolId": "POOL.A", "conditions": []},
+                    {
+                        "actId": "ACT.B", "poolId": "POOL.B",
+                        "conditions": [{
+                            "kind": "decodedSourcePredicate", "provenance": {},
+                            "condition": {"kind": "always"},
+                        }],
+                    },
+                ],
+            }],
+            "eventLinkage": [],
+            "sourceDenominators": {
+                "acts": 2, "currentEncounterMemberships": 2,
+                "currentEncounterPlacements": 1, "eventEncounterLinks": 0,
+                "poolRegistryMembers": 2, "pools": 2,
+            },
+        }
+
+    def test_multiple_memberships_preserved_and_unknown_nodes_rejected(self):
+        fixture = self.placement_fixture()
+        validate_placement(fixture)
+        broken = json.loads(json.dumps(fixture))
+        broken["pools"][0]["selection"]["kind"] = "suffixInferredPool"
+        with self.assertRaisesRegex(SourceExtractionError, "unknown placement selection"):
+            validate_placement(broken)
+        broken = json.loads(json.dumps(fixture))
+        broken["encounters"][0]["memberships"][1]["conditions"][0]["condition"]["kind"] = "fuzzyCondition"
+        with self.assertRaisesRegex(SourceExtractionError, "unknown placement condition"):
+            validate_placement(broken)
+        broken = json.loads(json.dumps(fixture))
+        broken["pools"][0]["canonicalMembers"][0]["weight"]["kind"] = "guessed"
+        with self.assertRaisesRegex(SourceExtractionError, "unknown placement weight"):
+            validate_placement(broken)
+
+
+class ObservationIdentityTests(unittest.TestCase):
+    @staticmethod
+    def fixture():
+        return {
+            "aliases": [],
+            "entries": [
+                {"observedId": "MONSTER.EGG", "canonicalMonster": "MONSTER.EGG", "identityKind": "model", "sourceType": "Game.Monsters.Egg"},
+                {"observedId": "MONSTER.FRONT", "canonicalMonster": "MONSTER.FRONT", "identityKind": "model", "sourceType": "Game.Monsters.Front"},
+            ],
+            "matchingPolicy": {
+                "caseSensitive": True, "fuzzyMatching": False, "prefixStripping": False,
+                "wirePrefixes": [{"category": "monsterModel", "prefix": "MONSTER.", "source": "ModelId.Category"}],
+            },
+            "observationContracts": [
+                {"contractId": "currentRunSave.monsterIds", "identityKind": "model", "wireForm": "MONSTER.<ModelId.Entry>"},
+                {"contractId": "currentRunSave.modelIdRead", "identityKind": "model", "wireForm": "<ModelId.Category>.<ModelId.Entry>"},
+                {"contractId": "gameResources.monsterVisualsPath", "identityKind": "resourceRepresentationOfModel", "wireForm": "resource"},
+                {"contractId": "combatLog.encounterStart", "identityKind": "encounterEntry", "wireForm": "entry"},
+                {"contractId": "combatLog.encounterWin", "identityKind": "encounterModel", "wireForm": "model"},
+            ],
+            "resourceRepresentations": [
+                {"canonicalMonster": "MONSTER.EGG", "identityKind": "resourceRepresentationOfModel", "resourceId": "res://scenes/creature_visuals/egg.tscn", "transformation": {"caseTransform": "ToLowerInvariant", "input": "ModelId.Entry", "pathPrefix": "res://scenes/creature_visuals/", "pathSuffix": ".tscn"}},
+                {"canonicalMonster": "MONSTER.FRONT", "identityKind": "resourceRepresentationOfModel", "resourceId": "res://scenes/creature_visuals/front.tscn", "transformation": {"caseTransform": "ToLowerInvariant", "input": "ModelId.Entry", "pathPrefix": "res://scenes/creature_visuals/", "pathSuffix": ".tscn"}},
+            ],
+            "sourceConclusions": [],
+            "sourceDenominators": {
+                "currentReachableModels": 2, "observableIds": 2, "resourceRepresentations": 2,
+                "sourceDeclaredCurrentAliases": 0, "stateObservationContracts": 1,
+            },
+            "stateObservationContracts": [{
+                "canonicalMonster": "MONSTER.EGG", "identityKind": "stateOfModel", "stateId": "MONSTER.EGG#HATCHED",
+                "observation": {
+                    "distinguishability": "notDistinguishableFromModelIdAlone",
+                    "emittedModelId": "MONSTER.EGG", "separateStateIdEmitted": False,
+                },
+            }],
+        }
+
+    def test_exact_only_lookup_rejects_prefix_case_and_lookalike_fallback(self):
+        fixture = self.fixture()
+        validate_observation_identities(fixture, reachable_models={"MONSTER.EGG", "MONSTER.FRONT"})
+        self.assertEqual(resolve_observed_identity(fixture, "MONSTER.FRONT")["canonicalMonster"], "MONSTER.FRONT")
+        for lookalike in ("FRONT", "monster.front", "MONSTER_FRONT", "MONSTER.FRONT ", "MONSTER.FRONT_EXTRA", "res://scenes/creature_visuals/front.tscn"):
+            self.assertIsNone(resolve_observed_identity(fixture, lookalike), lookalike)
+
+    def test_alias_collision_missing_target_and_normalization_policy_fail(self):
+        fixture = self.fixture()
+        broken = json.loads(json.dumps(fixture))
+        broken["entries"][1]["observedId"] = "MONSTER.EGG"
+        with self.assertRaisesRegex(SourceExtractionError, "collision"):
+            validate_observation_identities(broken, reachable_models={"MONSTER.EGG", "MONSTER.FRONT"})
+        broken = json.loads(json.dumps(fixture))
+        broken["stateObservationContracts"][0]["canonicalMonster"] = "MONSTER.MISSING"
+        with self.assertRaisesRegex(SourceExtractionError, "missing target"):
+            validate_observation_identities(broken, reachable_models={"MONSTER.EGG", "MONSTER.FRONT"})
+        broken = json.loads(json.dumps(fixture))
+        broken["matchingPolicy"]["fuzzyMatching"] = True
+        with self.assertRaisesRegex(SourceExtractionError, "normalization"):
+            validate_observation_identities(broken, reachable_models={"MONSTER.EGG", "MONSTER.FRONT"})
+        broken = json.loads(json.dumps(fixture))
+        broken["aliases"] = [{"observedId": "MONSTER.EG", "target": "MONSTER.EGG"}]
+        with self.assertRaisesRegex(SourceExtractionError, "no source-declared aliases"):
+            validate_observation_identities(broken, reachable_models={"MONSTER.EGG", "MONSTER.FRONT"})
+
+
+class BehaviorInheritanceTests(unittest.TestCase):
+    def test_behavior_owner_identity_requires_exact_reachable_descendants(self):
+        class Assembly:
+            bases = {
+                "Game.Monsters.Front": "Game.Monsters.SpecialSegment",
+                "Game.Monsters.SpecialSegment": "Game.Monsters.SharedSegment",
+                "Game.Monsters.SharedSegmentLookalike": "System.Object",
+            }
+
+            def derives_from(self, source, ancestor):
+                seen = set()
+                while source in self.bases:
+                    if source in seen:
+                        raise SourceExtractionError("cycle")
+                    seen.add(source)
+                    source = self.bases[source]
+                    if source == ancestor:
+                        return True
+                return False
+
+        source_to_model = {
+            "Game.Monsters.Front": "MONSTER.FRONT",
+            "Game.Monsters.SharedSegmentLookalike": "MONSTER.LOOKALIKE",
+        }
+        self.assertEqual(
+            _canonical_for_type(
+                "Game.Monsters.SharedSegment", source_to_model, Assembly(), {"MONSTER.FRONT", "MONSTER.LOOKALIKE"}
+            ),
+            "MONSTER.SHARED_SEGMENT",
+        )
+        with self.assertRaisesRegex(SourceExtractionError, "no canonical model or reachable concrete descendants"):
+            _canonical_for_type(
+                "Game.Monsters.Shared", source_to_model, Assembly(), {"MONSTER.FRONT", "MONSTER.LOOKALIKE"}
+            )
+
+    def models(self):
+        return [
+            {"sourceType": "Game.Monsters.Front", "canonicalId": "FRONT"},
+            {"sourceType": "Game.Monsters.Middle", "canonicalId": "MIDDLE"},
+            {"sourceType": "Game.Monsters.LookalikeSegment", "canonicalId": "LOOKALIKE"},
+        ]
+
+    def test_multi_level_exact_inheritance_and_lookalike_rejection(self):
+        relations = resolve_behavior_applicability(
+            base_by_type={
+                "Game.Monsters.Front": "Game.Monsters.SpecialSegment",
+                "Game.Monsters.SpecialSegment": "Game.Monsters.SharedSegment",
+                "Game.Monsters.Middle": "Game.Monsters.SharedSegment",
+                "Game.Monsters.SharedSegment": "System.Object",
+                "Game.Monsters.LookalikeSegment": "System.Object",
+            },
+            behavior_owner_types=["Game.Monsters.SharedSegment"],
+            concrete_models=self.models(),
+            reachable_models={"MONSTER.FRONT", "MONSTER.MIDDLE", "MONSTER.LOOKALIKE"},
+            assembly_sha256="a" * 64,
+        )
+        self.assertEqual(
+            [row["canonicalMonster"] for row in relations[0]["applicableConcreteModels"]],
+            ["MONSTER.FRONT", "MONSTER.MIDDLE"],
+        )
+        self.assertEqual(
+            relations[0]["applicableConcreteModels"][0]["inheritancePath"],
+            ["Game.Monsters.Front", "Game.Monsters.SpecialSegment", "Game.Monsters.SharedSegment"],
+        )
+
+    def test_attach_is_one_to_many_for_every_graph_and_registration(self):
+        relation = resolve_behavior_applicability(
+            base_by_type={
+                "Game.Monsters.Front": "Game.Monsters.SharedSegment",
+                "Game.Monsters.Middle": "Game.Monsters.SharedSegment",
+                "Game.Monsters.SharedSegment": "System.Object",
+            },
+            behavior_owner_types=["Game.Monsters.SharedSegment"],
+            concrete_models=self.models()[:2],
+            reachable_models={"MONSTER.FRONT", "MONSTER.MIDDLE"},
+            assembly_sha256="b" * 64,
+        )
+        behavior = {
+            "graphs": [{"sourceType": "Game.Monsters.SharedSegment"}],
+            "registrations": [{"sourceType": "Game.Monsters.SharedSegment"}],
+        }
+        attach_behavior_applicability(behavior, relation)
+        expected = ["MONSTER.FRONT", "MONSTER.MIDDLE"]
+        self.assertEqual(behavior["graphs"][0]["applicableConcreteModels"], expected)
+        self.assertEqual(behavior["registrations"][0]["applicableConcreteModels"], expected)
+
+    def test_cycles_missing_bases_duplicates_and_unresolved_owners_fail(self):
+        kwargs = dict(
+            behavior_owner_types=["Game.Monsters.SharedSegment"],
+            concrete_models=self.models()[:1],
+            reachable_models={"MONSTER.FRONT"},
+            assembly_sha256="c" * 64,
+        )
+        with self.assertRaisesRegex(SourceExtractionError, "cycle"):
+            resolve_behavior_applicability(
+                base_by_type={
+                    "Game.Monsters.Front": "Game.Monsters.SharedSegment",
+                    "Game.Monsters.SharedSegment": "Game.Monsters.Front",
+                }, **kwargs
+            )
+        with self.assertRaisesRegex(SourceExtractionError, "unresolved base"):
+            resolve_behavior_applicability(
+                base_by_type={"Game.Monsters.Front": "Missing.Base"}, **kwargs
+            )
+        with self.assertRaisesRegex(SourceExtractionError, "no proven"):
+            resolve_behavior_applicability(
+                base_by_type={
+                    "Game.Monsters.Front": "System.Object",
+                    "Game.Monsters.SharedSegment": "System.Object",
+                }, **kwargs
+            )
+        with self.assertRaisesRegex(SourceExtractionError, "duplicate behavior owner"):
+            resolve_behavior_applicability(
+                base_by_type={
+                    "Game.Monsters.Front": "Game.Monsters.SharedSegment",
+                    "Game.Monsters.SharedSegment": "System.Object",
+                }, behavior_owner_types=["Game.Monsters.SharedSegment"] * 2,
+                concrete_models=self.models()[:1], reachable_models={"MONSTER.FRONT"},
+                assembly_sha256="d" * 64,
+            )
 
 
 class ClosedWorldInvocationTests(unittest.TestCase):

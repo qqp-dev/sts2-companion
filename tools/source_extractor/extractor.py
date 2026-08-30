@@ -14,6 +14,8 @@ from .encounters import extract_rosters
 from .errors import SourceExtractionError
 from .input_gate import VerifiedInputs
 from .localization import require_localized_text
+from .identity import extract_observation_identities
+from .placement import extract_placement
 from .metadata import AssemblyMetadata, extract_encounter_census
 from .names import join_monster_names
 from .pck import read_selected
@@ -169,6 +171,7 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
     assembly = AssemblyMetadata(dll.path)
     try:
         census = extract_encounter_census(dll.path, dll.sha256, assembly=assembly)
+        placement = extract_placement(assembly, dll.sha256, census)
         world = extract_monster_world(dll.path, dll.sha256, assembly=assembly)
         known_models = {"MONSTER." + item["canonicalId"] for item in world["concrete"]}
         rosters = extract_rosters(dll.path, dll.sha256, census, known_models, assembly=assembly)
@@ -177,6 +180,9 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             pck.path, pck.sha256, assembly=assembly
         )
         state_facts = extract_state_facts(dll.path, dll.sha256, assembly=assembly)
+        observation_identities = extract_observation_identities(
+            assembly, dll.sha256, world["concrete"], set(rosters["reachableModels"]), state_facts
+        )
         hp_scaling = extract_hp_multiplayer_scaling(dll.path, dll.sha256, assembly=assembly)
         monster_l10n, monster_l10n_blob = _localization(verified, _MONSTER_LOCALIZATION)
         behavior = extract_behavior(assembly, dll.sha256, pck.sha256, world["concrete"],
@@ -246,6 +252,18 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             },
         },
         "coverage": {
+            "actCensus": complete(len(placement["acts"]), placement["sourceDenominators"]["acts"]),
+            "behaviorGraphApplicability": complete(len(behavior["graphs"]), len(behavior["applicability"])),
+            "behaviorOwnerApplicability": complete(len(behavior["applicability"]), len(behavior["graphs"])),
+            "encounterPlacement": complete(len(placement["encounters"]), placement["sourceDenominators"]["currentEncounterPlacements"]),
+            "eventEncounterLinkage": complete(len(placement["eventLinkage"]), placement["sourceDenominators"]["eventEncounterLinks"]),
+            "observableIdentityDomain": complete(len(observation_identities["entries"]), observation_identities["sourceDenominators"]["observableIds"]),
+            "observableResourceRepresentations": complete(len(observation_identities["resourceRepresentations"]), observation_identities["sourceDenominators"]["resourceRepresentations"]),
+            "observableStateContracts": complete(len(observation_identities["stateObservationContracts"]), observation_identities["sourceDenominators"]["stateObservationContracts"]),
+            "poolCensus": complete(len(placement["pools"]), placement["sourceDenominators"]["pools"]),
+            "poolMemberships": complete(sum(len(row["canonicalMembers"]) for row in placement["pools"]), placement["sourceDenominators"]["poolRegistryMembers"]),
+            "placementMemberships": complete(sum(len(row["memberships"]) for row in placement["encounters"]), placement["sourceDenominators"]["currentEncounterMemberships"]),
+            "moveRegistrationApplicability": complete(len(behavior["registrations"]), len(behavior["registrations"])),
             "encounterIdentities": complete(total_encounters, 89),
             "encounterPossibleMembership": complete(total_encounters, 89),
             "encounterProductionMembership": complete(total_encounters, 89),
@@ -320,6 +338,8 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             "hpGetterCensus": world["hpGetterCensus"],
         },
         "monsters": world["concrete"],
+        "observationIdentities": observation_identities,
+        "placement": placement,
         "multiplayerScaling": {"block": behavior["scaling"]["block"], "hp": hp_scaling, "power": behavior["scaling"]["power"], "ordinaryMonsterAttack": behavior["scaling"]["ordinaryMonsterAttack"]},
         "provenance": {
             "assemblyRules": {"modelDb.typeToId.v0.111.0": census["modelIdRule"]},

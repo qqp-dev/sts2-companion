@@ -1,18 +1,18 @@
-"""Closed C0 encounter projection contract and pinned v0.111.0 identities."""
+"""Closed E1 encounter projection contract and pinned v0.111.0 identities."""
 
 from __future__ import annotations
 
 from typing import Any
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 GENERATOR_NAME = "sts2-encounter-facts"
-GENERATOR_VERSION = "1.0.0"
-SOURCE_SCHEMA_VERSION = 4
-SOURCE_EXTRACTOR_VERSION = "4.0.0"
+GENERATOR_VERSION = "2.0.0"
+SOURCE_SCHEMA_VERSION = 5
+SOURCE_EXTRACTOR_VERSION = "5.0.0"
 
 SOURCE_ARTIFACT = {
     "id": "INPUT.SOURCE", "path": "data/game-v0.111.0-source.json",
-    "sha256": "a03e4213a7aa173f7379656e78ee3f45a9cb42b7cd73ff0287be3bb064811131", "size": 8721864,
+    "sha256": "74f7c952d01aa1ef4fc71e0dacc787dc4ba148d4927094bb8ca7b2e6358b568f", "size": 9508636,
 }
 LEGACY_ARTIFACT = {
     "id": "INPUT.LEGACY", "path": "data/encounters.json",
@@ -36,14 +36,26 @@ SOURCE_AUTHORITY = {
 }
 AUTHORITY = {
     "conflictPolicy": "explicitNoPrecedence", "legacyAnnotations": "legacyCommunityAnnotation",
-    "observedRuntimeIdentity": "contractOnlyNotPopulated",
+    "observedRuntimeIdentity": "sourceDerivedAdapterVocabularyNoObservedSamples",
     "projectionPatchPolicy": {"artifactTier": "raw-only", "kind": "none"},
     "silentMerge": False, "sourceFacts": "rawSource",
 }
 # family -> (status, denominator, numerator, unresolved); reviewed constants,
 # never values learned from the document being validated.
 REQUIRED_COVERAGE: dict[str, tuple[str, int, int, int]] = {
+    "actCensus": ("complete", 4, 4, 0),
+    "behaviorGraphApplicability": ("complete", 100, 100, 0),
+    "behaviorOwnerApplicability": ("complete", 100, 100, 0),
     "blockMultiplayerScaling": ("complete", 1, 1, 0),
+    "encounterPlacement": ("complete", 89, 89, 0),
+    "eventEncounterLinkage": ("complete", 8, 8, 0),
+    "moveRegistrationApplicability": ("complete", 307, 307, 0),
+    "observableIdentityDomain": ("complete", 108, 108, 0),
+    "observableResourceRepresentations": ("complete", 108, 108, 0),
+    "observableStateContracts": ("complete", 8, 8, 0),
+    "placementMemberships": ("complete", 90, 90, 0),
+    "poolCensus": ("complete", 20, 20, 0),
+    "poolMemberships": ("complete", 192, 192, 0),
     "encounterIdentities": ("complete", 89, 89, 0),
     "encounterPossibleMembership": ("complete", 89, 89, 0),
     "encounterProductionMembership": ("complete", 89, 89, 0),
@@ -83,7 +95,7 @@ METADATA_KEYS = {
     "payloadSha256", "projectionInputs", "requiredCoverage", "sourceExtractorVersion", "sourceSchemaVersion",
 }
 PAYLOAD_KEYS = {"conflicts", "evidence", "factReferences", "knownUnknowns", "laneComparisons", "legacyAnnotations", "readiness", "sourceFacts"}
-SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "scaling", "stateRules", "states"}
+SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states"}
 
 
 def coverage_rows() -> list[dict[str, Any]]:
