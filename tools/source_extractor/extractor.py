@@ -18,6 +18,7 @@ from .localization import require_localized_text
 from .identity import extract_observation_identities
 from .hp_pipeline import extract_hp_pipeline
 from .initial_state import extract_initial_state
+from .lifecycle import extract_lifecycle
 from .placement import extract_placement
 from .production import extract_production
 from .metadata import AssemblyMetadata, extract_encounter_census
@@ -216,6 +217,7 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             assembly, dll.sha256, behavior, world["concrete"], encounters,
             initial_state, hp_pipeline,
         )
+        lifecycle = extract_lifecycle(assembly, dll.sha256, behavior)
         # Resolve the generic E2c1 scripted boundary only after the independently
         # validated Architect component exists. Lifecycle dependencies stay open.
         scripted_dependencies = [row for row in behavior["eventDependencies"]
@@ -381,6 +383,20 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             "coreAddOverloadClosure": complete(len(production["coreAddContract"]["overloads"]), 3),
             "coreAddMethodClosure": complete(len(production["coreAddContract"]["methods"]), 6),
             "coreAddSemanticFieldClosure": complete(11, 11),
+            "coreLifecycleComponent": complete(1, 1),
+            "lifecycleCommandDeclarations": complete(lifecycle["sourceDenominators"]["commandDeclarations"], lifecycle["sourceDenominators"]["commandDeclarations"]),
+            "lifecycleCommandPhysicalBodies": complete(lifecycle["sourceDenominators"]["commandPhysicalBodies"], lifecycle["sourceDenominators"]["commandPhysicalBodies"]),
+            "lifecycleKillCallSites": complete(lifecycle["sourceDenominators"]["killCallSites"], lifecycle["sourceDenominators"]["killCallSites"]),
+            "lifecycleEscapeCallSites": complete(lifecycle["sourceDenominators"]["escapeCallSites"], lifecycle["sourceDenominators"]["escapeCallSites"]),
+            "lifecycleDispatchMethods": complete(lifecycle["sourceDenominators"]["dispatchMethods"], lifecycle["sourceDenominators"]["dispatchMethods"]),
+            "lifecycleListenerRegistryMethods": complete(lifecycle["sourceDenominators"]["listenerRegistryLogicalMethods"] + lifecycle["sourceDenominators"]["listenerRegistryPhysicalBodies"], lifecycle["sourceDenominators"]["listenerRegistryLogicalMethods"] + lifecycle["sourceDenominators"]["listenerRegistryPhysicalBodies"]),
+            "lifecycleRemovalMethods": complete(lifecycle["sourceDenominators"]["removalMethods"], lifecycle["sourceDenominators"]["removalMethods"]),
+            "lifecycleTerminationMethods": complete(lifecycle["sourceDenominators"]["terminationDeclarations"] + lifecycle["sourceDenominators"]["terminationPhysicalBodies"] + lifecycle["sourceDenominators"]["terminationSupportMethods"], lifecycle["sourceDenominators"]["terminationDeclarations"] + lifecycle["sourceDenominators"]["terminationPhysicalBodies"] + lifecycle["sourceDenominators"]["terminationSupportMethods"]),
+            "lifecycleCentralizedCheckSites": complete(lifecycle["sourceDenominators"]["centralizedCheckCallSites"], lifecycle["sourceDenominators"]["centralizedCheckCallSites"]),
+            "lifecycleRuntimeBoundaries": complete(lifecycle["sourceDenominators"]["runtimeBoundaries"], lifecycle["sourceDenominators"]["runtimeBoundaries"]),
+            "lifecycleDependencies": complete(lifecycle["sourceDenominators"]["dependencies"], lifecycle["sourceDenominators"]["dependencies"]),
+            "lifecycleInvocationClassification": complete(lifecycle["sourceDenominators"]["invocations"], lifecycle["sourceDenominators"]["invocations"]),
+            "lifecycleSemanticNodes": complete(lifecycle["sourceDenominators"]["semanticNodes"], lifecycle["sourceDenominators"]["semanticNodes"]),
             "moveActions": complete(behavior["summary"]["asyncActions"] + behavior["summary"]["synchronousNoOpActions"], 315),
             "moveIntentArguments": complete(behavior["summary"]["resolvedIntentArguments"], behavior["summary"]["requiredIntentArguments"]),
             "moveIntentClassification": complete(behavior["summary"]["resolvedIntentConstructorSites"], behavior["summary"]["intentConstructorSites"]),
@@ -412,6 +428,7 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
         "cards": referenced["cards"],
         "hpPipeline": hp_pipeline,
         "initialState": initial_state,
+        "lifecycle": lifecycle,
         "eventScripts": event_scripts,
         "intentLocalization": {"entries": intent_l10n, "provenance": intent_l10n_blob},
         "powers": referenced["powers"],

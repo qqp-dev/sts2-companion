@@ -191,6 +191,34 @@ class AssemblyMetadata:
                 return current
             current = base
 
+    def method_code_bytes(self, row_index: int) -> bytes:
+        """Read one bounded CIL code region from its validated tiny/fat header."""
+        row = self.md.MethodDef.rows[row_index - 1]
+        if not row.Rva:
+            raise SourceExtractionError(f"method has no CIL body at {self.method_symbol(row_index)}")
+        header = self.pe.get_data(row.Rva, 12)
+        if not header:
+            raise SourceExtractionError(f"empty CIL header at {self.method_symbol(row_index)}")
+        kind = header[0] & 3
+        if kind == 2:
+            header_size, code_size = 1, header[0] >> 2
+        elif kind == 3:
+            if len(header) < 12:
+                raise SourceExtractionError(f"truncated fat CIL header at {self.method_symbol(row_index)}")
+            flags_and_size = int.from_bytes(header[0:2], "little")
+            header_size = (flags_and_size >> 12) * 4
+            code_size = int.from_bytes(header[4:8], "little")
+            if header_size < 12:
+                raise SourceExtractionError(f"invalid fat CIL header at {self.method_symbol(row_index)}")
+        else:
+            raise SourceExtractionError(f"unsupported CIL header at {self.method_symbol(row_index)}")
+        if code_size < 0 or code_size > 1 << 20:
+            raise SourceExtractionError(f"unbounded CIL code size at {self.method_symbol(row_index)}")
+        code = self.pe.get_data(row.Rva + header_size, code_size)
+        if len(code) != code_size:
+            raise SourceExtractionError(f"truncated CIL code at {self.method_symbol(row_index)}")
+        return code
+
     def method_body(self, row_index: int):
         row = self.md.MethodDef.rows[row_index - 1]
         if not row.Rva:

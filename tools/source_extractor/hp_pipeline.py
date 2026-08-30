@@ -105,31 +105,8 @@ def _target_member(symbol: str, owner: str, members: set[str]) -> str | None:
 
 
 def _method_code_bytes(assembly: AssemblyMetadata, row_index: int) -> bytes:
-    """Read one bounded CIL code region from its validated tiny/fat header."""
-    row = assembly.md.MethodDef.rows[row_index - 1]
-    header = assembly.pe.get_data(row.Rva, 12)
-    if not header:
-        raise SourceExtractionError(f"empty CIL header at {assembly.method_symbol(row_index)}")
-    kind = header[0] & 3
-    if kind == 2:  # CorILMethod_TinyFormat
-        header_size = 1
-        code_size = header[0] >> 2
-    elif kind == 3:  # CorILMethod_FatFormat
-        if len(header) < 12:
-            raise SourceExtractionError(f"truncated fat CIL header at {assembly.method_symbol(row_index)}")
-        flags_and_size = int.from_bytes(header[0:2], "little")
-        header_size = (flags_and_size >> 12) * 4
-        code_size = int.from_bytes(header[4:8], "little")
-        if header_size < 12:
-            raise SourceExtractionError(f"invalid fat CIL header at {assembly.method_symbol(row_index)}")
-    else:
-        raise SourceExtractionError(f"unsupported CIL header at {assembly.method_symbol(row_index)}")
-    if code_size < 0 or code_size > 1 << 20:
-        raise SourceExtractionError(f"unbounded CIL code size at {assembly.method_symbol(row_index)}")
-    code = assembly.pe.get_data(row.Rva + header_size, code_size)
-    if len(code) != code_size:
-        raise SourceExtractionError(f"truncated CIL code at {assembly.method_symbol(row_index)}")
-    return code
+    """Compatibility delegate to the shared validated metadata code reader."""
+    return assembly.method_code_bytes(row_index)
 
 
 def _call_census(
