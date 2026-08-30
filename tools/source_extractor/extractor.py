@@ -12,6 +12,7 @@ from .ast import validate_operation
 from .combat_scaling import extract_combat_scaling
 from .encounters import extract_rosters
 from .errors import SourceExtractionError
+from .event_scripts import extract_event_scripts
 from .input_gate import VerifiedInputs
 from .localization import require_localized_text
 from .identity import extract_observation_identities
@@ -177,6 +178,7 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
     try:
         census = extract_encounter_census(dll.path, dll.sha256, assembly=assembly)
         placement = extract_placement(assembly, dll.sha256, census)
+        event_scripts = extract_event_scripts(assembly, dll.sha256, placement)
         world = extract_monster_world(dll.path, dll.sha256, assembly=assembly)
         known_models = {"MONSTER." + item["canonicalId"] for item in world["concrete"]}
         rosters = extract_rosters(dll.path, dll.sha256, census, known_models, assembly=assembly)
@@ -285,6 +287,21 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
             "eventTurnPhysicalRegistrations": complete(behavior["eventTurnSummary"]["physicalRegistrations"], behavior["eventTurnSummary"]["physicalRegistrations"]),
             "eventTurnPhysicalTitlesEnglish": complete(behavior["eventTurnSummary"]["physicalTitles"], behavior["eventTurnSummary"]["physicalTitles"]),
             "eventTurnReuseInheritanceApplicability": complete(behavior["eventTurnSummary"]["reuseOrInheritanceApplicability"], behavior["eventTurnSummary"]["reuseOrInheritanceApplicability"]),
+            "eventScriptOwnerApplicability": complete(event_scripts["sourceDenominators"]["owners"], event_scripts["sourceDenominators"]["owners"]),
+            "eventScriptEncounterLinks": complete(event_scripts["sourceDenominators"]["encounterScripts"], event_scripts["sourceDenominators"]["encounterScripts"]),
+            "eventScriptOptionDelegates": complete(event_scripts["sourceDenominators"]["options"], event_scripts["sourceDenominators"]["options"]),
+            "eventScriptEffectiveMethods": complete(event_scripts["sourceDenominators"]["methods"], event_scripts["sourceDenominators"]["methods"]),
+            "eventScriptStateRuntimeContracts": complete(event_scripts["sourceDenominators"]["stateContracts"], event_scripts["sourceDenominators"]["stateContracts"]),
+            "eventScriptTransitionArguments": complete(event_scripts["sourceDenominators"]["encounterScripts"], event_scripts["sourceDenominators"]["encounterScripts"]),
+            "eventScriptNodes": complete(event_scripts["sourceDenominators"]["nodes"], event_scripts["sourceDenominators"]["nodes"]),
+            "eventScriptEdges": complete(event_scripts["sourceDenominators"]["edges"], event_scripts["sourceDenominators"]["edges"]),
+            "eventScriptSemanticEffects": complete(event_scripts["sourceDenominators"]["effects"], event_scripts["sourceDenominators"]["effects"]),
+            "eventScriptInvocationClassification": complete(event_scripts["invocationCensus"]["summary"]["resolved"], event_scripts["invocationCensus"]["summary"]["denominator"]),
+            "eventScriptDependencyRefs": complete(event_scripts["sourceDenominators"]["dependencies"], event_scripts["sourceDenominators"]["dependencies"]),
+            "eventScriptDisplayScalingArguments": complete(event_scripts["sourceDenominators"]["displayScalingCalls"], event_scripts["sourceDenominators"]["displayScalingCalls"]),
+            "eventScriptOutcomes": complete(event_scripts["sourceDenominators"]["outcomes"], event_scripts["sourceDenominators"]["outcomes"]),
+            "eventScriptFrameworkClosure": complete(event_scripts["sourceDenominators"]["frameworkMethods"], event_scripts["sourceDenominators"]["frameworkMethods"]),
+            "eventScriptSupportMethodClosure": complete(event_scripts["sourceDenominators"]["supportMethods"], event_scripts["sourceDenominators"]["supportMethods"]),
             "observableIdentityDomain": complete(len(observation_identities["entries"]), observation_identities["sourceDenominators"]["observableIds"]),
             "observableResourceRepresentations": complete(len(observation_identities["resourceRepresentations"]), observation_identities["sourceDenominators"]["resourceRepresentations"]),
             "observableStateContracts": complete(len(observation_identities["stateObservationContracts"]), observation_identities["sourceDenominators"]["stateObservationContracts"]),
@@ -343,6 +360,7 @@ def build_artifact(verified: VerifiedInputs) -> bytes:
         "cards": referenced["cards"],
         "hpPipeline": hp_pipeline,
         "initialState": initial_state,
+        "eventScripts": event_scripts,
         "intentLocalization": {"entries": intent_l10n, "provenance": intent_l10n_blob},
         "powers": referenced["powers"],
         "encounterCensus": {

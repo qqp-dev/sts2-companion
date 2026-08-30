@@ -3,7 +3,7 @@
 `data/game-v0.111.0-source.json` is a deterministic, presentation-independent
 world model for exact public-beta v0.111.0 inputs. It contains identities,
 localization joins, formulas, roster selections, membership sets, and state
-facts—not UI sentences or layout. Schema 8 is the E2c1 boundary and remains
+facts—not UI sentences or layout. Schema 9 is the E2c2a boundary and remains
 runtime-incomplete until independently gated later E2 and consumer waves land.
 
 ## Three-wave boundary
@@ -16,6 +16,7 @@ runtime-incomplete until independently gated later E2 and consumer waves land.
 | E2a | Initial generator/constructor state, effective addition hooks, intrinsic Power hooks, runtime contracts, and 57 lane comparisons | Complete for exact denominators; no runtime consumer change |
 | E2b | Integer HP selection, Decimal multiplayer arithmetic, explicit assignment conversion/cap/clamp, special callers, Int32 storage and network wire joins | Complete for exact denominators; no runtime consumer change |
 | E2c1 | Event-inclusive physical turn graphs, inherited/reused applicability, event titles/intents/operations/no-op proofs, and helper-call closure | Complete for exact turn-machine denominators; scripted event and lifecycle dependencies remain |
+| E2c2a | Five linked event owners, 12 option/delegate constructions, seven exact combat transitions/outcomes, Foul Potion dispatch, and common framework closure | Complete for the non-Architect linked slice; Architect, lifecycle producers/results, and formulas remain |
 
 The current app does not import this artifact or the compact projection and still displays the
 wiki-derived book. Source extraction changes no routes, renderer output, event display, or
@@ -516,6 +517,40 @@ source-complete. The aggregate `UNKNOWN.EVENT_BEHAVIOR` remains alongside explic
 `UNKNOWN.EVENT_SCRIPTED_BEHAVIOR` and `UNKNOWN.EVENT_LIFECYCLE`. E2c2 must extract
 scripted transitions/results; later lifecycle work must close timeout/escape/result
 semantics before the aggregate blocker can be removed.
+
+## E2c2a linked-event script schema
+
+Raw `eventScripts` starts only from E1 owner/method/link provenance and contains five
+owners, 12 exact options/delegates, seven transition calls, seven outcomes, 25 nodes,
+20 edges, 10 direct semantic effects, 10 state/runtime contracts, six dependency refs,
+three independently decoded Battle display calls, 76 owner methods, 14 Foul Potion
+support methods, 53 common framework roots/async bodies, and 1,549 classified call
+sites. Every denominator is emitted by discovery and validated before replacement.
+
+The normalized graph preserves asynchronous completion versus exception propagation.
+It derives stage predecessors from the method that constructs each option: Dense Rest,
+Lantern Keep, and Punch Off Take precede their Fight options. Fake Merchant instead
+uses the Foul Potion event-instance fan-out and `Task.WhenAll`; no hidden option is
+invented. Transition facts retain exact overload, encounter, added rewards, and
+Boolean resume argument and join the existing E1 link fact.
+
+Dense eligibility and damage retain the runtime input
+`event.dynamicVars.HpLoss.baseValue`. Battle `Resume` retains the Boolean
+`encounter.RanOutOfTime` read and V1/V2/V3 success branches. The timeout write, Power
+decrement/removal, escape, and terminal combat result remain lifecycle refs. Exact
+stack extraction shows the three Battle display calls use monster V1/V2/V3 and the
+V1 encounter argument at each site; no expected polarity or argument was seeded.
+
+The schema 6 compact projection includes semantic owners/options/transitions/outcomes/
+nodes/edges/effects/contracts/dependencies and fact evidence, but excludes raw method
+censuses and the 1,549 call decisions. Its linked-event component is complete.
+Architect remains `UNKNOWN.EVENT_SCRIPTED_BEHAVIOR`; the four exact lifecycle refs
+remain `UNKNOWN.EVENT_LIFECYCLE`; aggregate and global blockers remain. No readiness
+outside the bounded projection is changed.
+
+Evidence grade: exact pinned CLI metadata and CIL for all normalized script facts;
+explicit unresolved refs for lifecycle/formula contracts; no runtime observation or
+community fallback is silently merged.
 
 ## E2 projection boundary
 

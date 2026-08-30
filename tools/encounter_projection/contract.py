@@ -1,18 +1,18 @@
-"""Closed E2c1 encounter projection contract and pinned v0.111.0 identities."""
+"""Closed E2c2a encounter projection contract and pinned v0.111.0 identities."""
 
 from __future__ import annotations
 
 from typing import Any
 
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
 GENERATOR_NAME = "sts2-encounter-facts"
-GENERATOR_VERSION = "5.0.0"
-SOURCE_SCHEMA_VERSION = 8
-SOURCE_EXTRACTOR_VERSION = "8.0.0"
+GENERATOR_VERSION = "6.0.0"
+SOURCE_SCHEMA_VERSION = 9
+SOURCE_EXTRACTOR_VERSION = "9.0.0"
 
 SOURCE_ARTIFACT = {
     "id": "INPUT.SOURCE", "path": "data/game-v0.111.0-source.json",
-    "sha256": "dac3224f4318e7126d2dd3af199e90907582e8d62aa62d498b84deaaa76e536e", "size": 12015887,
+    "sha256": "055d571405330e207c8dda17418f3092fd1c548e5248e49541449baffb90944c", "size": 12742768,
 }
 LEGACY_ARTIFACT = {
     "id": "INPUT.LEGACY", "path": "data/encounters.json",
@@ -62,6 +62,21 @@ REQUIRED_COVERAGE: dict[str, tuple[str, int, int, int]] = {
     "eventTurnPhysicalRegistrations": ("complete", 8, 8, 0),
     "eventTurnPhysicalTitlesEnglish": ("complete", 8, 8, 0),
     "eventTurnReuseInheritanceApplicability": ("complete", 3, 3, 0),
+    "eventScriptDependencyRefs": ("complete", 6, 6, 0),
+    "eventScriptDisplayScalingArguments": ("complete", 3, 3, 0),
+    "eventScriptEdges": ("complete", 20, 20, 0),
+    "eventScriptEffectiveMethods": ("complete", 76, 76, 0),
+    "eventScriptEncounterLinks": ("complete", 7, 7, 0),
+    "eventScriptFrameworkClosure": ("complete", 53, 53, 0),
+    "eventScriptInvocationClassification": ("complete", 1549, 1549, 0),
+    "eventScriptNodes": ("complete", 25, 25, 0),
+    "eventScriptOptionDelegates": ("complete", 12, 12, 0),
+    "eventScriptOutcomes": ("complete", 7, 7, 0),
+    "eventScriptOwnerApplicability": ("complete", 5, 5, 0),
+    "eventScriptSemanticEffects": ("complete", 10, 10, 0),
+    "eventScriptStateRuntimeContracts": ("complete", 10, 10, 0),
+    "eventScriptSupportMethodClosure": ("complete", 14, 14, 0),
+    "eventScriptTransitionArguments": ("complete", 7, 7, 0),
     "moveRegistrationApplicability": ("complete", 315, 315, 0),
     "observableIdentityDomain": ("complete", 108, 108, 0),
     "observableResourceRepresentations": ("complete", 108, 108, 0),
@@ -123,7 +138,7 @@ METADATA_KEYS = {
     "payloadSha256", "projectionInputs", "requiredCoverage", "sourceExtractorVersion", "sourceSchemaVersion",
 }
 PAYLOAD_KEYS = {"conflicts", "evidence", "factReferences", "knownUnknowns", "laneComparisons", "legacyAnnotations", "readiness", "resolvedAudits", "sourceFacts"}
-SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states", "initialState", "hpPipeline", "eventTurnBehavior"}
+SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states", "initialState", "hpPipeline", "eventTurnBehavior", "eventScripts"}
 
 
 def coverage_rows() -> list[dict[str, Any]]:
