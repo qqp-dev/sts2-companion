@@ -52,7 +52,8 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual(first, self.projection_bytes)
         self.assertLess(len(first), len(self.source_bytes) // 2)
         self.assertNotIn(b"invocationCensus", first)
-        self.assertNotIn(b"cilInstructionsSha256", first)
+        self.assertNotIn(b'"instructions"', first)
+        self.assertNotIn(b'"diagnosticMetadataToken"', first)
         self.assertEqual(hashlib.sha256(self.legacy_bytes).hexdigest(), LEGACY_SHA256)
         self.assertNotIn("generatedAt", self.artifact["metadata"])
 
@@ -108,7 +109,17 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual([row["canonicalMonster"] for row in owners], ["MONSTER.DECIMILLIPEDE_SEGMENT"])
         self.assertNotIn("modelRef", owners[0])
         unknowns = payload["knownUnknowns"]
-        self.assertTrue(any(row["reasonCode"] == "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT" for row in unknowns))
+        self.assertEqual(owners[0]["applicabilityKind"], "inheritedBehavior")
+        self.assertEqual(owners[0]["applicableConcreteModels"], [
+            "MONSTER.DECIMILLIPEDE_SEGMENT_BACK",
+            "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT",
+            "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+        ])
+        retired = {
+            "SOURCE_ACT_PLACEMENT_ABSENT", "SOURCE_ROOM_CLASS_PLACEMENT_ABSENT",
+            "OBSERVED_IDENTITY_ALIAS_JOIN_ABSENT", "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT",
+        }
+        self.assertTrue(retired.isdisjoint({row["reasonCode"] for row in unknowns}))
         self.assertEqual(sum(row["reasonCode"] == "SOURCE_MOVE_TITLE_MISSING_OR_INTERNAL" for row in unknowns), 18)
         candidates = payload["legacyAnnotations"]["moveTitleFallbackCandidates"]
         self.assertEqual(len(candidates), 18)
@@ -117,6 +128,135 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertTrue(all(row["resolution"] == "unresolved" for row in payload["conflicts"]))
         self.assertTrue(any(row["conflictId"] == "CONFLICT.MONSTER_TITLE.FOGMOG_NORMAL.1" for row in payload["conflicts"]))
         self.assertTrue(any(row["reasonCode"] == "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT" for row in unknowns))
+
+
+    def test_e1_placement_census_pools_conditions_and_nonpool_records(self):
+        sf = self.artifact["payload"]["sourceFacts"]
+        placement = sf["placement"]
+        self.assertEqual(placement["sourceDenominators"], {
+            "acts": 4, "currentEncounterMemberships": 90,
+            "currentEncounterPlacements": 89, "eventEncounterLinks": 8,
+            "poolRegistryMembers": 192, "pools": 20,
+        })
+        self.assertEqual(
+            [(row["canonicalId"], row["actIndex"], row["registryOrder"]) for row in placement["acts"]],
+            [("ACT.OVERGROWTH", 0, 0), ("ACT.UNDERDOCKS", 0, 1), ("ACT.HIVE", 1, 2), ("ACT.GLORY", 2, 3)],
+        )
+        encounters = {row["canonicalEncounter"]: row for row in placement["encounters"]}
+        self.assertEqual(len(encounters), 89)
+        self.assertNotIn("ENCOUNTER.DOORMAKER_BOSS", encounters)
+        self.assertEqual(encounters["ENCOUNTER.DECIMILLIPEDE_ELITE"]["memberships"][0]["actId"], "ACT.HIVE")
+        self.assertEqual(encounters["ENCOUNTER.DECIMILLIPEDE_ELITE"]["memberships"][0]["roomClass"], "elite")
+        self.assertEqual(encounters["ENCOUNTER.RUBY_RAIDERS_NORMAL"]["memberships"][0]["tier"], "regular")
+        fake = encounters["ENCOUNTER.FAKE_MERCHANT_EVENT_ENCOUNTER"]
+        self.assertEqual([row["actId"] for row in fake["memberships"]], ["ACT.GLORY", "ACT.HIVE", "ACT.OVERGROWTH", "ACT.UNDERDOCKS"])
+        self.assertTrue(all(row["eventPoolOrigin"] == "shared" for row in fake["memberships"]))
+        fake_condition = fake["memberships"][0]["conditions"][0]["condition"]
+        self.assertEqual(fake_condition["kind"], "allOf")
+        self.assertEqual(fake_condition["conditions"][0], {"kind": "compare", "left": "run.currentActIndex", "operator": "greaterThanOrEqual", "right": 1})
+        tunneler = encounters["ENCOUNTER.TUNNELER_NORMAL"]
+        self.assertEqual(tunneler["classification"], "sourceProvenNonPool")
+        self.assertEqual(tunneler["nonPoolClassification"]["kind"], "absentFromAllActEncounterRegistries")
+        architect = encounters["ENCOUNTER.THE_ARCHITECT_EVENT_ENCOUNTER"]
+        self.assertEqual(architect["nonPoolClassification"]["kind"], "scriptedRunTransition")
+        pools = {row["poolId"]: row for row in placement["pools"]}
+        weak = pools["POOL.OVERGROWTH.WEAK"]
+        self.assertEqual(weak["selection"]["kind"], "weightedDrawSequence")
+        self.assertEqual(weak["selection"]["draws"], {"kind": "constant", "value": 3})
+        self.assertTrue(all(row["weight"] == {"kind": "constant", "value": "1.0", "valueType": "decimal"} for row in weak["canonicalMembers"]))
+        self.assertEqual(pools["POOL.OVERGROWTH.EVENT"]["selection"]["initialOrdering"], ["actLocalRegistry", "sharedRegistry"])
+        self.assertEqual(len(placement["eventLinkage"]), 8)
+
+    def test_e1_exact_identity_domain_states_and_adversarial_lookalikes(self):
+        identities = self.artifact["payload"]["sourceFacts"]["observationIdentities"]
+        entries = {row["observedId"]: row for row in identities["entries"]}
+        self.assertEqual(len(entries), 108)
+        self.assertEqual(len(identities["resourceRepresentations"]), 108)
+        resources = {row["resourceId"]: row for row in identities["resourceRepresentations"]}
+        self.assertEqual(resources["res://scenes/creature_visuals/decimillipede_segment_front.tscn"]["canonicalMonster"], "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT")
+        self.assertNotIn("res://scenes/creature_visuals/tough_egg.tscn", entries)
+        self.assertEqual(identities["aliases"], [])
+        self.assertEqual(identities["matchingPolicy"]["fuzzyMatching"], False)
+        for model in (
+            "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT", "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+            "MONSTER.DECIMILLIPEDE_SEGMENT_BACK", "MONSTER.ASSASSIN_RUBY_RAIDER",
+            "MONSTER.AXE_RUBY_RAIDER", "MONSTER.BRUTE_RUBY_RAIDER",
+            "MONSTER.CROSSBOW_RUBY_RAIDER", "MONSTER.TRACKER_RUBY_RAIDER",
+            "MONSTER.TOUGH_EGG", "MONSTER.TEST_SUBJECT",
+        ):
+            self.assertEqual(entries[model]["canonicalMonster"], model)
+            self.assertEqual(entries[model]["identityKind"], "model")
+        for lookalike in (
+            "MONSTER.DECIMILLIPEDE_FRONT", "MONSTER.ASSASSIN_RAIDER", "MONSTER.HATCHLING",
+            "MONSTER.TEST_SUBJECT_PHASE_2", "monster.tough_egg", "TOUGH_EGG",
+        ):
+            self.assertNotIn(lookalike, entries)
+        states = {row["stateId"]: row for row in identities["stateObservationContracts"]}
+        self.assertEqual(len(states), 8)
+        for state_id, model in (
+            ("MONSTER.TOUGH_EGG#HATCHED", "MONSTER.TOUGH_EGG"),
+            ("MONSTER.TEST_SUBJECT#PHASE_2", "MONSTER.TEST_SUBJECT"),
+            ("MONSTER.DECIMILLIPEDE_SEGMENT_FRONT#BODY", "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT"),
+        ):
+            self.assertEqual(states[state_id]["observation"]["emittedModelId"], model)
+            self.assertEqual(states[state_id]["observation"]["separateStateIdEmitted"], False)
+        comparisons = {row["comparisonId"]: row for row in self.artifact["payload"]["laneComparisons"]}
+        self.assertEqual(comparisons["OBSERVED_IDENTITY.DECIMILLIPEDE_ELITE.0"]["reasonCode"], "NO_EXACT_SOURCE_OBSERVATION_ID")
+        self.assertEqual(comparisons["OBSERVED_IDENTITY.RUBY_RAIDERS_NORMAL.0"]["status"], "notStaticallyComparable")
+
+    def test_e1_all_graphs_and_registrations_have_concrete_applicability(self):
+        sf = self.artifact["payload"]["sourceFacts"]
+        owners = {row["canonicalMonster"]: row for row in sf["behaviorOwners"]}
+        self.assertEqual(len(owners), 100)
+        self.assertTrue(all(row["applicableConcreteModels"] for row in owners.values()))
+        self.assertEqual(len(sf["graphs"]), 100)
+        self.assertEqual(len(sf["moves"]), 307)
+        for row in sf["graphs"] + sf["moves"]:
+            self.assertEqual(row["applicableConcreteModels"], owners[row["canonicalMonster"]]["applicableConcreteModels"])
+        decimilli_moves = [row for row in sf["moves"] if row["canonicalMonster"] == "MONSTER.DECIMILLIPEDE_SEGMENT"]
+        self.assertEqual(len(decimilli_moves), 5)
+        self.assertTrue(all(len(row["applicableConcreteModels"]) == 3 for row in decimilli_moves))
+
+    def test_e1_placement_identity_and_applicability_mutations_fail(self):
+        def unknown_pool(a):
+            a["payload"]["sourceFacts"]["placement"]["pools"][0]["selection"]["kind"] = "guessedPool"
+
+        def unknown_condition(a):
+            placement = a["payload"]["sourceFacts"]["placement"]
+            member = next(m for row in placement["encounters"] for m in row["memberships"] if m["conditions"])
+            member["conditions"][0]["condition"]["kind"] = "guessedCondition"
+
+        def alias_injection(a):
+            a["payload"]["sourceFacts"]["observationIdentities"]["aliases"].append({"observedId": "MONSTER.EGG", "target": "MONSTER.TOUGH_EGG"})
+
+        def identity_collision(a):
+            rows = a["payload"]["sourceFacts"]["observationIdentities"]["entries"]
+            rows[1]["observedId"] = rows[0]["observedId"]
+
+        def missing_state_target(a):
+            a["payload"]["sourceFacts"]["observationIdentities"]["stateObservationContracts"][0]["canonicalMonster"] = "MONSTER.MISSING"
+
+        def bad_resource_representation(a):
+            a["payload"]["sourceFacts"]["observationIdentities"]["resourceRepresentations"][0]["resourceId"] = "monster.aeonglass"
+
+        def broken_owner_applicability(a):
+            a["payload"]["sourceFacts"]["behaviorOwners"][0]["applicableConcreteModels"] = ["MONSTER.MISSING"]
+
+        def broken_move_applicability(a):
+            a["payload"]["sourceFacts"]["moves"][0]["applicableConcreteModels"] = []
+
+        for change, pattern in (
+            (unknown_pool, "unknown placement selection"),
+            (unknown_condition, "unknown placement condition"),
+            (alias_injection, "no source-declared aliases"),
+            (identity_collision, "collision"),
+            (missing_state_target, "missing target|domain"),
+            (bad_resource_representation, "resource identity representation"),
+            (broken_owner_applicability, "concrete applicability"),
+            (broken_move_applicability, "applicability differs"),
+        ):
+            with self.subTest(pattern=pattern):
+                self.assert_invalid(self.mutated(change), pattern)
 
     def test_evidence_is_compact_stable_and_complete(self):
         payload = self.artifact["payload"]
@@ -133,7 +273,7 @@ class EncounterProjectionTests(unittest.TestCase):
 
     def test_metadata_manifest_payload_and_coverage_mutations_fail(self):
         cases = [
-            (lambda a: a.__setitem__("schemaVersion", 2), "schemaVersion"),
+            (lambda a: a.__setitem__("schemaVersion", 999), "schemaVersion"),
             (lambda a: a["metadata"]["generator"].__setitem__("version", "bad"), "generator"),
             (lambda a: a["metadata"]["game"].__setitem__("commit", "bad"), "game"),
             (lambda a: a["metadata"]["projectionInputs"][0].__setitem__("sha256", "0" * 64), "projectionInputs"),
@@ -149,7 +289,7 @@ class EncounterProjectionTests(unittest.TestCase):
 
     def test_source_metadata_and_coverage_mutations_fail(self):
         cases = [
-            (lambda s: s.__setitem__("schemaVersion", 5), "source.schemaVersion"),
+            (lambda s: s.__setitem__("schemaVersion", 999), "source.schemaVersion"),
             (lambda s: s.__setitem__("extractorVersion", "bad"), "source.extractorVersion"),
             (lambda s: s["game"].__setitem__("mainAssemblyHash", 0), "source.game"),
             (lambda s: s["inputs"][0].__setitem__("path", "wrong"), "source.inputs"),

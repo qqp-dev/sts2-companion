@@ -11,6 +11,8 @@ from source_extractor.ast import (
 )
 from source_extractor.canonical import witness_sha256
 from source_extractor.errors import SourceExtractionError
+from source_extractor.identity import validate_observation_identities
+from source_extractor.placement import validate_placement
 from .contract import (
     AUTHORITY, EMBEDDED_SOURCE_INPUTS, GAME, GENERATOR_NAME, GENERATOR_VERSION,
     INTENT_KINDS, METADATA_KEYS, PAYLOAD_KEYS, PROJECTION_INPUTS, REQUIRED_COVERAGE,
@@ -100,7 +102,7 @@ def _validate_source_document(source: dict[str, Any]) -> None:
     if source.get("authority") != SOURCE_AUTHORITY:
         _fail("source.authority", "malformed raw-only authority/fallback policy")
     if source.get("runtimeReady") is not False or source.get("status") != "incomplete":
-        _fail("source", "schema 4 must remain incomplete and not runtime-ready")
+        _fail("source", "schema 5 must remain incomplete and not runtime-ready")
     for family, (status, denominator, numerator, unresolved) in REQUIRED_COVERAGE.items():
         expected = {"denominator": denominator, "numerator": numerator, "status": status, "unresolved": unresolved}
         try:
@@ -120,6 +122,11 @@ def _validate_source_document(source: dict[str, Any]) -> None:
     }
     if len(current_models) != 108:
         _fail("source.monsters", "expected exactly 108 current reachable models")
+    try:
+        validate_placement(source.get("placement"))
+        validate_observation_identities(source.get("observationIdentities"), reachable_models=current_models)
+    except SourceExtractionError as exc:
+        _fail("source.e1", str(exc))
     encounter_ids: set[str] = set()
     for kind in ("ordinary", "event"):
         for index, row in enumerate(encounters[kind]):
@@ -152,9 +159,29 @@ def _validate_source_document(source: dict[str, Any]) -> None:
             if op_id in operation_ids:
                 _fail(f"source.behavior.registrations[{index}].operations[{op_index}].operationId", "duplicate operation ID")
             operation_ids.add(op_id)
-    if len(source["behavior"]["graphs"]) != 100:
+    graphs = source["behavior"]["graphs"]
+    if len(graphs) != 100:
         _fail("source.behavior.graphs", "expected 100 behavior graphs")
-    _unique(source["behavior"]["graphs"], "graphId", "source.behavior.graphs")
+    _unique(graphs, "graphId", "source.behavior.graphs")
+    applicability = source["behavior"].get("applicability")
+    if not isinstance(applicability, list) or len(applicability) != len(graphs):
+        _fail("source.behavior.applicability", "owner/graph applicability denominator mismatch")
+    app_by_owner = {}
+    for index, relation in enumerate(applicability):
+        owner = _string(relation.get("behaviorOwnerSourceType"), f"source.behavior.applicability[{index}].behaviorOwnerSourceType")
+        if owner in app_by_owner:
+            _fail(f"source.behavior.applicability[{index}]", "duplicate behavior owner relation")
+        rows = relation.get("applicableConcreteModels")
+        if not isinstance(rows, list) or not rows:
+            _fail(f"source.behavior.applicability[{index}]", "owner has no concrete applicability")
+        models = [row.get("canonicalMonster") for row in rows]
+        if len(models) != len(set(models)) or not set(models) <= current_models:
+            _fail(f"source.behavior.applicability[{index}]", "ambiguous or unknown concrete applicability")
+        app_by_owner[owner] = models
+    for family, rows in (("graphs", graphs), ("registrations", registrations)):
+        for index, row in enumerate(rows):
+            if row.get("applicableConcreteModels") != app_by_owner.get(row.get("sourceType")):
+                _fail(f"source.behavior.{family}[{index}].applicableConcreteModels", "does not equal exact owner applicability")
     if any(row["canonicalId"] not in move_ids for row in registrations):
         raise AssertionError("unreachable")
 
@@ -337,20 +364,25 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
     owner_fact_ids = set()
     for index, row in enumerate(owners):
         path = f"payload.sourceFacts.behaviorOwners[{index}]"
-        obj = _object(row, path, {"canonicalMonster", "classification", "factId", "modelRef", "sourceType"}, {"canonicalMonster", "classification", "factId", "sourceType"})
+        obj = _object(row, path, {"applicableConcreteModels", "applicabilityKind", "canonicalMonster", "classification", "factId", "modelRef", "sourceType"}, {"applicableConcreteModels", "applicabilityKind", "canonicalMonster", "classification", "factId", "sourceType"})
         owner = _string(obj["canonicalMonster"], path + ".canonicalMonster", prefix="MONSTER.")
         if owner in owner_ids:
             _fail(path + ".canonicalMonster", "duplicate behavior owner")
         owner_ids.add(owner)
         owner_fact_ids.add(_string(obj["factId"], path + ".factId", prefix="SOURCE.BEHAVIOR_OWNER.MONSTER."))
+        applicable = _list(obj["applicableConcreteModels"], path + ".applicableConcreteModels")
+        if not applicable or len(applicable) != len(set(applicable)) or not set(applicable) <= model_ids:
+            _fail(path + ".applicableConcreteModels", "missing, duplicate, or unknown concrete applicability")
         if obj["classification"] == "concreteModel":
-            if obj.get("modelRef") != f"SOURCE.{owner}" or owner not in model_ids:
-                _fail(path + ".modelRef", "broken concrete behavior-owner model join")
+            if obj.get("modelRef") != f"SOURCE.{owner}" or owner not in model_ids or obj["applicabilityKind"] != "directModel" or applicable != [owner]:
+                _fail(path, "broken direct behavior-owner model join")
         elif obj["classification"] == "abstractBehavior":
-            if "modelRef" in obj or owner != "MONSTER.DECIMILLIPEDE_SEGMENT":
-                _fail(path, "unsupported or silently joined abstract behavior owner")
+            if "modelRef" in obj or obj["applicabilityKind"] != "inheritedBehavior":
+                _fail(path, "abstract behavior owner lacks explicit inheritance applicability")
         else:
             _fail(path + ".classification", "unsupported owner classification")
+
+    owner_applicability = {row["canonicalMonster"]: row["applicableConcreteModels"] for row in owners}
 
     move_rows = _list(sf["moves"], "payload.sourceFacts.moves")
     if len(move_rows) != 307:
@@ -361,7 +393,7 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
     for index, row in enumerate(move_rows):
         path = f"payload.sourceFacts.moves[{index}]"
         obj = _object(row, path, {
-            "action", "canonicalId", "canonicalMonster", "factId", "graphId", "intents", "operations",
+            "action", "applicableConcreteModels", "canonicalId", "canonicalMonster", "factId", "graphId", "intents", "operations",
             "ordinal", "ownerRef", "sourceType", "stateId", "title",
         })
         move_id = _string(obj["canonicalId"], path + ".canonicalId", prefix="MONSTER.")
@@ -373,6 +405,8 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
             _fail(path, "registration canonical ID/owner/state mismatch")
         if owner not in owner_ids or obj["ownerRef"] != f"SOURCE.BEHAVIOR_OWNER.{owner}":
             _fail(path + ".ownerRef", "broken registration-to-owner join")
+        if obj["applicableConcreteModels"] != owner_applicability[owner]:
+            _fail(path + ".applicableConcreteModels", "registration applicability differs from owner")
         move_fact_ids.add(_string(obj["factId"], path + ".factId", prefix="SOURCE.MOVE.MONSTER."))
         action = _object(obj["action"], path + ".action", {"executionKind", "symbolSignature"})
         if action["executionKind"] not in {"asyncStateMachine", "synchronousNoOp"}:
@@ -399,7 +433,7 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
     graph_fact_ids = set()
     for index, row in enumerate(graph_rows):
         path = f"payload.sourceFacts.graphs[{index}]"
-        obj = _object(row, path, {"canonicalMonster", "edges", "factId", "graphId", "initial", "nodes", "sourceType", "topology"})
+        obj = _object(row, path, {"applicableConcreteModels", "canonicalMonster", "edges", "factId", "graphId", "initial", "nodes", "sourceType", "topology"})
         graph_id = _string(obj["graphId"], path + ".graphId", prefix="GRAPH.")
         if graph_id in graph_ids:
             _fail(path + ".graphId", "duplicate graph ID")
@@ -408,6 +442,8 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
         owner = obj["canonicalMonster"]
         if owner not in owner_ids:
             _fail(path + ".canonicalMonster", "graph has unknown behavior owner")
+        if obj["applicableConcreteModels"] != owner_applicability[owner]:
+            _fail(path + ".applicableConcreteModels", "graph applicability differs from owner")
         nodes = _list(obj["nodes"], path + ".nodes")
         node_ids = set()
         for node_index, node in enumerate(nodes):
@@ -443,6 +479,35 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
         for key, value in topology.items():
             _integer(value, path + ".topology." + key)
 
+    placement = _object(sf["placement"], "payload.sourceFacts.placement", {"acts", "encounters", "eventLinkage", "pools", "sourceDenominators"})
+    placement_fact_ids = set()
+    clean_placement = deepcopy(placement)
+    for family, prefix, expected_count in (("acts", "SOURCE.ACT.", 4), ("pools", "SOURCE.POOL.", 20), ("encounters", "SOURCE.PLACEMENT.", 89), ("eventLinkage", "SOURCE.EVENT_LINK.", 8)):
+        rows = _list(clean_placement[family], f"payload.sourceFacts.placement.{family}")
+        if len(rows) != expected_count:
+            _fail(f"payload.sourceFacts.placement.{family}", f"expected {expected_count} records")
+        for index, row in enumerate(rows):
+            placement_fact_ids.add(_string(row.pop("factId", None), f"payload.sourceFacts.placement.{family}[{index}].factId", prefix=prefix))
+    try:
+        validate_placement(clean_placement)
+    except SourceExtractionError as exc:
+        _fail("payload.sourceFacts.placement", str(exc))
+
+    observed = _object(sf["observationIdentities"], "payload.sourceFacts.observationIdentities", {"aliases", "entries", "matchingPolicy", "observationContracts", "policyFactId", "resourceRepresentations", "sourceConclusions", "sourceDenominators", "stateObservationContracts"})
+    identity_fact_ids = {_string(observed["policyFactId"], "payload.sourceFacts.observationIdentities.policyFactId", prefix="SOURCE.OBSERVATION_IDENTITY_POLICY")}
+    clean_observed = deepcopy(observed)
+    clean_observed.pop("policyFactId")
+    for index, row in enumerate(clean_observed["entries"]):
+        identity_fact_ids.add(_string(row.pop("factId", None), f"payload.sourceFacts.observationIdentities.entries[{index}].factId", prefix="SOURCE.OBSERVED_IDENTITY.MONSTER."))
+    for index, row in enumerate(clean_observed["resourceRepresentations"]):
+        identity_fact_ids.add(_string(row.pop("factId", None), f"payload.sourceFacts.observationIdentities.resourceRepresentations[{index}].factId", prefix="SOURCE.OBSERVED_RESOURCE.MONSTER."))
+    for index, row in enumerate(clean_observed["stateObservationContracts"]):
+        identity_fact_ids.add(_string(row.pop("factId", None), f"payload.sourceFacts.observationIdentities.stateObservationContracts[{index}].factId", prefix="SOURCE.OBSERVED_STATE.MONSTER."))
+    try:
+        validate_observation_identities(clean_observed, reachable_models=model_ids)
+    except SourceExtractionError as exc:
+        _fail("payload.sourceFacts.observationIdentities", str(exc))
+
     scaling = _object(sf["scaling"], "payload.sourceFacts.scaling", {"block", "hp", "ordinaryMonsterAttack", "power"})
     scaling_fact_ids = set()
     for name, row in scaling.items():
@@ -454,7 +519,8 @@ def _validate_source_facts(source_facts: Any) -> dict[str, set[str]]:
         _fail("payload.sourceFacts.moves", "move refers to unknown graph")
     all_source_facts = (
         encounter_fact_ids | monster_fact_ids | state_fact_ids | referenced_fact_ids |
-        owner_fact_ids | move_fact_ids | graph_fact_ids | scaling_fact_ids | {state_rules["factId"]}
+        owner_fact_ids | move_fact_ids | graph_fact_ids | scaling_fact_ids | placement_fact_ids |
+        identity_fact_ids | {state_rules["factId"]}
     )
     return {
         "all": all_source_facts, "encounters": encounter_fact_ids, "models": model_ids,
@@ -649,7 +715,7 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     for index, row in enumerate(comparisons):
         path = f"payload.laneComparisons[{index}]"
         obj = _object(row, path, {"comparisonId", "family", "left", "reasonCode", "right", "status"}, {"comparisonId", "family", "left", "right", "status"})
-        if obj["family"] not in {"encounterTitle", "monsterTitle", "initialHpA8SinglePlayer"}:
+        if obj["family"] not in {"encounterTitle", "monsterTitle", "initialHpA8SinglePlayer", "encounterActPlacement", "encounterRoomClass", "observedMonsterIdentity"}:
             _fail(path + ".family", "unsupported overlap family")
         if obj["status"] not in {"agrees", "conflict", "notStaticallyComparable"}:
             _fail(path + ".status", "unsupported overlap classification")
@@ -678,7 +744,7 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
             _fail(path + ".conflictId", "orphan/duplicate conflict")
         represented.add(comparison_id)
         if obj["resolution"] != "unresolved":
-            _fail(path + ".resolution", "C0 must not select a conflict winner")
+            _fail(path + ".resolution", "E1 must not select a conflict winner")
         comparison = next(item for item in comparisons if item["comparisonId"] == comparison_id)
         if obj["family"] != comparison["family"] or obj["left"] != comparison["left"] or obj["right"] != comparison["right"]:
             _fail(path, "conflict does not retain both comparable facts and values")
@@ -703,13 +769,14 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     if missing_title_count != 18:
         _fail("payload.knownUnknowns", "all 18 missing source move titles must be individually classified")
     required_reasons = {
-        "SOURCE_ACT_PLACEMENT_ABSENT", "SOURCE_ROOM_CLASS_PLACEMENT_ABSENT",
-        "OBSERVED_IDENTITY_ALIAS_JOIN_ABSENT", "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT",
         "INITIAL_STATE_COVERAGE_ABSENT", "EVENT_BEHAVIOR_COVERAGE_ABSENT",
         "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT", "LEGACY_PER_FACT_PROVENANCE_INCOMPLETE",
         "BROADER_WORLD_MODEL_FAMILIES_ABSENT",
     }
     actual_reasons = {row["reasonCode"] for row in unknowns}
+    retired_e1_reasons = {"SOURCE_ACT_PLACEMENT_ABSENT", "SOURCE_ROOM_CLASS_PLACEMENT_ABSENT", "OBSERVED_IDENTITY_ALIAS_JOIN_ABSENT", "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT"}
+    if actual_reasons & retired_e1_reasons:
+        _fail("payload.knownUnknowns", "resolved E1 absence reason was retained")
     if not required_reasons <= actual_reasons:
         _fail("payload.knownUnknowns", f"missing reason classifications {sorted(required_reasons-actual_reasons)!r}")
 
@@ -721,13 +788,13 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     scopes = _object(readiness["runtimeScopes"], "payload.readiness.runtimeScopes", {"encounterCompanion", "encounterProjection"})
     companion = _object(scopes["encounterCompanion"], "payload.readiness.runtimeScopes.encounterCompanion", {"ready", "reasonRefs", "status"})
     if companion["ready"] is not False or companion["status"] != "incomplete" or not companion["reasonRefs"]:
-        _fail("payload.readiness.runtimeScopes.encounterCompanion", "C0 companion scope cannot be ready")
+        _fail("payload.readiness.runtimeScopes.encounterCompanion", "E1 companion scope cannot be ready")
     projected = _object(scopes["encounterProjection"], "payload.readiness.runtimeScopes.encounterProjection", {"ready", "requiredCoverageFamilies", "requiredJoins", "status"})
     if projected["ready"] is not True or projected["status"] != "complete":
         _fail("payload.readiness.runtimeScopes.encounterProjection", "independent projection section should be complete")
     if projected["requiredCoverageFamilies"] != [row["family"] for row in coverage_rows()]:
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredCoverageFamilies", "coverage gate mismatch")
-    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence"}
+    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability"}
     if set(projected["requiredJoins"]) != expected_joins or len(projected["requiredJoins"]) != len(expected_joins):
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredJoins", "join gate mismatch")
 

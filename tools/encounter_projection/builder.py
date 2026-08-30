@@ -1,4 +1,4 @@
-"""Pure builder for the compact C0 encounter projection."""
+"""Pure builder for the compact E1 encounter projection."""
 
 from __future__ import annotations
 
@@ -143,6 +143,10 @@ def _source_models(source: dict[str, Any], facts: _Facts) -> dict[str, list[dict
 
 def _source_moves(source: dict[str, Any], monster_models: set[str], facts: _Facts) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     registrations = source["behavior"]["registrations"]
+    applicability = {
+        row["behaviorOwnerSourceType"]: row
+        for row in source["behavior"]["applicability"]
+    }
     moves = []
     owner_source_types: dict[str, str] = {}
     owner_first_index: dict[str, int] = {}
@@ -153,6 +157,7 @@ def _source_moves(source: dict[str, Any], monster_models: set[str], facts: _Fact
         facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE", [f"/behavior/registrations/{index}"])
         moves.append({
             "action": {"executionKind": row["execution"]["kind"], "symbolSignature": row["action"]["symbolSignature"]},
+            "applicableConcreteModels": deepcopy(row["applicableConcreteModels"]),
             "canonicalId": row["canonicalId"], "canonicalMonster": row["canonicalMonster"],
             "factId": fact_id, "graphId": row["graphId"],
             "intents": _compact_intents(row["intents"]), "operations": _without_provenance(row["operations"]),
@@ -161,14 +166,29 @@ def _source_moves(source: dict[str, Any], monster_models: set[str], facts: _Fact
             "sourceType": row["sourceType"], "stateId": row["stateId"], "title": _without_provenance(row["title"]),
         })
     owners = []
+    applicability_index = {
+        row["behaviorOwnerSourceType"]: index
+        for index, row in enumerate(source["behavior"]["applicability"])
+    }
     for canonical_monster in sorted(owner_source_types):
         fact_id = f"SOURCE.BEHAVIOR_OWNER.{canonical_monster}"
+        source_type = owner_source_types[canonical_monster]
         index = owner_first_index[canonical_monster]
-        facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE", [f"/behavior/registrations/{index}"])
+        app_index = applicability_index.get(source_type)
+        relation = applicability.get(source_type)
+        if app_index is None or relation is None:
+            raise SourceExtractionError(f"behavior owner lacks source applicability: {source_type}")
+        facts.add(
+            fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE",
+            [f"/behavior/registrations/{index}", f"/behavior/applicability/{app_index}"],
+        )
         concrete = canonical_monster in monster_models
+        applicable_models = [row["canonicalMonster"] for row in relation["applicableConcreteModels"]]
         owner = {
+            "applicableConcreteModels": applicable_models,
+            "applicabilityKind": "directModel" if concrete and applicable_models == [canonical_monster] else "inheritedBehavior",
             "canonicalMonster": canonical_monster, "classification": "concreteModel" if concrete else "abstractBehavior",
-            "factId": fact_id, "sourceType": owner_source_types[canonical_monster],
+            "factId": fact_id, "sourceType": source_type,
         }
         if concrete:
             owner["modelRef"] = f"SOURCE.{canonical_monster}"
@@ -184,6 +204,55 @@ def _source_graphs(source: dict[str, Any], facts: _Facts) -> list[dict[str, Any]
         result.append({**_without_provenance(row), "factId": fact_id})
     return result
 
+
+
+def _source_placement(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
+    placement = source["placement"]
+    result: dict[str, Any] = {"sourceDenominators": deepcopy(placement["sourceDenominators"])}
+    for family, prefix in (("acts", "SOURCE.ACT"), ("pools", "SOURCE.POOL"), ("encounters", "SOURCE.PLACEMENT"), ("eventLinkage", "SOURCE.EVENT_LINK")):
+        rows = []
+        for index, row in enumerate(placement[family]):
+            if family == "acts":
+                suffix = row["canonicalId"].removeprefix("ACT.")
+            elif family == "pools":
+                suffix = row["poolId"].removeprefix("POOL.")
+            else:
+                suffix = row["canonicalEncounter"].removeprefix("ENCOUNTER.")
+            fact_id = f"{prefix}.{suffix}"
+            facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE", [f"/placement/{family}/{index}"])
+            rows.append({**_without_provenance(row), "factId": fact_id})
+        result[family] = rows
+    return result
+
+
+def _source_observation_identities(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
+    identities = source["observationIdentities"]
+    entries = []
+    for index, row in enumerate(identities["entries"]):
+        fact_id = f"SOURCE.OBSERVED_IDENTITY.{row['canonicalMonster']}"
+        facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE", [f"/observationIdentities/entries/{index}"])
+        entries.append({**_without_provenance(row), "factId": fact_id})
+    resource_representations = []
+    for index, row in enumerate(identities["resourceRepresentations"]):
+        fact_id = f"SOURCE.OBSERVED_RESOURCE.{row['canonicalMonster']}"
+        facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE", [f"/observationIdentities/resourceRepresentations/{index}"])
+        resource_representations.append({**_without_provenance(row), "factId": fact_id})
+    state_contracts = []
+    for index, row in enumerate(identities["stateObservationContracts"]):
+        fact_id = f"SOURCE.OBSERVED_STATE.{row['stateId'].replace('#', '.')}"
+        facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE", [f"/observationIdentities/stateObservationContracts/{index}"])
+        state_contracts.append({**deepcopy(row), "factId": fact_id})
+    policy_fact = "SOURCE.OBSERVATION_IDENTITY_POLICY"
+    facts.add(policy_fact, "source", f"EVIDENCE.{policy_fact}", "INPUT.SOURCE", ["/observationIdentities/matchingPolicy", "/observationIdentities/observationContracts", "/observationIdentities/sourceConclusions"])
+    return {
+        "aliases": deepcopy(identities["aliases"]), "entries": entries,
+        "matchingPolicy": deepcopy(identities["matchingPolicy"]),
+        "observationContracts": _without_provenance(identities["observationContracts"]),
+        "policyFactId": policy_fact, "resourceRepresentations": resource_representations,
+        "sourceConclusions": deepcopy(identities["sourceConclusions"]),
+        "sourceDenominators": deepcopy(identities["sourceDenominators"]),
+        "stateObservationContracts": state_contracts,
+    }
 
 def _source_scaling(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
     result = {}
@@ -253,6 +322,9 @@ def _range_from_source(monster: dict[str, Any]) -> list[int]:
 def _comparisons_and_conflicts(source_facts: dict[str, Any], legacy_annotations: dict[str, Any]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     encounters = {row["canonicalId"]: row for row in source_facts["encounters"]["ordinary"]}
     monsters = {row["canonicalId"]: row for row in source_facts["monsters"]}
+    placements = {row["canonicalEncounter"].removeprefix("ENCOUNTER."): row for row in source_facts["placement"]["encounters"]}
+    observed_ids = {row["observedId"]: row for row in source_facts["observationIdentities"]["entries"]}
+    identity_policy_fact = source_facts["observationIdentities"]["policyFactId"]
     comparisons: list[dict[str, Any]] = []
     conflicts: list[dict[str, Any]] = []
 
@@ -275,12 +347,38 @@ def _comparisons_and_conflicts(source_facts: dict[str, Any], legacy_annotations:
     for legacy_encounter in legacy_annotations["current"]:
         encounter_id = legacy_encounter["legacyEncounterId"]
         source_encounter = encounters[encounter_id]
+        placement = placements[encounter_id]
+        source_act_ids = sorted({row["actId"] for row in placement["memberships"]})
+        compare(
+            f"ACT_PLACEMENT.{encounter_id}", "encounterActPlacement", placement["factId"],
+            {"actIds": source_act_ids, "classification": placement["classification"]},
+            legacy_encounter["factId"], {"legacyActAnnotation": legacy_encounter["annotations"]["act"]},
+            comparable=False, reason="DISTINCT_SOURCE_AND_LEGACY_ACT_VOCABULARIES",
+        )
+        source_room_classes = sorted({row["roomClass"] for row in placement["memberships"]})
+        legacy_room = legacy_encounter["annotations"]["roomClass"]
+        room_comparable = len(source_room_classes) == 1 and source_room_classes[0] in {"elite", "boss"}
+        compare(
+            f"ROOM_PLACEMENT.{encounter_id}", "encounterRoomClass", placement["factId"],
+            source_room_classes[0] if room_comparable else {"roomClasses": source_room_classes, "classification": placement["classification"]},
+            legacy_encounter["factId"], legacy_room,
+            comparable=room_comparable, reason=None if room_comparable else "DISTINCT_SOURCE_AND_LEGACY_ROOM_VOCABULARIES",
+        )
         compare(
             f"ENCOUNTER_TITLE.{encounter_id}", "encounterTitle", source_encounter["factId"], source_encounter["title"],
             legacy_encounter["factId"], legacy_encounter["annotations"]["displayName"],
         )
         for index, body in enumerate(legacy_encounter["presentationBodies"]):
             annotation = body["annotations"]
+            queried_observed_id = f"MONSTER.{annotation['monsterId']}"
+            observed = observed_ids.get(queried_observed_id)
+            compare(
+                f"OBSERVED_IDENTITY.{encounter_id}.{index}", "observedMonsterIdentity",
+                observed["factId"] if observed is not None else identity_policy_fact,
+                queried_observed_id if observed is not None else {"exactSourceMatch": None, "queriedObservedId": queried_observed_id},
+                body["factId"], queried_observed_id,
+                comparable=observed is not None, reason=None if observed is not None else "NO_EXACT_SOURCE_OBSERVATION_ID",
+            )
             monster = monsters.get(annotation["monsterId"])
             if monster is None:
                 continue
@@ -326,34 +424,9 @@ def _fallback_candidates(source_facts: dict[str, Any], legacy_annotations: dict[
 
 def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, Any]) -> list[dict[str, Any]]:
     encounter_facts = [row["factId"] for kind in ("ordinary", "event") for row in source_facts["encounters"][kind]]
-    ordinary_facts = [row["factId"] for row in source_facts["encounters"]["ordinary"]]
     event_facts = [row["factId"] for row in source_facts["encounters"]["event"]]
     monster_facts = [row["factId"] for row in source_facts["monsters"]]
     rows = [
-        {
-            "affectedFactIds": encounter_facts,
-            "detail": "Act membership and encounter pool/weight extraction is an E1 prerequisite; legacy act labels are annotations only.",
-            "reasonCode": "SOURCE_ACT_PLACEMENT_ABSENT", "scope": "encounterCompanion", "status": "unresolved",
-            "unknownId": "UNKNOWN.ACT_PLACEMENT",
-        },
-        {
-            "affectedFactIds": encounter_facts,
-            "detail": "Hallway, elite, boss, and event room placement is not source-derived in C0.",
-            "reasonCode": "SOURCE_ROOM_CLASS_PLACEMENT_ABSENT", "scope": "encounterCompanion", "status": "unresolved",
-            "unknownId": "UNKNOWN.ROOM_PLACEMENT",
-        },
-        {
-            "affectedFactIds": ordinary_facts,
-            "detail": "Observed log/save IDs are a runtime-only lane; exact source aliases are an E1 prerequisite.",
-            "reasonCode": "OBSERVED_IDENTITY_ALIAS_JOIN_ABSENT", "scope": "encounterCompanion", "status": "unresolved",
-            "unknownId": "UNKNOWN.OBSERVED_ALIAS_JOIN",
-        },
-        {
-            "affectedFactIds": ["SOURCE.BEHAVIOR_OWNER.MONSTER.DECIMILLIPEDE_SEGMENT"],
-            "detail": "The source artifact has an abstract behavior owner but no explicit abstract-to-concrete behavior inheritance join.",
-            "reasonCode": "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT", "scope": "encounterCompanion", "status": "unresolved",
-            "unknownId": "UNKNOWN.DECIMILLIPEDE_BEHAVIOR_JOIN",
-        },
         {
             "affectedFactIds": monster_facts,
             "detail": "Complete starts-with powers and initial model state coverage is an E2 prerequisite.",
@@ -368,7 +441,7 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
         },
         {
             "affectedFactIds": [source_facts["scaling"]["hp"]["factId"]],
-            "detail": "Source HP scaling declares no rounding/truncation. The audited stable consumer floors 2P values, but runtime source is outside C0's two-input evidence boundary; no precedence is selected.",
+            "detail": "Source HP scaling declares no rounding/truncation. The audited stable consumer floors 2P values, but runtime source is outside E1's two-input evidence boundary; no precedence is selected.",
             "reasonCode": "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT", "scope": "encounterCompanion", "status": "unresolved",
             "unknownId": "UNKNOWN.HP_ROUNDING_CONFLICT",
         },
@@ -380,7 +453,7 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
         },
         {
             "affectedFactIds": [],
-            "detail": "Acts/rooms/events/map, items, powers/statuses/enchantments, characters/aspects/pools/unlocks, and global combat/lifecycle families are outside C0.",
+            "detail": "Complete acts/rooms/events/map rules beyond bounded encounter placement, items, powers/statuses/enchantments, characters/aspects/pools/unlocks, and global combat/lifecycle families remain outside E1.",
             "reasonCode": "BROADER_WORLD_MODEL_FAMILIES_ABSENT", "scope": "worldModel", "status": "unresolved",
             "unknownId": "UNKNOWN.BROADER_WORLD_MODEL",
         },
@@ -414,7 +487,8 @@ def _readiness(known_unknowns: list[dict[str, Any]]) -> dict[str, Any]:
                 "ready": True, "requiredCoverageFamilies": [row["family"] for row in coverage_rows()],
                 "requiredJoins": [
                     "encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology",
-                    "operationModel", "legacyToCanonical", "factToEvidence",
+                    "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement",
+                    "eventEncounterLinkage", "observationIdentity", "behaviorApplicability",
                 ],
                 "status": "complete",
             },
@@ -431,7 +505,9 @@ def build_payload(source: dict[str, Any], legacy: dict[str, Any]) -> dict[str, A
     moves, owners = _source_moves(source, {row["canonicalModel"] for row in monsters}, facts)
     source_facts = {
         "behaviorOwners": owners, "encounters": encounters, "graphs": _source_graphs(source, facts),
-        "models": models, "monsters": monsters, "moves": moves, "scaling": _source_scaling(source, facts),
+        "models": models, "monsters": monsters, "moves": moves,
+        "observationIdentities": _source_observation_identities(source, facts),
+        "placement": _source_placement(source, facts), "scaling": _source_scaling(source, facts),
         "stateRules": state_rules, "states": states,
     }
     legacy_annotations = _legacy_annotations(legacy, facts)

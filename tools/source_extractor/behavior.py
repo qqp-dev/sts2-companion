@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING, Any, Mapping
 from .canonical import slugify_ascii_type_name, witness_sha256
 from .errors import SourceExtractionError
 from .invocations import ClosedWorldInvocationAudit
+from .inheritance import attach_behavior_applicability, resolve_behavior_applicability
 
 if TYPE_CHECKING:
     from .metadata import AssemblyMetadata
@@ -167,21 +168,33 @@ def _state_id_to_key(state_id: str) -> str:
     return state_id[:-5] if state_id.endswith("_MOVE") else state_id
 
 
-def _canonical_for_type(source_type: str, source_to_model: Mapping[str, str]) -> str:
+def _canonical_for_type(
+    source_type: str,
+    source_to_model: Mapping[str, str],
+    assembly: AssemblyMetadata,
+    reachable_models: set[str],
+) -> str:
     model = source_to_model.get(source_type)
-    if model is None:
-        # DecimillipedeSegment is abstract but its three concrete subclasses use
-        # the one assembly-proven behavior implementation/root.
-        if source_type == MONSTER_NS + "DecimillipedeSegment":
-            return "MONSTER.DECIMILLIPEDE_SEGMENT"
-        raise SourceExtractionError(f"behavior type has no canonical monster identity: {source_type}")
-    return model
+    if model is not None:
+        return model
+    descendants = [
+        candidate_model
+        for candidate_type, candidate_model in source_to_model.items()
+        if candidate_model in reachable_models
+        and assembly.derives_from(candidate_type, source_type)
+    ]
+    if not descendants:
+        raise SourceExtractionError(
+            f"behavior type has no canonical model or reachable concrete descendants: {source_type}"
+        )
+    simple = source_type.rsplit(".", 1)[-1]
+    if "+" in simple:
+        raise SourceExtractionError(f"nested behavior owner identity is unsupported: {source_type}")
+    return "MONSTER." + slugify_ascii_type_name(simple)
 
 
 def _title(state_id: str, canonical: str, localization: Mapping[str, Any], *, pck_sha256: str, blob_sha256: str) -> dict[str, Any]:
     root = canonical.removeprefix("MONSTER.")
-    if root in {"DECIMILLIPEDE_FRONT", "DECIMILLIPEDE_MIDDLE", "DECIMILLIPEDE_BACK"}:
-        root = "DECIMILLIPEDE_SEGMENT"
     direct_key = f"{root}.moves.{_state_id_to_key(state_id)}.title"
     key = direct_key
     value = localization.get(key)
@@ -605,7 +618,7 @@ def _registration_rows(assembly: AssemblyMetadata, assembly_sha256: str, source_
         generated = assembly.find_methods(source_type, "GenerateMoveStateMachine")
         if not generated: continue
         if len(generated) != 1: raise SourceExtractionError(f"ambiguous GenerateMoveStateMachine for {source_type}")
-        try: canonical = _canonical_for_type(source_type, source_to_model)
+        try: canonical = _canonical_for_type(source_type, source_to_model, assembly, reachable_models)
         except SourceExtractionError:
             # Only concrete helper/test/obsolete classes may be excluded.
             if source_type in source_to_model: raise
@@ -1072,6 +1085,16 @@ def extract_behavior(assembly: AssemblyMetadata, assembly_sha256: str, pck_sha25
                      localization_blob_sha256: str) -> dict[str, Any]:
     source_to_model = {x["sourceType"]:"MONSTER." + x["canonicalId"] for x in monsters}
     registrations, graphs, excluded, intent_coverage = _registration_rows(assembly,assembly_sha256,source_to_model,set(reachable_models),localization,pck_sha256,localization_blob_sha256)
+    applicability = resolve_behavior_applicability(
+        base_by_type=assembly.base_by_type,
+        behavior_owner_types=[row["sourceType"] for row in graphs],
+        concrete_models=monsters,
+        reachable_models=set(reachable_models),
+        assembly_sha256=assembly_sha256,
+    )
+    attach_behavior_applicability(
+        {"graphs": graphs, "registrations": registrations}, applicability
+    )
     operations, sink_counts, semantic_fields, semantic_denominator, invocation_decisions, invocation_summary = _operations(assembly,assembly_sha256,registrations)
     async_count=sum(x["execution"]["kind"]=="asyncStateMachine" for x in registrations)
     sync_count=len(registrations)-async_count
@@ -1095,7 +1118,7 @@ def extract_behavior(assembly: AssemblyMetadata, assembly_sha256: str, pck_sha25
     if sink_counts!=EXPECTED_SINKS: failures.append(f"sink census {sink_counts!r}")
     if topology!=expected_topology: failures.append(f"topology census {topology!r}")
     if failures: raise SourceExtractionError("Wave B regression disagreement: "+"; ".join(failures))
-    return {"excludedRegistrations":excluded,"graphs":graphs,"registrations":registrations,
+    return {"applicability":applicability,"excludedRegistrations":excluded,"graphs":graphs,"registrations":registrations,
             "invocationCensus":{"decisions":invocation_decisions,"summary":invocation_summary},
             "summary":{"asyncActions":async_count,"synchronousNoOpActions":sync_count,
                        "localizedTitles":localized,"missingOrInternalTitles":len(registrations)-localized,

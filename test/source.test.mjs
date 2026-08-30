@@ -32,8 +32,8 @@ const exactManifest = [
 
 test("source artifact is canonical, exactly pinned, partial, and raw-only", () => {
   assert.equal(artifactBytes.toString("utf8"), `${JSON.stringify(sortedValue(artifact), null, 2)}\n`);
-  assert.equal(artifact.schemaVersion, 4);
-  assert.equal(artifact.extractorVersion, "4.0.0");
+  assert.equal(artifact.schemaVersion, 5);
+  assert.equal(artifact.extractorVersion, "5.0.0");
   assert.equal(artifact.runtimeReady, false);
   assert.equal(artifact.status, "incomplete");
   assert.deepEqual(artifact.inputs, exactManifest);
@@ -53,6 +53,18 @@ test("source artifact is canonical, exactly pinned, partial, and raw-only", () =
 
 test("coverage is denominator-based and Wave B combat families are complete or honestly classified", () => {
   const complete = {
+    actCensus: 4,
+    behaviorGraphApplicability: 100,
+    behaviorOwnerApplicability: 100,
+    encounterPlacement: 89,
+    eventEncounterLinkage: 8,
+    moveRegistrationApplicability: 307,
+    observableIdentityDomain: 108,
+    observableResourceRepresentations: 108,
+    observableStateContracts: 8,
+    placementMemberships: 90,
+    poolCensus: 20,
+    poolMemberships: 192,
     encounterIdentities: 89,
     encounterPossibleMembership: 89,
     encounterProductionMembership: 89,
@@ -84,6 +96,80 @@ test("coverage is denominator-based and Wave B combat families are complete or h
   }
   assert.deepEqual(artifact.coverage.moveTitlesEnglish, { denominator: 307, numerator: 289, status: "classified", unresolved: 18 });
   assert.equal(artifact.coverage.powerCardReferencedModels.status, "complete");
+});
+
+
+test("E1 source placement is registry-derived, closed, and preserves non-pool encounters", () => {
+  assert.deepEqual(artifact.placement.sourceDenominators, {
+    acts: 4, currentEncounterMemberships: 90, currentEncounterPlacements: 89,
+    eventEncounterLinks: 8, poolRegistryMembers: 192, pools: 20,
+  });
+  assert.deepEqual(artifact.placement.acts.map((row) => [row.canonicalId, row.actIndex, row.registryOrder]), [
+    ["ACT.OVERGROWTH", 0, 0], ["ACT.UNDERDOCKS", 0, 1], ["ACT.HIVE", 1, 2], ["ACT.GLORY", 2, 3],
+  ]);
+  const placements = new Map(artifact.placement.encounters.map((row) => [row.canonicalEncounter, row]));
+  assert.equal(placements.size, 89);
+  assert.ok(!placements.has("ENCOUNTER.DOORMAKER_BOSS"));
+  assert.deepEqual(placements.get("ENCOUNTER.DECIMILLIPEDE_ELITE").memberships.map((row) => [row.actId, row.roomClass, row.tier]), [["ACT.HIVE", "elite", "elite"]]);
+  assert.deepEqual(placements.get("ENCOUNTER.RUBY_RAIDERS_NORMAL").memberships.map((row) => [row.actId, row.roomClass, row.tier]), [["ACT.OVERGROWTH", "monster", "regular"]]);
+  assert.equal(placements.get("ENCOUNTER.TUNNELER_NORMAL").nonPoolClassification.kind, "absentFromAllActEncounterRegistries");
+  assert.equal(placements.get("ENCOUNTER.THE_ARCHITECT_EVENT_ENCOUNTER").nonPoolClassification.kind, "scriptedRunTransition");
+  const fake = placements.get("ENCOUNTER.FAKE_MERCHANT_EVENT_ENCOUNTER");
+  assert.deepEqual(fake.memberships.map((row) => row.actId), ["ACT.GLORY", "ACT.HIVE", "ACT.OVERGROWTH", "ACT.UNDERDOCKS"]);
+  assert.ok(fake.memberships.every((row) => row.conditions[0].condition.kind === "allOf"));
+  const weakPool = artifact.placement.pools.find((row) => row.poolId === "POOL.OVERGROWTH.WEAK");
+  assert.equal(weakPool.selection.kind, "weightedDrawSequence");
+  assert.deepEqual(weakPool.selection.immediateExclusions, ["sameEncounterInstance", "sharedEncounterTag"]);
+  assert.ok(weakPool.canonicalMembers.every((row) => row.weight.value === "1.0"));
+  assert.equal(artifact.placement.eventLinkage.length, 8);
+});
+
+test("E1 observation IDs are exact canonical models and states do not invent aliases", () => {
+  const identity = artifact.observationIdentities;
+  assert.deepEqual(identity.sourceDenominators, {
+    currentReachableModels: 108, observableIds: 108, resourceRepresentations: 108,
+    sourceDeclaredCurrentAliases: 0, stateObservationContracts: 8,
+  });
+  assert.deepEqual(identity.aliases, []);
+  assert.deepEqual(identity.matchingPolicy, {
+    caseSensitive: true, fuzzyMatching: false, prefixStripping: false,
+    wirePrefixes: [{ category: "monsterModel", prefix: "MONSTER.", source: "ModelId.Category" }],
+  });
+  const entries = new Map(identity.entries.map((row) => [row.observedId, row]));
+  for (const id of [
+    "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT", "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+    "MONSTER.DECIMILLIPEDE_SEGMENT_BACK", "MONSTER.ASSASSIN_RUBY_RAIDER",
+    "MONSTER.AXE_RUBY_RAIDER", "MONSTER.BRUTE_RUBY_RAIDER",
+    "MONSTER.CROSSBOW_RUBY_RAIDER", "MONSTER.TRACKER_RUBY_RAIDER",
+    "MONSTER.TOUGH_EGG", "MONSTER.TEST_SUBJECT",
+  ]) {
+    assert.equal(entries.get(id).canonicalMonster, id);
+    assert.equal(entries.get(id).identityKind, "model");
+  }
+  for (const lookalike of ["MONSTER.DECIMILLIPEDE_FRONT", "MONSTER.ASSASSIN_RAIDER", "MONSTER.HATCHLING", "MONSTER.TEST_SUBJECT_PHASE_2", "monster.tough_egg"]) {
+    assert.ok(!entries.has(lookalike), lookalike);
+  }
+  const resources = new Map(identity.resourceRepresentations.map((row) => [row.resourceId, row]));
+  assert.equal(resources.size, 108);
+  assert.equal(resources.get("res://scenes/creature_visuals/decimillipede_segment_front.tscn").canonicalMonster, "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT");
+  assert.equal(resources.get("res://scenes/creature_visuals/assassin_ruby_raider.tscn").identityKind, "resourceRepresentationOfModel");
+  assert.ok(!entries.has("res://scenes/creature_visuals/tough_egg.tscn"));
+  const stateContracts = new Map(identity.stateObservationContracts.map((row) => [row.stateId, row]));
+  assert.equal(stateContracts.get("MONSTER.TOUGH_EGG#HATCHED").observation.emittedModelId, "MONSTER.TOUGH_EGG");
+  assert.equal(stateContracts.get("MONSTER.TEST_SUBJECT#PHASE_2").observation.separateStateIdEmitted, false);
+});
+
+test("E1 behavior applicability closes all owners, graphs, and registrations", () => {
+  assert.equal(artifact.behavior.applicability.length, 100);
+  const byOwner = new Map(artifact.behavior.applicability.map((row) => [row.behaviorOwnerSourceType, row.applicableConcreteModels.map((item) => item.canonicalMonster)]));
+  for (const row of [...artifact.behavior.graphs, ...artifact.behavior.registrations]) {
+    assert.deepEqual(row.applicableConcreteModels, byOwner.get(row.sourceType), row.sourceType);
+  }
+  const decimilli = artifact.behavior.applicability.find((row) => row.behaviorOwnerSourceType.endsWith(".DecimillipedeSegment"));
+  assert.deepEqual(decimilli.applicableConcreteModels.map((row) => row.canonicalMonster), [
+    "MONSTER.DECIMILLIPEDE_SEGMENT_BACK", "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT", "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+  ]);
+  assert.equal(artifact.behavior.registrations.filter((row) => row.sourceType.endsWith(".DecimillipedeSegment") && row.applicableConcreteModels.length === 3).length, 5);
 });
 
 test("monster census, identities, reachability, and exclusions are exact", () => {
@@ -212,7 +298,7 @@ test("source artifact is not consumed and runtime wiki book remains byte-identic
   assert.equal(encounterFor("BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER"), null);
   assert.equal(encounterFor("AEONGLASS_BOSS").name, "Aeonglass");
   for (const file of ["../src/book.mjs", "../src/client.js", "../src/http.mjs", "../src/plugin.mjs", "../src/state.mjs"]) {
-    assert.doesNotMatch(readFileSync(new URL(file, import.meta.url), "utf8"), /game-v0\.111\.0-source/);
+    assert.doesNotMatch(readFileSync(new URL(file, import.meta.url), "utf8"), /game-v0\.111\.0-source|encounter-facts-v0\.111\.0/);
   }
 });
 

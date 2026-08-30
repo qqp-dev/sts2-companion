@@ -3,8 +3,8 @@
 `data/game-v0.111.0-source.json` is a deterministic, presentation-independent
 world model for exact public-beta v0.111.0 inputs. It contains identities,
 localization joins, formulas, roster selections, membership sets, and state
-facts—not UI sentences or layout. Schema 4 is the Wave B boundary and remains
-runtime-incomplete until the runtime cutover wave lands.
+facts—not UI sentences or layout. Schema 5 is the E1 boundary and remains
+runtime-incomplete until independently gated E2 and consumer waves land.
 
 ## Three-wave boundary
 
@@ -12,10 +12,10 @@ runtime-incomplete until the runtime cutover wave lands.
 |---|---|---|
 | A | Monster/state identity and names; HP/state formulas; HP multiplayer scaling; encounter roster/pool/production facts | Complete for explicit denominators |
 | B | Move registration/title/intent; operations and helpers; move/Power scaling; selection and phase graphs | Complete for explicit denominators, with 18 classified missing titles |
-| C | Runtime/UI rendering, encounter scope correction, fact references and proof enforcement | Not started |
+| C0/E1 | Compact fact references plus source placement, observation identity, and behavior applicability | Landed; no runtime consumer change |
 
 The current app does not import this artifact or the C0 compact projection and still displays the
-wiki-derived book. Wave A changes no routes, renderer output, event display, or
+wiki-derived book. Source extraction changes no routes, renderer output, event display, or
 `data/encounters.json` bytes.
 
 ## Identities and state
@@ -31,10 +31,47 @@ Consequently:
 - Front, middle, and back Decimillipede segments are separate canonical models
   whose title getter uses `DECIMILLIPEDE_SEGMENT.name`; and
 - aliases from the old presentation book are never used to generate source
-  facts.
+  facts. Current save `monster_ids` are exact canonical `ModelId` strings; hatch
+  and phase state cannot be recovered from the model ID alone.
 
 Reachability classification is likewise separate: ordinary-reachable,
 event-only, deprecated placeholder, helper/test, helper/obsolete, or obsolete.
+
+## E1 placement and identity schemas
+
+`placement.acts` is derived from the owning `ModelDb.get_Acts` registry, not an
+expected ID list. For v0.111.0 it contains Overgrowth, Underdocks, Hive, and
+Glory in source order, with exact source act indices. Each act contributes
+weak, regular, elite, boss, and event pools. Encounter room class comes only
+from exact `EncounterModel.RoomType`; `IsWeak` separates weak from regular
+monster rooms. No encounter suffix, C# spelling convention, legacy act/kind,
+or wiki value participates in the join.
+
+The source denominators are four acts, 20 pools, 192 pool registry members, 89
+current encounter placements, 90 current encounter memberships, and eight
+event links. Placement retains source registry/pool order, equal `1.0` weights,
+draw structure, no-immediate-repeat tag filtering and fallback, event
+act-local/shared origin, pre-shuffle order, dynamic eligibility, and repeat
+behavior. Unknown collection, weight, selection, or condition shapes abort the
+family. The complete negative registry witness classifies `TUNNELER_NORMAL` as
+non-pool. `RunManager.EnterNextAct` and `TheArchitect.CanonicalEncounter` prove
+the Architect event encounter's separate scripted transition.
+
+`observationIdentities.entries` contains exactly 108 unique current canonical
+monster IDs. `ModelId.ToString`, the run-save converter, initial/summoned combat
+history writers, and encounter log writers define separate wire contracts.
+Matching is exact and case-sensitive. The contract has no generic lowercase,
+strip-prefix, suffix, or fuzzy path. `stateObservationContracts` covers all
+eight extracted states but records `separateStateIdEmitted: false`; it is not an
+alias table. `resourceRepresentations` separately records the 108 exact
+`MonsterModel.VisualsPath` values derived by `ModelId.Entry.ToLowerInvariant` and
+`SceneHelper.GetScenePath`; resource paths are never accepted by model-ID lookup.
+
+`behavior.applicability` is the exact metadata inheritance closure for all 100
+behavior graph owners. Every graph and registration repeats the resulting
+canonical model list for referential validation. The abstract
+`DecimillipedeSegment` owner has three concrete descendants; unrelated names do
+not join.
 
 ## Normalized AST grammar
 
@@ -271,7 +308,7 @@ loss. SFX, animation, waits, task awaiters, collections, and presentation nodes
 use narrow declaration/member recognizers and remain visible in the census; no
 unknown-prefix ignore can claim completeness.
 
-Schema 4 obtains every sink stack contract by decoding the exact ECMA-335
+Schema 5 obtains every sink stack contract by decoding the exact ECMA-335
 signature, including static versus instance receivers and generic signatures.
 A bounded CFG abstract interpreter carries constants, arguments, locals,
 fields, getters, arithmetic, conversions, and fluent command receivers across
@@ -324,10 +361,10 @@ explicit, visibly cited later community fallback if useful. Wave B never
 imports community/wiki data into the raw artifact and makes no XML migration
 claim.
 
-## C0 projection boundary
+## E1 projection boundary
 
 The checked source artifact above remains the full static evidence artifact.
-C0 additionally checks in `data/encounter-facts-v0.111.0.json`, built by
+C0 introduced and E1 extends `data/encounter-facts-v0.111.0.json`, built by
 `tools/generate-encounter-facts.py` from that artifact and
 `data/encounters.json` only. It is a projection, not a replacement extractor
 and not a runtime consumer input.
@@ -342,7 +379,10 @@ before atomic replacement. `--check` compares exact bytes without writing.
 
 Source facts and legacy/community annotations are separate objects. Exact-ID
 legacy encounter links are explicit; no save/log/model alias is inferred.
-Observed identity has a contract marker but no static observations. Legacy move
+Observed samples remain absent, but the source-derived exact adapter vocabulary
+and save/log wire contracts are now projected. Legacy identity strings are
+compared by exact equality only and unmatched strings remain explicit lane
+comparisons. Legacy move
 names associated with the same exact model are candidate sets only and never
 selected as source-title replacements. Disagreements are unresolved conflict
 records, while absent or dynamic semantics are stable reason-coded
@@ -355,7 +395,8 @@ pointed-value hashes instead of repeating CIL proof or the 6,683-invocation
 census. This makes the projection substantially smaller while retaining an
 auditable path to the full checked source artifact.
 
-C0 declares only the bounded encounter projection complete. The encounter
-companion and global world-model scopes remain incomplete pending E1/E2 and the
-independent product-family source waves. No `src/` file imports the projection,
+E1 declares only the bounded encounter projection complete. The encounter
+companion remains incomplete pending E2 initial-state/event/lifecycle coverage
+and the unresolved HP rounding conflict. Global readiness also remains false
+pending the independent product-family source waves. No `src/` file imports the projection,
 so `/sts2` continues to use byte-identical `data/encounters.json`.
