@@ -863,6 +863,15 @@ test("E2d1b random callbacks, producer semantics, and production/core Add contra
   assert.deepEqual(semantics.pools.filter((row) => row.selection.kind === "runtimeRng").map((row) => row.candidateModels), [
     ["MONSTER.ZAPBOT", "MONSTER.STABBOT"], ["MONSTER.GUARDBOT", "MONSTER.NOISEBOT"],
   ]);
+  assert.deepEqual(semantics.producers.filter((row) => row.ownerModel === "MONSTER.FABRICATOR").map((row) => [
+    row.producerId,
+    row.activationCardinality.normallyAddedBodies.maximum,
+    row.concurrentPolicy.preActivationAliveSameSideMaximum,
+    row.concurrentPolicy.possiblePostActivationAliveSameSideMaximum,
+  ]), [
+    ["PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE", 2, 3, 5],
+    ["PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE", 1, 3, 4],
+  ]);
   assert.deepEqual(semantics.slotStrategies.reduce((counts, row) => (counts[row.noSlotBehavior] = (counts[row.noSlotBehavior] ?? 0) + 1, counts), {}), {
     passEmptyStringToCoreAdd: 1, passFixedNameWithoutOccupancyCheck: 2, skipAttempt: 3,
   });

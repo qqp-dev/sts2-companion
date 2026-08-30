@@ -45,12 +45,12 @@
       "name": "sts2-encounter-facts",
       "version": "9.0.0"
     },
-    "payloadSha256": "fe8919b14d72efed47b41341b19ddc2ce8edb5978208660f22018d2ba686d058",
+    "payloadSha256": "315df957d395ab2bc13fc9d0f498ed566f1bd394e6e7eaae0642ba6b8aabc845",
     "projectionInputs": [
       {
         "id": "INPUT.SOURCE",
         "path": "data/game-v0.111.0-source.json",
-        "sha256": "c1f5c95c86f3c7bcf8a28a983aadab355c73ffb43ef1dacbb5153198d9a498c0",
+        "sha256": "4c3b04cca82041c3156de4d3b0552eed3f9346dc1195f97e8d52b8881b74651c",
         "size": 13399941
       },
       {
@@ -24322,7 +24322,7 @@
         "pointers": [
           {
             "jsonPointer": "/production",
-            "valueSha256": "3ed54683487f1552ffa7eef9a1ffcc8dcc8b599cf2500061cc6190541c03e05e"
+            "valueSha256": "f7d3f304642a1c179a5eb859d195d409af94f29a9b64a98266780d44db632734"
           }
         ]
       },
@@ -24344,7 +24344,7 @@
         "pointers": [
           {
             "jsonPointer": "/production/productionSemantics/producers/1",
-            "valueSha256": "d65570cec2b1e1243d634c0067dedddcfb6629f745dc5d99ae0c0447c41ea999"
+            "valueSha256": "50382b554ae44f79f9a7a57d895adf93bd401ba7678405216e0039021fba7686"
           }
         ]
       },
@@ -129311,7 +129311,7 @@
               "canonicalEncounter": "ENCOUNTER.FABRICATOR_NORMAL",
               "concurrentPolicy": {
                 "classification": "predicateBounded",
-                "possiblePostActivationAliveSameSideMaximum": 5,
+                "possiblePostActivationAliveSameSideMaximum": 4,
                 "preActivationAliveSameSideMaximum": 3
               },
               "dependencies": {

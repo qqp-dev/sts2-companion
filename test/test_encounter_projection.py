@@ -715,6 +715,15 @@ class EncounterProjectionTests(unittest.TestCase):
             "runtimeCardinalityRepeating", "fixedThreeAttemptBatch",
             "fixedGraphOnceWithStatePostAdd", "groupCounterBounded",
         ])
+        self.assertEqual([
+            (row["producerId"], row["activationCardinality"]["normallyAddedBodies"]["maximum"],
+             row["concurrentPolicy"]["preActivationAliveSameSideMaximum"],
+             row["concurrentPolicy"]["possiblePostActivationAliveSameSideMaximum"])
+            for row in semantics["producers"] if row["ownerModel"] == "MONSTER.FABRICATOR"
+        ], [
+            ("PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE", 2, 3, 5),
+            ("PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE", 1, 3, 4),
+        ])
         audit = next(row for row in self.artifact["payload"]["resolvedAudits"]
                      if row["auditId"] == "AUDIT.RESOLVED.PRODUCTION_SEMANTICS")
         self.assertEqual((audit["family"], audit["historicalStatus"]), ("enemyBodyProduction", "sourceComplete"))
@@ -749,6 +758,9 @@ class EncounterProjectionTests(unittest.TestCase):
         def ovi_cardinality(a):
             next(row for row in production(a)["productionSemantics"]["producers"]
                  if row["semanticKind"] == "fixedThreeAttemptBatch")["activationCardinality"]["bodyAddAttempts"]["exact"] = 2
+        def fabricating_strike_post_maximum(a):
+            next(row for row in production(a)["productionSemantics"]["producers"]
+                 if row["producerId"].endswith("FABRICATING_STRIKE_MOVE"))["concurrentPolicy"]["possiblePostActivationAliveSameSideMaximum"] = 5
         def rat_cap(a):
             next(row for row in production(a)["productionSemantics"]["producers"]
                  if row["semanticKind"] == "groupCounterBounded")["lifetimePolicy"]["completedCallPathMaximum"] = 5
@@ -768,6 +780,7 @@ class EncounterProjectionTests(unittest.TestCase):
             (missing_candidates, "candidate membership"), (osty_conflation, "Osty AfterSummon"),
             (pool_order, "Fabricator reusable"), (no_slot, "slot/no-slot"),
             (post_add_order, "moved before Add"), (ovi_cardinality, "Ovicopter"),
+            (fabricating_strike_post_maximum, "Fabricator availability/batch/concurrent/lifetime"),
             (rat_cap, "Rat availability/repeat/group-counter"), (state_default, "state default"),
             (semantic_dependency, "dependency was hidden"),
         ]
@@ -793,6 +806,7 @@ class EncounterProjectionTests(unittest.TestCase):
             (lambda source: source["production"]["productionSemantics"]["pools"][0]["candidateModels"].reverse(), "Fabricator reusable"),
             (lambda source: source["production"]["productionSemantics"]["slotStrategies"][0].__setitem__("noSlotBehavior", "skipAttempt"), "slot/no-slot"),
             (lambda source: source["production"]["productionSemantics"]["postAddEffects"][0].__setitem__("ordering", "beforeAdd"), "moved before Add"),
+            (lambda source: next(row for row in source["production"]["productionSemantics"]["producers"] if row["producerId"].endswith("FABRICATING_STRIKE_MOVE"))["concurrentPolicy"].__setitem__("possiblePostActivationAliveSameSideMaximum", 5), "Fabricator availability/batch/concurrent/lifetime"),
             (lambda source: next(row for row in source["production"]["productionSemantics"]["runtimeStateContracts"] if row["contractId"].endswith("LIVING_FOG_BLOAT_AMOUNT")).__setitem__("default", 2), "state default"),
         ]
         for change, pattern in cases:

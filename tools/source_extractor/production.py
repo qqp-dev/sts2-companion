@@ -768,8 +768,9 @@ def _producer_semantics(assembly: Any, assembly_sha256: str, behavior: Mapping[s
                             "method": _proof(_one_method(assembly, assembly_sha256, root["ownerSourceType"], "get_CanFabricate"),
                                              "alive same-side creature count < 4", "GetTeammatesOf", "Enumerable::Count"),
                             "runtimeInputRefs": ["RUNTIME.PRODUCTION.SAME_SIDE_CREATURES", "RUNTIME.PRODUCTION.CREATURE_IS_ALIVE"]}
+            normally_added_maximum = sum(attempt["bodyAddAttempts"]["maximum"] for attempt in attempts)
             concurrent = {"classification": "predicateBounded", "preActivationAliveSameSideMaximum": 3,
-                          "possiblePostActivationAliveSameSideMaximum": 5}
+                          "possiblePostActivationAliveSameSideMaximum": 3 + normally_added_maximum}
             lifetime = {"classification": "sourceProvenNoLifetimeCapInClosedGraph", "poolDepletion": False}
         else:
             pool_ref = fixed_pool_by_root[move_id]

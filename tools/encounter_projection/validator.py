@@ -360,9 +360,16 @@ def _validate_production_semantics(value: Any, path: str, *, move_ids: set[str],
     by_kind: dict[str, list[dict[str, Any]]] = {}
     for row in producers: by_kind.setdefault(row["semanticKind"], []).append(row)
     fabricators = by_kind["orderedHelperBatch"]
-    if (sorted(len(row["attempts"]) for row in fabricators) != [1, 2]
-            or any(row.get("concurrentPolicy") != {"classification": "predicateBounded",
-                "possiblePostActivationAliveSameSideMaximum": 5, "preActivationAliveSameSideMaximum": 3}
+    expected_fabricator_maxima = {
+        "PRODUCTION.MONSTER.FABRICATOR.FABRICATE_MOVE": (2, 5),
+        "PRODUCTION.MONSTER.FABRICATOR.FABRICATING_STRIKE_MOVE": (1, 4),
+    }
+    if ({row.get("producerId") for row in fabricators} != set(expected_fabricator_maxima)
+            or any(row.get("activationCardinality", {}).get("normallyAddedBodies", {}).get("maximum") != expected_fabricator_maxima[row["producerId"]][0]
+                   or len(row["attempts"]) != expected_fabricator_maxima[row["producerId"]][0]
+                   or row.get("concurrentPolicy") != {"classification": "predicateBounded",
+                       "possiblePostActivationAliveSameSideMaximum": expected_fabricator_maxima[row["producerId"]][1],
+                       "preActivationAliveSameSideMaximum": 3}
                    for row in fabricators)
             or any(row.get("lifetimePolicy") != {"classification": "sourceProvenNoLifetimeCapInClosedGraph", "poolDepletion": False}
                    for row in fabricators)

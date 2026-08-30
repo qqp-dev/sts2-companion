@@ -259978,7 +259978,7 @@
           "canonicalEncounter": "ENCOUNTER.FABRICATOR_NORMAL",
           "concurrentPolicy": {
             "classification": "predicateBounded",
-            "possiblePostActivationAliveSameSideMaximum": 5,
+            "possiblePostActivationAliveSameSideMaximum": 4,
             "preActivationAliveSameSideMaximum": 3
           },
           "dependencies": {
