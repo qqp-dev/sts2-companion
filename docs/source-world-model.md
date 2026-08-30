@@ -14,7 +14,7 @@ runtime-incomplete until the runtime cutover wave lands.
 | B | Move registration/title/intent; operations and helpers; move/Power scaling; selection and phase graphs | Complete for explicit denominators, with 18 classified missing titles |
 | C | Runtime/UI rendering, encounter scope correction, fact references and proof enforcement | Not started |
 
-The current app does not import this artifact and still displays the
+The current app does not import this artifact or the C0 compact projection and still displays the
 wiki-derived book. Wave A changes no routes, renderer output, event display, or
 `data/encounters.json` bytes.
 
@@ -320,6 +320,42 @@ expression type, and normalized slice resolve.
 
 18 move titles are classified `missingLocalization`. That is complete
 classification, not complete localized coverage, and is reserved for an
-explicit, visibly cited Wave C community fallback if useful. Wave B never
+explicit, visibly cited later community fallback if useful. Wave B never
 imports community/wiki data into the raw artifact and makes no XML migration
 claim.
+
+## C0 projection boundary
+
+The checked source artifact above remains the full static evidence artifact.
+C0 additionally checks in `data/encounter-facts-v0.111.0.json`, built by
+`tools/generate-encounter-facts.py` from that artifact and
+`data/encounters.json` only. It is a projection, not a replacement extractor
+and not a runtime consumer input.
+
+The projection schema is closed and independently validated. Validation pins
+schema/extractor/game/assembly identity, both projection input bytes, the
+embedded four-row source manifest, raw-only/patch-none authority, every
+projected denominator, AST kinds/operators/numeric types and depth, IDs,
+encounter/model/state/owner/graph/operation/legacy/evidence joins, lane
+comparisons, and both canonical digests. Validation and serialization complete
+before atomic replacement. `--check` compares exact bytes without writing.
+
+Source facts and legacy/community annotations are separate objects. Exact-ID
+legacy encounter links are explicit; no save/log/model alias is inferred.
+Observed identity has a contract marker but no static observations. Legacy move
+names associated with the same exact model are candidate sets only and never
+selected as source-title replacements. Disagreements are unresolved conflict
+records, while absent or dynamic semantics are stable reason-coded
+known-unknowns.
+
+The payload digest excludes all metadata and hashes compact canonical JSON of
+`payload`; the embedded source-input-manifest digest hashes compact canonical
+JSON of the exact manifest list. Evidence stores stable JSON pointers and
+pointed-value hashes instead of repeating CIL proof or the 6,683-invocation
+census. This makes the projection substantially smaller while retaining an
+auditable path to the full checked source artifact.
+
+C0 declares only the bounded encounter projection complete. The encounter
+companion and global world-model scopes remain incomplete pending E1/E2 and the
+independent product-family source waves. No `src/` file imports the projection,
+so `/sts2` continues to use byte-identical `data/encounters.json`.

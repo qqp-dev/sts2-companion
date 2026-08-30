@@ -20,7 +20,9 @@
     "README.md"
   ],
   "scripts": {
-    "test": "node --test && python3 -m unittest discover -s test -p 'test_*.py'"
+    "test": "node --test && python3 -m unittest discover -s test -p 'test_*.py'",
+    "build:encounter-facts": "python3 tools/generate-encounter-facts.py",
+    "check:encounter-facts": "python3 tools/generate-encounter-facts.py --check"
   },
   "dsh": {
     "bundle": {
