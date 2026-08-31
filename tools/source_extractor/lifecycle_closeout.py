@@ -15,7 +15,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from .behavior import _async_map
 from .canonical import slugify_ascii_type_name, witness_sha256
-from .cil_eval import CilDataFlow
+from .cil_eval import CilDataFlow, decode_method_signature
 from .errors import SourceExtractionError
 
 _ABSTRACT = "MegaCrit.Sts2.Core.Models.AbstractModel"
@@ -177,12 +177,24 @@ def _discover_doom_roots(assembly: Any, assembly_sha256: str,
 
 
 def _boolean_default(record: Mapping[str, Any]) -> bool | None:
+    """Return a source-proven literal Boolean returned by a predicate method.
+
+    CLI ``bool`` values use ``int32`` evaluation-stack slots, so ``ldc.i4.0``
+    and ``ldc.i4.1`` are materialized by :class:`CilDataFlow` as integer
+    constants.  The metadata return signature, rather than the Python type of
+    that stack value, proves that those two integers are Boolean values.
+    """
     try:
+        signature = decode_method_signature(record["symbolSignature"])
+        if signature.returns.kind != "bool":
+            return None
         value = CilDataFlow(record["instructions"]).return_value(record["symbolSignature"])
     except SourceExtractionError:
         return None
-    if value.kind == "constant" and type(value.data) is bool:
-        return value.data
+    if (value.kind == "constant" and value.cil_type is not None
+            and value.cil_type.kind == "i4" and type(value.data) is int
+            and value.data in {0, 1}):
+        return bool(value.data)
     return None
 
 
@@ -1280,7 +1292,132 @@ def _run_termination(methods: _Methods) -> dict[str, Any]:
     }
 
 
-def _power_retention(listener: Mapping[str, Any]) -> list[dict[str, Any]]:
+_POWER_OWNER_GETTER = "MegaCrit.Sts2.Core.Models.PowerModel::get_Owner sig:200012a7e4"
+_CREATURE_IS_DEAD_GETTER = "MegaCrit.Sts2.Core.Entities.Creatures.Creature::get_IsDead sig:200002"
+
+
+def _record_for_symbol(methods: _Methods, symbol: str, purpose: str) -> dict[str, Any]:
+    index = methods.symbols.get(symbol)
+    if index is None:
+        raise SourceExtractionError(f"unresolved {purpose} method: {symbol}")
+    return methods.assembly.method_record(index, methods.sha)
+
+
+def _branches_to(instructions: Sequence[Mapping[str, Any]], branch: int, target: int) -> bool:
+    return instructions[branch].get("operand") == instructions[target].get("offsetDiagnostic")
+
+
+def _proves_all_other_segments_dead(record: Mapping[str, Any], methods: _Methods) -> bool:
+    """Recognize the exact same-side Reattach-Power ``All(IsDead)`` source chain.
+
+    This follows method/delegate operands from the returned predicate. Names are
+    not accepted as semantic evidence on their own: collection construction,
+    owner exclusion, same-side lookup, Power filtering, ``Enumerable.All``, and
+    the ``Creature.IsDead`` callback must all have the reviewed CIL shapes.
+    """
+    instructions = record["instructions"]
+    if [row["opcode"] for row in instructions] != ["ldarg.0", "call", "ret"]:
+        return False
+    signature = decode_method_signature(record["symbolSignature"])
+    if signature.returns.kind != "bool" or signature.parameters:
+        return False
+    source_owner = record["symbolSignature"].split("::", 1)[0]
+    helper_symbol = instructions[1].get("operand")
+    if not isinstance(helper_symbol, str) or not helper_symbol.startswith(source_owner + "::"):
+        return False
+    helper = _record_for_symbol(methods, helper_symbol, "retention helper")
+    helper_instructions = helper["instructions"]
+    if [row["opcode"] for row in helper_instructions] != [
+        "ldarg.0", "call", "ldsfld", "dup", "brtrue.s", "pop", "ldsfld", "ldftn",
+        "newobj", "dup", "stsfld", "call", "ret",
+    ] or not _branches_to(helper_instructions, 4, 11):
+        return False
+    collection_symbol = helper_instructions[1].get("operand")
+    dead_callback_symbol = helper_instructions[7].get("operand")
+    all_symbol = helper_instructions[11].get("operand")
+    if (not isinstance(collection_symbol, str) or not collection_symbol.startswith(source_owner + "::")
+            or not isinstance(dead_callback_symbol, str)
+            or not isinstance(all_symbol, str)
+            or not all_symbol.startswith("System.Linq.Enumerable::All sig:")):
+        return False
+
+    collection = _record_for_symbol(methods, collection_symbol, "retention collection")
+    collection_instructions = collection["instructions"]
+    if [row["opcode"] for row in collection_instructions] != [
+        "ldarg.0", "call", "callvirt", "ldarg.0", "call", "callvirt", "ldarg.0", "call",
+        "newobj", "call", "ldsfld", "dup", "brtrue.s", "pop", "ldsfld", "ldftn",
+        "newobj", "dup", "stsfld", "call", "ret",
+    ] or not _branches_to(collection_instructions, 12, 19):
+        return False
+    filter_callback_symbol = collection_instructions[15].get("operand")
+    collection_calls = [collection_instructions[index].get("operand") for index in (1, 2, 4, 5, 7, 9, 19)]
+    if (collection_calls[0] != _POWER_OWNER_GETTER or collection_calls[2] != _POWER_OWNER_GETTER
+            or collection_calls[4] != _POWER_OWNER_GETTER
+            or not isinstance(collection_calls[1], str)
+            or not collection_calls[1].startswith("MegaCrit.Sts2.Core.Entities.Creatures.Creature::get_CombatState sig:")
+            or not isinstance(collection_calls[3], str)
+            or not collection_calls[3].startswith("MegaCrit.Sts2.Core.Combat.ICombatState::GetTeammatesOf sig:")
+            or not isinstance(collection_calls[5], str)
+            or not collection_calls[5].startswith("System.Linq.Enumerable::Except sig:")
+            or not isinstance(collection_calls[6], str)
+            or not collection_calls[6].startswith("System.Linq.Enumerable::Where sig:")
+            or not isinstance(filter_callback_symbol, str)):
+        return False
+
+    power_filter = _record_for_symbol(methods, filter_callback_symbol, "retention Power filter")
+    expected_filter_call = (
+        "MegaCrit.Sts2.Core.Entities.Creatures.Creature::HasPower sig:30010002 generic:" + source_owner
+    )
+    if ([(row["opcode"], row.get("operand")) for row in power_filter["instructions"]]
+            != [("ldarg.1", None), ("callvirt", expected_filter_call), ("ret", None)]):
+        return False
+
+    dead_callback = _record_for_symbol(methods, dead_callback_symbol, "retention death predicate")
+    return [(row["opcode"], row.get("operand")) for row in dead_callback["instructions"]] == [
+        ("ldarg.1", None), ("callvirt", _CREATURE_IS_DEAD_GETTER), ("ret", None),
+    ]
+
+
+def _conditional_retention_outcome(record: Mapping[str, Any], methods: _Methods) -> tuple[bool, dict[str, Any]]:
+    """Compile reviewed non-literal Power predicates or fail closed."""
+    instructions = record["instructions"]
+    opcodes = [row["opcode"] for row in instructions]
+    signature = decode_method_signature(record["symbolSignature"])
+    if signature.returns.kind != "bool":
+        raise SourceExtractionError(f"retention predicate does not return Boolean: {record['symbolSignature']}")
+
+    # ``target == Owner ? false : true``. This includes the branch and
+    # comparison compiler forms; both prove that the callback parameter exists.
+    if (len(signature.parameters) == 1
+            and opcodes == ["ldarg.1", "ldarg.0", "call", "beq.s", "ldc.i4.1", "ret", "ldc.i4.0", "ret"]
+            and instructions[2].get("operand") == _POWER_OWNER_GETTER
+            and _branches_to(instructions, 3, 6)):
+        return False, _equal(_runtime("targetIsPowerOwner", "boolean"), _constant(True))
+    if (len(signature.parameters) == 1
+            and opcodes == ["ldarg.1", "ldarg.0", "call", "ceq", "ldc.i4.0", "ceq", "ret"]
+            and instructions[2].get("operand") == _POWER_OWNER_GETTER):
+        return False, _equal(_runtime("targetIsPowerOwner", "boolean"), _constant(True))
+
+    # ``target.Type == 2 && target is not ITemporaryPower``. Keep the raw enum
+    # value and exact interface check explicit; no enum label is guessed.
+    if (len(signature.parameters) == 1
+            and opcodes == ["ldarg.1", "callvirt", "ldc.i4.2", "bne.un.s", "ldarg.1", "isinst",
+                            "ldnull", "cgt.un", "ldc.i4.0", "ceq", "ret", "ldc.i4.0", "ret"]
+            and isinstance(instructions[1].get("operand"), str)
+            and instructions[1]["operand"].startswith("MegaCrit.Sts2.Core.Models.PowerModel::get_Type sig:")
+            and instructions[5].get("operand") == "MegaCrit.Sts2.Core.Models.ITemporaryPower"
+            and _branches_to(instructions, 3, 11)):
+        return True, _all(
+            _equal(_runtime("targetPower.typeRawValue", "integer"), _constant(2)),
+            _equal(_runtime("targetPower.isITemporaryPower", "boolean"), _constant(False)),
+        )
+
+    if _proves_all_other_segments_dead(record, methods):
+        return True, _equal(_runtime("sameSide.allOtherSegmentsDead", "boolean"), _constant(True))
+    raise SourceExtractionError(f"unsupported dynamic Power retention predicate: {record['symbolSignature']}")
+
+
+def _power_retention(listener: Mapping[str, Any], methods: _Methods) -> list[dict[str, Any]]:
     hooks = {"ShouldCreatureBeRemovedFromCombatAfterDeath", "ShouldStopCombatFromEnding",
              "ShouldPowerBeRemovedOnDeath", "ShouldPowerBeRemovedAfterOwnerDeath",
              "ShouldOwnerDeathTriggerFatal"}
@@ -1289,17 +1426,16 @@ def _power_retention(listener: Mapping[str, Any]) -> list[dict[str, Any]]:
         if implementation["listenerDomain"] != "power" or implementation["hook"] not in hooks \
                 or implementation["declarationKind"] != "effectiveOverride":
             continue
+        symbol = implementation["logicalMethod"]["symbolSignature"]
+        record = _record_for_symbol(methods, symbol, "Power retention predicate")
+        default = _boolean_default(record)
+        if default != implementation["returnDefault"]:
+            raise SourceExtractionError(f"Power retention predicate default drift: {symbol}")
+        if type(default) is bool:
+            result, condition = default, _constant(True)
+        else:
+            result, condition = _conditional_retention_outcome(record, methods)
         owner = _canonical_type(implementation["declarationOwnerSourceType"])
-        result = {
-            "ShouldCreatureBeRemovedFromCombatAfterDeath": False,
-            "ShouldStopCombatFromEnding": True,
-            "ShouldPowerBeRemovedOnDeath": False,
-            "ShouldPowerBeRemovedAfterOwnerDeath": False,
-            "ShouldOwnerDeathTriggerFatal": True,
-        }[implementation["hook"]]
-        condition: dict[str, Any] = _equal(_runtime("targetIsPowerOwner", "boolean"), _constant(True))
-        if implementation["hook"] == "ShouldOwnerDeathTriggerFatal" and owner == "POWER.REATTACH_POWER":
-            condition = _equal(_runtime("sameSide.allOtherSegmentsDead", "boolean"), _constant(True))
         rows.append({
             "condition": condition, "hook": implementation["hook"],
             "policyId": f"LIFECYCLE.RETENTION.{owner}.{implementation['hook'].upper()}",
@@ -1500,7 +1636,7 @@ def extract_lifecycle_closeout(assembly: Any, assembly_sha256: str, *,
         "listenerCensus": listener["listenerCensus"],
         "listenerImplementations": listener["listenerImplementations"],
         "phaseSystems": phases,
-        "powerRetentionPolicies": _power_retention(listener),
+        "powerRetentionPolicies": _power_retention(listener, methods),
         "relationships": relationships,
         "runTermination": _run_termination(methods),
         "runtimeStateContracts": _runtime_contracts(),
@@ -1574,6 +1710,34 @@ def validate_lifecycle_closeout(value: Any) -> None:
     phase_signals = value["discovery"].get("phaseSignals", {})
     if len(phase_signals.get("signals", [])) != 7 or phase_signals.get("unrepresentedSignals") != []             or len(phase_signals.get("representedPhaseSystems", [])) != 6:
         raise SourceExtractionError("phase signal fixed-point coverage changed")
+    implementations = value["listenerImplementations"]
+    implementation_by_id = {row.get("implementationId"): row for row in implementations}
+    if len(implementation_by_id) != len(implementations):
+        raise SourceExtractionError("duplicate lifecycle listener implementation identity")
+    # These hashes are source-body recognizers, independent of method/owner names:
+    # each is exactly one ldc.i4.0/1 followed by ret in the pinned assembly.
+    literal_boolean_bodies = {
+        "fe5b67518fe3f35556f07eedcf5525072ce26f3a354f8d90b4ae49a47f90a9c9": False,
+        "b067e5b062baca1d4308a7becd68a73068d1754d05d78bd9a9c43492da8fca4a": True,
+    }
+    for implementation in implementations:
+        expected_default = literal_boolean_bodies.get(implementation["logicalMethod"]["methodBodySha256"])
+        if type(expected_default) is bool and implementation.get("returnDefault") is not expected_default:
+            raise SourceExtractionError("literal Boolean listener return default changed")
+    for policy in value["powerRetentionPolicies"]:
+        implementation = implementation_by_id.get(policy.get("sourceImplementationRef"))
+        if implementation is None or implementation.get("listenerDomain") != "power" \
+                or implementation.get("declarationKind") != "effectiveOverride" \
+                or implementation.get("hook") != policy.get("hook"):
+            raise SourceExtractionError("Power retention policy implementation link changed")
+        default = implementation.get("returnDefault")
+        if type(default) is bool and (policy.get("result") is not default
+                                      or policy.get("condition") != _constant(True)):
+            raise SourceExtractionError("Power retention policy contradicts literal predicate default")
+        signature = decode_method_signature(implementation["logicalMethod"]["symbolSignature"])
+        if not signature.parameters and "targetIsPowerOwner" in repr(policy.get("condition")):
+            raise SourceExtractionError("zero-parameter Power retention policy invented a target")
+
     # Distinguish one-argument callbacks from hook override declarations.
     died = [row for row in value["subscriptions"] if row["event"] == "Died"]
     if (len(died) != 2 or any(not row["callbackSignature"].endswith(" sig:20010112a7e4") for row in died)

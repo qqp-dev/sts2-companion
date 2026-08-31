@@ -45,13 +45,13 @@
       "name": "sts2-encounter-facts",
       "version": "11.0.0"
     },
-    "payloadSha256": "372752774e953cf4422a9d80a6debe864e1f467393c207747e61b157e5b7fd26",
+    "payloadSha256": "a930e691593b007996183392c09cd93f649a87a83b095f45763c4eb7ce82c18b",
     "projectionInputs": [
       {
         "id": "INPUT.SOURCE",
         "path": "data/game-v0.111.0-source.json",
-        "sha256": "0a2e0d05b3a151f3e1c2014b4ce4305659186772900d069022fd9df028aa5aa1",
-        "size": 17057148
+        "sha256": "2991f0391565f384453bdb009050f9cd53a0f4949e86b92adf73e0fe928e559e",
+        "size": 17054697
       },
       {
         "id": "INPUT.LEGACY",
@@ -15457,7 +15457,7 @@
         "pointers": [
           {
             "jsonPointer": "/lifecycle",
-            "valueSha256": "d9002c4b2b20aa3ebaeb5fb6deb92f29b02a16ff8d531741e1691d2763e8551d"
+            "valueSha256": "2bc293fe0172a0ed84f9ddcb2ee3c67061ca2498afda04c923eb26713af23835"
           }
         ]
       },
@@ -92321,8 +92321,8 @@
         },
         "closeoutDigests": {
           "invocationOrderingSha256": "c485ea65d3870bdf05b878191b50f69179933bb87512a0ee94ae91494626904e",
-          "listenerClosureSha256": "5d5cd859c63478010f4010af48fe07a00bedd9e0c8dad18500ff616e59a2270a",
-          "mechanicsSha256": "635f1da15ac33cb49931a1c70650dcd52b1c4adf14a20653c741fc8d022e1905",
+          "listenerClosureSha256": "4ba61c9c4e78fb70b5f4e25bfe80ba00854eff77e22729d861d10ed011362760",
+          "mechanicsSha256": "d7dea5a25bd8d43f955a0ab0955ec8938050150f8cd0b35a8a0cca70b6a117dd",
           "methodPinsSha256": "6cafe9043e4faa034c9895cdacad41f4e824d4923591dbabf45eca05d72614c2",
           "runtimeContractsSha256": "67f49c34ffc3140afd672a36c3b57b20bcf5969d376d89037fd13b7492525c7d"
         },
@@ -95249,18 +95249,8 @@
             },
             {
               "condition": {
-                "kind": "comparison",
-                "left": {
-                  "kind": "runtimeInput",
-                  "name": "targetIsPowerOwner",
-                  "valueType": "boolean"
-                },
-                "operator": "equal",
-                "right": {
-                  "kind": "constant",
-                  "value": true,
-                  "valueType": "boolean"
-                },
+                "kind": "constant",
+                "value": true,
                 "valueType": "boolean"
               },
               "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
@@ -95271,18 +95261,8 @@
             },
             {
               "condition": {
-                "kind": "comparison",
-                "left": {
-                  "kind": "runtimeInput",
-                  "name": "targetIsPowerOwner",
-                  "valueType": "boolean"
-                },
-                "operator": "equal",
-                "right": {
-                  "kind": "constant",
-                  "value": true,
-                  "valueType": "boolean"
-                },
+                "kind": "constant",
+                "value": true,
                 "valueType": "boolean"
               },
               "hook": "ShouldStopCombatFromEnding",
@@ -95315,40 +95295,51 @@
             },
             {
               "condition": {
-                "kind": "comparison",
-                "left": {
-                  "kind": "runtimeInput",
-                  "name": "targetIsPowerOwner",
-                  "valueType": "boolean"
-                },
-                "operator": "equal",
-                "right": {
-                  "kind": "constant",
-                  "value": true,
-                  "valueType": "boolean"
-                },
+                "kind": "allOf",
+                "operands": [
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "targetPower.typeRawValue",
+                      "valueType": "integer"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": 2,
+                      "valueType": "integer"
+                    },
+                    "valueType": "boolean"
+                  },
+                  {
+                    "kind": "comparison",
+                    "left": {
+                      "kind": "runtimeInput",
+                      "name": "targetPower.isITemporaryPower",
+                      "valueType": "boolean"
+                    },
+                    "operator": "equal",
+                    "right": {
+                      "kind": "constant",
+                      "value": false,
+                      "valueType": "boolean"
+                    },
+                    "valueType": "boolean"
+                  }
+                ],
                 "valueType": "boolean"
               },
               "hook": "ShouldPowerBeRemovedOnDeath",
               "policyId": "LIFECYCLE.RETENTION.POWER.ILLUSION_POWER.SHOULDPOWERBEREMOVEDONDEATH",
               "power": "POWER.ILLUSION_POWER",
-              "result": false,
+              "result": true,
               "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDPOWERBEREMOVEDONDEATH.073"
             },
             {
               "condition": {
-                "kind": "comparison",
-                "left": {
-                  "kind": "runtimeInput",
-                  "name": "targetIsPowerOwner",
-                  "valueType": "boolean"
-                },
-                "operator": "equal",
-                "right": {
-                  "kind": "constant",
-                  "value": true,
-                  "valueType": "boolean"
-                },
+                "kind": "constant",
+                "value": true,
                 "valueType": "boolean"
               },
               "hook": "ShouldStopCombatFromEnding",
@@ -95359,40 +95350,20 @@
             },
             {
               "condition": {
-                "kind": "comparison",
-                "left": {
-                  "kind": "runtimeInput",
-                  "name": "targetIsPowerOwner",
-                  "valueType": "boolean"
-                },
-                "operator": "equal",
-                "right": {
-                  "kind": "constant",
-                  "value": true,
-                  "valueType": "boolean"
-                },
+                "kind": "constant",
+                "value": true,
                 "valueType": "boolean"
               },
               "hook": "ShouldOwnerDeathTriggerFatal",
               "policyId": "LIFECYCLE.RETENTION.POWER.MINION_POWER.SHOULDOWNERDEATHTRIGGERFATAL",
               "power": "POWER.MINION_POWER",
-              "result": true,
+              "result": false,
               "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDOWNERDEATHTRIGGERFATAL.064"
             },
             {
               "condition": {
-                "kind": "comparison",
-                "left": {
-                  "kind": "runtimeInput",
-                  "name": "targetIsPowerOwner",
-                  "valueType": "boolean"
-                },
-                "operator": "equal",
-                "right": {
-                  "kind": "constant",
-                  "value": true,
-                  "valueType": "boolean"
-                },
+                "kind": "constant",
+                "value": true,
                 "valueType": "boolean"
               },
               "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
@@ -95425,18 +95396,8 @@
             },
             {
               "condition": {
-                "kind": "comparison",
-                "left": {
-                  "kind": "runtimeInput",
-                  "name": "targetIsPowerOwner",
-                  "valueType": "boolean"
-                },
-                "operator": "equal",
-                "right": {
-                  "kind": "constant",
-                  "value": true,
-                  "valueType": "boolean"
-                },
+                "kind": "constant",
+                "value": true,
                 "valueType": "boolean"
               },
               "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
@@ -95491,18 +95452,8 @@
             },
             {
               "condition": {
-                "kind": "comparison",
-                "left": {
-                  "kind": "runtimeInput",
-                  "name": "targetIsPowerOwner",
-                  "valueType": "boolean"
-                },
-                "operator": "equal",
-                "right": {
-                  "kind": "constant",
-                  "value": true,
-                  "valueType": "boolean"
-                },
+                "kind": "constant",
+                "value": true,
                 "valueType": "boolean"
               },
               "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
@@ -95535,18 +95486,8 @@
             },
             {
               "condition": {
-                "kind": "comparison",
-                "left": {
-                  "kind": "runtimeInput",
-                  "name": "targetIsPowerOwner",
-                  "valueType": "boolean"
-                },
-                "operator": "equal",
-                "right": {
-                  "kind": "constant",
-                  "value": true,
-                  "valueType": "boolean"
-                },
+                "kind": "constant",
+                "value": true,
                 "valueType": "boolean"
               },
               "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
@@ -95557,18 +95498,8 @@
             },
             {
               "condition": {
-                "kind": "comparison",
-                "left": {
-                  "kind": "runtimeInput",
-                  "name": "targetIsPowerOwner",
-                  "valueType": "boolean"
-                },
-                "operator": "equal",
-                "right": {
-                  "kind": "constant",
-                  "value": true,
-                  "valueType": "boolean"
-                },
+                "kind": "constant",
+                "value": true,
                 "valueType": "boolean"
               },
               "hook": "ShouldStopCombatFromEnding",
@@ -95579,18 +95510,8 @@
             },
             {
               "condition": {
-                "kind": "comparison",
-                "left": {
-                  "kind": "runtimeInput",
-                  "name": "targetIsPowerOwner",
-                  "valueType": "boolean"
-                },
-                "operator": "equal",
-                "right": {
-                  "kind": "constant",
-                  "value": true,
-                  "valueType": "boolean"
-                },
+                "kind": "constant",
+                "value": true,
                 "valueType": "boolean"
               },
               "hook": "ShouldStopCombatFromEnding",
@@ -95601,18 +95522,8 @@
             },
             {
               "condition": {
-                "kind": "comparison",
-                "left": {
-                  "kind": "runtimeInput",
-                  "name": "targetIsPowerOwner",
-                  "valueType": "boolean"
-                },
-                "operator": "equal",
-                "right": {
-                  "kind": "constant",
-                  "value": true,
-                  "valueType": "boolean"
-                },
+                "kind": "constant",
+                "value": true,
                 "valueType": "boolean"
               },
               "hook": "ShouldStopCombatFromEnding",

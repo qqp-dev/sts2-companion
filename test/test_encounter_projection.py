@@ -491,6 +491,11 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual(lifecycle["listenerCensus"]["effectiveApplications"],1861)
         mechanics=lifecycle["mechanics"]
         self.assertEqual([len(mechanics[key]) for key in ("cleanup","deathProduction","phaseSystems","powerRetentionPolicies","relationships","subscriptions")],[11,3,6,18,6,3])
+        minion_fatal=next(row for row in mechanics["powerRetentionPolicies"]
+                          if row["policyId"]=="LIFECYCLE.RETENTION.POWER.MINION_POWER.SHOULDOWNERDEATHTRIGGERFATAL")
+        self.assertIs(minion_fatal["result"],False)
+        self.assertEqual(minion_fatal["condition"],{"kind":"constant","value":True,"valueType":"boolean"})
+        self.assertNotIn("targetIsPowerOwner",json.dumps(minion_fatal))
         self.assertEqual([row["kind"] for row in mechanics["doom"]["orderedEffects"]],["doomVfx","kill","afterDiedToDoom"])
         self.assertFalse(mechanics["doom"]["orderedEffects"][2]["perBody"])
         subject=next(row for row in mechanics["phaseSystems"] if row["phaseSystemId"]=="LIFECYCLE.PHASE.TEST_SUBJECT_ADAPTABLE")

@@ -227117,8 +227117,8 @@
     ],
     "closeoutDigests": {
       "invocationOrderingSha256": "c485ea65d3870bdf05b878191b50f69179933bb87512a0ee94ae91494626904e",
-      "listenerClosureSha256": "5d5cd859c63478010f4010af48fe07a00bedd9e0c8dad18500ff616e59a2270a",
-      "mechanicsSha256": "635f1da15ac33cb49931a1c70650dcd52b1c4adf14a20653c741fc8d022e1905",
+      "listenerClosureSha256": "4ba61c9c4e78fb70b5f4e25bfe80ba00854eff77e22729d861d10ed011362760",
+      "mechanicsSha256": "d7dea5a25bd8d43f955a0ab0955ec8938050150f8cd0b35a8a0cca70b6a117dd",
       "methodPinsSha256": "6cafe9043e4faa034c9895cdacad41f4e824d4923591dbabf45eca05d72614c2",
       "runtimeContractsSha256": "67f49c34ffc3140afd672a36c3b57b20bcf5969d376d89037fd13b7492525c7d"
     },
@@ -276402,7 +276402,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.AbstractModel::ShouldCreatureBeRemovedFromCombatAfterDeath sig:20010212a7e4"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "20010212a7e4"
       },
       {
@@ -277419,7 +277419,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.AbstractModel::ShouldDie sig:20010212a7e4"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "20010212a7e4"
       },
       {
@@ -278436,7 +278436,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.AbstractModel::ShouldDieLate sig:20010212a7e4"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "20010212a7e4"
       },
       {
@@ -279453,7 +279453,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.AbstractModel::ShouldPowerBeRemovedOnDeath sig:2001021288f4"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "2001021288f4"
       },
       {
@@ -280470,7 +280470,7 @@
           "normalizedSliceSha256": "203cc833602d909c135022c8093ef8bf95231c440ea5642f59d8f3a2704f1605",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.AbstractModel::ShouldStopCombatFromEnding sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": false,
         "signature": "200002"
       },
       {
@@ -286855,7 +286855,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.AbstractModel::ShouldCreatureBeRemovedFromCombatAfterDeath sig:20010212a7e4"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "20010212a7e4"
       },
       {
@@ -287833,7 +287833,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.AbstractModel::ShouldDie sig:20010212a7e4"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "20010212a7e4"
       },
       {
@@ -288513,7 +288513,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.AbstractModel::ShouldDieLate sig:20010212a7e4"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "20010212a7e4"
       },
       {
@@ -289106,7 +289106,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.PowerModel::ShouldOwnerDeathTriggerFatal sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "200002"
       },
       {
@@ -289154,7 +289154,7 @@
           "normalizedSliceSha256": "203cc833602d909c135022c8093ef8bf95231c440ea5642f59d8f3a2704f1605",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.Powers.MinionPower::ShouldOwnerDeathTriggerFatal sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": false,
         "signature": "200002"
       },
       {
@@ -289773,7 +289773,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.PowerModel::ShouldPowerBeRemovedAfterOwnerDeath sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "200002"
       },
       {
@@ -289821,7 +289821,7 @@
           "normalizedSliceSha256": "203cc833602d909c135022c8093ef8bf95231c440ea5642f59d8f3a2704f1605",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.Powers.AdaptablePower::ShouldPowerBeRemovedAfterOwnerDeath sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": false,
         "signature": "200002"
       },
       {
@@ -289869,7 +289869,7 @@
           "normalizedSliceSha256": "203cc833602d909c135022c8093ef8bf95231c440ea5642f59d8f3a2704f1605",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.Powers.MinionPower::ShouldPowerBeRemovedAfterOwnerDeath sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": false,
         "signature": "200002"
       },
       {
@@ -289917,7 +289917,7 @@
           "normalizedSliceSha256": "203cc833602d909c135022c8093ef8bf95231c440ea5642f59d8f3a2704f1605",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.Powers.PainfulStabsPower::ShouldPowerBeRemovedAfterOwnerDeath sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": false,
         "signature": "200002"
       },
       {
@@ -289965,7 +289965,7 @@
           "normalizedSliceSha256": "203cc833602d909c135022c8093ef8bf95231c440ea5642f59d8f3a2704f1605",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.Powers.ReattachPower::ShouldPowerBeRemovedAfterOwnerDeath sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": false,
         "signature": "200002"
       },
       {
@@ -290013,7 +290013,7 @@
           "normalizedSliceSha256": "203cc833602d909c135022c8093ef8bf95231c440ea5642f59d8f3a2704f1605",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.Powers.SteamEruptionPower::ShouldPowerBeRemovedAfterOwnerDeath sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": false,
         "signature": "200002"
       },
       {
@@ -290684,7 +290684,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.AbstractModel::ShouldPowerBeRemovedOnDeath sig:2001021288f4"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "2001021288f4"
       },
       {
@@ -291389,7 +291389,7 @@
           "normalizedSliceSha256": "203cc833602d909c135022c8093ef8bf95231c440ea5642f59d8f3a2704f1605",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.AbstractModel::ShouldStopCombatFromEnding sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": false,
         "signature": "200002"
       },
       {
@@ -291437,7 +291437,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.Powers.AdaptablePower::ShouldStopCombatFromEnding sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "200002"
       },
       {
@@ -291485,7 +291485,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.Powers.InfestedPower::ShouldStopCombatFromEnding sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "200002"
       },
       {
@@ -291533,7 +291533,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.Powers.SteamEruptionPower::ShouldStopCombatFromEnding sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "200002"
       },
       {
@@ -291581,7 +291581,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.Powers.StockPower::ShouldStopCombatFromEnding sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "200002"
       },
       {
@@ -291629,7 +291629,7 @@
           "normalizedSliceSha256": "d318347e1e73b314af30195bfda2db8f75ff4e331745ee3e25c5f5e4a22da728",
           "symbolSignature": "MegaCrit.Sts2.Core.Models.Powers.SurprisePower::ShouldStopCombatFromEnding sig:200002"
         },
-        "returnDefault": null,
+        "returnDefault": true,
         "signature": "200002"
       }
     ],
@@ -295414,18 +295414,8 @@
       },
       {
         "condition": {
-          "kind": "comparison",
-          "left": {
-            "kind": "runtimeInput",
-            "name": "targetIsPowerOwner",
-            "valueType": "boolean"
-          },
-          "operator": "equal",
-          "right": {
-            "kind": "constant",
-            "value": true,
-            "valueType": "boolean"
-          },
+          "kind": "constant",
+          "value": true,
           "valueType": "boolean"
         },
         "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
@@ -295436,18 +295426,8 @@
       },
       {
         "condition": {
-          "kind": "comparison",
-          "left": {
-            "kind": "runtimeInput",
-            "name": "targetIsPowerOwner",
-            "valueType": "boolean"
-          },
-          "operator": "equal",
-          "right": {
-            "kind": "constant",
-            "value": true,
-            "valueType": "boolean"
-          },
+          "kind": "constant",
+          "value": true,
           "valueType": "boolean"
         },
         "hook": "ShouldStopCombatFromEnding",
@@ -295480,40 +295460,51 @@
       },
       {
         "condition": {
-          "kind": "comparison",
-          "left": {
-            "kind": "runtimeInput",
-            "name": "targetIsPowerOwner",
-            "valueType": "boolean"
-          },
-          "operator": "equal",
-          "right": {
-            "kind": "constant",
-            "value": true,
-            "valueType": "boolean"
-          },
+          "kind": "allOf",
+          "operands": [
+            {
+              "kind": "comparison",
+              "left": {
+                "kind": "runtimeInput",
+                "name": "targetPower.typeRawValue",
+                "valueType": "integer"
+              },
+              "operator": "equal",
+              "right": {
+                "kind": "constant",
+                "value": 2,
+                "valueType": "integer"
+              },
+              "valueType": "boolean"
+            },
+            {
+              "kind": "comparison",
+              "left": {
+                "kind": "runtimeInput",
+                "name": "targetPower.isITemporaryPower",
+                "valueType": "boolean"
+              },
+              "operator": "equal",
+              "right": {
+                "kind": "constant",
+                "value": false,
+                "valueType": "boolean"
+              },
+              "valueType": "boolean"
+            }
+          ],
           "valueType": "boolean"
         },
         "hook": "ShouldPowerBeRemovedOnDeath",
         "policyId": "LIFECYCLE.RETENTION.POWER.ILLUSION_POWER.SHOULDPOWERBEREMOVEDONDEATH",
         "power": "POWER.ILLUSION_POWER",
-        "result": false,
+        "result": true,
         "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDPOWERBEREMOVEDONDEATH.073"
       },
       {
         "condition": {
-          "kind": "comparison",
-          "left": {
-            "kind": "runtimeInput",
-            "name": "targetIsPowerOwner",
-            "valueType": "boolean"
-          },
-          "operator": "equal",
-          "right": {
-            "kind": "constant",
-            "value": true,
-            "valueType": "boolean"
-          },
+          "kind": "constant",
+          "value": true,
           "valueType": "boolean"
         },
         "hook": "ShouldStopCombatFromEnding",
@@ -295524,40 +295515,20 @@
       },
       {
         "condition": {
-          "kind": "comparison",
-          "left": {
-            "kind": "runtimeInput",
-            "name": "targetIsPowerOwner",
-            "valueType": "boolean"
-          },
-          "operator": "equal",
-          "right": {
-            "kind": "constant",
-            "value": true,
-            "valueType": "boolean"
-          },
+          "kind": "constant",
+          "value": true,
           "valueType": "boolean"
         },
         "hook": "ShouldOwnerDeathTriggerFatal",
         "policyId": "LIFECYCLE.RETENTION.POWER.MINION_POWER.SHOULDOWNERDEATHTRIGGERFATAL",
         "power": "POWER.MINION_POWER",
-        "result": true,
+        "result": false,
         "sourceImplementationRef": "LIFECYCLE.LISTENER.POWER.SHOULDOWNERDEATHTRIGGERFATAL.064"
       },
       {
         "condition": {
-          "kind": "comparison",
-          "left": {
-            "kind": "runtimeInput",
-            "name": "targetIsPowerOwner",
-            "valueType": "boolean"
-          },
-          "operator": "equal",
-          "right": {
-            "kind": "constant",
-            "value": true,
-            "valueType": "boolean"
-          },
+          "kind": "constant",
+          "value": true,
           "valueType": "boolean"
         },
         "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
@@ -295590,18 +295561,8 @@
       },
       {
         "condition": {
-          "kind": "comparison",
-          "left": {
-            "kind": "runtimeInput",
-            "name": "targetIsPowerOwner",
-            "valueType": "boolean"
-          },
-          "operator": "equal",
-          "right": {
-            "kind": "constant",
-            "value": true,
-            "valueType": "boolean"
-          },
+          "kind": "constant",
+          "value": true,
           "valueType": "boolean"
         },
         "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
@@ -295656,18 +295617,8 @@
       },
       {
         "condition": {
-          "kind": "comparison",
-          "left": {
-            "kind": "runtimeInput",
-            "name": "targetIsPowerOwner",
-            "valueType": "boolean"
-          },
-          "operator": "equal",
-          "right": {
-            "kind": "constant",
-            "value": true,
-            "valueType": "boolean"
-          },
+          "kind": "constant",
+          "value": true,
           "valueType": "boolean"
         },
         "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
@@ -295700,18 +295651,8 @@
       },
       {
         "condition": {
-          "kind": "comparison",
-          "left": {
-            "kind": "runtimeInput",
-            "name": "targetIsPowerOwner",
-            "valueType": "boolean"
-          },
-          "operator": "equal",
-          "right": {
-            "kind": "constant",
-            "value": true,
-            "valueType": "boolean"
-          },
+          "kind": "constant",
+          "value": true,
           "valueType": "boolean"
         },
         "hook": "ShouldPowerBeRemovedAfterOwnerDeath",
@@ -295722,18 +295663,8 @@
       },
       {
         "condition": {
-          "kind": "comparison",
-          "left": {
-            "kind": "runtimeInput",
-            "name": "targetIsPowerOwner",
-            "valueType": "boolean"
-          },
-          "operator": "equal",
-          "right": {
-            "kind": "constant",
-            "value": true,
-            "valueType": "boolean"
-          },
+          "kind": "constant",
+          "value": true,
           "valueType": "boolean"
         },
         "hook": "ShouldStopCombatFromEnding",
@@ -295744,18 +295675,8 @@
       },
       {
         "condition": {
-          "kind": "comparison",
-          "left": {
-            "kind": "runtimeInput",
-            "name": "targetIsPowerOwner",
-            "valueType": "boolean"
-          },
-          "operator": "equal",
-          "right": {
-            "kind": "constant",
-            "value": true,
-            "valueType": "boolean"
-          },
+          "kind": "constant",
+          "value": true,
           "valueType": "boolean"
         },
         "hook": "ShouldStopCombatFromEnding",
@@ -295766,18 +295687,8 @@
       },
       {
         "condition": {
-          "kind": "comparison",
-          "left": {
-            "kind": "runtimeInput",
-            "name": "targetIsPowerOwner",
-            "valueType": "boolean"
-          },
-          "operator": "equal",
-          "right": {
-            "kind": "constant",
-            "value": true,
-            "valueType": "boolean"
-          },
+          "kind": "constant",
+          "value": true,
           "valueType": "boolean"
         },
         "hook": "ShouldStopCombatFromEnding",

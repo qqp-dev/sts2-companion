@@ -863,10 +863,16 @@ damage.
 The closeout classifies 1,265 call-like sites with no ignore/unresolved class and
 records six phases, 18 retention policies, six relationships, three subscriptions,
 11 cleanup overrides, four death-Add sites/three systems, seven event registrations,
-and one run-termination system. Canonical listener/mechanics/invocation/runtime
-and method-pin digests are validated before atomic replacement. A semantic-pipeline
-audit requires the existing core death, Add, HP, and event authorities and rejects
-parallel evaluators or copied effects.
+and one run-termination system. Literal predicate defaults are decoded only when
+the metadata return type is CLI Boolean and every reachable return carries the
+same `ldc.i4.0` or `ldc.i4.1` value. Retention results use those source defaults;
+a target/owner condition is emitted only when the method has a callback parameter
+and its CIL compares that parameter with the Power owner. Unsupported dynamic
+predicate shapes fail extraction rather than receiving a hook-name default.
+Canonical listener/mechanics/invocation/runtime and method-pin digests are
+validated before atomic replacement. A semantic-pipeline audit requires the
+existing core death, Add, HP, and event authorities and rejects parallel
+evaluators or copied effects.
 
 ### Reuse and authority audit
 

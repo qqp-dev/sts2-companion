@@ -28,6 +28,7 @@ from source_extractor.behavior import _canonical_for_type, _compile_graph, _inte
 from source_extractor.encounters import _compile_fixed_selection, _derive_fixed_slot_names
 from source_extractor.localization import require_localized_text
 from source_extractor.lifecycle import validate_lifecycle
+from source_extractor.lifecycle_closeout import _boolean_default
 from source_extractor.errors import SourceExtractionError
 from source_extractor.event_scripts import _validate_bounded_plumbing_vocabulary
 from source_extractor.architect_script import join_localization_structure, validate_architect_script
@@ -987,6 +988,9 @@ class LifecycleCilSliceTests(unittest.TestCase):
             (lambda x: phase(x, "LIFECYCLE.PHASE.TOUGH_EGG_HATCH")["transitions"][0]["condition"]["left"].__setitem__("name", "power.amount"), "participant-only decrement"),
             (lambda x: phase(x, "LIFECYCLE.PHASE.DECIMILLIPEDE_REATTACH").__setitem__("addOrSlotChange", True), "body/slot"),
             (lambda x: x["doom"]["orderedEffects"][2].__setitem__("perBody", True), "post-batch hook"),
+            (lambda x: next(row for row in x["powerRetentionPolicies"]
+                            if row["policyId"] == "LIFECYCLE.RETENTION.POWER.MINION_POWER.SHOULDOWNERDEATHTRIGGERFATAL")
+             .__setitem__("result", True), "contradicts literal predicate default"),
             (lambda x: x["deathProduction"][0].__setitem__("d1Producer", True), "d1 producer"),
             (lambda x: next(row for row in x["eventCombat"]["battleTimeLimit"]["branches"]
                             if row["branchId"].endswith(".TIMEOUT"))["orderedEffects"][2].__setitem__("timeoutResultEnum", "Victory"), "timeout write/escape/result"),
@@ -1001,6 +1005,39 @@ class LifecycleCilSliceTests(unittest.TestCase):
                 value = deepcopy(self.lifecycle); change(value)
                 with self.assertRaisesRegex(SourceExtractionError, pattern):
                     validate_lifecycle(value)
+
+    def test_boolean_listener_defaults_use_cli_signature_and_i4_stack_values(self):
+        def record(opcode, signature="200002"):
+            return {
+                "symbolSignature": f"Synthetic::Predicate sig:{signature}",
+                "instructions": [
+                    {"opcode": opcode, "operand": None, "offsetDiagnostic": 0},
+                    {"opcode": "ret", "operand": None, "offsetDiagnostic": 1},
+                ],
+            }
+
+        self.assertIs(_boolean_default(record("ldc.i4.0")), False)
+        self.assertIs(_boolean_default(record("ldc.i4.1")), True)
+        self.assertIsNone(_boolean_default(record("ldc.i4.2")))
+        self.assertIsNone(_boolean_default(record("ldc.i4.1", "200008")))
+
+    def test_checked_literal_listener_defaults_drive_unconditional_retention(self):
+        implementations = self.lifecycle["listenerImplementations"]
+        minion = next(row for row in implementations
+                      if row["logicalMethod"]["symbolSignature"] ==
+                      "MegaCrit.Sts2.Core.Models.Powers.MinionPower::ShouldOwnerDeathTriggerFatal sig:200002")
+        should_die = next(row for row in implementations
+                          if row["logicalMethod"]["symbolSignature"] ==
+                          "MegaCrit.Sts2.Core.Models.AbstractModel::ShouldDie sig:20010212a7e4")
+        self.assertIs(minion["returnDefault"], False)
+        self.assertIs(should_die["returnDefault"], True)
+        policy = next(row for row in self.lifecycle["powerRetentionPolicies"]
+                      if row["sourceImplementationRef"] == minion["implementationId"])
+        self.assertIs(policy["result"], False)
+        self.assertEqual(policy["condition"], {
+            "kind": "constant", "value": True, "valueType": "boolean",
+        })
+        self.assertNotIn("targetIsPowerOwner", json.dumps(policy))
 
     def test_trailing_boolean_argument_is_exact_and_fail_closed(self):
         rows = [
