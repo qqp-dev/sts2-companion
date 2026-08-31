@@ -27,40 +27,26 @@ contributes one ordinary **StS2 Companion** menu item linking to its configured
 The document and its bounded `/sts2/state` and `/sts2/client.js` implementation
 endpoints read only the checked compact projection
 `data/encounter-facts-v0.111.0.json`, once at startup, through one strict
-adapter. The phone workflow is intentionally decision-shaped:
+adapter. The narrow default guide leads with:
 
-1. A compact encounter capsule labels the result **static** once and identifies
-   the checked fight and placement context.
-2. **Fight briefing** states the possible lineup shape and selects at most three
-   source-backed mechanic classes most likely to alter planning:
-   event/lifecycle/clock consequences, production, forms, opening
-   conditions, or compact effect signatures. This deterministic salience pass is
-   compression, not a tactical recommendation or next-move prediction.
-3. **Enemies at a glance** shows HP/forms and at most two selected mechanics per
-   possible enemy or produced form. It never presents one row per move.
-4. **Fight details** is one native disclosure containing every formatted lineup,
-   opening, cycle/fork, effect, production, event, lifecycle, condition, and
-   limitation record. **Technical audit** then exposes exact checked records and
-   evidence.
-
-If checked tactical callouts pass all seven independent gates, they render after
-the briefing under **What changes the fight** and every passing record remains
-reachable. Current checked data has `callouts: []`, so no empty section appears;
-the intended editorial/tactical layer is not being substituted with extracted
-mechanics and is not claimed complete.
+- encounter name and alternative/random roster possibilities without claiming
+  those possibilities are all present;
+- enemy/form HP parameters, compact human effect signatures, openers, cycles,
+  forks, statuses, scaling and production;
+- death, revive, hatch, escape, phase and clock rules; and
+- decision-relevant static conditions and explicit unknowns.
 
 Raw identifiers, move titles, expressions, graph records and evidence pointers
-stay inside **Technical audit**. Specific unknowns appear in primary content only
-when they limit the selected mechanic; the full observation boundary and
-record-level unresolved facts remain in expanded detail/audit.
+stay inside the native **Technical audit** disclosure. They do not occupy the
+collapsed combat guide. The empty checked editorial-callout collection does not
+create an empty product section; the internal collection contract remains
+`0..N` and a collapsed display limit never discards passing records.
 
 The view does **not** execute/read game binaries at runtime, recreate the
 projection generator, predict the next move, or observe current HP, Block,
 Powers, intent, turn, phase, hand, branch or live-body survival. Possible initial
 bodies, state-reader body identities and produced bodies remain separate. It
-never fabricates current tactics or imperatives from a model identity. The
-future `NOW / IN / BREAK / OUT-NEXT / CLOCK / ?` live decision frame is not
-implemented by this static guide.
+never fabricates current tactics or imperatives from a model identity.
 
 The projection's `matchingPolicy.prefixStripping:false` governs exact observed
 identity matching. The adapter does not guess aliases, fold case, or fuzzy-match.

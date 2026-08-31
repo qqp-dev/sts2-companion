@@ -2,9 +2,8 @@
 
 > **Status:** reconciled contract for the single practical phone guide and future
 > evidence-gated callouts. `/sts2` consumes the checked compact projection through
-> one validated adapter. Its collapsed surface is a bounded fight briefing plus
-> compact enemy/form summaries; full practical mechanics and exact technical
-> records remain in separate native disclosures. Current
+> one validated adapter. Its collapsed surface renders practical static combat
+> mechanics; exact technical records remain in native disclosure. Current
 > observation has encounter lifecycle/identity only, plus final completed-room
 > encounter/model IDs. It does **not** observe a live turn, HP, Block, Powers,
 > intents, move history, counters, hand/deck, model state/phase, or survivors.
@@ -184,31 +183,20 @@ missing semantics.
 
 Information is progressively disclosed:
 
-1. **Fight briefing:** encounter identity/context, possible lineup shape, and at
-   most three selected source-backed mechanics. Selection is a deterministic
-   presentation-salience pass over mechanic classes—lifecycle/event clocks,
-   production, forms, conditional opening state, and effect signatures—not an
-   inference of the realized intent or a tactical recommendation. There is no
-   filler requirement; fewer than three is valid.
-2. **Compact enemy/form summaries:** HP/form parameters and at most two selected
-   key mechanics per possible or produced body. These are effect signatures and
-   opening conditions, never a move-per-row dump.
-3. **Expanded fight detail:** every formatted roster, body, behavior, effect,
-   production, event, lifecycle, condition, and limitation record. In a future
-   live product this level also contains complete query families/frontiers.
-4. **Technical audit:** exact ordered operations, formulas, missing inputs,
+1. **Primary practical combat guide:** roster possibilities, enemy/form HP
+   parameters, compact human effects, cycles/forks, production, event consequences,
+   lifecycle rules, clocks, conditions, and unknowns.
+2. **Collapsed tactical collection:** a ranked subset of passing callouts with an
+   explicit total count and expansion path. It may be empty but is never the
+   primary guide surface.
+3. **Expanded decision/fight view:** every passing callout plus the six query
+   families, complete frontiers, clocks, conditions, and persistent costs.
+4. **Exact detail and audit:** ordered operations, formulas, missing inputs,
    rule/input refs, untouched lane facts, conflicts, and evidence pointers.
 
-The tactical collection is additive immediately after the briefing: a ranked
-collapsed subset under a player-oriented heading, with an expansion path to all
-passing records. It may be empty and never causes an empty section. Its seven
-eligibility gates are independent of the briefing's presentation compression.
-
-Suppression at a higher level is view compression only. Stable detail references
-make every selected briefing item and every retained presentation family
-reachable. Every displayed callout MUST link to exact support, and every passing
-callout MUST remain reachable. Omission MUST NOT delete, rewrite, or silently
-discard a lower-level record.
+Suppression at a higher level is view compression only. Every displayed callout
+MUST link to exact support, and every passing callout MUST remain reachable.
+Omission MUST NOT delete, rewrite, or silently discard a lower-level record.
 
 ## 3. The current guide and future decision projection
 
@@ -228,16 +216,6 @@ wording that implies a realized temporal state. A model identity is not a
 state/phase; roster possibility is not a realized lineup; produced is not
 co-present; a summon operation is not a complete summon lifecycle. Static
 conditions remain conditions and static branches remain sets.
-
-The implemented static presentation is compiled server-side as pure,
-deterministic data. Its first level includes `fightShape`, `highlights` and stable
-detail references; the browser only projects that typed result. Low-level setup
-writes do not outrank player-visible card/Power/status/lifecycle mechanics merely
-because they occur first in source order. Move IDs/titles never become fallback
-briefing labels. A global observer-gap panel is not primary content: the static
-boundary is labeled once, mechanic-specific conditions stay beside the affected
-mechanic, and the complete observation boundary is available under **Fight
-details** and **Technical audit**.
 
 The checked adapter record is useful now because E1 can support identity,
 placement, roster structure, applicability, move operations, and behavior paths
@@ -1465,10 +1443,8 @@ ownership.
 
 - `/sts2`, its bounded state payload, and browser client read only the checked
   compact projection through one fail-closed adapter. The one user-facing
-  document renders a bounded fight briefing and compact enemy/form summaries;
-  every formatted mechanic and limitation remains reachable through **Fight
-  details**, while raw authority records and evidence remain in **Technical
-  audit**.
+  document renders practical static mechanics and explicit unknowns; raw authority
+  records and evidence are reachable only through Technical audit.
 - No alternate HTML product is part of this contract. A projection failure returns
   503 on the guide and its implementation endpoints rather than substituting
   unvalidated community/wiki facts.

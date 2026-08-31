@@ -228,12 +228,6 @@ function rosterNode(node, names) {
 
 function initialEffect(fact) {
   const effect = fact.effect ?? {};
-  const salience = Object.freeze({
-    applyPower: 15, afflictCard: 15, gainBlock: 20,
-    relationship: 35, forceMoveState: 50, subscribe: 55, configurePowerTarget: 55,
-    setState: 60, setCurrentHp: 70, setMaxAndCurrentHp: 70,
-  })[effect.kind] ?? 65;
-  const primaryEligible = new Set(["applyPower", "afflictCard", "gainBlock"]).has(effect.kind);
   const recipient = targetText(fact.recipient?.kind);
   const amount = amountText(fact.baseValue?.expression);
   const model = effect.model ? cardOrPower(effect.model) : null;
@@ -252,10 +246,9 @@ function initialEffect(fact) {
     default: line = `${recipient} · checked initial effect unresolved`; break;
   }
   return {
-    timing: lowerWords(fact.stage), line, salience, primaryEligible,
+    timing: lowerWords(fact.stage), line,
     condition: fact.condition?.kind === "unconditional" ? null : conditionText(fact.condition),
-    unresolved: (fact.runtimeInputs ?? []).length
-      ? `${fact.runtimeInputs.length} runtime modifier input${fact.runtimeInputs.length === 1 ? " remains" : "s remain"} unresolved` : null,
+    unresolved: (fact.runtimeInputs ?? []).length ? `${fact.runtimeInputs.length} runtime modifier input${fact.runtimeInputs.length === 1 ? "" : "s"} remain unresolved` : null,
   };
 }
 
@@ -296,90 +289,10 @@ function moveEffects(move, names) {
       case "helperEffect": line = helperText[operation.helper] ?? "checked linked effect; exact consequence unresolved"; break;
       default: line = `${target} · checked effect details unresolved`; break;
     }
-    effects.push({ order: effects.length + 1, line, kind: operation.kind });
+    effects.push({ order: effects.length + 1, line });
   }
   if (!effects.length) effects.push({ order: 1, line: "No checked combat effect in this behavior" });
   return effects;
-}
-
-/** Compact human unit used by briefing/card selection; never a move name. */
-function effectSignatureHeadline(move, names) {
-  const labels = [];
-  const add = (label) => { if (label && !labels.includes(label)) labels.push(label); };
-  for (const operation of move.operations ?? []) {
-    switch (operation.kind) {
-      case "attack": add("Damage"); break;
-      case "attackHitCount": {
-        const value = operation.value?.value;
-        if (typeof value !== "number" || value > 1) add("Multi-hit");
-        break;
-      }
-      case "gainBlock": add("Block"); break;
-      case "heal": add("Healing"); break;
-      case "applyPower": add(cardOrPower(operation.model)); break;
-      case "removePower": add(`${movePowerIdentity(operation)} removal`); break;
-      case "addStatusCard":
-      case "addGeneratedCard": add(`${cardOrPower(operation.model)} cards`); break;
-      case "removeCard": add("Card removal"); break;
-      case "stateWrite": add("Counter or state shift"); break;
-      case "summon": add(`${modelName(operation.model, names)} production`); break;
-      case "escape": add("Escape"); break;
-      case "kill": add("Death rule"); break;
-      case "transition": add(operation.transition === "noOp" ? "No combat effect" : "Behavior shift"); break;
-      case "helperEffect": add(Object.freeze({
-        reattach: "Revive", fabricate: "Bot production", chooseCurse: "Curse",
-        hatch: "Hatch", pressureState: "Pressure shift",
-      })[operation.helper] ?? "Linked effect"); break;
-      default: add("Unresolved checked effect"); break;
-    }
-  }
-  if (!labels.length) return "No checked combat effect";
-  const generic = new Set(["Counter or state shift", "Behavior shift", "Linked effect", "Unresolved checked effect"]);
-  const orderedLabels = [...labels.filter((label) => !generic.has(label)), ...labels.filter((label) => generic.has(label))];
-  return `${orderedLabels.slice(0, 3).join(" + ")}${orderedLabels.length > 3 ? " + linked effect" : ""}`;
-}
-// Compact effect lists may be salience-ranked rather than source-ordered. Their
-// separator must not imply execution order; exact order remains in disclosure.
-function compactSequence(values, limit = 2, options = {}) {
-  const rows = values.map((value, index) => ({
-    index,
-    line: typeof value === "string" ? value : value.line,
-    salience: options.salience ? options.salience(value) : index,
-  }));
-  const ranked = options.salience
-    ? rows.sort((left, right) => left.salience - right.salience || left.index - right.index)
-    : rows;
-  const visible = ranked.slice(0, limit);
-  const remaining = Math.max(0, rows.length - visible.length);
-  const remainderLabel = options.remainderLabel ?? "ordered effect";
-  const separator = options.separator ?? " → ";
-  return `${visible.map((row) => row.line).join(separator)}${remaining ? ` · +${remaining} ${remainderLabel}${remaining === 1 ? "" : "s"} in details` : ""}`;
-}
-function compactAlternatives(values, limit = 2) {
-  return compactSequence(values, limit, {
-    separator: " · or · ",
-    remainderLabel: "possible outcome",
-  });
-}
-function operationSalience(operation) {
-  if (["summon", "escape", "kill", "helperEffect"].includes(operation?.kind)) return 10;
-  if (["addStatusCard", "addGeneratedCard", "removeCard"].includes(operation?.kind)) return 20;
-  if (operation?.kind === "removePower") return 25;
-  if (operation?.kind === "applyPower") return 30;
-  if (operation?.kind === "heal") return 35;
-  if (operation?.kind === "gainBlock") return 45;
-  if (operation?.kind === "attackHitCount") return 55;
-  if (operation?.kind === "attack") return 80;
-  return 90;
-}
-function effectSalience(move) {
-  return Math.min(90, ...(move.operations ?? []).map(operationSalience));
-}
-// Combat signatures use absolute operation salience everywhere they are
-// selected. Only opening setup receives a baseline; tie breakers preserve
-// source/body order without changing semantic priority.
-function combatMechanicPriority(kind, salience, tieBreaker = 0) {
-  return (kind === "opening" ? 25 : 0) + salience + tieBreaker;
 }
 
 function graphPresentation(body, effectLabels) {
@@ -462,69 +375,29 @@ function formHpText(state, stateIndex, body, encounter) {
 }
 function bodyPresentation(body, index, encounter, names) {
   const effectLabels = new Map();
-  (body.moves ?? []).forEach((move) => effectLabels.set(move.stateId, effectSignatureHeadline(move, names)));
+  (body.moves ?? []).forEach((move, moveIndex) => effectLabels.set(move.stateId, `Effect ${LETTERS[moveIndex] ?? moveIndex + 1}`));
   const initial = encounter.roster.possibleInitialBodies.includes(body.canonicalModel);
   const produced = encounter.production?.producedBodies?.includes(body.canonicalModel) === true;
   const roles = [initial ? "possible initial body" : null, produced ? "produced possibility" : null].filter(Boolean);
   const hp = body.hp?.a8SinglePlayer;
-  const detailRef = `enemy-${index + 1}`;
-  const initialEffects = (body.initialState ?? []).map((fact, factIndex) => ({
-    ...initialEffect(fact), detailRef, itemRef: `${detailRef}-opening-${factIndex + 1}`,
-  }));
-  const effects = (body.moves ?? []).map((move, moveIndex) => {
-    const renderedEffects = moveEffects(move, names);
-    const orderedEffects = renderedEffects.map(({ kind, ...effect }) => effect);
-    return {
-      label: `Effect ${LETTERS[moveIndex] ?? moveIndex + 1}`,
-      headline: effectSignatureHeadline(move, names),
-      summary: compactSequence(renderedEffects, 2, {
-        salience: operationSalience,
-        separator: "; ",
-      }),
-      salience: effectSalience(move),
-      timing: "during this possible behavior resolution",
-      moveIndex, detailRef, itemRef: `${detailRef}-signature-${moveIndex + 1}`, orderedEffects,
-    };
-  });
-  // A combat signature's operation salience is already absolute. Opening
-  // setup receives a baseline so lifecycle/card/Power/status mechanics can
-  // outrank it while Block and routine damage do not do so automatically.
-  const mechanicCandidates = [
-    ...initialEffects.filter((fact) => fact.primaryEligible).map((fact, factIndex) => ({
-      kind: "opening",
-      headline: factIndex === 0 ? "Opening setup" : "Additional opening setup",
-      effect: fact.line, condition: fact.condition,
-      ...(fact.unresolved ? { unresolved: fact.unresolved } : {}),
-      detailRef, salience: combatMechanicPriority("opening", fact.salience, factIndex / 100),
-    })),
-    ...effects.map((effect, effectIndex) => ({
-      kind: "signature", headline: effect.headline, effect: effect.summary, condition: null,
-      detailRef, salience: combatMechanicPriority("signature", effect.salience, effectIndex / 100),
-    })),
-  ].sort((left, right) => left.salience - right.salience || left.headline.localeCompare(right.headline));
-  // Repeated checked setup/signatures are one compact mechanic, while every
-  // underlying record remains available through initialEffects/effects.
-  const distinctMechanics = new Map();
-  for (const mechanic of mechanicCandidates) {
-    const key = mechanic.kind === "opening"
-      ? JSON.stringify([mechanic.kind, mechanic.effect, mechanic.condition, mechanic.unresolved])
-      : JSON.stringify([mechanic.kind, mechanic.headline, mechanic.effect, mechanic.condition]);
-    if (!distinctMechanics.has(key)) distinctMechanics.set(key, mechanic);
-  }
-  const keyMechanics = [...distinctMechanics.values()].slice(0, 2)
-    .map(({ kind, salience, ...mechanic }) => mechanic);
   return {
-    bodyIndex: index, detailRef,
+    bodyIndex: index,
     name: nameOf(body),
     role: roles.join(" · ") || "encounter body",
     hp: hp ? `${rangeText(hp)} HP · A8 single player` : "HP is runtime-defined",
     hpHasRuntimeInputs: JSON.stringify(body.hp?.expression ?? {}).includes('"stateVariable"') || JSON.stringify(body.hp?.expression ?? {}).includes('"runtimeInput"'),
     forms: (body.states ?? []).map((state, stateIndex) => ({
       name: /^phase\d+$/.test(state.hpState ?? "") ? `Phase ${String(state.hpState).slice(5)} — ${localizedName(state.displayName)}` : localizedName(state.displayName),
-      hp: formHpText(state, stateIndex, body, encounter), detailRef, itemRef: `${detailRef}-form-${stateIndex + 1}`,
+      hp: formHpText(state, stateIndex, body, encounter),
     })),
-    initialEffects, effects, keyMechanics,
-    behavior: { ...graphPresentation(body, effectLabels), detailRef, itemRef: `${detailRef}-behavior` },
+    initialEffects: (body.initialState ?? []).map(initialEffect),
+    effects: (body.moves ?? []).map((move, moveIndex) => ({
+      label: `Effect ${LETTERS[moveIndex] ?? moveIndex + 1}`,
+      timing: "during this possible behavior resolution",
+      moveIndex,
+      orderedEffects: moveEffects(move, names),
+    })),
+    behavior: graphPresentation(body, effectLabels),
   };
 }
 
@@ -555,7 +428,6 @@ function productionPresentation(production, names) {
     };
   });
   return {
-    detailRef: "production",
     possibilities: (production.producedBodies ?? []).map((model) => modelName(model, names)),
     caveat: "Produced bodies are possibilities from eligible rules, not initial or co-present bodies.",
     rules,
@@ -641,7 +513,7 @@ function lifecycleEffect(operation, names, sequence = [], index = 0) {
   const target = targetText(operation.target);
   switch (operation.kind) {
     case "attack": return lifecycleAttackText(operation, names, sequence, index);
-    case "snapshotDamage": return `${target} · remember Steam Eruption's amount at that trigger for the coming attack`;
+    case "snapshotDamage": return `${target} · remember Steam Eruption's current amount for the coming attack`;
     case "createBody": return `${target} · create ${modelName(operation.model, names)}`;
     case "createMutableBody": return `${target} · create ${modelName(operation.model, names)} with its checked starting state`;
     case "precreateBody": return `${target} · prepare ${modelName(operation.model, names)} before adding it`;
@@ -665,7 +537,7 @@ function lifecycleEffect(operation, names, sequence = [], index = 0) {
     case "applyTargetedPower": return `${target} · apply ${cardOrPower(operation.power)}`;
     case "skipPowerApplication": return `${target} · skip ${cardOrPower(operation.power)} application`;
     case "decrementPower": return `${target} · reduce ${cardOrPower(operation.power ?? operation.owner)} by ${operation.amount ?? "the checked amount"}`;
-    case "snapshotPowers": return `${target} · remember Powers present at the hatch trigger except Minion`;
+    case "snapshotPowers": return `${target} · remember current Powers except Minion for hatch cleanup`;
     case "removeSnapshottedPowers": return `${target} · remove the remembered Powers except ${cardOrPower(operation.retainedPower)}`;
     case "writeState": {
       const meaning = lifecycleWriteText(operation);
@@ -763,11 +635,7 @@ function lifecyclePresentation(lifecycle, names) {
     });
     const practicalBranches = branches.filter((branch) => branch.effects.length > 0);
     if (practicalBranches.length) {
-      mechanics.push({
-        detailRef: `lifecycle-${mechanics.length + 1}`,
-        family: LIFECYCLE_FAMILIES[path.join(".")] ?? "Other checked lifecycle rule",
-        branches: practicalBranches,
-      });
+      mechanics.push({ family: LIFECYCLE_FAMILIES[path.join(".")] ?? "Other checked lifecycle rule", branches: practicalBranches });
     }
   }
   return {
@@ -813,144 +681,6 @@ function eventPresentation(event) {
   };
 }
 
-const BRIEFING_LIMIT = 3;
-const LIFECYCLE_PRIORITY = Object.freeze({
-  "Event fight clock": 5,
-  "Phases, revive and hatch": 8,
-  "On-death production": 10,
-  "Linked bodies": 12,
-  "Death and Power retention": 15,
-  "Triggered rules": 17,
-  "Event fight triggers": 18,
-  "Fight cleanup": 30,
-  "Other checked lifecycle rule": 35,
-});
-function compactFightShape(roster, bodies) {
-  const slots = `${roster.cardinality} possible initial body slot${roster.cardinality === "1" ? "" : "s"}`;
-  if (roster.summary.length <= 130) return `${slots} · ${roster.summary}`;
-  const possibleForms = bodies.filter((body) => body.role.includes("possible initial body")).length;
-  return `${slots} · nested random composition across ${possibleForms} possible body form${possibleForms === 1 ? "" : "s"}; exact branches in details`;
-}
-function compactFormText(form) {
-  const phase = /^(Phase \d+) — /.exec(form.name);
-  return `${phase ? phase[1] : form.name} · ${form.hp}`;
-}
-function lifecycleEffectSalience(effect) {
-  const text = effect.toLowerCase();
-  if (/escape and leave/.test(text)) return 1;
-  if (/hatch with|restore (?:maximum and revived )?hp/.test(text)) return 5;
-  if (/finish .* revival/.test(text)) return 6;
-  if (/create |add the exact created body|replacement body/.test(text)) return 7;
-  if (/explode phase|about-to-explode/.test(text)) return 8;
-  if (/begin .*revival|revive/.test(text)) return 10;
-  if (/enter .* behavior/.test(text)) return 12;
-  if (/reduce hatch|ran out of time/.test(text)) return 15;
-  if (/deal .*damage|checked attack| hp/.test(text)) return 20;
-  if (/death rule|death handling/.test(text)) return 25;
-  if (/no combat effect|without changing/.test(text)) return 100;
-  return 40;
-}
-function lifecycleBranchSalience(branch) {
-  const effects = branch.effects.join(" ").toLowerCase();
-  if (/escape and leave|ran out of time/.test(effects)) return 1;
-  if (/hatch with|mark .* hatched|finish .* revival|restore maximum and revived hp/.test(effects)) return 5;
-  if (/create |add the exact created body|replacement body/.test(effects)) return 7;
-  if (/explode phase|about-to-explode/.test(effects)) return 8;
-  if (/begin .*revival|revive/.test(effects)) return 10;
-  if (/reduce hatch/.test(effects)) return 15;
-  if (/deal .*damage|checked attack| hp/.test(effects)) return 20;
-  if (/death rule|death handling/.test(effects)) return 25;
-  if (/no combat effect|without changing/.test(effects)) return 100;
-  return 40;
-}
-function briefingPresentation({ roster, bodies, production, lifecycle, event, unknowns, callouts }) {
-  const candidates = [];
-  const add = (candidate) => candidates.push(candidate);
-  const byFamily = new Map();
-  for (const mechanic of lifecycle.mechanics) {
-    const group = byFamily.get(mechanic.family) ?? [];
-    group.push(mechanic); byFamily.set(mechanic.family, group);
-  }
-  for (const [family, mechanics] of byFamily) {
-    const branches = mechanics.flatMap((mechanic) => mechanic.branches.map((branch) => ({ ...branch, detailRef: mechanic.detailRef })));
-    const branch = branches.map((value, index) => ({ value, index, salience: lifecycleBranchSalience(value) }))
-      .sort((left, right) => left.salience - right.salience || left.index - right.index)[0].value;
-    const condition = branch.condition && branch.condition !== "always" ? branch.condition : null;
-    const clock = branch.repeat || null;
-    const branchCount = branches.length;
-    add({
-      kind: "lifecycle", headline: family,
-      effect: `${compactSequence(branch.effects, 1, { salience: lifecycleEffectSalience, separator: "; " })}${branchCount > 1 ? ` · ${branchCount} checked branches in details` : ""}`,
-      condition, ...(clock ? { clock } : {}), detailRef: branch.detailRef, priority: LIFECYCLE_PRIORITY[family] ?? 35,
-    });
-  }
-  if (event?.effects.length) add({
-    kind: "event", headline: "Event-fight consequences",
-    effect: compactAlternatives(event.effects), condition: null,
-    branch: "Outside-combat results depend on the checked event branch",
-    detailRef: "event-consequences", priority: 6,
-  });
-  if (production?.rules.length) {
-    const first = production.rules[0];
-    add({
-      kind: "production", headline: "Bodies can be added",
-      effect: `${first.owner} · ${first.cadence} · ${first.repeat}`,
-      condition: first.condition, detailRef: production.detailRef, priority: 9,
-    });
-  }
-  for (const body of bodies) {
-    if (body.forms.length > 1) add({
-      kind: "forms", headline: `${body.name} has ${body.forms.length} possible forms`,
-      effect: compactSequence(body.forms.map(compactFormText), 3, { remainderLabel: "possible form" }),
-      condition: null, observation: "The form is not identified by encounter identity alone",
-      detailRef: body.detailRef, priority: 11 + body.bodyIndex / 100,
-    });
-    body.initialEffects.filter((fact) => fact.primaryEligible).forEach((fact, factIndex) => add({
-      kind: "opening", headline: `${body.name} · opening setup`, effect: fact.line,
-      condition: fact.condition, ...(fact.unresolved ? { unresolved: fact.unresolved } : {}), detailRef: body.detailRef,
-      priority: combatMechanicPriority("opening", fact.salience, body.bodyIndex / 100 + factIndex / 1000),
-    }));
-    body.effects.forEach((effect, effectIndex) => add({
-      kind: "signature", headline: `${body.name} · ${effect.headline}`,
-      effect: effect.summary, condition: null, detailRef: body.detailRef,
-      priority: combatMechanicPriority("signature", effect.salience, body.bodyIndex / 100 + effectIndex / 1000),
-    }));
-  }
-  const variableRoster = /random|\//i.test(roster.summary);
-  const distinct = new Map();
-  for (const candidate of candidates.sort((left, right) => left.priority - right.priority
-    || left.headline.localeCompare(right.headline) || left.effect.localeCompare(right.effect))) {
-    const key = JSON.stringify([candidate.kind, candidate.headline, candidate.effect]);
-    if (!distinct.has(key)) distinct.set(key, candidate);
-  }
-  const highlights = [...distinct.values()].slice(0, BRIEFING_LIMIT);
-  const reachability = [
-    { detailRef: "lineup", kind: "lineup", factCount: 1 },
-    ...bodies.map((body) => ({
-      detailRef: body.detailRef, kind: "enemy-or-form",
-      factCount: 2 + body.forms.length + body.initialEffects.length + body.behavior.paths.length
-        + body.effects.reduce((count, effect) => count + effect.orderedEffects.length, 0),
-    })),
-    ...(production ? [{ detailRef: production.detailRef, kind: "production", factCount: 1 + production.possibilities.length + production.rules.length }] : []),
-    ...(event ? [{ detailRef: "event-consequences", kind: "event", factCount: 1 + event.effects.length }] : []),
-    ...(lifecycle.rules.length || lifecycle.mechanics.length
-      ? [{ detailRef: "lifecycle-overview", kind: "lifecycle-overview", factCount: lifecycle.rules.length }] : []),
-    ...lifecycle.mechanics.map((mechanic) => ({
-      detailRef: mechanic.detailRef, kind: "lifecycle",
-      factCount: mechanic.branches.reduce((count, branch) => count + branch.effects.length + (branch.condition ? 1 : 0) + (branch.repeat ? 1 : 0), 0),
-    })),
-    { detailRef: "limitations", kind: "limitations", factCount: 1 + unknowns.length },
-    ...(callouts.total ? [{ detailRef: "player-notes", kind: "callouts", factCount: callouts.total }] : []),
-    { detailRef: "technical-audit", kind: "audit", factCount: 1 },
-  ];
-  return {
-    fightShape: compactFightShape(roster, bodies),
-    lineupCondition: variableRoster ? "One checked random or alternative branch supplies the lineup; possibilities are not all co-present." : null,
-    highlights: highlights.map(({ priority, ...highlight }) => highlight),
-    reachability,
-  };
-}
-
 function contextPresentation(encounter) {
   const memberships = encounter.placement?.memberships ?? [];
   const primary = memberships[0];
@@ -969,11 +699,7 @@ function validatedCollection(collection) {
   return collection;
 }
 
-/**
- * Pure phone view-model compiler. It deterministically selects a bounded static
- * briefing, while preserving every formatted fact for disclosure and audit.
- * It derives no combat outcome or tactical recommendation.
- */
+/** Pure phone view-model compiler. It formats adapter-validated facts; it derives no combat outcomes. */
 export function buildEncounterPresentation(encounter, options = {}) {
   if (!encounter || typeof encounter !== "object") throw new TypeError("encounter presentation requires an encounter object");
   const names = new Map((encounter.monsters ?? []).map((body) => [body.canonicalModel, nameOf(body)]));
@@ -981,27 +707,21 @@ export function buildEncounterPresentation(encounter, options = {}) {
     ? validatedCollection(options.calloutCollection)
     : compileCalloutCollection(options.calloutCandidates ?? encounter.callouts ?? [], options.calloutContext ?? {}, { collapsedLimit: options.collapsedLimit ?? 1 });
   const roster = {
-    detailRef: "lineup",
     summary: rosterNode(encounter.roster?.grammar, names),
     cardinality: rangeText(encounter.roster?.cardinality),
     caveat: "Random and alternative branches are possibilities. Only one branch is selected; listed possibilities are not all co-present.",
   };
-  const bodies = (encounter.monsters ?? []).map((body, index) => bodyPresentation(body, index, encounter, names));
-  const production = productionPresentation(encounter.production, names);
-  const lifecycle = lifecyclePresentation(encounter.lifecycle ?? {}, names);
-  const event = eventPresentation(encounter.event);
-  const unknowns = (encounter.knownUnknowns ?? []).map((row) => ({
-    headline: text(row.detail, words(row.unknownId)),
-    detail: `${words(row.status)} · ${words(row.scope)} · ${words(row.reasonCode)}`,
-  }));
-  const limitations = {
-    observation: "Turn, HP, Block, intents, Powers, hand, counters, phase, and surviving bodies are outside the available encounter-identity observation.",
-    unknowns,
-  };
-  const briefing = briefingPresentation({ roster, bodies, production, lifecycle, event, unknowns, callouts });
+  const unknowns = [
+    { headline: "Realized turn state is unavailable", detail: "Live HP, Block, Powers, intent, phase, survivors, hand, and move history are not observed." },
+    ...(encounter.knownUnknowns ?? []).map((row) => ({ headline: text(row.detail, words(row.unknownId)), detail: `${words(row.status)} · ${words(row.scope)} · ${words(row.reasonCode)}` })),
+  ];
   return {
-    context: contextPresentation(encounter), briefing, roster, bodies, production,
-    lifecycle, event, limitations, unknowns, callouts,
+    context: contextPresentation(encounter), roster,
+    bodies: (encounter.monsters ?? []).map((body, index) => bodyPresentation(body, index, encounter, names)),
+    production: productionPresentation(encounter.production, names),
+    lifecycle: lifecyclePresentation(encounter.lifecycle ?? {}, names),
+    event: eventPresentation(encounter.event),
+    unknowns, callouts,
   };
 }
 
@@ -1009,6 +729,5 @@ export const presentationInternals = Object.freeze({
   words, rosterNode, moveEffects, graphPresentation, initialEffect, targetText,
   productionPresentation, lifecyclePresentation, lifecyclePresentationRecords, lifecycleEffect,
   retentionPolicyText, lifecycleWriteText, eventPresentation, eventEffect, validatedCollection,
-  effectSignatureHeadline, compactSequence, compactAlternatives, operationSalience, effectSalience, combatMechanicPriority, compactFightShape, compactFormText, lifecycleEffectSalience, lifecycleBranchSalience, briefingPresentation,
   BOOLEAN_CONDITIONS, EVENT_EFFECT_KINDS, LIFECYCLE_WRITES, TARGETS,
 });
