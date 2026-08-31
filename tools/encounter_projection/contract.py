@@ -1,18 +1,18 @@
-"""Closed E2d2a encounter projection contract and pinned v0.111.0 identities."""
+"""Closed E2 lifecycle encounter projection contract and pinned v0.111.0 identities."""
 
 from __future__ import annotations
 
 from typing import Any
 
-SCHEMA_VERSION = 10
+SCHEMA_VERSION = 11
 GENERATOR_NAME = "sts2-encounter-facts"
-GENERATOR_VERSION = "10.0.0"
-SOURCE_SCHEMA_VERSION = 13
-SOURCE_EXTRACTOR_VERSION = "13.0.0"
+GENERATOR_VERSION = "11.0.0"
+SOURCE_SCHEMA_VERSION = 14
+SOURCE_EXTRACTOR_VERSION = "14.0.0"
 
 SOURCE_ARTIFACT = {
     "id": "INPUT.SOURCE", "path": "data/game-v0.111.0-source.json",
-    "sha256": "8fe227f7fdea18c32abd93c7c910ba861161b9ea4418b3b387030bc0e7b41ace", "size": 14173997,
+    "sha256": "2991f0391565f384453bdb009050f9cd53a0f4949e86b92adf73e0fe928e559e", "size": 17054697,
 }
 LEGACY_ARTIFACT = {
     "id": "INPUT.LEGACY", "path": "data/encounters.json",
@@ -76,6 +76,20 @@ REQUIRED_COVERAGE: dict[str, tuple[str, int, int, int]] = {
     "lifecycleDependencies": ("complete", 7, 7, 0),
     "lifecycleInvocationClassification": ("complete", 707, 707, 0),
     "lifecycleSemanticNodes": ("complete", 59, 59, 0),
+    "lifecycleReachableListenerOwners": ("complete", 108, 108, 0),
+    "lifecyclePowerSeedTypes": ("complete", 69, 69, 0),
+    "lifecycleFixedPointPowerTypes": ("complete", 71, 71, 0),
+    "lifecycleEffectiveListenerApplications": ("complete", 1861, 1861, 0),
+    "lifecycleListenerImplementations": ("complete", 80, 80, 0),
+    "lifecyclePhaseSystems": ("complete", 6, 6, 0),
+    "lifecycleRelationships": ("complete", 6, 6, 0),
+    "lifecycleSubscriptions": ("complete", 3, 3, 0),
+    "lifecycleBeforeRemovedCleanup": ("complete", 11, 11, 0),
+    "lifecycleDeathAddSites": ("complete", 4, 4, 0),
+    "lifecycleDeathProductionSystems": ("complete", 3, 3, 0),
+    "lifecycleEventCombatRegistrations": ("complete", 7, 7, 0),
+    "lifecycleRunTerminationSystems": ("complete", 1, 1, 0),
+    "lifecycleCloseoutInvocationClassification": ("complete", 1265, 1265, 0),
     "encounterPlacement": ("complete", 89, 89, 0),
     "eventEncounterLinkage": ("complete", 8, 8, 0),
     "eventTurnClassifications": ("complete", 8, 8, 0),

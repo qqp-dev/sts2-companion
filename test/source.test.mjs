@@ -32,8 +32,8 @@ const exactManifest = [
 
 test("source artifact is canonical, exactly pinned, partial, and raw-only", () => {
   assert.equal(artifactBytes.toString("utf8"), `${JSON.stringify(sortedValue(artifact), null, 2)}\n`);
-  assert.equal(artifact.schemaVersion, 13);
-  assert.equal(artifact.extractorVersion, "13.0.0");
+  assert.equal(artifact.schemaVersion, 14);
+  assert.equal(artifact.extractorVersion, "14.0.0");
   assert.equal(artifact.runtimeReady, false);
   assert.equal(artifact.status, "incomplete");
   assert.deepEqual(artifact.inputs, exactManifest);
@@ -822,16 +822,29 @@ test("selection graphs preserve topology, Flyconid/Fabricator/Decimillipede fixt
   }
 });
 
-test("E2d2a core lifecycle closes force, dispatch, registry, removal, and centralized termination", () => {
+test("E2 lifecycle closes reachable listeners, phases, events, run termination, and the d2a core", () => {
   const lifecycle = artifact.lifecycle;
   assert.equal(lifecycle.componentId, "LIFECYCLE.CORE.E2D2A");
-  assert.equal(lifecycle.status, "sourceCompleteE2d2a");
-  assert.deepEqual(lifecycle.sourceDenominators, {
+  assert.equal(lifecycle.status, "sourceCompleteE2Lifecycle");
+  assert.deepEqual(Object.fromEntries(Object.entries(lifecycle.sourceDenominators).filter(([key]) => !key.startsWith("closeout."))), {
     centralizedCheckCallSites: 14, commandDeclarations: 4, commandPhysicalBodies: 4,
     dependencies: 7, dispatchMethods: 6, escapeCallSites: 3, invocations: 707, killCallSites: 21,
     listenerRegistryLogicalMethods: 3, listenerRegistryPhysicalBodies: 3,
     removalMethods: 4, runtimeBoundaries: 7, semanticNodes: 59,
     terminationDeclarations: 4, terminationPhysicalBodies: 4, terminationSupportMethods: 3,
+  });
+  assert.deepEqual(lifecycle.listenerCensus, {
+    effectiveApplications: 1861, fixedPointPowerTypes: 71, implementationRecords: 80,
+    monsterOwnerTypes: 108, powerSeedTypes: 69,
+    postDiscoveryAssertions: {
+      monsterAfterDeathDeclarationOwners: 10, monsterAfterDeathEffectiveModels: 12,
+      monsterBeforeDeathDeclarations: 2, monsterBeforeRemovedDeclarations: 11,
+      powerAfterDeathBaselineDeclarations: 16, powerBeforeDeathBaselineDeclarations: 1,
+      powerBeforeDeathFixedPointDeclarations: 2, powerOwnerFatalDeclarations: 2,
+      powerOwnerRetentionDeclarations: 5, powerRemovePredicateDeclarations: 5,
+      powerRemovedOnDeathDeclarations: 1, powerStopEndingDeclarations: 5,
+      reachableShouldDieFamilyOverrides: 0,
+    },
   });
   const declarations = lifecycle.api.commandDeclarations;
   assert.deepEqual(declarations.map((row) => row.parameters.map((p) => p.name)), [
@@ -940,7 +953,7 @@ test("E2d2a core lifecycle closes force, dispatch, registry, removal, and centra
   assert.deepEqual(lifecycle.listenerRegistry.runOrder.map((row) => row.source), ["active-player deck", "active-player inventory", "run globals", "mod run subscribers", "child combat registry"]);
   assert.match(lifecycle.listenerRegistry.dynamicValues, /never assumed empty/);
   assert.equal(lifecycle.runtimeBoundaries.length, 7);
-  assert.ok(lifecycle.runtimeBoundaries.every((row) => row.effectStatus === "pendingE2d2b"));
+  assert.ok(lifecycle.runtimeBoundaries.every((row) => row.effectStatus === "runtimeDynamicExternalBoundary"));
   assert.deepEqual(lifecycle.removal.escapeDeathHooks, []);
   assert.equal(lifecycle.removal.escapeResultEnum, null);
   assert.match(lifecycle.removal.deathMoveDeferral, /deferred/);
@@ -955,7 +968,52 @@ test("E2d2a core lifecycle closes force, dispatch, registry, removal, and centra
   ]);
   assert.equal(lifecycle.centralizedCheckCallSites.length, 14);
   assert.ok(lifecycle.centralizedCheckCallSites.every((row) => !row.caller.includes("CreatureCmd+<Kill")));
-  assert.deepEqual(new Set(lifecycle.dependencies.map((row) => row.status)), new Set(["sourceComplete", "pendingE2d2b", "pendingE2d2c", "pendingE2d2d"]));
+  assert.deepEqual(new Set(lifecycle.dependencies.map((row) => row.status)), new Set(["sourceComplete"]));
+  assert.equal(lifecycle.invocationDecisions.length, 1265);
+  assert.ok(lifecycle.invocationDecisions.every((row) => row.classification !== "ignored" && row.classification !== "unresolved"));
+  assert.deepEqual(lifecycle.discovery.fixedPointIterations.map((row) => row.addedPowers), [["POWER.HEIST_POWER"], []]);
+  assert.deepEqual(lifecycle.doom.orderedEffects.map((row) => [row.kind, row.execution]), [
+    ["doomVfx", "awaitedSequential"], ["kill", "awaitedSequential"],
+    ["afterDiedToDoom", "awaitedOnceAfterCompleteList"],
+  ]);
+  assert.equal(lifecycle.doom.orderedEffects[1].force, false);
+  assert.equal(lifecycle.doom.orderedEffects[2].perBody, false);
+  assert.equal(lifecycle.phaseSystems.length, 6);
+  const phases = new Map(lifecycle.phaseSystems.map((row) => [row.phaseSystemId, row]));
+  const subject = phases.get("LIFECYCLE.PHASE.TEST_SUBJECT_ADAPTABLE");
+  assert.equal(subject.derivedCompletedReviveCount, 2);
+  assert.equal(subject.capField, null);
+  assert.deepEqual(subject.transitions[0].orderedEffects.map((row) => row.owner), [
+    "POWER.ADAPTABLE_POWER", "POWER.ADAPTABLE_POWER", "MONSTER.TEST_SUBJECT",
+    "MONSTER.TEST_SUBJECT", "MONSTER.TEST_SUBJECT",
+  ]);
+  const egg = phases.get("LIFECYCLE.PHASE.TOUGH_EGG_HATCH");
+  assert.deepEqual(egg.titleContract, { getterField: "_hatched", hatchWritesTitle: false, isHatchedField: "_isHatched" });
+  assert.equal(egg.deathOrAdd, false);
+  assert.deepEqual(egg.transitions.map((row) => row.transitionId), [
+    "LIFECYCLE.TRANSITION.TOUGH_EGG.HATCH_COUNTDOWN",
+    "LIFECYCLE.TRANSITION.TOUGH_EGG.NORMAL_HATCH",
+    "LIFECYCLE.TRANSITION.TOUGH_EGG.RESTORED_HATCH",
+  ]);
+  const eggCountdown = egg.transitions[0];
+  assert.deepEqual(eggCountdown.condition, {
+    kind: "comparison",
+    left: { kind: "runtimeInput", name: "sideTurn.participantsContainsOwner", valueType: "boolean" },
+    operator: "equal",
+    right: { kind: "constant", value: true, valueType: "boolean" },
+    valueType: "boolean",
+  });
+  assert.deepEqual(eggCountdown.orderedEffects, [{
+    amount: 1, execution: "awaited", kind: "decrementPower", order: 0,
+    owner: "POWER.HATCH_POWER", target: "sameOwnerBody",
+  }]);
+  assert.equal(phases.get("LIFECYCLE.PHASE.DECIMILLIPEDE_REATTACH").addOrSlotChange, false);
+  assert.deepEqual(lifecycle.deathProduction.map((row) => row.physicalAddSites.length), [1, 1, 2]);
+  assert.ok(lifecycle.deathProduction.every((row) => row.d1Producer === false));
+  assert.equal(lifecycle.eventCombat.registrations.filter((row) => row.shouldResumeParentEventAfterCombat).length, 3);
+  assert.equal(lifecycle.eventCombat.registrations.filter((row) => !row.shouldResumeParentEventAfterCombat).length, 4);
+  assert.deepEqual(lifecycle.runTermination.winRun.branches[1].orderedEffects.map((row) => row.kind), ["onEnded", "guaranteeKillAllPlayers"]);
+  assert.equal(lifecycle.runTermination.guaranteeKillAllPlayers.orderedPerPlayer[0].force, true);
   assert.equal(artifact.runtimeReady, false);
 });
 
@@ -1210,7 +1268,7 @@ test("E2a selected Power hooks and runtime contracts are explicit", () => {
   assert.deepEqual(artifact.observationIdentities.aliases, []);
 });
 
-test("migration ledger and world-model census claims match the current schema summary and coverage", () => {
+test("migration ledger and world-model census claims match checked coverage", () => {
   const markdown = (url) => readFileSync(new URL(url, import.meta.url), "utf8").replace(/\s+/g, " ").trim();
   const readme = markdown("../README.md");
   const ledger = markdown("../docs/source-migration-ledger.md");
@@ -1266,7 +1324,6 @@ test("migration ledger and world-model census claims match the current schema su
 
   has(readme, "docs/source-migration-ledger.md");
   has(readme, "docs/source-world-model.md");
-  has(ledger, `Schema ${artifact.schemaVersion} remains deliberately`);
   has(ledger, `Title localization is classified ${summary.localizedTitles}/${topology.moveConstructors} with ${summary.missingOrInternalTitles} explicit missing/internal keys`);
   has(ledger, `${topology.moveConstructors} current move registrations from all reachable behavior classes plus the abstract Decimillipede segment implementation (${summary.asyncActions} async via \`AsyncStateMachineAttribute\`, ${word(summary.synchronousNoOpActions)} exact \`Task.CompletedTask\` no-ops)`);
   has(ledger, `${summary.localizedTitles} shipped English titles joined by localization root/state`);
@@ -1280,10 +1337,8 @@ test("migration ledger and world-model census claims match the current schema su
   has(ledger, `Source enumeration yields ${topology.behaviorClasses} physical graph owners and ${topology.moveConstructors} registrations. ${word(eventSummary.physicalOwners)[0].toUpperCase()}${word(eventSummary.physicalOwners).slice(1)} physical graphs and ${word(eventSummary.physicalRegistrations)} registrations are newly included`);
   has(ledger, `Fake Merchant | \`normalTurnMachine\` | ${word(fake.registrationIds.length)[0].toUpperCase()}${word(fake.registrationIds.length).slice(1)} localized moves, ${word(fakeGraph.topology.randomNodes)} random nodes, ${word(fakeMoves.flatMap((row) => row.intents).length)} intent constructors, ${word(operationCount("attack"))} attacks, ${word(operationCount("attackHitCount"))} hit count, Frail, and Strength are closed.`);
   has(ledger, `The event slice closes ${eventInvocations.denominator} invocation sites, ${word(eventSummary.eventTurnDirectOperations)} direct gameplay operations, and ${word(eventSummary.noOpProofs)} explicit no-op proofs with zero unresolved.`);
-  has(ledger, `deterministic schema ${JSON.parse(readFileSync(new URL("../data/encounter-facts-v0.111.0.json", import.meta.url))).schemaVersion} compact projection`);
-  has(ledger, `(schema ${artifact.schemaVersion} raw source facts)`);
 
-  has(worldModel, `Schema ${artifact.schemaVersion} is the E2d2a boundary`);
+  has(worldModel, `Schema ${artifact.schemaVersion} is the consolidated E2 lifecycle`);
   has(worldModel, `exact metadata inheritance closure for all ${topology.behaviorClasses} behavior graph owners`);
   has(worldModel, `The ${summary.intentConstructorSites} constructor sites contain ${summary.requiredIntentArguments} required arguments`);
   has(worldModel, `separately count ${summary.intentConstructorSites} classified constructors and ${summary.requiredIntentArguments} resolved arguments`);

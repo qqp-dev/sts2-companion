@@ -27,6 +27,8 @@ from source_extractor.placement import decode_factory_collection, validate_place
 from source_extractor.behavior import _canonical_for_type, _compile_graph, _intent_records
 from source_extractor.encounters import _compile_fixed_selection, _derive_fixed_slot_names
 from source_extractor.localization import require_localized_text
+from source_extractor.lifecycle import validate_lifecycle
+from source_extractor.lifecycle_closeout import _boolean_default
 from source_extractor.errors import SourceExtractionError
 from source_extractor.event_scripts import _validate_bounded_plumbing_vocabulary
 from source_extractor.architect_script import join_localization_structure, validate_architect_script
@@ -972,6 +974,71 @@ class CilSemanticEvaluatorTests(unittest.TestCase):
 
 
 class LifecycleCilSliceTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.lifecycle = json.loads((REPO_ROOT / "data/game-v0.111.0-source.json").read_text())["lifecycle"]
+
+    def test_closeout_attribution_order_identity_and_readiness_mutations_fail(self):
+        def phase(value, phase_id):
+            return next(row for row in value["phaseSystems"] if row["phaseSystemId"] == phase_id)
+        cases = [
+            (lambda x: x["listenerCensus"].__setitem__("fixedPointPowerTypes", 70), "denominator|digest"),
+            (lambda x: phase(x, "LIFECYCLE.PHASE.TEST_SUBJECT_ADAPTABLE")["transitions"][0]["orderedEffects"][2].__setitem__("owner", "POWER.ADAPTABLE_POWER"), "effect owner attribution"),
+            (lambda x: phase(x, "LIFECYCLE.PHASE.TOUGH_EGG_HATCH")["titleContract"].__setitem__("getterField", "_isHatched"), "distinct field/title"),
+            (lambda x: phase(x, "LIFECYCLE.PHASE.TOUGH_EGG_HATCH")["transitions"][0]["condition"]["left"].__setitem__("name", "power.amount"), "participant-only decrement"),
+            (lambda x: phase(x, "LIFECYCLE.PHASE.DECIMILLIPEDE_REATTACH").__setitem__("addOrSlotChange", True), "body/slot"),
+            (lambda x: x["doom"]["orderedEffects"][2].__setitem__("perBody", True), "post-batch hook"),
+            (lambda x: next(row for row in x["powerRetentionPolicies"]
+                            if row["policyId"] == "LIFECYCLE.RETENTION.POWER.MINION_POWER.SHOULDOWNERDEATHTRIGGERFATAL")
+             .__setitem__("result", True), "contradicts literal predicate default"),
+            (lambda x: x["deathProduction"][0].__setitem__("d1Producer", True), "d1 producer"),
+            (lambda x: next(row for row in x["eventCombat"]["battleTimeLimit"]["branches"]
+                            if row["branchId"].endswith(".TIMEOUT"))["orderedEffects"][2].__setitem__("timeoutResultEnum", "Victory"), "timeout write/escape/result"),
+            (lambda x: x["runTermination"]["winRun"]["branches"][1]["orderedEffects"].reverse(), "OnEnded-before-force-kills"),
+            (lambda x: x["runTermination"]["architectVisualBoundary"].__setitem__("attackAnimationsDealDamage", True), "force-kill/wait/VFX"),
+            (lambda x: x["runTermination"]["onEnded"]["externalSideEffects"][0].__setitem__("remoteSuccessClaimed", True), "remote external success"),
+            (lambda x: x["semanticPipelineAudit"].__setitem__("duplicateDeathEvaluator", True), "duplicate lifecycle semantic pipeline"),
+            (lambda x: x["closeoutDigests"].__setitem__("mechanicsSha256", "0" * 64), "canonical digest"),
+        ]
+        for change, pattern in cases:
+            with self.subTest(pattern=pattern):
+                value = deepcopy(self.lifecycle); change(value)
+                with self.assertRaisesRegex(SourceExtractionError, pattern):
+                    validate_lifecycle(value)
+
+    def test_boolean_listener_defaults_use_cli_signature_and_i4_stack_values(self):
+        def record(opcode, signature="200002"):
+            return {
+                "symbolSignature": f"Synthetic::Predicate sig:{signature}",
+                "instructions": [
+                    {"opcode": opcode, "operand": None, "offsetDiagnostic": 0},
+                    {"opcode": "ret", "operand": None, "offsetDiagnostic": 1},
+                ],
+            }
+
+        self.assertIs(_boolean_default(record("ldc.i4.0")), False)
+        self.assertIs(_boolean_default(record("ldc.i4.1")), True)
+        self.assertIsNone(_boolean_default(record("ldc.i4.2")))
+        self.assertIsNone(_boolean_default(record("ldc.i4.1", "200008")))
+
+    def test_checked_literal_listener_defaults_drive_unconditional_retention(self):
+        implementations = self.lifecycle["listenerImplementations"]
+        minion = next(row for row in implementations
+                      if row["logicalMethod"]["symbolSignature"] ==
+                      "MegaCrit.Sts2.Core.Models.Powers.MinionPower::ShouldOwnerDeathTriggerFatal sig:200002")
+        should_die = next(row for row in implementations
+                          if row["logicalMethod"]["symbolSignature"] ==
+                          "MegaCrit.Sts2.Core.Models.AbstractModel::ShouldDie sig:20010212a7e4")
+        self.assertIs(minion["returnDefault"], False)
+        self.assertIs(should_die["returnDefault"], True)
+        policy = next(row for row in self.lifecycle["powerRetentionPolicies"]
+                      if row["sourceImplementationRef"] == minion["implementationId"])
+        self.assertIs(policy["result"], False)
+        self.assertEqual(policy["condition"], {
+            "kind": "constant", "value": True, "valueType": "boolean",
+        })
+        self.assertNotIn("targetIsPowerOwner", json.dumps(policy))
+
     def test_trailing_boolean_argument_is_exact_and_fail_closed(self):
         rows = [
             {"opcode": "ldc.i4.7", "operand": None},

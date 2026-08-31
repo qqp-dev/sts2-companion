@@ -319,8 +319,15 @@ def _validate_production_semantics(value: Any, path: str, *, move_ids: set[str],
         _fail(path + ".dependencies", "production E2d2 dependency boundary changed")
     for index, dependency in enumerate(dependencies):
         dp = f"{path}.dependencies[{index}]"
-        if dependency.get("status") != "pendingE2d2" or not dependency.get("sourceRefs"):
-            _fail(dp, "production lifecycle dependency was hidden or promoted")
+        expected_ref = {
+            "DEPENDENCY.PRODUCTION.CURRENT_ENEMY_LIFECYCLE": "lifecycle.core.removal",
+            "DEPENDENCY.PRODUCTION.AFTER_CREATURE_ADDED_LISTENERS": "lifecycle.listenerImplementations",
+            "DEPENDENCY.PRODUCTION.TOUGH_EGG_HATCH": "lifecycle.phaseSystems.LIFECYCLE.PHASE.TOUGH_EGG_HATCH",
+            "DEPENDENCY.PRODUCTION.DEATH_POWER_ADD_SITES": "lifecycle.deathProduction",
+        }[dependency["dependencyId"]]
+        if (dependency.get("status") != "sourceComplete" or not dependency.get("sourceRefs")
+                or dependency.get("resolvedComponentRef") != expected_ref):
+            _fail(dp, "production lifecycle dependency is not exactly resolved")
         if compact: fact_ids.add(_string(dependency.get("factId"), dp + ".factId", prefix="SOURCE.DEPENDENCY.PRODUCTION."))
         elif "factId" in dependency: _fail(dp + ".factId", "raw dependency cannot contain projection ID")
 
@@ -606,8 +613,8 @@ def _validate_source_document(source: dict[str, Any]) -> None:
         if obj["kind"] == "scriptedEventSemantics":
             if obj["status"] != "sourceComplete" or obj.get("resolvedComponentRef") != "EVENT_SCRIPT_COMPONENT.THE_ARCHITECT":
                 _fail(path, "Architect scripted dependency is not resolved by the extracted component")
-        elif obj["status"] != "unresolved" or "resolvedComponentRef" in obj:
-            _fail(path, "event lifecycle dependency was silently resolved")
+        elif obj["status"] != "sourceComplete" or obj.get("resolvedComponentRef") != "lifecycle.eventCombat":
+            _fail(path, "event lifecycle dependency is not resolved by lifecycle event combat")
         roots = _list(obj["sourceRoots"], path + ".sourceRoots")
         if not roots or any(not isinstance(root.get("methodBodySha256"), str) or not isinstance(root.get("symbolSignature"), str) for root in roots):
             _fail(path + ".sourceRoots", "event dependency source roots/provenance missing")
@@ -670,7 +677,7 @@ def _validate_source_document(source: dict[str, Any]) -> None:
     dependencies = core.get("dependencies", {})
     if (dependencies.get("hpAssignmentComponentRef") != "hpPipeline.assignment" or dependencies.get("initialStateComponentRef") != "initialState"
             or len(dependencies.get("initialStateFactRefs", [])) != 7 or len(dependencies.get("initialStateOwnerModels", [])) != 9
-            or len(dependencies.get("initialStateNoGameplayFactModels", [])) != 4 or dependencies.get("lifecycle") != "pendingE2d2"
+            or len(dependencies.get("initialStateNoGameplayFactModels", [])) != 4 or dependencies.get("lifecycle") != "sourceCompleteE2d2"
             or dependencies.get("producerSemantics") != "sourceCompleteE2d1b"):
         _fail("source.production.coreAddContract.dependencies", "E2a/E2b/E2d1b/E2d2 dependency join incomplete")
     if core.get("callOrder") != expected_core_order:
@@ -1108,13 +1115,22 @@ def _validate_compact_architect(value: Any, placement_fact_ids: set[str]) -> set
 
 def _validate_compact_lifecycle(value: Any, source: dict[str, Any]) -> set[str]:
     path="payload.sourceFacts.lifecycle"
-    obj=_object(value,path,{"api","combatTermination","componentId","core","dependencies","digests","dispatch","factId","listenerRegistry","methodRefs","removal","runtimeBoundaries","runtimeStateContracts","sourceDenominators","status"})
-    if obj["componentId"]!="LIFECYCLE.CORE.E2D2A" or obj["status"]!="sourceCompleteE2d2a" or obj["factId"]!="SOURCE.LIFECYCLE.CORE.E2D2A":
+    obj=_object(value,path,{"api","combatTermination","componentId","core","dependencies","digests","dispatch","factId","listenerRegistry","methodRefs","removal","runtimeBoundaries","runtimeStateContracts","sourceDenominators","status","listenerCensus","mechanics","semanticPipelineAudit","closeoutDigests"})
+    if obj["componentId"]!="LIFECYCLE.CORE.E2D2A" or obj["status"]!="sourceCompleteE2Lifecycle" or obj["factId"]!="SOURCE.LIFECYCLE.CORE.E2D2A":
         _fail(path,"core lifecycle identity/status/fact changed")
     text=repr(obj)
     if "playDeathEffects" in text:_fail(path,"legacy kill Boolean field is forbidden")
     if "CombatResult" in text:_fail(path,"invented combat result enum is forbidden")
-    if any(token in text for token in ("diagnosticMetadataToken","cilInstructionsSha256","methodBodySha256","commandCallSites","invocationCensus","instructions")):
+    forbidden_proof_keys = {"diagnosticMetadataToken", "cilInstructionsSha256", "methodBodySha256",
+                            "commandCallSites", "invocationCensus", "instructions", "instructionOrigins"}
+    def proof_keys(node: Any) -> set[str]:
+        if isinstance(node, dict):
+            return (set(node) & forbidden_proof_keys) | set().union(
+                *(proof_keys(child) for child in node.values()), set())
+        if isinstance(node, list):
+            return set().union(*(proof_keys(child) for child in node), set())
+        return set()
+    if proof_keys(obj):
         _fail(path,"raw lifecycle call/proof bulk leaked into compact projection")
     api=_object(obj["api"],path+".api",{"commandDeclarations"})
     commands=_list(api["commandDeclarations"],path+".api.commandDeclarations")
@@ -1132,8 +1148,24 @@ def _validate_compact_lifecycle(value: Any, source: dict[str, Any]) -> set[str]:
     expected={"commandDeclarations":4,"commandPhysicalBodies":4,"killCallSites":21,"escapeCallSites":3,"dispatchMethods":6,
               "listenerRegistryLogicalMethods":3,"listenerRegistryPhysicalBodies":3,"removalMethods":4,
               "terminationDeclarations":4,"terminationPhysicalBodies":4,"terminationSupportMethods":3,
-              "centralizedCheckCallSites":14,"runtimeBoundaries":7,"dependencies":7,"invocations":707,"semanticNodes":59}
-    if den!=expected:_fail(path+".sourceDenominators","core lifecycle denominator drift")
+              "centralizedCheckCallSites":14,"runtimeBoundaries":7,"dependencies":7,"invocations":707,"semanticNodes":59,
+              "closeout.beforeRemovedCleanup":11,"closeout.deathAddPhysicalSites":4,"closeout.deathProductionSystems":3,
+              "closeout.effectiveListenerApplications":1861,"closeout.eventCombatRegistrations":7,
+              "closeout.fixedPointPowerTypes":71,"closeout.invocationDecisions":1265,"closeout.listenerImplementations":80,
+              "closeout.monsterOwnerTypes":108,"closeout.phaseSystems":6,"closeout.powerSeedTypes":69,
+              "closeout.relationships":6,"closeout.runTerminationSystems":1,"closeout.subscriptions":3}
+    if den!=expected:_fail(path+".sourceDenominators","closed lifecycle denominator drift")
+    census=_object(obj["listenerCensus"],path+".listenerCensus",{"effectiveApplications","fixedPointPowerTypes","implementationRecords","monsterOwnerTypes","postDiscoveryAssertions","powerSeedTypes"})
+    if (census["effectiveApplications"],census["fixedPointPowerTypes"],census["implementationRecords"],census["monsterOwnerTypes"],census["powerSeedTypes"])!=(1861,71,80,108,69):
+        _fail(path+".listenerCensus","fixed-point listener census changed")
+    mechanics=_object(obj["mechanics"],path+".mechanics",{"cleanup","deathProduction","doom","eventCombat","phaseSystems","powerRetentionPolicies","relationships","runTermination","subscriptions"})
+    if [len(mechanics[key]) for key in ("cleanup","deathProduction","phaseSystems","powerRetentionPolicies","relationships","subscriptions")] != [11,3,6,18,6,3]:
+        _fail(path+".mechanics","compact lifecycle mechanics cardinality changed")
+    if len(mechanics["eventCombat"].get("registrations",[]))!=7:
+        _fail(path+".mechanics.eventCombat","event combat registration closure changed")
+    audit=_object(obj["semanticPipelineAudit"],path+".semanticPipelineAudit",{"coreDeathEvaluatorRef","duplicateDeathEvaluator","coreAddRef","duplicateAddEvaluator","hpAssignmentRef","duplicateHpEvaluator","eventEffectsRef","eventEffectsCopied"})
+    if any(audit[key] is not False for key in ("duplicateDeathEvaluator","duplicateAddEvaluator","duplicateHpEvaluator","eventEffectsCopied")):
+        _fail(path+".semanticPipelineAudit","duplicate semantic pipeline")
     core=_object(obj["core"],path+".core",{"emptyBehavior","innerDeathGraph","listKillGraph","listSnapshotOrder","singularKillContract"})
     inner=core["innerDeathGraph"]
     if (inner.get("directCheckWinCondition") is not False or inner.get("deadBodyEntryShortCircuit") is not False
@@ -1184,8 +1216,8 @@ def _validate_compact_lifecycle(value: Any, source: dict[str, Any]) -> set[str]:
     if len(edges)!=4 or {row.get("edgeId") for row in edges}!={"LIFECYCLE.ACTION.NORMAL","LIFECYCLE.ACTION.LOGGED_FAULT","LIFECYCLE.ACTION.CANCEL","LIFECYCLE.AWAIT.FAILURE"}:
         _fail(path+".combatTermination.actionExecutorEdges","normal/fault/cancel/await-failure edge closure changed")
     boundaries=_list(obj["runtimeBoundaries"],path+".runtimeBoundaries")
-    if len(boundaries)!=7 or any(row.get("classification")!="vanillaExternalRunOrPlayerListener" or row.get("effectStatus")!="pendingE2d2b" for row in boundaries):
-        _fail(path+".runtimeBoundaries","vanilla runtime boundaries were omitted/ignored/resolved")
+    if len(boundaries)!=7 or any(row.get("classification")!="vanillaExternalRunOrPlayerListener" or row.get("effectStatus")!="runtimeDynamicExternalBoundary" for row in boundaries):
+        _fail(path+".runtimeBoundaries","vanilla dynamic runtime boundaries were omitted or assumed empty")
     deps=_list(obj["dependencies"],path+".dependencies");dep_ids=set();fact_ids={obj["factId"]}
     if len(deps)!=7:_fail(path+".dependencies","dependency closure changed")
     for index,row in enumerate(deps):
@@ -1193,8 +1225,8 @@ def _validate_compact_lifecycle(value: Any, source: dict[str, Any]) -> set[str]:
         expected_fact="SOURCE."+dep["dependencyId"]
         if dep["factId"]!=expected_fact or dep["factId"] in fact_ids:_fail(path+".dependencies","dependency fact ID mismatch/duplicate")
         dep_ids.add(dep["dependencyId"]);fact_ids.add(dep["factId"])
-    if {row["status"] for row in deps}!={"sourceComplete","pendingE2d2b","pendingE2d2c","pendingE2d2d"}:
-        _fail(path+".dependencies","later lifecycle families silently resolved")
+    if {row["status"] for row in deps}!={"sourceComplete"} or any(not row.get("resolvedComponentRef") for row in deps):
+        _fail(path+".dependencies","lifecycle dependency closure is incomplete")
     if obj["digests"]!=source["lifecycle"]["digests"]:_fail(path+".digests","source lifecycle digest join mismatch")
     for key in ("core","dispatch","listenerRegistry","removal","combatTermination","runtimeStateContracts","sourceDenominators"):
         if obj[key]!=source["lifecycle"][key]:_fail(path+"."+key,"source lifecycle semantic join mismatch")
@@ -1204,7 +1236,7 @@ def _validate_compact_lifecycle(value: Any, source: dict[str, Any]) -> set[str]:
                           "sourceType":row["sourceType"],"symbolSignature":row["method"]["symbolSignature"]}
                          for row in source["lifecycle"]["runtimeBoundaries"]]
     if boundaries!=expected_boundaries:_fail(path+".runtimeBoundaries","source lifecycle runtime-boundary join mismatch")
-    if len(obj["runtimeStateContracts"])!=7:_fail(path+".runtimeStateContracts","runtime state contract closure changed")
+    if len(obj["runtimeStateContracts"])!=16:_fail(path+".runtimeStateContracts","runtime state contract closure changed")
     return fact_ids
 
 
@@ -1661,8 +1693,8 @@ def _validate_source_facts(source_facts: Any, source: dict[str, Any]) -> dict[st
         if obj["kind"] == "scriptedEventSemantics":
             if obj["status"] != "sourceComplete" or obj.get("resolvedComponentRef") != "EVENT_SCRIPT_COMPONENT.THE_ARCHITECT":
                 _fail(path, "Architect scripted component ref unresolved")
-        elif obj["status"] != "unresolved" or "resolvedComponentRef" in obj:
-            _fail(path, "event lifecycle dependency silently resolved")
+        elif obj["status"] != "sourceComplete" or obj.get("resolvedComponentRef") != "lifecycle.eventCombat":
+            _fail(path, "event lifecycle dependency is not exactly resolved")
         roots = _list(obj["sourceRootSymbols"], path + ".sourceRootSymbols")
         if not roots or any(not isinstance(root, str) or "::" not in root or " sig:" not in root for root in roots):
             _fail(path + ".sourceRootSymbols", "event dependency roots missing")
@@ -2075,9 +2107,9 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
         _fail("payload.resolvedAudits[production]", "production audit denominators/fact refs drift")
     if not set(production_audit["classificationFactRefs"] + production_audit["dependencyFactRefs"]) <= all_facts:
         _fail("payload.resolvedAudits[production]", "production audit has broken fact refs")
-    if ("source-complete" not in production_audit["boundary"] or "E2d2 dependencies" not in production_audit["boundary"]
-            or "death/removal" not in production_audit["boundary"]):
-        _fail("payload.resolvedAudits[production]", "production audit overclaims lifecycle closure")
+    if ("lifecycle refs are source-complete" not in production_audit["boundary"]
+            or "joined by refs rather than copied" not in production_audit["boundary"]):
+        _fail("payload.resolvedAudits[production]", "production audit lifecycle/ref boundary changed")
 
     lifecycle_audit=_object(by_id["AUDIT.RESOLVED.CORE_LIFECYCLE"],"payload.resolvedAudits[lifecycle]",{"auditId","boundary","classificationFactRefs","dependencyFactRefs","family","historicalStatus","sourceDenominators"})
     lifecycle=payload["sourceFacts"]["lifecycle"]
@@ -2085,13 +2117,14 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
         _fail("payload.resolvedAudits[lifecycle]","core lifecycle audit identity/status drift")
     if lifecycle_audit["classificationFactRefs"]!=[lifecycle["factId"]] or set(lifecycle_audit["dependencyFactRefs"])!={row["factId"] for row in lifecycle["dependencies"]} or lifecycle_audit["sourceDenominators"]!=lifecycle["sourceDenominators"]:
         _fail("payload.resolvedAudits[lifecycle]","core lifecycle audit fact/denominator refs drift")
-    if "source-complete E2d2a" not in lifecycle_audit["boundary"] or "remain dependencies" not in lifecycle_audit["boundary"]:
-        _fail("payload.resolvedAudits[lifecycle]","core lifecycle audit overclaims aggregate readiness")
+    if ("aggregate listener/phase/relationship/death-Add/event/run lifecycle are source-complete" not in lifecycle_audit["boundary"]
+            or "formula runtime contracts remain outside" not in lifecycle_audit["boundary"]):
+        _fail("payload.resolvedAudits[lifecycle]","lifecycle audit formula boundary changed")
 
     event_audit = _object(by_id["AUDIT.RESOLVED.EVENT_TURN_MACHINES"], "payload.resolvedAudits[eventTurn]",
                           {"auditId", "boundary", "classificationFactRefs", "dependencyFactRefs", "family", "historicalStatus", "sourceDenominators"})
     if (event_audit["family"], event_audit["historicalStatus"], event_audit["boundary"]) != (
-        "eventTurnMachines", "sourceComplete", "Architect scripting is separately source-complete; lifecycle/timeout/result dependencies remain unresolved."
+        "eventTurnMachines", "sourceComplete", "Architect scripting and lifecycle timeout/result refs are separately source-complete; formula boundaries remain independent."
     ):
         _fail("payload.resolvedAudits[eventTurn]", "event turn completion/boundary drift")
     if len(event_audit["classificationFactRefs"]) != 8 or len(event_audit["dependencyFactRefs"]) != 4:
@@ -2110,7 +2143,7 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
                            {"auditId", "boundary", "classificationFactRefs", "dependencyFactRefs", "family", "historicalStatus", "sourceDenominators"})
     if (script_audit["family"], script_audit["historicalStatus"], script_audit["boundary"]) != (
             "linkedEventStartOptionTransitionResume", "sourceComplete",
-            "The non-Architect scripts are source-complete; Architect is a separate resolved component and lifecycle producers/results remain unresolved."):
+            "The non-Architect scripts, Architect component, and lifecycle producers/results are separately source-complete; formula dependencies remain explicit."):
         _fail("payload.resolvedAudits[eventScripts]", "linked event audit status/boundary drift")
     script_facts={row["factId"] for row in payload["sourceFacts"]["eventScripts"]["owners"]}
     script_dependencies={row["factId"] for row in payload["sourceFacts"]["eventScripts"]["dependencies"]}
@@ -2131,8 +2164,9 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
         _fail("payload.resolvedAudits[architect]", "Architect audit refs drift")
     if architect_audit["sourceDenominators"] != architect["sourceDenominators"] or not set(architect_audit["classificationFactRefs"] + architect_audit["dependencyFactRefs"]) <= all_facts:
         _fail("payload.resolvedAudits[architect]", "Architect audit denominators/refs are invalid")
-    if "score formula values" not in architect_audit["boundary"] or "lifecycle ordering remain dependencies" not in architect_audit["boundary"]:
-        _fail("payload.resolvedAudits[architect]", "Architect audit boundary overclaims formula/lifecycle closure")
+    if ("score formula values remain a dependency" not in architect_audit["boundary"]
+            or "forced-kill ordering are source-complete" not in architect_audit["boundary"]):
+        _fail("payload.resolvedAudits[architect]", "Architect audit formula/lifecycle boundary changed")
 
     comparisons = _list(payload["laneComparisons"], "payload.laneComparisons")
     comparison_ids = _unique(comparisons, "comparisonId", "payload.laneComparisons")
@@ -2198,15 +2232,17 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
     if missing_title_count != 18:
         _fail("payload.knownUnknowns", "all 18 missing source move titles must be individually classified")
     required_reasons = {
-        "LIFECYCLE_COVERAGE_REMAINING", "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE",
-        "EVENT_BEHAVIOR_AGGREGATE_INCOMPLETE",
-        "EVENT_LIFECYCLE_TIMEOUT_RESULT_UNEXTRACTED", "LEGACY_PER_FACT_PROVENANCE_INCOMPLETE",
+        "FORMULA_RUNTIME_CONTRACT_COVERAGE_INCOMPLETE", "LEGACY_PER_FACT_PROVENANCE_INCOMPLETE",
         "BROADER_WORLD_MODEL_FAMILIES_ABSENT",
     }
     actual_reasons = {row["reasonCode"] for row in unknowns}
     retired_e1_reasons = {"SCRIPTED_EVENT_BEHAVIOR_UNEXTRACTED", "SOURCE_ACT_PLACEMENT_ABSENT", "SOURCE_ROOM_CLASS_PLACEMENT_ABSENT", "OBSERVED_IDENTITY_ALIAS_JOIN_ABSENT", "ABSTRACT_BEHAVIOR_INHERITANCE_JOIN_ABSENT", "INITIAL_STATE_COVERAGE_ABSENT", "SOURCE_VS_STABLE_HP_ROUNDING_CONFLICT", "PRODUCTION_SEMANTICS_PENDING_E2D1B"}
+    retired_lifecycle_reasons = {"LIFECYCLE_COVERAGE_REMAINING", "EVENT_BEHAVIOR_AGGREGATE_INCOMPLETE",
+                                 "EVENT_LIFECYCLE_TIMEOUT_RESULT_UNEXTRACTED"}
     if actual_reasons & retired_e1_reasons:
         _fail("payload.knownUnknowns", "resolved E1 absence reason was retained")
+    if actual_reasons & retired_lifecycle_reasons:
+        _fail("payload.knownUnknowns", "resolved lifecycle reason was retained")
     if not required_reasons <= actual_reasons:
         _fail("payload.knownUnknowns", f"missing reason classifications {sorted(required_reasons-actual_reasons)!r}")
 
@@ -2217,14 +2253,15 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
             _fail(f"payload.readiness.{name}", "global/root readiness must be computed false/incomplete")
     scopes = _object(readiness["runtimeScopes"], "payload.readiness.runtimeScopes", {"encounterCompanion", "encounterProjection"})
     companion = _object(scopes["encounterCompanion"], "payload.readiness.runtimeScopes.encounterCompanion", {"ready", "reasonRefs", "status"})
-    if companion["ready"] is not False or companion["status"] != "incomplete" or not companion["reasonRefs"]:
-        _fail("payload.readiness.runtimeScopes.encounterCompanion", "encounter companion scope cannot be ready")
+    if (companion["ready"] is not False or companion["status"] != "incomplete"
+            or companion["reasonRefs"] != ["UNKNOWN.FORMULA_RUNTIME_CONTRACTS"]):
+        _fail("payload.readiness.runtimeScopes.encounterCompanion", "formula must remain the sole hard-false companion gate")
     projected = _object(scopes["encounterProjection"], "payload.readiness.runtimeScopes.encounterProjection", {"ready", "requiredCoverageFamilies", "requiredJoins", "status"})
     if projected["ready"] is not True or projected["status"] != "complete":
         _fail("payload.readiness.runtimeScopes.encounterProjection", "independent projection section should be complete")
     if projected["requiredCoverageFamilies"] != [row["family"] for row in coverage_rows()]:
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredCoverageFamilies", "coverage gate mismatch")
-    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage", "eventTurnClassificationDependencies", "eventScriptOwnerEncounterLink", "eventScriptOptionDelegate", "eventScriptTransitionArguments", "eventScriptOutcomeDependency", "architectOwnerPlacementApplicability", "architectLocalizationStructure", "architectDialogueLineGraph", "architectOptionDelegates", "architectVisualOnlyLayout", "architectPresentationGameplayBoundary", "architectTerminalOrder", "architectDependencyRefs", "randomBranchRepeatWeight", "randomSelectionRuntime", "productionDiscovery", "coreAddDependencies", "productionProducerPool", "productionAvailabilityCapRepeat", "productionSlotFailure", "productionRuntimeState", "productionPostAddOrder", "productionLifecycleDependencies", "coreLifecycleApiDispatchRegistryRemovalTermination"}
+    expected_joins = {"encounterToMonster", "stateToModel", "registrationToBehaviorOwner", "graphTopology", "operationModel", "legacyToCanonical", "factToEvidence", "encounterPlacement", "eventEncounterLinkage", "observationIdentity", "behaviorApplicability", "initialStateOwnerApplicability", "initialStateFactRuntimeContract", "initialPowerHookClosure", "initialStateLegacyComparisons", "hpArithmeticAssignmentStorage", "eventTurnClassificationDependencies", "eventScriptOwnerEncounterLink", "eventScriptOptionDelegate", "eventScriptTransitionArguments", "eventScriptOutcomeDependency", "architectOwnerPlacementApplicability", "architectLocalizationStructure", "architectDialogueLineGraph", "architectOptionDelegates", "architectVisualOnlyLayout", "architectPresentationGameplayBoundary", "architectTerminalOrder", "architectDependencyRefs", "randomBranchRepeatWeight", "randomSelectionRuntime", "productionDiscovery", "coreAddDependencies", "productionProducerPool", "productionAvailabilityCapRepeat", "productionSlotFailure", "productionRuntimeState", "productionPostAddOrder", "productionLifecycleDependencies", "coreLifecycleApiDispatchRegistryRemovalTermination", "reachableListenerPhaseRelationshipDeathAddEventRunClosure"}
     if set(projected["requiredJoins"]) != expected_joins or len(projected["requiredJoins"]) != len(expected_joins):
         _fail("payload.readiness.runtimeScopes.encounterProjection.requiredJoins", "join gate mismatch")
 

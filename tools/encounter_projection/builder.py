@@ -1,4 +1,4 @@
-"""Pure builder for the compact E2d2a encounter projection."""
+"""Pure builder for the compact E2 lifecycle encounter projection."""
 
 from __future__ import annotations
 
@@ -23,6 +23,24 @@ def _without_provenance(value: Any) -> Any:
         return [_without_provenance(item) for item in value]
     if isinstance(value, dict):
         return {key: _without_provenance(item) for key, item in value.items() if key not in {"provenance", "targetProvenance"}}
+    return value
+
+
+def _compact_lifecycle_value(value: Any) -> Any:
+    """Keep lifecycle mechanics/conditions while replacing all CIL proof with refs."""
+    if isinstance(value, list):
+        return [_compact_lifecycle_value(item) for item in value]
+    if isinstance(value, dict):
+        if "logicalMethod" in value and "physicalBody" in value:
+            return {
+                "logicalSymbolSignature": value["logicalMethod"]["symbolSignature"],
+                "physicalSymbolSignature": value["physicalBody"]["symbolSignature"],
+            }
+        if "methodBodySha256" in value and "symbolSignature" in value:
+            return {"symbolSignature": value["symbolSignature"]}
+        return {key: _compact_lifecycle_value(item) for key, item in value.items()
+                if key not in {"provenance", "targetProvenance", "instructionOrigins",
+                               "instructionIndex", "normalizedSliceSha256", "semanticWitnessSha256"}}
     return value
 
 
@@ -359,6 +377,22 @@ def _source_lifecycle(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
         "removal":deepcopy(lifecycle["removal"]),
         "runtimeBoundaries":boundaries,"runtimeStateContracts":deepcopy(lifecycle["runtimeStateContracts"]),
         "sourceDenominators":deepcopy(lifecycle["sourceDenominators"]),"status":lifecycle["status"],
+        "listenerCensus":deepcopy(lifecycle["listenerCensus"]),
+        "mechanics":{
+            "cleanup":[{"cleanupId":row["cleanupId"],"classification":row["classification"],
+                         "ownerModel":row["ownerModel"],"survivorGameplayEffects":row["survivorGameplayEffects"]}
+                        for row in lifecycle["cleanup"]],
+            "deathProduction":_compact_lifecycle_value(lifecycle["deathProduction"]),
+            "doom":_compact_lifecycle_value(lifecycle["doom"]),
+            "eventCombat":_compact_lifecycle_value(lifecycle["eventCombat"]),
+            "phaseSystems":_compact_lifecycle_value(lifecycle["phaseSystems"]),
+            "powerRetentionPolicies":deepcopy(lifecycle["powerRetentionPolicies"]),
+            "relationships":_compact_lifecycle_value(lifecycle["relationships"]),
+            "runTermination":_compact_lifecycle_value(lifecycle["runTermination"]),
+            "subscriptions":_compact_lifecycle_value(lifecycle["subscriptions"]),
+        },
+        "semanticPipelineAudit":deepcopy(lifecycle["semanticPipelineAudit"]),
+        "closeoutDigests":deepcopy(lifecycle["closeoutDigests"]),
     }
 
 
@@ -1005,7 +1039,10 @@ def _known_unknowns(source_facts: dict[str, Any], legacy_annotations: dict[str, 
             "reasonCode": "SOURCE_MOVE_TITLE_MISSING_OR_INTERNAL", "scope": "projectedMoves", "status": "unresolved",
             "unknownId": f"UNKNOWN.MOVE_TITLE.{move['canonicalId'].replace('#', '.')}",
         })
-    return rows
+    resolved_lifecycle_unknowns = {
+        "UNKNOWN.LIFECYCLE_COVERAGE", "UNKNOWN.EVENT_LIFECYCLE", "UNKNOWN.EVENT_BEHAVIOR",
+    }
+    return [row for row in rows if row["unknownId"] not in resolved_lifecycle_unknowns]
 
 
 def _resolved_audits(source_facts: dict[str, Any]) -> list[dict[str, Any]]:
@@ -1015,28 +1052,28 @@ def _resolved_audits(source_facts: dict[str, Any]) -> list[dict[str, Any]]:
     production = source_facts["production"]["productionSemantics"]
     return [{
         "auditId": "AUDIT.RESOLVED.PRODUCTION_SEMANTICS",
-        "boundary": "Seven producer triggers are source-complete; death/removal, Tough Egg hatch, general AfterCreatureAdded listener effects, and four death-Power Add sites remain E2d2 dependencies.",
+        "boundary": "Seven producer triggers and their death/removal, Tough Egg hatch, AfterCreatureAdded listener, and death-Power Add lifecycle refs are source-complete and joined by refs rather than copied.",
         "classificationFactRefs": [row["factId"] for family in ("producers", "pools", "slotStrategies", "postAddEffects", "runtimeStateContracts") for row in production[family]],
         "dependencyFactRefs": [row["factId"] for row in production["dependencies"]],
         "family": "enemyBodyProduction", "historicalStatus": "sourceComplete",
         "sourceDenominators": deepcopy(production["sourceDenominators"]),
     }, {
         "auditId": "AUDIT.RESOLVED.EVENT_TURN_MACHINES",
-        "boundary": "Architect scripting is separately source-complete; lifecycle/timeout/result dependencies remain unresolved.",
+        "boundary": "Architect scripting and lifecycle timeout/result refs are separately source-complete; formula boundaries remain independent.",
         "classificationFactRefs": [row["factId"] for row in event_turn["encounters"]],
         "dependencyFactRefs": [row["factId"] for row in event_turn["dependencies"]],
         "family": "eventTurnMachines", "historicalStatus": "sourceComplete",
         "sourceDenominators": deepcopy(event_turn["sourceDenominators"]),
     }, {
         "auditId": "AUDIT.RESOLVED.LINKED_EVENT_SCRIPTS",
-        "boundary": "The non-Architect scripts are source-complete; Architect is a separate resolved component and lifecycle producers/results remain unresolved.",
+        "boundary": "The non-Architect scripts, Architect component, and lifecycle producers/results are separately source-complete; formula dependencies remain explicit.",
         "classificationFactRefs": [row["factId"] for row in source_facts["eventScripts"]["owners"]],
         "dependencyFactRefs": [row["factId"] for row in source_facts["eventScripts"]["dependencies"]],
         "family": "linkedEventStartOptionTransitionResume", "historicalStatus": "sourceComplete",
         "sourceDenominators": deepcopy(source_facts["eventScripts"]["sourceDenominators"]),
     }, {
         "auditId": "AUDIT.RESOLVED.ARCHITECT_SCRIPT",
-        "boundary": "Dialogue/control/presentation/terminal calls are source-complete; score formula values and RunManager OnEnded/forced-kill lifecycle ordering remain dependencies.",
+        "boundary": "Dialogue/control/presentation/terminal calls and RunManager OnEnded/forced-kill ordering are source-complete; score formula values remain a dependency.",
         "classificationFactRefs": [source_facts["eventScripts"]["architect"][name]["factId"] for name in ("applicability", "placement", "localization", "initialState", "lineControl", "presentation", "roomEntry", "terminal", "visualOnlyCombat")]
                                   + [row["factId"] for row in source_facts["eventScripts"]["architect"]["dialogue"]["templates"]],
         "dependencyFactRefs": [row["factId"] for row in source_facts["eventScripts"]["architect"]["dependencies"]],
@@ -1044,7 +1081,7 @@ def _resolved_audits(source_facts: dict[str, Any]) -> list[dict[str, Any]]:
         "sourceDenominators": deepcopy(source_facts["eventScripts"]["architect"]["sourceDenominators"]),
     }, {
         "auditId": "AUDIT.RESOLVED.CORE_LIFECYCLE",
-        "boundary": "Core command/dispatch/registry/removal/pending-loss/victory mechanics are source-complete E2d2a; concrete listeners, event terminal routing, and run termination remain dependencies.",
+        "boundary": "Core and aggregate listener/phase/relationship/death-Add/event/run lifecycle are source-complete; formula runtime contracts remain outside this audit.",
         "classificationFactRefs": [source_facts["lifecycle"]["factId"]],
         "dependencyFactRefs": [row["factId"] for row in source_facts["lifecycle"]["dependencies"]],
         "family": "coreLifecycle", "historicalStatus": "sourceComplete",
@@ -1108,6 +1145,7 @@ def _readiness(known_unknowns: list[dict[str, Any]]) -> dict[str, Any]:
                     "productionProducerPool", "productionAvailabilityCapRepeat", "productionSlotFailure",
                     "productionRuntimeState", "productionPostAddOrder", "productionLifecycleDependencies",
                     "coreLifecycleApiDispatchRegistryRemovalTermination",
+                    "reachableListenerPhaseRelationshipDeathAddEventRunClosure",
                 ],
                 "status": "complete",
             },

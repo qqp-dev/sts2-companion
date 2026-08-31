@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from collections import Counter
 import hashlib
 import json
 from pathlib import Path
@@ -53,7 +54,7 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual(first, self.projection_bytes)
         self.assertLess(len(first), len(self.source_bytes) // 2)
-        self.assertNotIn(b"invocationCensus", first)
+        self.assertNotIn("invocationCensus", self.artifact["payload"]["sourceFacts"]["lifecycle"])
         self.assertNotIn(b'"instructions"', first)
         self.assertNotIn(b'"diagnosticMetadataToken"', first)
         self.assertEqual(hashlib.sha256(self.legacy_bytes).hexdigest(), LEGACY_SHA256)
@@ -262,12 +263,12 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual(architect["behaviorClassification"], "scriptedNonTurnCombat")
         self.assertEqual(len(architect["dependencyRefs"]), 1)
         unknowns = {row["unknownId"]: row for row in self.artifact["payload"]["knownUnknowns"]}
-        self.assertIn(architect["factId"], unknowns["UNKNOWN.EVENT_BEHAVIOR"]["affectedFactIds"])
+        self.assertNotIn("UNKNOWN.EVENT_BEHAVIOR", unknowns)
         self.assertNotIn("UNKNOWN.EVENT_SCRIPTED_BEHAVIOR", unknowns)
-        self.assertEqual(len(unknowns["UNKNOWN.EVENT_LIFECYCLE"]["affectedFactIds"]), 11)
+        self.assertNotIn("UNKNOWN.EVENT_LIFECYCLE", unknowns)
         audit = next(row for row in self.artifact["payload"]["resolvedAudits"] if row["auditId"] == "AUDIT.RESOLVED.EVENT_TURN_MACHINES")
         self.assertEqual((len(audit["classificationFactRefs"]), len(audit["dependencyFactRefs"])), (8, 4))
-        self.assertIn("remain unresolved", audit["boundary"])
+        self.assertIn("separately source-complete", audit["boundary"])
         serialized = json.dumps(event)
         self.assertNotIn("decisionRefs", serialized)
         self.assertNotIn("eventTurnInvocationCensus", serialized)
@@ -416,31 +417,38 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual(payload["sourceFacts"]["observationIdentities"]["aliases"], [])
         unknowns = {row["unknownId"]: row for row in payload["knownUnknowns"]}
         self.assertNotIn("UNKNOWN.INITIAL_STATES", unknowns)
-        self.assertIn("UNKNOWN.LIFECYCLE_COVERAGE", unknowns)
+        self.assertNotIn("UNKNOWN.LIFECYCLE_COVERAGE", unknowns)
         self.assertIn("UNKNOWN.FORMULA_RUNTIME_CONTRACTS", unknowns)
-        self.assertIn("UNKNOWN.EVENT_BEHAVIOR", unknowns)
+        self.assertNotIn("UNKNOWN.EVENT_BEHAVIOR", unknowns)
         self.assertNotIn("UNKNOWN.EVENT_SCRIPTED_BEHAVIOR", unknowns)
-        self.assertIn("UNKNOWN.EVENT_LIFECYCLE", unknowns)
+        self.assertNotIn("UNKNOWN.EVENT_LIFECYCLE", unknowns)
         self.assertNotIn("UNKNOWN.HP_ROUNDING_CONFLICT", unknowns)
         companion = payload["readiness"]["runtimeScopes"]["encounterCompanion"]
         self.assertEqual((companion["ready"], companion["status"]), (False, "incomplete"))
-        self.assertEqual(set(companion["reasonRefs"]), {
-            "UNKNOWN.LIFECYCLE_COVERAGE", "UNKNOWN.FORMULA_RUNTIME_CONTRACTS",
-            "UNKNOWN.EVENT_BEHAVIOR", "UNKNOWN.EVENT_LIFECYCLE",
-        })
+        self.assertEqual(companion["reasonRefs"], ["UNKNOWN.FORMULA_RUNTIME_CONTRACTS"])
 
-    def test_e2d2a_compact_lifecycle_and_readiness_boundary(self):
+    def test_e2_lifecycle_closeout_and_readiness_boundary(self):
         lifecycle=self.artifact["payload"]["sourceFacts"]["lifecycle"]
         self.assertEqual((lifecycle["componentId"],lifecycle["status"],lifecycle["factId"]),
-                         ("LIFECYCLE.CORE.E2D2A","sourceCompleteE2d2a","SOURCE.LIFECYCLE.CORE.E2D2A"))
+                         ("LIFECYCLE.CORE.E2D2A","sourceCompleteE2Lifecycle","SOURCE.LIFECYCLE.CORE.E2D2A"))
         self.assertEqual([row["parameters"] for row in lifecycle["api"]["commandDeclarations"]],
                          [["creature","force"],["creatures","force"],["creature","force","recursion"],["creature","removeCreatureNode"]])
-        self.assertEqual(lifecycle["sourceDenominators"],{
+        expected_core={
             "centralizedCheckCallSites":14,"commandDeclarations":4,"commandPhysicalBodies":4,
             "dependencies":7,"dispatchMethods":6,"escapeCallSites":3,"invocations":707,"killCallSites":21,
             "listenerRegistryLogicalMethods":3,"listenerRegistryPhysicalBodies":3,"removalMethods":4,
             "runtimeBoundaries":7,"semanticNodes":59,"terminationDeclarations":4,
-            "terminationPhysicalBodies":4,"terminationSupportMethods":3})
+            "terminationPhysicalBodies":4,"terminationSupportMethods":3}
+        self.assertEqual({key:value for key,value in lifecycle["sourceDenominators"].items()
+                          if not key.startswith("closeout.")}, expected_core)
+        self.assertEqual({key:value for key,value in lifecycle["sourceDenominators"].items()
+                          if key.startswith("closeout.")}, {
+            "closeout.beforeRemovedCleanup":11,"closeout.deathAddPhysicalSites":4,
+            "closeout.deathProductionSystems":3,"closeout.effectiveListenerApplications":1861,
+            "closeout.eventCombatRegistrations":7,"closeout.fixedPointPowerTypes":71,
+            "closeout.invocationDecisions":1265,"closeout.listenerImplementations":80,
+            "closeout.monsterOwnerTypes":108,"closeout.phaseSystems":6,"closeout.powerSeedTypes":69,
+            "closeout.relationships":6,"closeout.runTerminationSystems":1,"closeout.subscriptions":3})
         self.assertFalse(lifecycle["core"]["innerDeathGraph"]["directCheckWinCondition"])
         self.assertFalse(lifecycle["core"]["innerDeathGraph"]["deadBodyEntryShortCircuit"])
         list_graph=lifecycle["core"]["listKillGraph"]
@@ -468,17 +476,45 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertIsNone(lifecycle["removal"]["escapeResultEnum"])
         self.assertFalse(lifecycle["combatTermination"]["victoryPredicate"]["secondaryOnlyEnemiesBlock"])
         self.assertEqual(lifecycle["combatTermination"]["victoryPredicate"]["allEscaped"],"ordinary victory at the next centralized check")
-        self.assertEqual({row["status"] for row in lifecycle["dependencies"]},{"sourceComplete","pendingE2d2b","pendingE2d2c","pendingE2d2d"})
+        self.assertEqual({row["status"] for row in lifecycle["dependencies"]},{"sourceComplete"})
         self.assertEqual(len(lifecycle["runtimeBoundaries"]),7)
         serialized=json.dumps(lifecycle)
-        for forbidden in ("playDeathEffects","diagnosticMetadataToken","cilInstructionsSha256","methodBodySha256","commandCallSites","invocationCensus"):
+        for forbidden in ("playDeathEffects","diagnosticMetadataToken","cilInstructionsSha256","methodBodySha256","commandCallSites"):
             self.assertNotIn(forbidden,serialized)
         audit=next(row for row in self.artifact["payload"]["resolvedAudits"] if row["auditId"]=="AUDIT.RESOLVED.CORE_LIFECYCLE")
         self.assertEqual(audit["classificationFactRefs"],[lifecycle["factId"]])
         self.assertEqual(set(audit["dependencyFactRefs"]),{row["factId"] for row in lifecycle["dependencies"]})
-        unknown=next(row for row in self.artifact["payload"]["knownUnknowns"] if row["unknownId"]=="UNKNOWN.LIFECYCLE_COVERAGE")
-        self.assertEqual(unknown["reasonCode"],"LIFECYCLE_COVERAGE_REMAINING")
-        self.assertIn("source-complete E2d2a",unknown["detail"])
+        unknown_ids={row["unknownId"] for row in self.artifact["payload"]["knownUnknowns"]}
+        self.assertNotIn("UNKNOWN.LIFECYCLE_COVERAGE",unknown_ids)
+        self.assertNotIn("UNKNOWN.EVENT_LIFECYCLE",unknown_ids)
+        self.assertNotIn("UNKNOWN.EVENT_BEHAVIOR",unknown_ids)
+        self.assertEqual(lifecycle["listenerCensus"]["effectiveApplications"],1861)
+        mechanics=lifecycle["mechanics"]
+        self.assertEqual([len(mechanics[key]) for key in ("cleanup","deathProduction","phaseSystems","powerRetentionPolicies","relationships","subscriptions")],[11,3,6,18,6,3])
+        minion_fatal=next(row for row in mechanics["powerRetentionPolicies"]
+                          if row["policyId"]=="LIFECYCLE.RETENTION.POWER.MINION_POWER.SHOULDOWNERDEATHTRIGGERFATAL")
+        self.assertIs(minion_fatal["result"],False)
+        self.assertEqual(minion_fatal["condition"],{"kind":"constant","value":True,"valueType":"boolean"})
+        self.assertNotIn("targetIsPowerOwner",json.dumps(minion_fatal))
+        self.assertEqual([row["kind"] for row in mechanics["doom"]["orderedEffects"]],["doomVfx","kill","afterDiedToDoom"])
+        self.assertFalse(mechanics["doom"]["orderedEffects"][2]["perBody"])
+        subject=next(row for row in mechanics["phaseSystems"] if row["phaseSystemId"]=="LIFECYCLE.PHASE.TEST_SUBJECT_ADAPTABLE")
+        self.assertEqual(subject["derivedCompletedReviveCount"],2)
+        self.assertIsNone(subject["capField"])
+        egg=next(row for row in mechanics["phaseSystems"] if row["phaseSystemId"]=="LIFECYCLE.PHASE.TOUGH_EGG_HATCH")
+        self.assertEqual(egg["titleContract"],{"getterField":"_hatched","hatchWritesTitle":False,"isHatchedField":"_isHatched"})
+        self.assertEqual([row["transitionId"] for row in egg["transitions"]],[
+            "LIFECYCLE.TRANSITION.TOUGH_EGG.HATCH_COUNTDOWN",
+            "LIFECYCLE.TRANSITION.TOUGH_EGG.NORMAL_HATCH",
+            "LIFECYCLE.TRANSITION.TOUGH_EGG.RESTORED_HATCH"])
+        countdown=egg["transitions"][0]
+        self.assertEqual(countdown["condition"],{
+            "kind":"comparison","left":{"kind":"runtimeInput","name":"sideTurn.participantsContainsOwner","valueType":"boolean"},
+            "operator":"equal","right":{"kind":"constant","value":True,"valueType":"boolean"},"valueType":"boolean"})
+        self.assertEqual(countdown["orderedEffects"],[{
+            "amount":1,"execution":"awaited","kind":"decrementPower","order":0,
+            "owner":"POWER.HATCH_POWER","target":"sameOwnerBody"}])
+        self.assertEqual(Counter(row["shouldResumeParentEventAfterCombat"] for row in mechanics["eventCombat"]["registrations"]),Counter({False:4,True:3}))
         self.assertFalse(self.artifact["payload"]["readiness"]["runtimeScopes"]["encounterCompanion"]["ready"])
         self.assertTrue(self.artifact["payload"]["readiness"]["runtimeScopes"]["encounterProjection"]["ready"])
 
@@ -510,7 +546,11 @@ class EncounterProjectionTests(unittest.TestCase):
             (lambda a:lifecycle(a)["digests"].__setitem__("coreSemanticsSha256","0"*64),"digest join"),
             (lambda a:lifecycle(a).__setitem__("commandCallSites",[]),"unknown fields"),
             (lambda a:a["payload"]["resolvedAudits"].pop(next(i for i,row in enumerate(a["payload"]["resolvedAudits"]) if row["auditId"]=="AUDIT.RESOLVED.CORE_LIFECYCLE")),"expected HP, production, lifecycle"),
-            (lambda a:a["payload"]["readiness"]["runtimeScopes"]["encounterCompanion"].__setitem__("ready",True),"cannot be ready"),
+            (lambda a:a["payload"]["readiness"]["runtimeScopes"]["encounterCompanion"].__setitem__("ready",True),"sole hard-false companion gate"),
+            (lambda a:lifecycle(a)["listenerCensus"].__setitem__("fixedPointPowerTypes",70),"fixed-point listener census"),
+            (lambda a:lifecycle(a)["mechanics"]["phaseSystems"].pop(),"mechanics cardinality"),
+            (lambda a:lifecycle(a)["mechanics"]["doom"]["orderedEffects"][2].__setitem__("perBody",True),"payload differs|deterministic two-lane"),
+            (lambda a:lifecycle(a)["semanticPipelineAudit"].__setitem__("duplicateDeathEvaluator",True),"duplicate semantic pipeline"),
         ]
         for change,pattern in cases:
             with self.subTest(pattern=pattern):self.assert_invalid(self.mutated(change),pattern)
@@ -582,7 +622,7 @@ class EncounterProjectionTests(unittest.TestCase):
             (lambda a: initial(a)["owners"][base_noop].__setitem__("classification", "sourceProvenNonGameplayOnly"), "base no-op"),
             (lambda a: initial(a)["owners"][visual].__setitem__("classification", "orderedGameplayEffects"), "effects/classification"),
             (lambda a: a["payload"]["laneComparisons"].pop(next(i for i, row in enumerate(a["payload"]["laneComparisons"]) if row["family"] == "initialStateLegacyAnnotation")), "57 initial-state comparisons"),
-            (lambda a: a["payload"]["readiness"]["runtimeScopes"]["encounterCompanion"].__setitem__("ready", True), "cannot be ready"),
+            (lambda a: a["payload"]["readiness"]["runtimeScopes"]["encounterCompanion"].__setitem__("ready", True), "sole hard-false companion gate"),
         ])
         for change, pattern in cases:
             with self.subTest(pattern=pattern):
@@ -693,7 +733,7 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertNotIn('"instructions"', serialized)
         unknowns = {row["unknownId"]: row for row in self.artifact["payload"]["knownUnknowns"]}
         self.assertNotIn("UNKNOWN.EVENT_SCRIPTED_BEHAVIOR", unknowns)
-        self.assertEqual(len(unknowns["UNKNOWN.EVENT_LIFECYCLE"]["affectedFactIds"]), 11)
+        self.assertNotIn("UNKNOWN.EVENT_LIFECYCLE", unknowns)
         self.assertFalse(self.artifact["payload"]["readiness"]["runtimeScopes"]["encounterCompanion"]["ready"])
 
         cases = [
@@ -737,8 +777,8 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertFalse(architect["terminal"]["eventCombatTransition"])
         unknowns = {row["unknownId"]: row for row in self.artifact["payload"]["knownUnknowns"]}
         self.assertNotIn("UNKNOWN.EVENT_SCRIPTED_BEHAVIOR", unknowns)
-        self.assertIn("UNKNOWN.EVENT_BEHAVIOR", unknowns)
-        self.assertIn("UNKNOWN.EVENT_LIFECYCLE", unknowns)
+        self.assertNotIn("UNKNOWN.EVENT_BEHAVIOR", unknowns)
+        self.assertNotIn("UNKNOWN.EVENT_LIFECYCLE", unknowns)
         audit = next(row for row in self.artifact["payload"]["resolvedAudits"]
                      if row["auditId"] == "AUDIT.RESOLVED.ARCHITECT_SCRIPT")
         self.assertEqual(audit["historicalStatus"], "sourceComplete")
@@ -825,7 +865,7 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual(production["coreAddContract"]["semanticBoundaries"]["coreSlotValidation"], "absent")
         unknowns = {row["unknownId"] for row in self.artifact["payload"]["knownUnknowns"]}
         self.assertNotIn("UNKNOWN.PRODUCTION_SEMANTICS", unknowns)
-        self.assertIn("UNKNOWN.LIFECYCLE_COVERAGE", unknowns)
+        self.assertNotIn("UNKNOWN.LIFECYCLE_COVERAGE", unknowns)
         semantics = production["productionSemantics"]
         self.assertEqual(semantics["status"], "sourceComplete")
         self.assertEqual(semantics["sourceDenominators"], {
@@ -905,7 +945,7 @@ class EncounterProjectionTests(unittest.TestCase):
             (post_add_order, "moved before Add"), (ovi_cardinality, "Ovicopter"),
             (fabricating_strike_post_maximum, "Fabricator availability/batch/concurrent/lifetime"),
             (rat_cap, "Rat availability/repeat/group-counter"), (state_default, "state default"),
-            (semantic_dependency, "dependency was hidden"),
+            (semantic_dependency, "dependency is not exactly resolved"),
         ]
         for change, pattern in cases:
             with self.subTest(pattern=pattern):

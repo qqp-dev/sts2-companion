@@ -3,8 +3,9 @@
 `data/game-v0.111.0-source.json` is a deterministic, presentation-independent
 world model for exact public-beta v0.111.0 inputs. It contains identities,
 localization joins, formulas, roster selections, membership sets, and state
-facts—not UI sentences or layout. Schema 13 is the E2d2a boundary and remains
-runtime-incomplete until independently gated later E2 and consumer waves land.
+facts—not UI sentences or layout. Schema 14 is the consolidated E2 lifecycle
+closeout boundary. Static lifecycle is source-complete, while the encounter
+companion remains runtime-incomplete until formula/runtime contracts close.
 
 ## Three-wave boundary
 
@@ -15,16 +16,19 @@ runtime-incomplete until independently gated later E2 and consumer waves land.
 | C0/E1 | Compact fact references plus source placement, observation identity, and behavior applicability | Landed; no runtime consumer change |
 | E2a | Initial generator/constructor state, effective addition hooks, intrinsic Power hooks, runtime contracts, and 57 lane comparisons | Complete for exact denominators; no runtime consumer change |
 | E2b | Integer HP selection, Decimal multiplayer arithmetic, explicit assignment conversion/cap/clamp, special callers, Int32 storage and network wire joins | Complete for exact denominators; no runtime consumer change |
-| E2c1 | Event-inclusive physical turn graphs, inherited/reused applicability, event titles/intents/operations/no-op proofs, and helper-call closure | Complete for exact turn-machine denominators; scripted event and lifecycle dependencies remain |
+| E2c1 | Event-inclusive physical turn graphs, inherited/reused applicability, event titles/intents/operations/no-op proofs, and helper-call closure | Complete; script and lifecycle refs are separately closed by E2c2/E2d2 |
 | E2c2a | Five linked event owners, 12 option/delegate constructions, seven exact combat transitions/outcomes, Foul Potion dispatch, and common framework closure | Complete for the non-Architect linked slice |
-| E2c2b | Architect placement, dialogue selection/line graph, structural localization, visual-only layout, presentation closure, and terminal sink/order | Script component complete; lifecycle producers/order and formulas remain dependencies |
+| E2c2b | Architect placement, dialogue selection/line graph, structural localization, visual-only layout, presentation closure, and terminal sink/order | Script and E2d2 run-lifecycle refs complete; score formulas remain dependencies |
 | E2d1a | Generic random repeat/float-weight repair; closed Add/Osty census; current producer roots/helper sites; shared core Add lifecycle contract | Complete for exact discovery/core denominators |
-| E2d1b | Seven producer triggers; pools/candidates; availability, slots, cardinality, cap/repeat state; ordered post-Add effects and runtime/dependency contracts | Complete for exact production denominators |
-| E2d2a | Shared Kill/force/death dispatch, listener registries, Escape/removal, pending loss and centralized victory termination | Core component complete; concrete listeners, event routing, and run termination remain E2d2b/c/d |
+| E2d1b | Seven producer triggers; pools/candidates; availability, slots, cardinality, cap/repeat state; ordered post-Add effects and runtime/dependency contracts | Complete; lifecycle boundaries are resolved by refs, not copied |
+| E2d2a | Shared Kill/force/death dispatch, listener registries, Escape/removal, pending loss and centralized victory termination | Core component complete |
+| E2d2 closeout | Reachable listener fixed point, phases/retention, relationships/subscriptions/cleanup, death-Add, event combat, and run termination | Complete for exact schema-14 denominators |
 
-The current app does not import this artifact or the compact projection and still displays the
-wiki-derived book. Source extraction changes no routes, renderer output, event display, or
-`data/encounters.json` bytes.
+The current app never imports this raw artifact. Its additive opt-in source-first
+shadow reads the compact projection only through `src/source-adapter.mjs`, while
+the stable `/sts2` route still displays the wiki-derived book. Source extraction
+changes no stable route, renderer output, event display, or `data/encounters.json`
+bytes.
 
 ## Identities and state
 
@@ -514,13 +518,13 @@ helpers, 76 narrow non-gameplay plumbing). Generic graph collection state record
 the exact constructor, `MoveState` element type, source order, and cardinality;
 unknown constructors, overloads, types, elements, or joins fail.
 
-The compact `eventTurnBehavior` projects eight classification facts, three unresolved lifecycle dependency facts and one source-complete Architect component ref, title/applicability/graph/registration/initial-state refs, event
-source denominators, and the invocation summary. It omits method proof and decision
-bulk. `AUDIT.RESOLVED.EVENT_TURN_MACHINES` marks only this physical turn component
-source-complete. Schema 10 retires `UNKNOWN.EVENT_SCRIPTED_BEHAVIOR` through the
-separate Architect audit. The aggregate `UNKNOWN.EVENT_BEHAVIOR` remains alongside
-`UNKNOWN.EVENT_LIFECYCLE`; later lifecycle work must close timeout/escape/result and
-run-end ordering before the aggregate blocker can be removed.
+The compact `eventTurnBehavior` projects eight classification facts, zero unresolved lifecycle dependency facts,
+and three exact resolved lifecycle dependency facts and one source-complete Architect component ref,
+title/applicability/graph/registration/initial-state refs, event source
+denominators, and the invocation summary. It omits method proof and decision bulk.
+Schema 14 resolves those lifecycle refs through `lifecycle.eventCombat` and retires
+`UNKNOWN.EVENT_LIFECYCLE` plus aggregate `UNKNOWN.EVENT_BEHAVIOR`; formulas remain
+independently gated.
 
 ## E2c2a linked-event script schema
 
@@ -540,18 +544,19 @@ Boolean resume argument and join the existing E1 link fact.
 
 Dense eligibility and damage retain the runtime input
 `event.dynamicVars.HpLoss.baseValue`. Battle `Resume` retains the Boolean
-`encounter.RanOutOfTime` read and V1/V2/V3 success branches. The timeout write, Power
-decrement/removal, escape, and terminal combat result remain lifecycle refs. Exact
+`encounter.RanOutOfTime` read and V1/V2/V3 success branches. Schema 14 closes the
+timeout write, Power decrement, escape, ordinary centralized victory, terminal
+rewards, and parent-room routing through lifecycle refs. Exact
 stack extraction shows the three Battle display calls use monster V1/V2/V3 and the
 V1 encounter argument at each site; no expected polarity or argument was seeded.
 
 The schema 8 compact projection includes semantic owners/options/transitions/outcomes/
 nodes/edges/effects/contracts/dependencies and fact evidence, but excludes raw method
 censuses and the 1,549 call decisions. Its linked-event component is complete.
-At the E2c2a boundary Architect remained `UNKNOWN.EVENT_SCRIPTED_BEHAVIOR`. E2c2b
-retires that blocker, while Battle timeout/escape/common terminal and Architect
-OnEnded/forced-kill/order refs remain `UNKNOWN.EVENT_LIFECYCLE`; aggregate and global
-blockers remain. No readiness outside the bounded projection is changed.
+At the E2c2a boundary Architect remained `UNKNOWN.EVENT_SCRIPTED_BEHAVIOR`; E2c2b
+retired that blocker. Schema 14 additionally closes Battle and Architect lifecycle
+refs. No formula value or remote platform outcome is inferred, and root/global
+readiness remains false.
 
 Evidence grade: exact pinned CLI metadata and CIL for all normalized script facts;
 explicit unresolved refs for lifecycle/formula contracts; no runtime observation or
@@ -686,14 +691,14 @@ Fabricator forwards an empty string; fixed-name producers forward `illusion`.
 The 12 runtime contracts preserve dynamic combat, encounter/body collections,
 alive and next-move inputs, Monster-AI RNG, Fabricator history, Rat fields,
 Living Fog cardinality, and Obscura state as unavailable to the current adapter.
-The four dependency records retain current-enemy death/removal, awaited
+The four dependency records now resolve current-enemy death/removal, awaited
 AfterCreatureAdded listener effects, Tough Egg Hatch, and the four classified
-death-Power Add sites for E2d2. Thus production semantics are complete while
-general lifecycle is not.
+death-Power Add sites to schema-14 lifecycle refs. The seven d1 producers remain
+unchanged; death-Power Adds are a separate denominator.
 
 ## E2d2a core lifecycle contract
 
-Schema 13 replaces the incorrect normalized Kill field with the exact metadata
+Schema 14 retains the schema-13 correction that replaced the incorrect normalized Kill field with the exact metadata
 name `force`. Both public overloads and the inner physical state machine preserve
 that name; schema validation rejects `playDeathEffects`. `force:false` means
 ordinary fully hooked death, including Gas Bomb and Waterfall Giant. The two
@@ -745,7 +750,7 @@ Secondary-only living enemies do not block victory; all escaped enemies are not 
 special result. The ordered termination graph covers mark/clear/revive,
 `AfterCombatEnd`, history/room/player cleanup, `AfterCombatVictory`, turns/room/
 save/progress/achievement/scaling updates, `CombatWon`, queue synchronization,
-and final `CombatEnded`; E2d2c owns later rewards/parent routing. Centralized
+and final `CombatEnded`; the consolidated closeout adds later rewards/parent routing. Centralized
 checks are source-linked from action and turn boundaries, never from Kill. Normal
 action completion and logged fault reach the check, cancellation is not success,
 and awaited failure cannot imply later stages.
@@ -756,8 +761,120 @@ physical registries, four removal methods, 11 termination declaration/body/suppo
 methods, 14 centralized check sites, seven runtime boundaries, seven dependencies, 707 classified invocations,
 and 59 semantic nodes. The compact projection keeps signatures, graphs, contracts,
 dependency facts, denominators, and digests while excluding call/proof bulk.
-`AUDIT.RESOLVED.CORE_LIFECYCLE` is complete, but aggregate lifecycle, event,
-formula, root/global, and companion readiness remain false pending E2d2b/c/d.
+`AUDIT.RESOLVED.CORE_LIFECYCLE` now covers the core plus aggregate closeout.
+Lifecycle/event unknowns are retired; formula, root/global, and companion readiness
+remain independently false.
+
+
+## E2 lifecycle closeout
+
+### Reachable effective listeners and retention
+
+Discovery begins with the checked 108 reachable concrete Monster types and 69
+Power types referenced by earlier source components. A Doom dispatcher root adds
+`POWER.DOOM_POWER`; scanning each effective physical listener body to a fixed
+point adds `POWER.HEIST_POWER` from Surprise. The terminal set is 71 Powers. No
+owner allowlist seeds this closure. Exact-signature inheritance resolution yields
+1,861 effective applications grouped into 80 implementation/default records.
+Post-discovery assertions include two Monster `BeforeDeath` overrides, ten
+Monster four-argument `AfterDeath` owners effective on 12 models, two separate
+one-argument `Died` callbacks, 11 non-base removal cleanups, baseline/fixed-point
+Power `BeforeDeath` counts one/two, 16 baseline Power `AfterDeath` declarations,
+and predicate counts 5/5/1/5/2. Reachable Monster/Power `ShouldDie`, late,
+`AfterPreventingDeath`, and `AfterDiedToDoom` overrides remain zero. Seven
+inventory/platform listeners are retained as dynamic external boundaries, never
+assumed empty.
+
+Doom performs VFX then ordinary `Kill(force:false)` sequentially for each selected
+body and invokes `AfterDiedToDoom(combatState, originalList)` exactly once after the
+complete list. Awaited failure/cancellation cannot imply later bodies or the final
+hook.
+
+### Same-body phases
+
+Test Subject reaches zero HP normally. Adaptable suppresses collection removal,
+retains itself, stops combat ending, writes only its internal `isReviving=true`,
+and awaits `TestSubject.TriggerDeadState`. `TriggerDeadState`—not Adaptable—owns
+the run kill counter, `DeadTrigger`, and forced `DeadState`. `RespawnMove`
+increments `Respawns` first and clears the flag. Form one revives from 200/212 and
+adds Painful Stabs; form two revives from 300/313, adds Nemesis, then removes
+Adaptable and Painful Stabs. Both use the existing multiplayer HP assignment ref
+with awaited SetMaxHp then Heal. Two completed revives derive from the switch and
+Adaptable removal; there is no cap field, reset, new body, slot, or position.
+
+Tough Egg never dies or Adds a hatchling. At each side-turn end, Hatch Power only
+checks whether its owner is among the participants and, when true, awaits a
+one-point decrement regardless of the current amount. It does not read its amount
+or set/force a move. `HatchMove` is independently the monster behavior graph's
+initial move; it writes serialized `IsHatched/_isHatched`, awaits Hatch Power
+removal, writes distinct `_hatched`, plays SFX, snapshots/removes every current
+Power except Minion, then awaits same-body `Hatch`. The title getter reads
+`_hatched`; Hatch does not write title. HP is inclusive 19..22 below A8 and 20..23
+at A8+, through the existing assignment chain. Restoration skips Hatch Power,
+awaits Hatch, and forces stored `AfterHatchedState` without rerunning removal.
+
+Reattach retains each dead Decimillipede segment and its Power. While another
+same-side segment lives it writes `isReviving`, forces the same body's DeadState,
+disables interaction, then rechecks on `DoReattach`, plays VFX, clears the flag,
+enables interaction, and heals the same body by current amount with the true flag.
+No Add/slot/position change occurs. Illusion and Steam Eruption likewise preserve
+same-body identity. Steam writes About-to-Blow state and 999999999 HP, snapshots
+runtime pressure, removes its Power, attacks, then uses ordinary `Kill(false)`;
+Gas Bomb also attacks then uses ordinary `Kill(false)`.
+Phase discovery is not capped by these names: it intersects Power `AfterDeath`
+with removal prevention, discovers every current ordinary self-kill owner, and
+joins the production same-body Hatch dependency. Seven source signals map to six
+systems because Waterfall contributes both a Power and a self-kill signal; any
+unrepresented future signal blocks extraction.
+
+### Death production, relationships, events, and run end
+
+Four physical death-Add sites form three records outside the d1 producer
+count: Infested makes four ordered stunned Wrigglers in indexed slots; Stock
+makes an Axebot in the exact owner slot with decremented StockAmount; Surprise
+pre-creates the exact Fat Gremlin, applies targeted Heist from dynamic Thievery
+gold, adds Sneaky before Fat, then conditionally marks stolen gold. All join the
+existing core Add, initial-state, and HP contracts by refs; delayed reveals are
+safe fire-and-forget boundaries.
+
+Typed relationships cover Queen/Amalgam and multi-Priest Kin follower death.
+Subscriptions independently cover Slumbering Beetle and Soul Nexus one-shot
+`Died` callbacks plus Cubex HP-change audio/unsubscribe. All 11 non-base
+`BeforeRemovedFromRoom` implementations are emitted with ordered calls and no
+invented survivor effect; Kaiser and Waterfall presentation cleanup remains
+separate from gameplay phases.
+
+Seven event-combat registrations are closed. Battleworn runs only when the owner
+is a participant: amount above one awaits decrement; amount at most one writes
+`RanOutOfTime=true` without decrement, then awaits `Escape(owner,true)`. Later
+ordinary centralized victory reaches terminal rewards. Three Battleworn rooms
+await parent resume and existing Resume selects DEFEAT/no effects or its
+version-specific VICTORY ref; four other event combats route to normal map travel.
+The Boolean default, write, save/load refs, and Resume read are explicit; no
+special timeout result exists.
+
+Architect remains visual pseudo-combat. `WinRun` returns if State is null;
+otherwise synchronous `OnEnded(true)` precedes awaited `GuaranteeKillAllPlayers`.
+Winning history/serialization/progress/score/Architect damage occur before kills.
+Players are enumerated in source order; each receives awaited `Kill(force:true)`
+then an awaited custom-scaled 0.25–0.5 presentation wait. Force bypasses prevention
+only. Platform, metrics, and daily uploads are external attempts; safe-task
+boundaries do not imply remote success, and Architect attack animations deal no
+damage.
+
+The closeout classifies 1,265 call-like sites with no ignore/unresolved class and
+records six phases, 18 retention policies, six relationships, three subscriptions,
+11 cleanup overrides, four death-Add sites/three systems, seven event registrations,
+and one run-termination system. Literal predicate defaults are decoded only when
+the metadata return type is CLI Boolean and every reachable return carries the
+same `ldc.i4.0` or `ldc.i4.1` value. Retention results use those source defaults;
+a target/owner condition is emitted only when the method has a callback parameter
+and its CIL compares that parameter with the Power owner. Unsupported dynamic
+predicate shapes fail extraction rather than receiving a hook-name default.
+Canonical listener/mechanics/invocation/runtime and method-pin digests are
+validated before atomic replacement. A semantic-pipeline audit requires the
+existing core death, Add, HP, and event authorities and rejects parallel
+evaluators or copied effects.
 
 ### Reuse and authority audit
 
@@ -772,10 +889,11 @@ alias, runtime assembly execution, or proprietary instruction dump.
 ## E2 projection boundary
 
 The checked source artifact above remains the full static evidence artifact.
-C0 introduced, E1 extended, and E2a/E2b/E2c1/E2c2a/E2c2b/E2d1a/E2d1b/E2d2a extend `data/encounter-facts-v0.111.0.json`, built by
+C0 introduced, E1 extended, and E2a/E2b/E2c1/E2c2a/E2c2b/E2d1a/E2d1b/E2d2 extend `data/encounter-facts-v0.111.0.json`, built by
 `tools/generate-encounter-facts.py` from that artifact and
-`data/encounters.json` only. It is a projection, not a replacement extractor
-and not a runtime consumer input.
+`data/encounters.json` only. It is a projection, not a replacement extractor.
+After C1, it is the sole checked source input to the additive opt-in shadow
+adapter; the stable route does not consume it.
 
 The projection schema is closed and independently validated. Validation pins
 schema/extractor/game/assembly identity, both projection input bytes, the
@@ -803,9 +921,11 @@ pointed-value hashes instead of repeating CIL proof or the 6,786-invocation
 census. This makes the projection substantially smaller while retaining an
 auditable path to the full checked source artifact.
 
-E2d2a declares only the bounded encounter projection complete. The encounter
-companion remains hard-false/incomplete: event turn machines are source-complete,
-but referenced event lifecycle/timeout/result and formula semantics, broader lifecycle
-closure, and companion-wide formula/runtime contracts remain blockers. Global readiness also remains false
-pending the independent product-family source waves. No `src/` file imports the projection,
-so `/sts2` continues to use byte-identical `data/encounters.json`.
+Projection schema 11 declares the bounded encounter projection complete. The
+consolidated lifecycle gate retires `UNKNOWN.LIFECYCLE_COVERAGE`,
+`UNKNOWN.EVENT_LIFECYCLE`, and aggregate `UNKNOWN.EVENT_BEHAVIOR`. The encounter
+companion nevertheless remains hard-false/incomplete for the sole scoped reason
+`UNKNOWN.FORMULA_RUNTIME_CONTRACTS`; readiness is not inferred from reason removal.
+Root/global readiness remains false for broader source/provenance/title families.
+Only `src/source-adapter.mjs` imports the projection, for the opt-in shadow;
+`/sts2` continues to use byte-identical `data/encounters.json`.
