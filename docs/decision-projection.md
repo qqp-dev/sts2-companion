@@ -1,9 +1,10 @@
 # Decision projection contract
 
-> **Status:** reconciled contract for the opt-in C1 source shadow and future
-> evidence-gated callouts. `/sts2/source` consumes the checked compact projection
-> through one validated adapter and renders a static mechanics capsule. Stable
-> `/sts2` remains legacy-backed. Current observation has encounter
+> **Status:** reconciled contract for the canonical source-first phone view and
+> future evidence-gated callouts. `/sts2` consumes the checked compact projection
+> through one validated adapter and renders a static mechanics capsule;
+> `/sts2/source` is a compatibility alias and `/sts2/legacy` is a temporary,
+> non-default rollback. Current observation has encounter
 > lifecycle/identity only, plus final completed-room encounter/model IDs. It does
 > **not** observe a live turn, HP, Block, Powers, intents, move history, counters,
 > hand/deck, model state/phase, or survivors. Live decision frames and editorial
@@ -12,7 +13,7 @@
 This contract defines a rich static mechanics capsule as the primary projection
 of an authoritative decoded combat blueprint, with an additive evidence-gated
 collection of useful human **thinking windows**. Normative words apply to the
-current static shadow where implemented and to future callout/live-frame work as
+current static capsule where implemented and to future callout/live-frame work as
 labeled. Examples are fixtures, not captured gameplay or observed outcomes.
 
 ## 1. Problem and non-goals
@@ -221,7 +222,8 @@ and behavior graphs within its declared coverage. It must still expose E1 gaps,
 including initial-state/Power coverage, event behavior, HP rounding conflict,
 and broader lifecycle families. Legacy annotations may decorate it only with a
 visible `legacyAnnotations` lane badge and may not close an authoritative gap.
-No capsule is a new `/sts2` runtime surface in the current stage.
+The canonical `/sts2` capsule remains a static source surface, not a live
+`DecisionFrame` or present-tense tactical observer.
 
 ### 3.2 Decision frame: future live product
 
@@ -1012,7 +1014,7 @@ satisfy a source-required gate or turn a derived claim into source certainty.
 domain: projection consumers MUST NOT strip a prefix to make an unrecognized
 source identity match. The existing state reader has a separate, stable wire
 boundary: `parseSave` converts an exact saved `MONSTER.*` wire ID to its
-unprefixed state model-ID representation. The shadow adapter first validates
+unprefixed state model-ID representation. The source adapter first validates
 every checked projection mapping row, then applies that same pure reader
 conversion to the row's exact `observedId` to build a collision-checked secondary
 index. Looking up an already-normalized reader ID through that index is a
@@ -1436,14 +1438,15 @@ terse output is not a defense for silently dropping passing candidates.
 This plan follows source migration gates and does not modify their artifacts or
 ownership.
 
-### Current C1 shadow and offline contract work
+### Current canonical static capsule and offline contract work
 
-- The opt-in `/sts2/source` path reads only the checked compact projection through
-  one fail-closed adapter. It renders rich static mechanics, explicit unknowns,
-  separate authority lanes, and affected evidence.
-- Stable `/sts2`, its state payload/client, the state reader, and default link stay
-  legacy-backed and behaviorally unchanged. A shadow projection failure returns
-  503 without blocking stable startup.
+- Canonical `/sts2`, its state payload, and browser client read only the checked
+  compact projection through one fail-closed adapter. They render rich static
+  mechanics, explicit unknowns, separate authority lanes, and affected evidence.
+- `/sts2/source` remains a compatibility alias. The clearly labeled
+  `/sts2/legacy` rollback preserves the old book for diagnosis but is not the
+  primary product. A projection failure returns 503 on source-first routes rather
+  than silently falling back to legacy facts.
 - Current checked data contains no editorial callout records, so the collection is
   honestly empty. The extractor remains editorially neutral.
 - Continue building callout schema/golden fixtures outside extraction. Static
@@ -1491,18 +1494,17 @@ does not trigger state inference from screen conventions or model IDs.
 
 ### C1/C2/C3 consumer gates
 
-- **C1 shadow (current):** render the validated compact source capsule only under
-  `/sts2/source`; keep stable output unchanged, preserve fail-closed reasons, and
-  collect no unsupported confidence/probability metric. It does not compile live
-  frames or invent editorial tactics.
+- **C1 static capsule:** render the validated compact source capsule without
+  unsupported confidence/probability metrics. It does not compile live frames or
+  invent editorial tactics.
 - **C2 staged source-first UI:** render only claim families whose E2 and
   observation gates are green; a partially green frontier retains typed unknowns
   and cannot become a positive focus conclusion. Retain immediate rollback and
   expose legacy lane boundaries in tap-through detail only.
-- **C3/default switch:** require semantic fixtures (including dominance, Pareto,
-  no-focus, infeasible, and lifecycle-unknown cases), trace-oracle validation,
-  phone usability results, version/mismatch behavior, and QA approval before any
-  default change.
+- **C3/default switch (completed for the static capsule):** semantic fixtures,
+  phone hierarchy/usability safeguards, version/mismatch behavior, fail-closed
+  adapter tests, and reviewed route tests gate the canonical `/sts2` surface.
+  Future live-frame or editorial features remain subject to their own gates.
 
 The current encounter lifecycle/identity reader can support capsule selection
 and version context, not a live turn frame. Adding source authority without live

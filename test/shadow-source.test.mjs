@@ -223,44 +223,56 @@ test("projection corruption and structural mutations fail closed", () => {
   finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
-test("shadow HTTP has exact GET/HEAD/405/404, security, bounded JSON, and query handling", async () => {
+test("canonical source-first HTTP has exact routes, compatibility aliases, security, and query handling", async () => {
   const parsed = parsedRoomState("AXEBOTS_NORMAL", ["MONSTER.AXEBOT"]);
   const reader = { read: () => parsed };
   await withServer(createSts2Handler(reader, { sourceAdapter: adapter }), async (server) => {
-    for (const path of ["/sts2/source", "/sts2/source/state", "/sts2/source/client.js"]) {
+    for (const path of ["/sts2", "/sts2/state", "/sts2/client.js"]) {
       const get = await request(server, path); const head = await request(server, path, "HEAD");
       assert.equal(get.status, 200); assert.equal(head.status, 200); assert.equal(head.body, "");
       assert.equal(Number(get.headers["content-length"]), Buffer.byteLength(get.body)); assert.equal(head.headers["content-length"], get.headers["content-length"]);
       assert.equal(get.headers["cache-control"], "no-store"); assert.match(get.headers["content-security-policy"], /default-src 'none'/); assert.equal(get.headers["x-frame-options"], "DENY");
     }
-    const json = await request(server, "/sts2/source/state"); assert.ok(Buffer.byteLength(json.body) < 600_001);
+    const page = await request(server, "/sts2");
+    assert.match(page.body, /<title>StS2 Companion<\/title>/);
+    assert.match(page.body, /src="\/sts2\/client\.js"/);
+    assert.doesNotMatch(page.body, /legacy rollback|non-default|source shadow/i);
+    const json = await request(server, "/sts2/state"); assert.ok(Buffer.byteLength(json.body) < 600_001);
     const capsule = JSON.parse(json.body); assert.equal(capsule.encounter.canonicalId, "AXEBOTS_NORMAL");
     assert.deepEqual(capsule.encounter.observedBodies, [{ observedId: "AXEBOT", observedWireId: "MONSTER.AXEBOT", canonicalModel: "MONSTER.AXEBOT", resolved: true }]);
-    assert.equal((await request(server, "/sts2/source?encounter=TEST_SUBJECT_BOSS")).status, 200);
-    assert.equal((await request(server, "/sts2/source?encounter=NOPE")).status, 404);
-    assert.equal((await request(server, "/sts2/source?encounter=A&encounter=B")).status, 400);
-    const injection = await request(server, "/sts2/source?encounter=%3Cscript%3Ealert(1)%3C/script%3E"); assert.equal(injection.status, 404); assert.match(injection.headers["content-type"], /^text\/plain/);
-    assert.equal((await request(server, "/sts2/source", "POST")).status, 405); assert.equal((await request(server, "/sts2/source/nope")).status, 404);
+
+    for (const [alias, canonical] of [["/sts2/source", "/sts2"], ["/sts2/source/state", "/sts2/state"], ["/sts2/source/client.js", "/sts2/client.js"]]) {
+      const aliased = await request(server, alias), primary = await request(server, canonical);
+      assert.equal(aliased.status, 200); assert.equal(aliased.body, primary.body);
+    }
+    assert.equal((await request(server, "/sts2?encounter=TEST_SUBJECT_BOSS")).status, 200);
+    assert.equal((await request(server, "/sts2?encounter=NOPE")).status, 404);
+    assert.equal((await request(server, "/sts2?encounter=A&encounter=B")).status, 400);
+    const injection = await request(server, "/sts2?encounter=%3Cscript%3Ealert(1)%3C/script%3E"); assert.equal(injection.status, 404); assert.match(injection.headers["content-type"], /^text\/plain/);
+    assert.equal((await request(server, "/sts2", "POST")).status, 405); assert.equal((await request(server, "/sts2/nope")).status, 404);
   });
 });
 
-test("bad projection returns shadow 503 without changing stable page/state/client", async () => {
+test("bad projection fails canonical source routes closed while legacy rollback remains available", async () => {
   const bad = createSourceAdapter({ projection: project((p) => { p.schemaVersion = 99; }) });
   const parsed = parsedRoomState("AXEBOTS_NORMAL", ["MONSTER.AXEBOT"]);
   const reader = { read: () => parsed };
-  const stablePaths = ["/sts2", "/sts2/state", "/sts2/client.js"];
+  const legacyPaths = ["/sts2/legacy", "/sts2/legacy/state", "/sts2/legacy/client.js"];
   const baseline = new Map();
   await withServer(createSts2Handler(reader, { sourceAdapter: adapter }), async (server) => {
-    for (const path of stablePaths) baseline.set(path, await request(server, path));
+    for (const path of legacyPaths) baseline.set(path, await request(server, path));
   });
   await withServer(createSts2Handler(reader, { sourceAdapter: bad }), async (server) => {
-    for (const path of ["/sts2/source", "/sts2/source/state", "/sts2/source/client.js"]) assert.equal((await request(server, path)).status, 503);
-    for (const path of stablePaths) {
+    for (const path of ["/sts2", "/sts2/state", "/sts2/client.js", "/sts2/source", "/sts2/source/state", "/sts2/source/client.js"]) {
+      const response = await request(server, path); assert.equal(response.status, 503); assert.match(response.body, /source projection unavailable/);
+    }
+    for (const path of legacyPaths) {
       const response = await request(server, path); const healthy = baseline.get(path);
       assert.equal(response.status, 200); assert.equal(response.body, healthy.body);
       for (const header of ["content-type", "content-length", "cache-control", "content-security-policy"]) assert.equal(response.headers[header], healthy.headers[header]);
     }
-    assert.equal(JSON.parse((await request(server, "/sts2/state")).body).encounterId, "AXEBOTS_NORMAL");
+    assert.equal(JSON.parse((await request(server, "/sts2/legacy/state")).body).encounterId, "AXEBOTS_NORMAL");
+    assert.match((await request(server, "/sts2/legacy")).body, /legacy rollback/i);
   });
 });
 
@@ -268,6 +280,7 @@ test("shadow client is DOM text-only and manual polling retains the selector", (
   assert.ok(!/innerHTML|outerHTML|insertAdjacentHTML|document\.write/.test(clientSource));
   assert.match(clientSource, /\.textContent = String\(text\)/); assert.match(clientSource, /getAll\("encounter"\)/);
   assert.match(clientSource, /encodeURIComponent\(manualQuery\[0\]\)/); assert.match(clientSource, /setInterval\(poll/);
+  assert.match(clientSource, /`\$\{basePath\}\/state/); assert.doesNotMatch(clientSource, /\/source\/state/);
 });
 
 test("shadow client renders move-bearing capsules through proof", async () => {
@@ -276,6 +289,18 @@ test("shadow client renders move-bearing capsules through proof", async () => {
   for (const section of ["Move possibilities and ordered operations", "Move graph:", "Lifecycle and core boundaries", "Provenance and evidence"]) {
     assert.match(root.textContent, new RegExp(section));
   }
+});
+
+test("Battleworn phone surface exposes its clock and exact lifecycle audit payload", async () => {
+  const capsule = adapter.view(state(), "BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER");
+  const { root } = await runShadowClient(capsule);
+  for (const text of [
+    "Event Combat · Battle Time Limit", "After Side Turn End", "Countdown · decrement Battleworn Dummy Time Limit by 1",
+    "set RanOutOfTime = true", "escape through the checked removal graph and remove the creature node",
+    "ordinary centralized victory check", "Exact removal, dispatch, completion & lifecycle facts",
+    "battleTimeLimit", "LIFECYCLE.EVENT.BATTLEWORN.TIMEOUT", "removeCreatureNode", "ordinaryCentralizedVictoryByRef",
+  ]) assert.match(root.textContent, new RegExp(text));
+  assert.doesNotMatch(JSON.stringify(capsule.encounter.lifecycle.mechanics), /BATTLEWORN_DUMMY_EVENT_V[23]_ENCOUNTER|DENSE_VEGETATION/);
 });
 
 test("shadow client retries an unchanged payload after a render failure", async () => {
@@ -288,13 +313,64 @@ test("shadow client retries an unchanged payload after a render failure", async 
 
 const qualifications = Object.freeze({ playerControllable: true, nonObvious: true, materiallyUseful: true, ordinaryStateRobust: true, sourceSupported: true, causallyExplainable: true, distinct: true });
 function candidate(id, rank, language = "static-conditional") {
-  return { id, distinctnessKey: `MECHANIC.${id}`, language, headline: `${id}: use the controlled choice when the source condition holds`, condition: "when the checked source condition holds", causalBasis: "the controllable choice changes the cited consequence", rank, qualifications, basis: { factRefs: [`FACT.${id}`], conditionRefs: [`CONDITION.${id}`], causalRefs: [`CAUSE.${id}`] } };
+  return { id, distinctnessKey: `MECHANIC.${id}`, language, headline: `${id}: when the source condition holds, the controlled choice changes the effect`, condition: "when the checked source condition holds", causalBasis: "the controllable choice changes the cited consequence", rank, qualifications, basis: { factRefs: [`FACT.${id}`], conditionRefs: [`CONDITION.${id}`], causalRefs: [`CAUSE.${id}`] } };
 }
 test("callout contract preserves evidence-gated 0, 1, and 3 collections with visible subset count", () => {
   const zero = compileCalloutCollection([]); assert.equal(zero.total, 0); assert.match(zero.emptyReason, /0 source-qualified/);
   const one = compileCalloutCollection([candidate("ONE", 1)]); assert.equal(one.total, 1); assert.equal(one.hasMore, false);
   const three = compileCalloutCollection([candidate("THREE", 3), candidate("ONE", 1), candidate("TWO", 2)], {}, { collapsedLimit: 1 });
   assert.deepEqual(three.all.map((row) => row.id), ["ONE", "TWO", "THREE"]); assert.equal(three.total, 3); assert.equal(three.collapsedCount, 1); assert.equal(three.hasMore, true); assert.equal(three.expandPathRequired, true);
+});
+
+test("shadow renderer supports honest 0, 1, and 3 callouts with one expand path to every record", async () => {
+  const renderCount = async (count) => {
+    const capsule = structuredClone(adapter.view(state(), "AXEBOTS_NORMAL"));
+    const candidates = Array.from({ length: count }, (_, index) => candidate(`VISIBLE_${index + 1}`, index + 1));
+    capsule.encounter.presentation.callouts = compileCalloutCollection(candidates, {}, { collapsedLimit: 1 });
+    return (await runShadowClient(capsule)).root;
+  };
+  const descendants = (node, result = []) => {
+    for (const child of node.children ?? []) if (child && typeof child === "object") { result.push(child); descendants(child, result); }
+    return result;
+  };
+
+  const zero = await renderCount(0);
+  assert.match(zero.textContent, /Tactical callouts · 0/);
+  assert.doesNotMatch(zero.textContent, /VISIBLE_1/);
+
+  const one = await renderCount(1), oneNodes = descendants(one);
+  assert.match(one.textContent, /Tactical callouts · 1/);
+  assert.match(one.textContent, /1 of 1 shown/);
+  const oneCards = oneNodes.filter((node) => node.className === "callout-card");
+  assert.equal(oneCards.length, 1);
+  assert.ok(oneCards[0].children.filter((node) => node.tagName !== "details").length <= 3, "one callout uses at most three visible text rows");
+  assert.match(one.textContent, /FACT.VISIBLE_1/);
+
+  const three = await renderCount(3), threeNodes = descendants(three);
+  assert.match(three.textContent, /Tactical callouts · 3/);
+  assert.match(three.textContent, /1 of 3 shown · more available below/);
+  assert.match(three.textContent, /Show all 3 source-qualified callouts/);
+  for (const id of ["VISIBLE_1", "VISIBLE_2", "VISIBLE_3"]) {
+    assert.match(three.textContent, new RegExp(id));
+    assert.match(three.textContent, new RegExp(`FACT\.${id}`));
+  }
+  assert.equal(threeNodes.filter((node) => node.className.includes("callout-expander")).length, 1);
+  const threeCards = threeNodes.filter((node) => node.className === "callout-card");
+  assert.equal(threeCards.length, 4, "one collapsed card plus all three in the single expansion");
+  assert.ok(threeCards.every((card) => card.children.filter((node) => node.tagName !== "details").length <= 3));
+});
+
+test("shadow renderer keeps version mismatch and unsupported observation boundaries visible", async () => {
+  const mismatch = structuredClone(adapter.view(state(), "AXEBOTS_NORMAL"));
+  mismatch.observation.installedVersion.version = "v9.9.9"; mismatch.observation.versionMatches = false;
+  const { root } = await runShadowClient(mismatch);
+  assert.match(root.textContent, /VERSION MISMATCH/);
+  assert.match(root.textContent, /Installed v9\.9\.9 differs from checked v0\.111\.0/);
+
+  const unresolved = adapter.view(state("NOT_A_CHECKED_ENCOUNTER", "combat"));
+  const failed = await runShadowClient(unresolved);
+  assert.match(failed.root.textContent, /Unsupported encounter identity/);
+  assert.match(failed.root.textContent, /has no checked source identity/);
 });
 
 test("callout language, distinctness, basis, and phase-control causality are enforced", () => {
@@ -309,8 +385,14 @@ test("callout language, distinctness, basis, and phase-control causality are enf
   assert.throws(() => compileCalloutCollection([missingBasis]), /factRefs/);
 });
 
-test("README is concise and links retained detailed documentation and exact shadow URLs", () => {
+test("README is concise and names canonical, compatibility, rollback, and authority boundaries", () => {
   const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8"); assert.ok(Buffer.byteLength(readme) < 10_000);
-  for (const text of ["docs/source-migration-ledger.md", "docs/source-world-model.md", "docs/decision-projection.md", "http://127.0.0.1:3082/sts2/source", "https://qq-box.tail580136.ts.net/sts2/source"]) assert.ok(readme.includes(text), text);
+  for (const text of ["docs/source-migration-ledger.md", "docs/source-world-model.md", "docs/decision-projection.md", "http://127.0.0.1:3082/sts2", "https://qq-box.tail580136.ts.net/sts2", "`/sts2/source` is a compatibility alias", "`/sts2/legacy`"]) assert.ok(readme.includes(text), text);
+  assert.doesNotMatch(readme, /existing stable page remains the default|never switch `?\/sts2`? to source-first|source shadow.{0,40}opt-in/i);
+  const decision = readFileSync(new URL("../docs/decision-projection.md", import.meta.url), "utf8");
+  assert.match(decision, /Canonical `\/sts2`.*checked[\s\S]{0,160}compact projection/);
+  assert.match(decision, /`\/sts2\/source` (?:is|remains) a compatibility alias/);
+  assert.match(decision, /`\/sts2\/legacy`[^.]{0,100}(?:non-default|not the primary product)/);
+  assert.doesNotMatch(decision, /existing stable page remains the default|source shadow.{0,40}opt-in|legacy[^.]{0,80}(?:is|remains) (?:the )?default/i);
   assert.ok(readFileSync(new URL("../docs/source-migration-ledger.md", import.meta.url), "utf8").length > 40_000);
 });

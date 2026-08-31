@@ -169,7 +169,7 @@ body{margin:0;color:var(--text)}
 `;
 
 function page(state, basePath) {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#000"><title>sts2 companion</title><style>${CSS}</style></head><body><div class="shell"><div class="topbar"><span><i class="live-dot" aria-hidden="true"></i>sts2 companion</span><span>a9 · 2p</span></div>${renderState(state, basePath)}</div><script src="${escapeHtml(basePath)}/client.js" defer></script></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#000"><title>sts2 legacy rollback</title><style>${CSS}</style></head><body><div class="shell"><div class="topbar"><span><i class="live-dot" aria-hidden="true"></i>sts2 · legacy rollback</span><span>temporary · a9 · 2p</span></div>${renderState(state, basePath)}</div><script src="${escapeHtml(basePath)}/client.js" defer></script></body></html>`;
 }
 
 function payload(reader, players) {
@@ -188,11 +188,56 @@ function payload(reader, players) {
 
 
 const SOURCE_CSS = `
-:root{color-scheme:dark;--bg:#070707;--card:#111;--line:#303030;--text:#f2eee7;--muted:#aaa39a;--source:#66e3a4;--observed:#73baff;--legacy:#d6aaff;--unknown:#ffbd70}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 ui-sans-serif,system-ui,sans-serif}.source-shell{max-width:52rem;margin:auto;padding:1rem}.shadow-top{display:flex;justify-content:space-between;color:var(--muted);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;padding:.3rem 0 1rem}.source-header,.hero,.source-section,.empty{border:1px solid var(--line);background:var(--card);padding:1rem;margin-bottom:.8rem}.badges,.chips{display:flex;gap:.4rem;flex-wrap:wrap}.badge,.chip{border:1px solid currentColor;padding:.15rem .42rem;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase}.badge-source{color:var(--source)}.badge-observed{color:var(--observed)}.badge-legacy{color:var(--legacy)}.badge-unknown{color:var(--unknown)}.badge-manual{color:#f7e481}.authority-line,.canonical,.model-id,.fact-ref{color:var(--muted);font-size:.75rem;overflow-wrap:anywhere;margin-top:.6rem}.eyebrow,.section-heading{color:var(--muted);text-transform:uppercase;font-size:.72rem;letter-spacing:.07em}.hero h1{font-size:1.8rem;margin:.2rem 0}.notice{border-left:2px solid var(--unknown);padding-left:.65rem;color:var(--muted)}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem}.section-heading h2{color:var(--text);font-size:1.05rem;margin:.1rem 0 .8rem}.lead{color:var(--muted)}.chip{color:var(--source);overflow-wrap:anywhere}.chip.produced{color:var(--unknown)}details{border-top:1px solid var(--line);margin-top:.7rem;padding-top:.65rem}summary{cursor:pointer;color:var(--source);font-weight:650}.tree{overflow-wrap:anywhere}.tree .tree{border-left:1px solid var(--line);padding-left:.6rem;margin:.25rem 0}.tree-key{color:var(--muted)}.tree-value{color:var(--text)}.monster-card{border-top:2px solid var(--line);padding:1rem 0}.monster-card:first-of-type{border-top:0}.monster-head{display:flex;justify-content:space-between;gap:1rem;align-items:baseline}.monster-head h3{font-size:1.15rem;margin:.1rem 0}.model-id{text-align:right}.formula{color:var(--unknown)}.mechanic-line{margin:.5rem 0}.subsection,.moves{margin-top:1rem}.subsection h4,.moves h4{font-size:.82rem;text-transform:uppercase;color:var(--muted)}.state-row,.observed-row,.placement{padding:.4rem 0;border-bottom:1px solid var(--line)}.operation{display:grid;gap:.25rem;padding:.65rem 0;border-bottom:1px solid var(--line)}.operation>span{overflow-wrap:anywhere}.intent{display:block;color:var(--unknown);font-size:.72rem;margin-top:.15rem}.unknown{color:var(--unknown)}.move-summary{display:flex;justify-content:space-between;gap:1rem}.empty{padding:2rem 1rem}@media(min-width:44rem){.source-shell{padding:1.5rem}.source-section,.hero,.source-header{padding:1.2rem 1.35rem}}
+:root{color-scheme:dark;--bg:#080a0b;--surface:#111517;--raised:#171d20;--line:#344047;--text:#f4f1e9;--muted:#b7b2a8;--source:#76e7ae;--observed:#8cc9ff;--manual:#f4df82;--unknown:#ffc77d;--danger:#ff9a92;--focus:#fff2a8}
+*{box-sizing:border-box;min-width:0}
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.48 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%}
+.source-shell{width:100%;max-width:48rem;margin:0 auto;padding:max(.75rem,env(safe-area-inset-top)) max(.75rem,env(safe-area-inset-right)) max(1.25rem,env(safe-area-inset-bottom)) max(.75rem,env(safe-area-inset-left))}
+.source-state,.source-state>*{max-width:100%}
+.shadow-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.25rem 1rem;padding:.15rem .15rem .75rem;color:var(--muted);font-size:.7rem;font-weight:750;letter-spacing:.1em;text-transform:uppercase}
+.encounter-hero{padding:1.1rem 1rem 1rem;border:1px solid var(--line);border-bottom:3px solid var(--source);background:linear-gradient(145deg,#151b1e,#0e1214)}
+.eyebrow{margin:0 0 .35rem;color:var(--muted);font-size:.72rem;font-weight:750;letter-spacing:.09em;text-transform:uppercase;overflow-wrap:anywhere}
+.encounter-title{margin:0;font-size:clamp(1.7rem,9vw,2.45rem);line-height:1.04;letter-spacing:-.025em;overflow-wrap:anywhere}
+.static-contract{margin:.75rem 0 0;color:var(--source);font-size:.86rem;font-weight:700}
+.boundary-strip{margin:0 0 .8rem;padding:.75rem 1rem;border:1px solid var(--line);border-top:0;background:#0d1113}
+.badges,.chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.badge,.chip{max-width:100%;border:1px solid currentColor;padding:.2rem .45rem;font-size:.67rem;font-weight:800;letter-spacing:.055em;text-transform:uppercase;overflow-wrap:anywhere}
+.badge-source,.chip{color:var(--source)}.badge-observed{color:var(--observed)}.badge-manual{color:var(--manual)}.badge-unknown{color:var(--unknown)}.badge-danger{color:var(--danger)}
+.boundary-copy,.boundary-warning{margin:.65rem 0 0;font-size:.82rem}.boundary-copy{color:var(--muted)}.boundary-warning{padding-left:.6rem;border-left:3px solid var(--danger);color:var(--text)}
+.capsule-section,.empty-state{margin:0 0 .8rem;padding:1rem;border:1px solid var(--line);background:var(--surface);overflow-wrap:anywhere}
+.section-title{margin:0 0 .85rem;font-size:.78rem;line-height:1.2;color:var(--muted);font-weight:850;letter-spacing:.1em;text-transform:uppercase}
+.roster-count{margin:0;color:var(--source);font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.065em}
+.roster-grammar{margin:.35rem 0;font-size:1.22rem;line-height:1.28;font-weight:760}
+.possibility-note,.condition-line,.clock-line,.unknown-line{margin:.55rem 0;padding-left:.65rem;border-left:3px solid var(--unknown)}
+.possibility-note,.condition-line,.clock-line{color:#e7d9c3}.quiet,.body-role{color:var(--muted)}.quiet{margin:.5rem 0;font-size:.88rem}
+.observed-identities,.mechanic-group,.forms{margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line)}
+.identity-row,.form-line,.path-line,.lifecycle-line,.pool-line{margin:.45rem 0}
+.body-card{margin:.9rem -0.25rem 0;padding:1rem .25rem 0;border-top:3px solid var(--line)}.body-card:first-of-type{margin-top:0;border-top:0;padding-top:0}
+.body-head{display:grid;gap:.55rem}.body-title{margin:0;font-size:1.35rem;line-height:1.15}.body-role{margin:.2rem 0 0;font-size:.76rem;font-weight:750;letter-spacing:.06em;text-transform:uppercase}
+.hp-pill{justify-self:start;padding:.35rem .55rem;border:1px solid var(--source);color:var(--source);font-size:.8rem;line-height:1.25;overflow-wrap:anywhere}
+.minor-title{margin:0 0 .55rem;font-size:.79rem;color:var(--muted);font-weight:850;letter-spacing:.07em;text-transform:uppercase}
+.initial-effect,.effect-card,.rule-card,.unknown-card,.callout-card{margin:.65rem 0;padding:.75rem;border:1px solid var(--line);background:var(--raised)}
+.timing-label{display:inline-block;margin-bottom:.35rem;color:var(--observed);font-size:.69rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.effect-title,.rule-title,.unknown-title,.callout-headline{margin:0 0 .5rem;font-size:1rem;line-height:1.25}
+.effect-list{margin:.25rem 0;padding-left:1.35rem}.effect-line{margin:.34rem 0}.effect-list .effect-line{padding-left:.15rem}
+.behavior-headline{margin:.2rem 0;font-weight:750}.path-line{padding:.45rem .55rem;border-left:2px solid var(--observed);background:#10171b;font-size:.9rem}
+.rule-card .condition-line,.rule-card .clock-line{font-size:.9rem}.pool-line{font-size:.88rem;color:var(--muted)}
+.unknown-card{border-left:4px solid var(--unknown)}.unknown-title{color:var(--unknown)}
+.callouts{background:#0d1113}.callouts-empty{padding-top:.75rem;padding-bottom:.75rem}.callouts-available{border-color:#50745f}.collection-count{margin:0 0 .65rem;color:var(--source);font-size:.83rem;font-weight:800}.callout-card{border-left:4px solid var(--source)}.callout-cause,.callout-condition{margin:.35rem 0}.callout-condition{color:#e7d9c3}
+.audit-capsule{background:#0c0f11}
+details{width:100%;max-width:100%;margin-top:.65rem;border-top:1px solid var(--line)}
+summary{display:flex;align-items:center;min-height:44px;padding:.4rem 0;cursor:pointer;color:var(--source);font-weight:750;overflow-wrap:anywhere}
+summary:hover{text-decoration:underline}summary:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:2px}
+details[open]>summary{margin-bottom:.35rem}.callout-expander>summary{font-size:1rem}
+.tree{width:100%;max-width:100%;padding:.12rem 0;overflow-wrap:anywhere;word-break:break-word;font:clamp(.72rem,3.5vw,.82rem)/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+.tree .tree{margin:.18rem 0;padding-left:.5rem;border-left:1px solid var(--line)}.tree-key{color:var(--muted)}.tree-value{color:var(--text)}
+.empty-state{padding:1.4rem 1rem}.empty-state h1{margin:0 0 .6rem;font-size:1.55rem}
+@media (max-width:23rem){.source-shell{padding-left:.55rem;padding-right:.55rem}.encounter-hero,.capsule-section,.empty-state{padding-left:.8rem;padding-right:.8rem}.initial-effect,.effect-card,.rule-card,.unknown-card,.callout-card{padding:.65rem}.tree .tree{padding-left:.35rem}}
+@media (min-width:44rem){.source-shell{padding:1.5rem}.encounter-hero,.capsule-section,.empty-state{padding:1.25rem 1.35rem}.body-head{grid-template-columns:minmax(0,1fr) auto;align-items:start}.hp-pill{justify-self:end;max-width:15rem}}
 `;
 
 function sourcePage(basePath) {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#070707"><title>sts2 source shadow</title><style>${SOURCE_CSS}</style></head><body><div class="source-shell"><div class="shadow-top"><span>sts2 · source shadow</span><span>non-default · static</span></div><main id="source-encounter" data-base-path="${escapeHtml(basePath)}" class="source-state"><section class="empty"><h1>Loading source mechanics…</h1><p>No live tactical state is inferred.</p></section></main></div><script src="${escapeHtml(basePath)}/source/client.js" defer></script></body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#070707"><title>StS2 Companion</title><style>${SOURCE_CSS}</style></head><body><div class="source-shell"><div class="shadow-top"><span>StS2 Companion</span><span>static source mechanics</span></div><main id="source-encounter" data-base-path="${escapeHtml(basePath)}" class="source-state"><section class="empty-state"><h1>Loading source mechanics…</h1><p>No live tactical state is inferred.</p></section></main></div><script src="${escapeHtml(basePath)}/client.js" defer></script></body></html>`;
 }
 function readSourceObservation(reader) {
   try { return reader.read(); }
@@ -206,6 +251,7 @@ function manualSelector(url) {
 
 export function createSts2Handler(reader, options = {}) {
   const basePath = String(options.basePath ?? "/sts2").replace(/\/$/, "") || "/sts2";
+  const legacyPath = `${basePath}/legacy`;
   const players = Number(options.players ?? 2);
   const sourceAdapter = options.sourceAdapter ?? createSourceAdapter(options.sourceOptions ?? {});
   return function sts2Handler(req, res) {
@@ -214,18 +260,21 @@ export function createSts2Handler(reader, options = {}) {
     try { url = new URL(req.url ?? basePath, "http://sts2.invalid"); }
     catch { text(res, 400, "Malformed request URL", head); return; }
     const pathname = url.pathname;
-    const route = pathname === basePath || pathname === `${basePath}/` ? "page"
-      : pathname === `${basePath}/state` ? "state"
-        : pathname === `${basePath}/client.js` ? "client"
+    const route = pathname === basePath || pathname === `${basePath}/` ? "source-page"
+      : pathname === `${basePath}/state` ? "source-state"
+        : pathname === `${basePath}/client.js` ? "source-client"
           : pathname === `${basePath}/source` || pathname === `${basePath}/source/` ? "source-page"
             : pathname === `${basePath}/source/state` ? "source-state"
-              : pathname === `${basePath}/source/client.js` ? "source-client" : null;
+              : pathname === `${basePath}/source/client.js` ? "source-client"
+                : pathname === legacyPath || pathname === `${legacyPath}/` ? "legacy-page"
+                  : pathname === `${legacyPath}/state` ? "legacy-state"
+                    : pathname === `${legacyPath}/client.js` ? "legacy-client" : null;
     if (!route) { text(res, 404, "Not found", head); return; }
     if (req.method !== "GET" && !head) {
       write(res, 405, { Allow: "GET, HEAD", "Content-Type": "text/plain; charset=utf-8" }, "Method not allowed\n", head);
       return;
     }
-    if (route === "client") { write(res, 200, { "Content-Type": "text/javascript; charset=utf-8" }, CLIENT, head); return; }
+    if (route === "legacy-client") { write(res, 200, { "Content-Type": "text/javascript; charset=utf-8" }, CLIENT, head); return; }
     if (route === "source-client") {
       if (!sourceAdapter.available) { text(res, 503, sourceAdapter.error, head); return; }
       write(res, 200, { "Content-Type": "text/javascript; charset=utf-8" }, SOURCE_CLIENT, head); return;
@@ -243,8 +292,8 @@ export function createSts2Handler(reader, options = {}) {
       write(res, 200, { "Content-Type": "text/html; charset=utf-8" }, sourcePage(basePath), head); return;
     }
     const state = payload(reader, players);
-    if (route === "state") { write(res, 200, { "Content-Type": "application/json; charset=utf-8" }, `${JSON.stringify(state)}\n`, head); return; }
-    write(res, 200, { "Content-Type": "text/html; charset=utf-8" }, page(state, basePath), head);
+    if (route === "legacy-state") { write(res, 200, { "Content-Type": "application/json; charset=utf-8" }, `${JSON.stringify(state)}\n`, head); return; }
+    write(res, 200, { "Content-Type": "text/html; charset=utf-8" }, page(state, legacyPath), head);
   };
 }
 
