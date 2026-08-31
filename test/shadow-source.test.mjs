@@ -358,9 +358,11 @@ test("version mismatch and unsupported observation boundaries stay honest", asyn
   assert.match(collapsedText(rendered.root), /Version mismatch/);
   assert.match(collapsedText(rendered.root), /Installed v9\.9\.9 differs from checked v0\.111\.0/);
   const unresolved = await runShadowClient(adapter.view(state("NOT_A_CHECKED_ENCOUNTER", "combat")));
-  assert.match(collapsedText(unresolved.root), /Unsupported encounter identity/);
-  assert.match(collapsedText(unresolved.root), /Checked detail is available in Technical audit/);
-  assert.doesNotMatch(collapsedText(unresolved.root), /NOT_A_CHECKED_ENCOUNTER/);
+  const unresolvedText = collapsedText(unresolved.root);
+  assert.match(unresolvedText, /Unsupported encounter identity/);
+  assert.match(unresolvedText, /observed encounter ID has no checked source identity: NOT_A_CHECKED_ENCOUNTER/);
+  assert.doesNotMatch(unresolvedText, /Checked detail is available in Technical audit|Technical audit/);
+  assert.equal(descendants(unresolved.root).filter((node) => node.className === "technical-audit").length, 0);
 });
 
 test("callout evidence, language, distinctness, and causality gates remain enforced", () => {

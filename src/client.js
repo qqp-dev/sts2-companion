@@ -216,7 +216,7 @@
     if (state.status !== "selected") {
       const empty = el("section", "empty-state");
       heading(empty, 1, state.status === "unresolved-observation" ? "Unsupported encounter identity" : "No encounter selected");
-      empty.append(el("p", "boundary-note", state.error || state.notices?.[0] || "No encounter is available."));
+      empty.append(rawEl("p", "boundary-note", state.error || state.notices?.[0] || "No encounter is available."));
       empty.append(el("p", "quiet", "Choose one checked encounter or wait for a locally observed encounter identity."));
       root.append(empty);
       signature = nextSignature;
