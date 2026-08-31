@@ -564,7 +564,7 @@ test("qq chrome is black and square and omits matching version chrome", async ()
     releaseInfo: { version: "v0.111.0", branch: "public-beta" },
   };
   await withServer(createSts2Handler({ read: () => matching }), async (server) => {
-    const page = await request(server, "/sts2");
+    const page = await request(server, "/sts2/legacy");
     assert.equal(page.status, 200);
     assert.match(page.body, /<meta name="theme-color" content="#000">/);
     assert.match(page.body, /--page:#000;/);
@@ -585,13 +585,13 @@ test("qq chrome is black and square and omits matching version chrome", async ()
     assert.doesNotMatch(page.body, /DECIMILLIPEDE_ELITE|DECIMILLIPEDE_FRONT/);
     assert.equal(page.body.match(/a9 · 2p/g)?.length, 1);
 
-    const client = await request(server, "/sts2/client.js");
+    const client = await request(server, "/sts2/legacy/client.js");
     assert.equal(client.status, 200);
     assert.match(client.body, /version\.matches === true\) return null/);
     assert.match(client.body, /showRawId && body\.monsterId/);
     assert.match(client.body, /hp ×.*attacks & combat stats unscaled.*mp powers by formula/);
     assert.doesNotMatch(client.body, /hp & stored buffs/);
-    const state = JSON.parse((await request(server, "/sts2/state")).body);
+    const state = JSON.parse((await request(server, "/sts2/legacy/state")).body);
     assert.equal(state.ascension, 9);
     assert.equal(state.players, 2);
     assert.doesNotMatch(client.body, /IN COMBAT|LAST COMBAT|status-badge/);
@@ -601,7 +601,7 @@ test("qq chrome is black and square and omits matching version chrome", async ()
 test("idle and last states use quiet lowercase chrome", async () => {
   let current = { status: "idle", encounterId: null, monsterIds: [], releaseInfo: null };
   await withServer(createSts2Handler({ read: () => current }), async (server) => {
-    const idle = await request(server, "/sts2");
+    const idle = await request(server, "/sts2/legacy");
     assert.match(idle.body, /<p class="idle-copy">no run \/ no combat · waiting for the next fight<\/p>/);
     assert.match(idle.body, /version unknown/);
     assert.doesNotMatch(idle.body, /idle-mark|idle-title|◇/);
@@ -612,7 +612,7 @@ test("idle and last states use quiet lowercase chrome", async () => {
       monsterIds: ["AXEBOT"],
       releaseInfo: { version: "v0.111.0", branch: "public-beta" },
     };
-    const last = await request(server, "/sts2");
+    const last = await request(server, "/sts2/legacy");
     assert.match(last.body, /<div class="status-line status-last"><i class="status-dot"[^>]*><\/i>last<\/div>/);
     assert.match(last.body, /\.status-last\{color:var\(--muted\)\}/);
     assert.doesNotMatch(last.body, /LAST COMBAT|AXEBOTS_NORMAL|class="monster-id"|<div class="version-card/);
@@ -627,7 +627,7 @@ test("version mismatch and leftover unknown pattern are visible known-unknowns",
     releaseInfo: { version: "v0.110.1", branch: "v0.110.1" },
   };
   await withServer(createSts2Handler({ read: () => mismatch }), async (server) => {
-    const page = await request(server, "/sts2");
+    const page = await request(server, "/sts2/legacy");
     assert.equal(page.status, 200);
     assert.match(page.body, /version mismatch/);
     assert.match(page.body, /book v0\.111\.0 · public-beta/);
@@ -641,7 +641,7 @@ test("unknown encounter remains a successful visible page and state", async () =
   const reader = { read: () => ({ status: "combat", encounterId: "EVENT_ODDBALL_ENCOUNTER", monsterIds: ["MYSTERY_BODY"] }) };
   const handler = createSts2Handler(reader);
   await withServer(handler, async (server) => {
-    const page = await request(server, "/sts2");
+    const page = await request(server, "/sts2/legacy");
     assert.equal(page.status, 200);
     assert.match(page.body, /EVENT_ODDBALL_ENCOUNTER/);
     assert.match(page.body, /MYSTERY_BODY/);
@@ -649,7 +649,7 @@ test("unknown encounter remains a successful visible page and state", async () =
     assert.match(page.body, /version unknown/);
     assert.match(page.headers["content-security-policy"], /default-src 'none'/);
     assert.equal(page.headers["cache-control"], "no-store");
-    const state = await request(server, "/sts2/state");
+    const state = await request(server, "/sts2/legacy/state");
     assert.equal(state.status, 200);
     assert.equal(JSON.parse(state.body).encounterId, "EVENT_ODDBALL_ENCOUNTER");
   });
@@ -682,4 +682,56 @@ test("plugin identity, injection, loopback refusal, and prefix registration", ()
   assert.equal(route.path, "/sts2");
   assert.equal(typeof route.handler, "function");
   assert.equal(disposed, true);
+});
+
+test("plugin contributes its canonical navigation item when optional qq-ui becomes available", () => {
+  let injectedDependencies, attachMenu;
+  let route;
+  const ctx = {
+    webServer: { host: "127.0.0.1", register(value) { route = value; return () => {}; } },
+    effect(fn) { return fn(); },
+    inject(dependencies, callback) { injectedDependencies = dependencies; attachMenu = callback; },
+  };
+  apply(ctx, { basePath: "/reference/sts2", logPath: "/missing/godot.log", savePath: "/missing/current_run_mp.save" });
+  assert.deepEqual(injectedDependencies, ["qq-ui"]);
+  assert.equal(route.path, "/reference/sts2");
+
+  const registrations = []; let disposed = 0; let effectLabel;
+  const ui = { consoleMenu: { register(item) {
+    registrations.push(item);
+    let active = true;
+    return () => { if (active) { active = false; disposed += 1; } };
+  } } };
+  let cleanup;
+  const menuCtx = {
+    get(name, required) { assert.equal(name, "qq-ui"); assert.equal(required, false); return ui; },
+    effect(fn, label) { effectLabel = label; cleanup = fn(); },
+  };
+  attachMenu(menuCtx);
+  assert.deepEqual(registrations, [{ kind: "navigation", id: "sts2-companion", label: "StS2 Companion", href: "/reference/sts2", order: 100 }]);
+  assert.match(effectLabel, /qq-ui navigation/);
+  cleanup(); cleanup();
+  assert.equal(disposed, 1, "qq-ui's idempotent disposer remains bound to the injected context lifecycle");
+});
+
+test("optional qq-ui contribution supports property lookup and service re-attachment", () => {
+  let attachMenu;
+  const ctx = {
+    webServer: { host: "127.0.0.1", register() { return () => {}; } },
+    effect(fn) { return fn(); },
+    inject(dependencies, callback) { assert.deepEqual(dependencies, ["qq-ui"]); attachMenu = callback; },
+  };
+  apply(ctx, { logPath: "/missing/godot.log", savePath: "/missing/current_run_mp.save" });
+
+  let registered = 0, disposed = 0;
+  const ui = { consoleMenu: { register(item) { assert.equal(item.href, "/sts2"); registered += 1; return () => { disposed += 1; }; } } };
+  const attach = () => {
+    let cleanup;
+    attachMenu({ "qq-ui": ui, get: () => undefined, effect(fn) { cleanup = fn(); } });
+    return cleanup;
+  };
+  const first = attach(); first();
+  const second = attach(); second();
+  assert.equal(registered, 2);
+  assert.equal(disposed, 2);
 });
