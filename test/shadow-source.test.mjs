@@ -294,31 +294,47 @@ function descendants(node, result = []) {
   return result;
 }
 
-test("collapsed DOM is practical while one Technical audit retains exact raw records", async () => {
+test("collapsed DOM follows briefing → compact cards → disclosure → audit hierarchy", async () => {
   const payload = adapter.view(state(), "AXEBOTS_NORMAL");
   const { root } = await runShadowClient(payload);
   const collapsed = collapsedText(root);
-  for (const heading of ["Possible roster", "Enemies & forms", "Opener, cycle & forks", "Effect signatures", "Death, phases & clocks", "What is not observed", "Technical audit"])
+  for (const heading of ["Fight briefing", "Enemies at a glance", "Fight details", "Technical audit"])
     assert.match(collapsed, new RegExp(heading));
+  for (const expandedOnly of ["Initial lineup grammar", "Enemy mechanics", "All effect signatures", "Death, phases & clocks", "Limits & unresolved detail"])
+    assert.doesNotMatch(collapsed, new RegExp(expandedOnly));
   assert.doesNotMatch(collapsed, /MONSTER\.|BOOT_UP_MOVE|Boot Up|\bformula\b|\bgraph\b/i);
-  assert.doesNotMatch(collapsed, /Checked editorial callouts|0 callouts/i);
+  assert.doesNotMatch(collapsed, /\bEffect [A-Z]\b/);
+  assert.doesNotMatch(collapsed, /What is not observed|Checked editorial callouts|0 callouts/i);
+  assert.equal((collapsed.match(/Static guide/g) ?? []).length, 1);
+  assert.match(root.textContent, /Initial lineup grammar/);
+  assert.match(root.textContent, /All effect signatures/);
   assert.match(root.textContent, /MONSTER\.AXEBOT/);
   assert.match(root.textContent, /BOOT_UP_MOVE/);
+  assert.equal(descendants(root).filter((node) => node.className.split(" ").includes("briefing-row")).length, payload.encounter.presentation.briefing.highlights.length);
+  assert.equal(descendants(root).filter((node) => node.className === "enemy-summary-card").length, payload.encounter.presentation.bodies.length);
+  assert.equal(descendants(root).filter((node) => node.className === "fight-details").length, 1);
   assert.equal(descendants(root).filter((node) => node.className === "technical-audit").length, 1);
 });
 
-test("complex collapsed fixtures preserve practical lifecycle semantics without debug leakage", async () => {
+test("representative collapsed briefings select mechanics while full disclosure preserves every fixture", async () => {
   const fixtures = [
-    ["BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER", [/Event fight clock/, /record that the event fight ran out of time/, /escape and leave the fight/]],
+    ["BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER", [/record that the event fight ran out of time/, /escape and leave the fight/]],
     ["TEST_SUBJECT_BOSS", [/completed respawns = 1/, /Adaptable revival/, /Test Subject death/]],
     ["OVICOPTER_NORMAL", [/reduce Hatch by 1/, /hatch with 19–22 HP below A8; 20–23 HP at A8\+/]],
-    ["WATERFALL_GIANT_BOSS", [/remember Steam Eruption's current amount/, /snapshotted Steam Eruption amount/]],
+    ["WATERFALL_GIANT_BOSS", [/remember Steam Eruption's amount at that trigger/, /snapshotted Steam Eruption amount/]],
     ["LIVING_FOG_NORMAL", [/perform Gas Bomb's checked attack/]],
   ];
-  for (const [id, required] of fixtures) {
-    const { root } = await runShadowClient(adapter.view(state(), id)); const collapsed = collapsedText(root);
-    required.forEach((pattern) => assert.match(collapsed, pattern, id));
+  for (const [id, fullDetail] of fixtures) {
+    const payload = adapter.view(state(), id);
+    const { root } = await runShadowClient(payload);
+    const collapsed = collapsedText(root);
+    for (const highlight of payload.encounter.presentation.briefing.highlights) {
+      assert.ok(collapsed.includes(highlight.headline), `${id}: selected headline`);
+      assert.ok(collapsed.includes(highlight.effect), `${id}: selected effect`);
+    }
+    fullDetail.forEach((pattern) => assert.match(root.textContent, pattern, id));
     assert.doesNotMatch(collapsed, /\b(?:MONSTER|POWER|SOURCE|RUNTIME)\.|\b[A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+\b|ShouldPower|HasAmalgamDied|\bformula\b|\bAST\b|\bgraph\b/i, id);
+    assert.doesNotMatch(collapsed, /Initial lineup grammar|All effect signatures|Limits & unresolved detail/, id);
   }
 });
 
@@ -342,13 +358,27 @@ test("renderer gives 0 callouts no chrome and preserves 1/3 expansion semantics"
     payload.encounter.presentation.callouts = compileCalloutCollection(candidates, {}, { collapsedLimit: 1 });
     return (await runShadowClient(payload)).root;
   };
-  const zero = await renderCount(0); assert.doesNotMatch(collapsedText(zero), /callout/i);
-  const one = await renderCount(1); assert.match(collapsedText(one), /Checked editorial callouts/); assert.match(collapsedText(one), /Editorial note 1/);
+  const zero = await renderCount(0); assert.doesNotMatch(collapsedText(zero), /What changes the fight|Editorial note/i);
+  const one = await renderCount(1); assert.match(collapsedText(one), /What changes the fight/); assert.match(collapsedText(one), /Editorial note 1/);
   const three = await renderCount(3); const collapsed = collapsedText(three);
-  assert.match(collapsed, /Editorial note 1/); assert.match(collapsed, /Show all 3 callouts/);
+  assert.match(collapsed, /Editorial note 1/); assert.match(collapsed, /Show all 3 notes/);
   assert.doesNotMatch(collapsed, /Editorial note [23]/);
   assert.match(three.textContent, /Editorial note 2/); assert.match(three.textContent, /Editorial note 3/);
   assert.equal(descendants(three).filter((node) => node.className.includes("callout-expander")).length, 1);
+});
+
+test("record-level unknowns stay disclosed and the empty state has no stale guide", async () => {
+  const bowlbugs = await runShadowClient(adapter.view(state(), "BOWLBUGS_NORMAL"));
+  const collapsed = collapsedText(bowlbugs.root);
+  assert.doesNotMatch(collapsed, /Source move localization is missing|Limits & unresolved detail/);
+  assert.match(collapsed, /Unresolved · 1 runtime modifier input remains unresolved/);
+  assert.doesNotMatch(collapsed, /If \/ when · 1 runtime modifier input remains unresolved/);
+  assert.match(bowlbugs.root.textContent, /Limits & unresolved detail/);
+  assert.match(bowlbugs.root.textContent, /Source move localization is missing\/internal/);
+
+  const empty = await runShadowClient(adapter.view(state()));
+  assert.match(collapsedText(empty.root), /No encounter selected/);
+  assert.doesNotMatch(empty.root.textContent, /Fight briefing|Fight details|Technical audit/);
 });
 
 test("version mismatch and unsupported observation boundaries stay honest", async () => {
