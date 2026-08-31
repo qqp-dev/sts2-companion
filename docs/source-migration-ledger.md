@@ -706,8 +706,7 @@ families and joins. Root/global world-model readiness and
 `incomplete`/false: the aggregate event blocker remains because referenced event
 lifecycle/timeout/result and formula semantics are unresolved; broader lifecycle
 closure and companion-wide formula contracts also remain blockers. E2d2a therefore does not alter the stable UI default,
-security headers, no-store behavior, state selection, or its legacy rollback
-boundary.
+security headers, no-store behavior, state selection, or route boundary.
 
 
 ## C1 shadow reader-representation bridge
