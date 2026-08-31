@@ -1,0 +1,576 @@
+{
+  "SHRINKER_BEETLE_WEAK": {
+    "title": "Shrinker Beetle",
+    "fightShape": "1 possible initial body slot · Shrinker Beetle",
+    "lineupCondition": null,
+    "highlights": [
+      {
+        "kind": "signature",
+        "headline": "Shrinker Beetle · Shrink",
+        "effect": "the affected targets · apply -1 Shrink",
+        "condition": null,
+        "detailRef": "enemy-1"
+      },
+      {
+        "kind": "signature",
+        "headline": "Shrinker Beetle · Damage",
+        "effect": "all opponents · checked amount damage",
+        "condition": null,
+        "detailRef": "enemy-1"
+      }
+    ],
+    "enemies": [
+      {
+        "name": "Shrinker Beetle",
+        "hp": "40–42 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Shrink",
+            "effect": "the affected targets · apply -1 Shrink",
+            "condition": null,
+            "detailRef": "enemy-1"
+          },
+          {
+            "headline": "Damage",
+            "effect": "all opponents · checked amount damage",
+            "condition": null,
+            "detailRef": "enemy-1"
+          }
+        ]
+      }
+    ]
+  },
+  "BOWLBUGS_NORMAL": {
+    "title": "Bowlbug Swarm",
+    "fightShape": "3 possible initial body slots · Bowlbug (Rock) + 2 random distinct bodies from {Bowlbug (Egg) / Bowlbug (Silk) / Bowlbug (Nectar)} · without replacement",
+    "lineupCondition": "One checked random or alternative branch supplies the lineup; possibilities are not all co-present.",
+    "highlights": [
+      {
+        "kind": "signature",
+        "headline": "Bowlbug (Nectar) · Strength",
+        "effect": "self · apply checked amount Strength",
+        "condition": null,
+        "detailRef": "enemy-2"
+      },
+      {
+        "kind": "signature",
+        "headline": "Bowlbug (Silk) · Weak",
+        "effect": "the affected targets · apply 1 Weak",
+        "condition": null,
+        "detailRef": "enemy-4"
+      },
+      {
+        "kind": "opening",
+        "headline": "Bowlbug (Rock) · opening setup",
+        "effect": "self · apply 1 Imbalanced",
+        "condition": null,
+        "unresolved": "1 runtime modifier input remains unresolved",
+        "detailRef": "enemy-3"
+      }
+    ],
+    "enemies": [
+      {
+        "name": "Bowlbug (Egg)",
+        "hp": "23–24 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Damage + Block",
+            "effect": "self · gain checked amount Block; all opponents · checked amount damage",
+            "condition": null,
+            "detailRef": "enemy-1"
+          }
+        ]
+      },
+      {
+        "name": "Bowlbug (Nectar)",
+        "hp": "36–39 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Strength",
+            "effect": "self · apply checked amount Strength",
+            "condition": null,
+            "detailRef": "enemy-2"
+          },
+          {
+            "headline": "Damage",
+            "effect": "all opponents · checked amount damage",
+            "condition": null,
+            "detailRef": "enemy-2"
+          }
+        ]
+      },
+      {
+        "name": "Bowlbug (Rock)",
+        "hp": "46–49 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Opening setup",
+            "effect": "self · apply 1 Imbalanced",
+            "condition": null,
+            "unresolved": "1 runtime modifier input remains unresolved",
+            "detailRef": "enemy-3"
+          },
+          {
+            "headline": "Damage",
+            "effect": "all opponents · checked amount damage",
+            "condition": null,
+            "detailRef": "enemy-3"
+          }
+        ]
+      },
+      {
+        "name": "Bowlbug (Silk)",
+        "hp": "41–44 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Weak",
+            "effect": "the affected targets · apply 1 Weak",
+            "condition": null,
+            "detailRef": "enemy-4"
+          },
+          {
+            "headline": "Damage + Multi-hit",
+            "effect": "all opponents · checked amount damage × 2 hits",
+            "condition": null,
+            "detailRef": "enemy-4"
+          }
+        ]
+      }
+    ]
+  },
+  "KNIGHTS_ELITE": {
+    "title": "Knight Gang",
+    "fightShape": "3 possible initial body slots · Flail Knight + Spectral Knight + Magi Knight",
+    "lineupCondition": null,
+    "highlights": [
+      {
+        "kind": "signature",
+        "headline": "Flail Knight · Strength",
+        "effect": "self · apply 3 Strength",
+        "condition": null,
+        "detailRef": "enemy-1"
+      },
+      {
+        "kind": "signature",
+        "headline": "Magi Knight · Dampen",
+        "effect": "each selected creature · apply 1 Dampen",
+        "condition": null,
+        "detailRef": "enemy-2"
+      },
+      {
+        "kind": "signature",
+        "headline": "Spectral Knight · Hex",
+        "effect": "each selected creature · apply 2 Hex",
+        "condition": null,
+        "detailRef": "enemy-3"
+      }
+    ],
+    "enemies": [
+      {
+        "name": "Flail Knight",
+        "hp": "108 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Strength",
+            "effect": "self · apply 3 Strength",
+            "condition": null,
+            "detailRef": "enemy-1"
+          },
+          {
+            "headline": "Damage + Multi-hit",
+            "effect": "all opponents · checked amount damage × 2 hits",
+            "condition": null,
+            "detailRef": "enemy-1"
+          }
+        ]
+      },
+      {
+        "name": "Magi Knight",
+        "hp": "89 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Dampen",
+            "effect": "each selected creature · apply 1 Dampen",
+            "condition": null,
+            "detailRef": "enemy-2"
+          },
+          {
+            "headline": "Damage + Block",
+            "effect": "self · gain checked amount Block; all opponents · checked amount damage",
+            "condition": null,
+            "detailRef": "enemy-2"
+          }
+        ]
+      },
+      {
+        "name": "Spectral Knight",
+        "hp": "97 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Hex",
+            "effect": "each selected creature · apply 2 Hex",
+            "condition": null,
+            "detailRef": "enemy-3"
+          },
+          {
+            "headline": "Damage + Multi-hit",
+            "effect": "all opponents · checked amount damage × 3 hits",
+            "condition": null,
+            "detailRef": "enemy-3"
+          }
+        ]
+      }
+    ]
+  },
+  "FABRICATOR_NORMAL": {
+    "title": "Fabricator",
+    "fightShape": "1 possible initial body slot · Fabricator",
+    "lineupCondition": null,
+    "highlights": [
+      {
+        "kind": "production",
+        "headline": "Bodies can be added",
+        "effect": "Fabricator · 0–2 added bodies per eligible trigger · repeat while production remains available",
+        "condition": "checked body count < 4",
+        "detailRef": "production"
+      },
+      {
+        "kind": "signature",
+        "headline": "Fabricator · Bot production",
+        "effect": "produce the checked bot body",
+        "condition": null,
+        "detailRef": "enemy-1"
+      },
+      {
+        "kind": "signature",
+        "headline": "Noisebot · Dazed cards",
+        "effect": "the generated combat-card pile · add 1 generated Dazed card; the generated combat-card pile · add 1 generated Dazed card",
+        "condition": null,
+        "detailRef": "enemy-3"
+      }
+    ],
+    "enemies": [
+      {
+        "name": "Fabricator",
+        "hp": "155 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Bot production",
+            "effect": "produce the checked bot body",
+            "condition": null,
+            "detailRef": "enemy-1"
+          },
+          {
+            "headline": "Damage",
+            "effect": "all opponents · checked amount damage",
+            "condition": null,
+            "detailRef": "enemy-1"
+          }
+        ]
+      },
+      {
+        "name": "Guardbot",
+        "hp": "17–21 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Block",
+            "effect": "each selected creature · gain 15 Block",
+            "condition": null,
+            "detailRef": "enemy-2"
+          }
+        ]
+      },
+      {
+        "name": "Noisebot",
+        "hp": "19–24 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Dazed cards",
+            "effect": "the generated combat-card pile · add 1 generated Dazed card; the generated combat-card pile · add 1 generated Dazed card",
+            "condition": null,
+            "detailRef": "enemy-3"
+          }
+        ]
+      },
+      {
+        "name": "Stabbot",
+        "hp": "19–24 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Damage + Frail",
+            "effect": "the affected targets · apply 1 Frail; all opponents · checked amount damage",
+            "condition": null,
+            "detailRef": "enemy-4"
+          }
+        ]
+      },
+      {
+        "name": "Zapbot",
+        "hp": "19–24 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Opening setup",
+            "effect": "self · apply 2 High Voltage",
+            "condition": null,
+            "unresolved": "1 runtime modifier input remains unresolved",
+            "detailRef": "enemy-5"
+          },
+          {
+            "headline": "Damage",
+            "effect": "all opponents · checked amount damage",
+            "condition": null,
+            "detailRef": "enemy-5"
+          }
+        ]
+      }
+    ]
+  },
+  "TEST_SUBJECT_BOSS": {
+    "title": "Test Subject",
+    "fightShape": "1 possible initial body slot · Test Subject (runtime number)",
+    "lineupCondition": null,
+    "highlights": [
+      {
+        "kind": "lifecycle",
+        "headline": "Phases, revive and hatch",
+        "effect": "the same body · restore maximum and revived HP to 200 HP below A8; 212 HP at A8+ · +3 ordered effects in details · 4 checked branches in details",
+        "condition": "completed respawns = 1",
+        "clock": "first completed revive",
+        "detailRef": "lifecycle-1"
+      },
+      {
+        "kind": "forms",
+        "headline": "Test Subject (runtime number) has 3 possible forms",
+        "effect": "Phase 1 · 111 HP · A8 single player → Phase 2 · 200 HP below A8; 212 HP at A8+ → Phase 3 · 300 HP below A8; 313 HP at A8+",
+        "condition": null,
+        "observation": "The form is not identified by encounter identity alone",
+        "detailRef": "enemy-1"
+      },
+      {
+        "kind": "lifecycle",
+        "headline": "Death and Power retention",
+        "effect": "Adaptable keeps its body present for checked post-death handling · 5 checked branches in details",
+        "condition": "the affected body owns this Power",
+        "detailRef": "lifecycle-2"
+      }
+    ],
+    "enemies": [
+      {
+        "name": "Test Subject (runtime number)",
+        "hp": "111 HP · A8 single player",
+        "forms": [
+          {
+            "name": "Phase 1 — Test Subject (runtime number)",
+            "hp": "111 HP · A8 single player"
+          },
+          {
+            "name": "Phase 2 — Test Subject (runtime number)",
+            "hp": "200 HP below A8; 212 HP at A8+"
+          },
+          {
+            "name": "Phase 3 — Test Subject (runtime number)",
+            "hp": "300 HP below A8; 313 HP at A8+"
+          }
+        ],
+        "keyMechanics": [
+          {
+            "headline": "Burn cards + Strength",
+            "effect": "the affected targets · add checked amount Burn cards; self · apply checked amount Strength",
+            "condition": null,
+            "detailRef": "enemy-1"
+          },
+          {
+            "headline": "Painful Stabs + Nemesis + Adaptable removal + linked effect",
+            "effect": "self · remove Adaptable; self · remove Painful Stabs · +3 ordered effects in details",
+            "condition": null,
+            "detailRef": "enemy-1"
+          }
+        ]
+      }
+    ]
+  },
+  "DENSE_VEGETATION_EVENT_ENCOUNTER": {
+    "title": "Wrigglers",
+    "fightShape": "4 possible initial body slots · 4× Wriggler",
+    "lineupCondition": null,
+    "highlights": [
+      {
+        "kind": "event",
+        "headline": "Event-fight consequences",
+        "effect": "heal by the checked rest-site amount · or · lose HP equal to the event's checked HP-loss amount · +1 possible outcome in details",
+        "condition": null,
+        "branch": "Outside-combat results depend on the checked event branch",
+        "detailRef": "event-consequences"
+      },
+      {
+        "kind": "signature",
+        "headline": "Wriggler · Infection cards + Strength",
+        "effect": "the affected targets · add 1 Infection card; self · apply 2 Strength",
+        "condition": null,
+        "detailRef": "enemy-1"
+      },
+      {
+        "kind": "signature",
+        "headline": "Wriggler · Damage",
+        "effect": "all opponents · checked amount damage",
+        "condition": null,
+        "detailRef": "enemy-1"
+      }
+    ],
+    "enemies": [
+      {
+        "name": "Wriggler",
+        "hp": "18–22 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Infection cards + Strength",
+            "effect": "the affected targets · add 1 Infection card; self · apply 2 Strength",
+            "condition": null,
+            "detailRef": "enemy-1"
+          },
+          {
+            "headline": "Damage",
+            "effect": "all opponents · checked amount damage",
+            "condition": null,
+            "detailRef": "enemy-1"
+          }
+        ]
+      }
+    ]
+  },
+  "CONSTRUCT_MENAGERIE_NORMAL": {
+    "title": "Construct Menagerie",
+    "fightShape": "3 possible initial body slots · Punch Construct + 2× Cubex Construct",
+    "lineupCondition": null,
+    "highlights": [
+      {
+        "kind": "signature",
+        "headline": "Cubex Construct · Strength + Counter or state shift",
+        "effect": "self · apply 2 Strength; self · update this behavior's checked counter or state · +1 ordered effect in details",
+        "condition": null,
+        "detailRef": "enemy-1"
+      },
+      {
+        "kind": "signature",
+        "headline": "Cubex Construct · Damage + Strength",
+        "effect": "self · apply 2 Strength; all opponents · checked amount damage",
+        "condition": null,
+        "detailRef": "enemy-1"
+      },
+      {
+        "kind": "signature",
+        "headline": "Punch Construct · Damage + Multi-hit + Frail",
+        "effect": "the affected targets · apply 1 Frail; all opponents · checked amount damage × checked amount hits",
+        "condition": null,
+        "detailRef": "enemy-2"
+      }
+    ],
+    "enemies": [
+      {
+        "name": "Cubex Construct",
+        "hp": "70 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Strength + Counter or state shift",
+            "effect": "self · apply 2 Strength; self · update this behavior's checked counter or state · +1 ordered effect in details",
+            "condition": null,
+            "detailRef": "enemy-1"
+          },
+          {
+            "headline": "Damage + Strength",
+            "effect": "self · apply 2 Strength; all opponents · checked amount damage",
+            "condition": null,
+            "detailRef": "enemy-1"
+          }
+        ]
+      },
+      {
+        "name": "Punch Construct",
+        "hp": "60 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Damage + Multi-hit + Frail",
+            "effect": "the affected targets · apply 1 Frail; all opponents · checked amount damage × checked amount hits",
+            "condition": null,
+            "detailRef": "enemy-2"
+          },
+          {
+            "headline": "Opening setup",
+            "effect": "self · apply 1 Artifact",
+            "condition": null,
+            "unresolved": "1 runtime modifier input remains unresolved",
+            "detailRef": "enemy-2"
+          }
+        ]
+      }
+    ]
+  },
+  "PUNCH_OFF_EVENT_ENCOUNTER": {
+    "title": "Punch Constructs",
+    "fightShape": "2 possible initial body slots · 2× Punch Construct",
+    "lineupCondition": null,
+    "highlights": [
+      {
+        "kind": "event",
+        "headline": "Event-fight consequences",
+        "effect": "add an Injury curse to the deck · or · construct a relic reward for the reward list · +1 possible outcome in details",
+        "condition": null,
+        "branch": "Outside-combat results depend on the checked event branch",
+        "detailRef": "event-consequences"
+      },
+      {
+        "kind": "signature",
+        "headline": "Punch Construct · Damage + Multi-hit + Frail",
+        "effect": "the affected targets · apply 1 Frail; all opponents · checked amount damage × checked amount hits",
+        "condition": null,
+        "detailRef": "enemy-1"
+      },
+      {
+        "kind": "opening",
+        "headline": "Punch Construct · opening setup",
+        "effect": "self · apply 1 Artifact",
+        "condition": null,
+        "unresolved": "1 runtime modifier input remains unresolved",
+        "detailRef": "enemy-1"
+      }
+    ],
+    "enemies": [
+      {
+        "name": "Punch Construct",
+        "hp": "60 HP · A8 single player",
+        "forms": [],
+        "keyMechanics": [
+          {
+            "headline": "Damage + Multi-hit + Frail",
+            "effect": "the affected targets · apply 1 Frail; all opponents · checked amount damage × checked amount hits",
+            "condition": null,
+            "detailRef": "enemy-1"
+          },
+          {
+            "headline": "Opening setup",
+            "effect": "self · apply 1 Artifact",
+            "condition": null,
+            "unresolved": "1 runtime modifier input remains unresolved",
+            "detailRef": "enemy-1"
+          }
+        ]
+      }
+    ]
+  }
+}
