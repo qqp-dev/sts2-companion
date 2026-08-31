@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Phone-first, read-only Slay the Spire 2 static combat companion for qq.",
+  "description": "Phone-first A9 / 2P Slay the Spire 2 reference book for qq.",
   "main": "src/plugin.mjs",
   "exports": {
     ".": "./src/plugin.mjs",

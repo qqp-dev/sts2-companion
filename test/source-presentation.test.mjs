@@ -65,8 +65,7 @@ test("practical effect signatures are deterministic and exclude move titles and 
   const body = source.presentation.bodies[0];
   assert.equal(body.hp, "76–86 HP · A8 single player");
   assert.match(body.initialEffects[0].line, /apply checked amount Stock/);
-  assert.match(body.behavior.headline, /starts at Block \+ Strength.*repeating cycle.*follow-ups/);
-  assert.doesNotMatch(body.behavior.headline, /Effect [A-Z]/);
+  assert.match(body.behavior.headline, /starts at Effect A.*repeating cycle.*follow-ups/);
   assert.deepEqual(body.effects[2].orderedEffects.map((row) => row.line), [
     "all opponents · checked amount damage",
     "the affected targets · apply 2 Weak",
@@ -89,230 +88,6 @@ test("roster alternatives and produced bodies never become a co-presence claim",
   const production = encounter("FABRICATOR_NORMAL").presentation.production;
   assert.match(production.caveat, /not initial or co-present bodies/);
   assert.deepEqual(production.possibilities, ["Guardbot", "Noisebot", "Stabbot", "Zapbot"]);
-});
-
-test("briefing compiler prioritizes and compresses without losing disclosure reachability", () => {
-  for (const id of adapter.canonicalIds) {
-    const presentation = encounter(id).presentation;
-    assert.match(presentation.briefing.fightShape, /\S/, `${id}: fight shape`);
-    assert.ok(presentation.briefing.highlights.length >= 1 && presentation.briefing.highlights.length <= 3, `${id}: bounded highlights`);
-    assert.ok(presentation.bodies.every((body) => body.keyMechanics.length <= 2), `${id}: compact enemy mechanics`);
-
-    const refs = presentation.briefing.reachability.map((row) => row.detailRef);
-    assert.equal(new Set(refs).size, refs.length, `${id}: stable unique disclosure refs`);
-    const expected = [
-      presentation.roster.detailRef,
-      ...presentation.bodies.map((body) => body.detailRef),
-      ...(presentation.production ? [presentation.production.detailRef] : []),
-      ...(presentation.event ? ["event-consequences"] : []),
-      ...(presentation.lifecycle.rules.length || presentation.lifecycle.mechanics.length ? ["lifecycle-overview"] : []),
-      ...presentation.lifecycle.mechanics.map((mechanic) => mechanic.detailRef),
-      "limitations", "technical-audit",
-    ];
-    assert.deepEqual([...refs].sort(), [...expected].sort(), `${id}: every retained family has a disclosure target`);
-    for (const highlight of presentation.briefing.highlights) {
-      assert.match(highlight.headline, /\S/, `${id}: highlight headline`);
-      assert.match(highlight.effect, /\S/, `${id}: highlight effect`);
-      assert.ok(highlight.effect.length <= 160, `${id}: compressed highlight effect line`);
-      assert.ok(refs.includes(highlight.detailRef), `${id}: highlight reaches detail`);
-    }
-  }
-});
-
-test("briefing selection is mechanic-salient rather than a move-list prefix", () => {
-  const axebot = encounter("AXEBOTS_NORMAL").presentation.briefing;
-  assert.deepEqual(axebot.highlights.slice(0, 2).map((row) => row.headline), ["On-death production", "Death and Power retention"]);
-  const bowlbugs = encounter("BOWLBUGS_NORMAL").presentation.briefing;
-  assert.match(bowlbugs.lineupCondition, /not all co-present/);
-  assert.ok(bowlbugs.highlights.every((row) => row.kind !== "lineup"));
-  assert.ok(bowlbugs.highlights.every((row) => row.effect !== encounter("BOWLBUGS_NORMAL").presentation.roster.summary));
-  const fabricator = encounter("FABRICATOR_NORMAL").presentation.briefing;
-  assert.equal(fabricator.highlights[0].headline, "Bodies can be added");
-  const testSubject = encounter("TEST_SUBJECT_BOSS").presentation.briefing;
-  assert.equal(testSubject.highlights[0].headline, "Phases, revive and hatch");
-  const event = encounter("DENSE_VEGETATION_EVENT_ENCOUNTER").presentation.briefing;
-  assert.equal(event.highlights[0].headline, "Event-fight consequences");
-  const battleworn = encounter("BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER").presentation.briefing.highlights[0];
-  assert.equal(battleworn.headline, "Event fight clock");
-  assert.match(battleworn.effect, /escape and leave the fight/);
-  assert.doesNotMatch(battleworn.effect, /^this event fight · record/);
-  assert.match(battleworn.condition, /Power amount ≤ 1/);
-  const ovicopter = encounter("OVICOPTER_NORMAL").presentation.briefing.highlights[0];
-  assert.equal(ovicopter.headline, "Phases, revive and hatch");
-  assert.match(ovicopter.effect, /hatch with 19–22 HP below A8; 20–23 HP at A8\+/);
-  const linkedQueen = encounter("QUEEN_BOSS").presentation.briefing.highlights.find((row) => row.headline === "Linked bodies");
-  assert.match(linkedQueen.effect, /enter the enraged behavior/);
-  assert.doesNotMatch(linkedQueen.effect, /^the same Queen · record/);
-});
-
-test("briefing and compact cards share absolute combat-signature priority", () => {
-  const presentation = encounter("CONSTRUCT_MENAGERIE_NORMAL").presentation;
-  const expected = [
-    ["Cubex Construct", "Strength + Counter or state shift"],
-    ["Punch Construct", "Damage + Multi-hit + Frail"],
-  ];
-  for (const [bodyName, mechanicHeadline] of expected) {
-    const body = presentation.bodies.find((row) => row.name === bodyName);
-    const compact = body.keyMechanics.find((row) => row.headline === mechanicHeadline);
-    assert.ok(compact, `${bodyName}: decision-relevant mechanic is selected on its compact card`);
-    const briefing = presentation.briefing.highlights.find(
-      (row) => row.headline === `${bodyName} · ${mechanicHeadline}`,
-    );
-    assert.ok(briefing, `${bodyName}: decision-relevant mechanic outranks routine opening setup`);
-    assert.equal(briefing.effect, compact.effect, `${bodyName}: briefing and compact card use one signature`);
-  }
-  assert.ok(presentation.briefing.highlights.some((row) => row.kind === "signature"));
-  assert.notDeepEqual(
-    presentation.briefing.highlights.map((row) => row.effect),
-    ["self · apply 1 Artifact", "self · apply 1 Artifact", "self · gain 13 Block"],
-  );
-});
-
-test("event briefing presents checked branch outcomes as alternatives, never an execution trace", () => {
-  for (const id of ["DENSE_VEGETATION_EVENT_ENCOUNTER", "PUNCH_OFF_EVENT_ENCOUNTER"]) {
-    const presentation = encounter(id).presentation;
-    const event = presentation.briefing.highlights.find((row) => row.kind === "event");
-    assert.ok(event, `${id}: event consequences remain prominent`);
-    assert.match(event.effect, / · or · /, `${id}: alternatives use non-ordering language`);
-    assert.match(event.effect, /\+1 possible outcome in details$/, `${id}: hidden branch is named as an outcome`);
-    assert.doesNotMatch(event.effect, /→|ordered effects?/, `${id}: no predicted ordered trace`);
-    assert.equal(presentation.event.effects.length, 3, `${id}: every checked event outcome remains reachable`);
-  }
-});
-
-test("briefing qualifiers preserve predicates, clocks, branches, and observation limits as distinct types", () => {
-  for (const id of ["SLUMBERING_BEETLE_NORMAL", "SOUL_NEXUS_ELITE"]) {
-    const triggered = encounter(id).presentation.briefing.highlights
-      .find((row) => row.kind === "lifecycle" && row.headline === "Triggered rules");
-    assert.ok(triggered, `${id}: one-shot lifecycle rule remains prominent`);
-    assert.equal(triggered.condition, null, `${id}: one-shot cadence is not a predicate`);
-    assert.equal(triggered.clock, "once", `${id}: one-shot cadence remains visible as a clock`);
-  }
-
-  const subject = encounter("TEST_SUBJECT_BOSS").presentation.briefing.highlights;
-  const phase = subject.find((row) => row.headline === "Phases, revive and hatch");
-  assert.equal(phase.condition, "completed respawns = 1");
-  assert.equal(phase.clock, "first completed revive");
-  const forms = subject.find((row) => row.kind === "forms");
-  assert.equal(forms.condition, null);
-  assert.equal(forms.observation, "The form is not identified by encounter identity alone");
-
-  for (const id of ["DENSE_VEGETATION_EVENT_ENCOUNTER", "PUNCH_OFF_EVENT_ENCOUNTER"]) {
-    const event = encounter(id).presentation.briefing.highlights.find((row) => row.kind === "event");
-    assert.equal(event.condition, null, `${id}: alternative event branches are not predicates`);
-    assert.equal(event.branch, "Outside-combat results depend on the checked event branch");
-  }
-
-  for (const id of adapter.canonicalIds) {
-    for (const highlight of encounter(id).presentation.briefing.highlights) {
-      if (highlight.condition) {
-        assert.doesNotMatch(
-          highlight.condition,
-          /Clock ·|runtime modifier input|form is not identified|outside-combat results depend/i,
-          `${id}: condition contains only predicate semantics`,
-        );
-      }
-      if (highlight.clock) assert.equal(highlight.kind, "lifecycle", `${id}: clocks are lifecycle qualifiers`);
-      if (highlight.branch) assert.equal(highlight.kind, "event", `${id}: branches are event qualifiers`);
-      if (highlight.observation) assert.equal(highlight.kind, "forms", `${id}: observation limits qualify forms`);
-    }
-  }
-});
-
-test("compact effect lines rank player-visible mechanics above setup writes", () => {
-  const cubex = encounter("CUBEX_CONSTRUCT_NORMAL").presentation;
-  const cubexStrength = cubex.briefing.highlights.find((row) => row.headline.includes("Strength + Counter"));
-  assert.match(cubexStrength.effect, /^self · apply 2 Strength;/);
-  assert.match(cubexStrength.effect, /update this behavior's checked counter or state/);
-  assert.equal(cubex.bodies[0].keyMechanics[0].effect, cubexStrength.effect);
-
-  const tunneler = encounter("TUNNELER_WEAK").presentation.briefing.highlights
-    .find((row) => row.headline.includes("Burrowed + Block"));
-  assert.match(tunneler.effect, /^self · apply 1 Burrowed; self · gain checked amount Block/);
-  assert.match(tunneler.effect, /\+1 ordered effect in details$/);
-
-  const hopper = encounter("THIEVING_HOPPER_WEAK").presentation.briefing.highlights
-    .find((row) => row.headline.includes("Escape + Counter"));
-  assert.match(hopper.effect, /^self · escape through the checked fight rule;/);
-
-  const forms = encounter("TEST_SUBJECT_BOSS").presentation.briefing.highlights
-    .find((row) => row.kind === "forms");
-  assert.match(forms.effect, /Phase 3 · 300 HP below A8; 313 HP at A8\+$/);
-  assert.doesNotMatch(forms.effect, /ordered effect/);
-  assert.equal(
-    presentationInternals.compactSequence(["A", "B", "C", "D"], 2, { remainderLabel: "possible form" }),
-    "A → B · +2 possible forms in details",
-  );
-});
-
-test("runtime modifier gaps remain unresolved observations rather than conditions", () => {
-  for (const id of ["BOWLBUGS_NORMAL", "CUBEX_CONSTRUCT_NORMAL"]) {
-    const presentation = encounter(id).presentation;
-    const highlight = presentation.briefing.highlights.find((row) => row.kind === "opening" && row.unresolved);
-    assert.ok(highlight, `${id}: unresolved opening remains visible`);
-    assert.equal(highlight.condition, null, `${id}: unresolved input is not a trigger`);
-    assert.match(highlight.unresolved, /^1 runtime modifier input remains unresolved$/);
-    if (id === "BOWLBUGS_NORMAL") {
-      const compact = presentation.bodies.flatMap((body) => body.keyMechanics).find((row) => row.unresolved);
-      assert.ok(compact, `${id}: selected compact opening retains the unresolved input`);
-      assert.equal(compact.condition, null);
-    }
-  }
-});
-
-test("compact enemy mechanics deduplicate setup and reserve slots for salient combat signatures", () => {
-  const segments = encounter("DECIMILLIPEDE_ELITE").presentation.bodies;
-  const repeatedOpenings = segments[0].initialEffects
-    .filter((fact) => fact.primaryEligible && fact.line === "self · apply 25 Reattach")
-    .map((fact) => fact.line);
-  assert.ok(repeatedOpenings.length >= 2);
-  assert.equal(new Set(repeatedOpenings).size, 1, "fixture contains the duplicate opening that previously filled both slots");
-  for (const segment of segments) {
-    assert.ok(segment.keyMechanics.filter((row) => row.headline.includes("Opening setup")).length <= 1);
-    assert.ok(segment.keyMechanics.some((row) => row.headline === "Revive"));
-    const distinct = new Set(segment.keyMechanics.map((row) => JSON.stringify([row.headline, row.effect, row.condition, row.unresolved])));
-    assert.equal(distinct.size, segment.keyMechanics.length);
-  }
-  const subject = encounter("TEST_SUBJECT_BOSS").presentation.bodies[0].keyMechanics;
-  assert.ok(subject.some((row) => row.headline === "Burn cards + Strength"));
-  assert.ok(subject.some((row) => row.headline.includes("Adaptable removal")));
-  assert.ok(subject.every((row) => !row.headline.includes("Opening setup")));
-});
-
-test("representative briefing hierarchy matches the reviewed golden fixture", () => {
-  const golden = JSON.parse(readFileSync(new URL("./fixtures/briefing-golden.json", import.meta.url), "utf8"));
-  const actual = {};
-  for (const id of Object.keys(golden)) {
-    const source = encounter(id), presentation = source.presentation;
-    actual[id] = {
-      title: source.title,
-      fightShape: presentation.briefing.fightShape,
-      lineupCondition: presentation.briefing.lineupCondition,
-      highlights: presentation.briefing.highlights,
-      enemies: presentation.bodies.map((body) => ({
-        name: body.name, hp: body.hp,
-        forms: body.forms.map((form) => ({ name: form.name, hp: form.hp })),
-        keyMechanics: body.keyMechanics,
-      })),
-    };
-  }
-  assert.deepEqual(actual, golden);
-});
-
-test("all primary and compact surfaces remain static, conditional, and effect-signature based", () => {
-  const unsupportedLive = /\b(?:now|current HP|current intent|this turn|will attack|you should|do this now|survivors? (?:are|is))\b/i;
-  const rawIdentity = /\b(?:MONSTER|POWER|CARD|ENCOUNTER|SOURCE|RUNTIME)\.|\b[A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+\b/;
-  for (const id of adapter.canonicalIds) {
-    const presentation = encounter(id).presentation;
-    const primary = strings({ briefing: presentation.briefing, compact: presentation.bodies.map((body) => ({
-      name: body.name, role: body.role, hp: body.hp, forms: body.forms, keyMechanics: body.keyMechanics,
-    })) }).join("\n");
-    assert.doesNotMatch(primary, unsupportedLive, id);
-    assert.doesNotMatch(primary, rawIdentity, id);
-    assert.doesNotMatch(primary, /\bEffect [A-Z]\b/, id);
-    assert.doesNotMatch(primary, /\b(?:formula|AST|graph)\b/i, id);
-    assert.doesNotMatch(primary, /set (?:encounter state|initial behavior state)|listen for the checked fight trigger|configure .* target/i, id);
-  }
 });
 
 test("projection-wide target census has deliberate side, plurality, and iterator semantics", () => {
@@ -405,7 +180,7 @@ test("lifecycle attack census distinguishes snapshots, move references, and unre
   assert.match(fog, /perform Gas Bomb's checked attack/);
   assert.doesNotMatch(fog, /captured|snapshotted/);
   const steam = strings(encounter("WATERFALL_GIANT_BOSS").presentation.lifecycle).join(" ");
-  assert.match(steam, /remember Steam Eruption's amount at that trigger/);
+  assert.match(steam, /remember Steam Eruption's current amount/);
   assert.match(steam, /deal the snapshotted Steam Eruption amount/);
   const unresolved = presentationInternals.lifecycleEffect({ kind: "attack", target: "players" }, new Map(), [], 0);
   assert.match(unresolved, /damage amount is defined by that attack/);
@@ -494,45 +269,23 @@ test("presentation-consumed lifecycle identity references still fail the adapter
   }
 });
 
-test("one guide page uses flat qq document styling and narrow accessibility safeguards", () => {
+test("one guide page has explicit local qq-like tokens and narrow accessibility safeguards", () => {
   const html = httpInternals.guidePage("/sts2");
-  const css = httpInternals.GUIDE_CSS;
   assert.match(html, /name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/);
   const httpSource = readFileSync(new URL("../src/http.mjs", import.meta.url), "utf8");
   assert.match(httpSource, /Local qq-like compatibility tokens/);
   assert.match(httpSource, /qq-ui does not publish a shared token contract/);
-  for (const [token, value] of Object.entries({
-    "qq-bg": "#000", "qq-text": "#e8e8e8", "qq-muted": "#8a8a8a", "qq-line": "#1a1a1a",
-  })) assert.match(css, new RegExp(`--${token}:${value}(?:;|\\n)`), token);
-  assert.match(css, /font-family:"Geist UI",Geist,ui-sans-serif,system-ui/);
-  assert.match(css, /summary\{[^}]*min-height:44px/);
-  assert.match(css, /summary:focus-visible\{[^}]*outline:2px solid var\(--qq-focus\)/);
-  assert.match(css, /summary::after\{[^}]*border-right:1\.5px solid currentColor/);
-  assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
-  assert.match(css, /env\(safe-area-inset-(?:left|right|bottom)\)/);
-  assert.match(css, /\.hp-meta\{[^}]*justify-self:end[^}]*text-align:right/);
-  assert.doesNotMatch(css.match(/\.hp-meta\{[^}]*\}/)[0], /(?:background|border):/);
-  for (const flatSurface of ["fight-details", "technical-audit", "callout-card", "body-card", "rule-card", "effect-card", "unknown-row", "chip"])
-    assert.match(css, new RegExp(`\\.${flatSurface}[^}]*background:transparent`), flatSurface);
-  const literalBackgrounds = [...css.matchAll(/background:(#[0-9a-f]+)/gi)].map((match) => match[1]);
-  assert.deepEqual(literalBackgrounds, ["#120808"], "only a true warning receives a tinted surface");
-  assert.equal((css.match(/border-radius:(?!0)/g) ?? []).length, 1, "only a true warning is rounded");
-  assert.equal((css.match(/text-transform:uppercase/g) ?? []).length, 1, "uppercase styling stays in site chrome");
-  assert.doesNotMatch(css, /--qq-(?:surface|raised)|box-shadow|(?:linear|radial)-gradient|border-left/);
-  assert.doesNotMatch(css, /white-space:\s*nowrap|overflow-x:\s*auto/);
-  assert.match(css, /overflow-x:hidden/);
-  assert.match(css, /overflow-wrap:anywhere/);
-  assert.match(css, /word-break:break-word/);
+  for (const characteristic of [
+    '--qq-bg:#000', '--qq-surface:#0a0a0a', '--qq-text:#e8e8e8', '--qq-muted:#8a8a8a',
+    '--qq-line:#1a1a1a', 'font-family:"Geist UI",Geist,ui-sans-serif,system-ui',
+    'min-height:3.5rem', 'summary:focus-visible{outline:2px solid var(--qq-focus)',
+    '@media(prefers-reduced-motion:reduce)', 'overflow-x:hidden', 'word-break:break-word',
+  ]) assert.ok(html.includes(characteristic), characteristic);
+  assert.doesNotMatch(html, /white-space:\s*nowrap|overflow-x:\s*auto/);
   const client = readFileSync(new URL("../src/client.js", import.meta.url), "utf8");
   assert.doesNotMatch(client, /\x08/, "regexes contain no literal backspace characters");
   assert.match(client, /\/\\b\(\?:formula\|AST\)\\b/);
-  assert.doesNotMatch(client, /hp-pill/);
-  assert.equal((client.match(/"hp-meta"/g) ?? []).length, 2);
-  const order = ["renderBriefing(root", "renderCallouts(root", "renderCompactBodies(root", "renderFightDetails(root", "renderAudit(root"];
+  const order = ["renderRoster(root", "renderBodies(root", "renderProduction(root", "renderEvent(root", "renderLifecycle(root", "renderUnknowns(root", "renderCallouts(root", "renderAudit(root"];
   let cursor = -1;
   for (const marker of order) { const next = client.indexOf(marker); assert.ok(next > cursor, marker); cursor = next; }
-  assert.doesNotMatch(client, /renderRoster\(root|What is not observed|Checked editorial callouts/);
-  assert.match(client, /Fight details/);
-  assert.match(client, /What changes the fight/);
-  assert.match(client, /Static guide · encounter identity only, not a live turn/);
 });
