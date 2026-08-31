@@ -683,3 +683,56 @@ test("plugin identity, injection, loopback refusal, and prefix registration", ()
   assert.equal(typeof route.handler, "function");
   assert.equal(disposed, true);
 });
+
+
+test("plugin contributes its canonical navigation item when optional qq-ui becomes available", () => {
+  let injectedDependencies, attachMenu;
+  let route;
+  const ctx = {
+    webServer: { host: "127.0.0.1", register(value) { route = value; return () => {}; } },
+    effect(fn) { return fn(); },
+    inject(dependencies, callback) { injectedDependencies = dependencies; attachMenu = callback; },
+  };
+  apply(ctx, { basePath: "/reference/sts2", logPath: "/missing/godot.log", savePath: "/missing/current_run_mp.save" });
+  assert.deepEqual(injectedDependencies, ["qq-ui"]);
+  assert.equal(route.path, "/reference/sts2");
+
+  const registrations = []; let disposed = 0; let effectLabel;
+  const ui = { consoleMenu: { register(item) {
+    registrations.push(item);
+    let active = true;
+    return () => { if (active) { active = false; disposed += 1; } };
+  } } };
+  let cleanup;
+  const menuCtx = {
+    get(service, required) { assert.equal(service, "qq-ui"); assert.equal(required, false); return ui; },
+    effect(fn, label) { effectLabel = label; cleanup = fn(); },
+  };
+  attachMenu(menuCtx);
+  assert.deepEqual(registrations, [{ kind: "navigation", id: "sts2-companion", label: "StS2 Companion", href: "/reference/sts2", order: 100 }]);
+  assert.match(effectLabel, /qq-ui navigation/);
+  cleanup(); cleanup();
+  assert.equal(disposed, 1, "qq-ui's idempotent disposer remains bound to the injected context lifecycle");
+});
+
+test("optional qq-ui contribution supports property lookup and service re-attachment", () => {
+  let attachMenu;
+  const ctx = {
+    webServer: { host: "127.0.0.1", register() { return () => {}; } },
+    effect(fn) { return fn(); },
+    inject(dependencies, callback) { assert.deepEqual(dependencies, ["qq-ui"]); attachMenu = callback; },
+  };
+  apply(ctx, { logPath: "/missing/godot.log", savePath: "/missing/current_run_mp.save" });
+
+  let registered = 0, disposed = 0;
+  const ui = { consoleMenu: { register(item) { assert.equal(item.href, "/sts2"); registered += 1; return () => { disposed += 1; }; } } };
+  const attach = () => {
+    let cleanup;
+    attachMenu({ "qq-ui": ui, get: () => undefined, effect(fn) { cleanup = fn(); } });
+    return cleanup;
+  };
+  const first = attach(); first();
+  const second = attach(); second();
+  assert.equal(registered, 2);
+  assert.equal(disposed, 2);
+});
