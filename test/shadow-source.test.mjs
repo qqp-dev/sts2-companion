@@ -70,14 +70,14 @@ async function runShadowClient(payload, { failCreateOnce = null } = {}) {
 let adapter;
 test.before(() => { adapter = createSourceAdapter({ projection: artifact }); assert.equal(adapter.available, true, adapter.error); });
 
-test("schema 10 adapter is immutable, deterministic, and joins exact observed identity", () => {
+test("checked schema 11 adapter is immutable, deterministic, and joins exact observed identity", () => {
   const observed = state("BOWLBUGS_NORMAL", "combat", ["MONSTER.BOWLBUG_ROCK", "MONSTER.BOWLBUG_EGG", "MONSTER.BOWLBUG_SILK"]);
   assert.deepEqual(adapter.resolveObserved(observed), { kind: "current-combat", encounterId: "BOWLBUGS_NORMAL" });
   assert.equal(adapter.resolveObserved(state("bowlbugs_normal")).kind, "unresolved-observation");
   const first = adapter.view(observed); const second = adapter.view(observed);
   assert.equal(JSON.stringify(first), JSON.stringify(second)); assert.ok(Object.isFrozen(first.encounter.monsters[0].moves));
   assert.equal(first.mode, "current-combat"); assert.deepEqual(first.encounter.observedBodies.map((row) => row.canonicalModel), observed.monsterIds);
-  assert.equal(first.authority.projectionSchemaVersion, 10); assert.equal(first.authority.dllSha256, "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f");
+  assert.equal(first.authority.projectionSchemaVersion, 11); assert.equal(first.authority.dllSha256, "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f");
 });
 
 test("real parser output resolves bare AXEBOT through the shared reader normalization", () => {
@@ -166,11 +166,11 @@ test("event, formula/state, ordered operation, graph, unknown, conflict, and pro
   assert.deepEqual(axebotView.encounter.callouts, []);
 });
 
-test("schema 11 is explicit and additive while arbitrary and mismatched majors fail", () => {
-  const elevenProjection = project((p) => { p.schemaVersion = 11; p.metadata.generator.version = "11.0.0"; p.payload.sourceFacts.lifecycle.status = "sourceCompleteE2Lifecycle"; p.payload.additiveFutureField = { ignored: true }; });
-  elevenProjection.metadata.payloadSha256 = adapterInternals.payloadDigest(elevenProjection.payload);
-  const eleven = createSourceAdapter({ projection: elevenProjection });
-  assert.equal(eleven.available, true, eleven.error); assert.equal(eleven.schemaVersion, 11);
+test("schema 10 compatibility is explicit while arbitrary and mismatched majors fail", () => {
+  const tenProjection = project((p) => { p.schemaVersion = 10; p.metadata.generator.version = "10.0.0"; p.payload.sourceFacts.lifecycle.status = "sourceCompleteE2d2a"; p.payload.additiveFutureField = { ignored: true }; });
+  tenProjection.metadata.payloadSha256 = adapterInternals.payloadDigest(tenProjection.payload);
+  const ten = createSourceAdapter({ projection: tenProjection });
+  assert.equal(ten.available, true, ten.error); assert.equal(ten.schemaVersion, 10);
   for (const [schema, generator] of [[12, "12.0.0"], [10, "11.0.0"], [11, "10.0.0"]]) {
     const bad = createSourceAdapter({ projection: project((p) => { p.schemaVersion = schema; p.metadata.generator.version = generator; }) });
     assert.equal(bad.available, false); assert.match(bad.error, /schema|generator/);
