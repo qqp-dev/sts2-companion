@@ -494,22 +494,40 @@ test("presentation-consumed lifecycle identity references still fail the adapter
   }
 });
 
-test("one guide page has explicit local qq-like tokens and narrow accessibility safeguards", () => {
+test("one guide page uses flat qq document styling and narrow accessibility safeguards", () => {
   const html = httpInternals.guidePage("/sts2");
+  const css = httpInternals.GUIDE_CSS;
   assert.match(html, /name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/);
   const httpSource = readFileSync(new URL("../src/http.mjs", import.meta.url), "utf8");
   assert.match(httpSource, /Local qq-like compatibility tokens/);
   assert.match(httpSource, /qq-ui does not publish a shared token contract/);
-  for (const characteristic of [
-    '--qq-bg:#000', '--qq-surface:#0a0a0a', '--qq-text:#e8e8e8', '--qq-muted:#8a8a8a',
-    '--qq-line:#1a1a1a', 'font-family:"Geist UI",Geist,ui-sans-serif,system-ui',
-    'min-height:3.5rem', 'summary:focus-visible{outline:2px solid var(--qq-focus)',
-    '@media(prefers-reduced-motion:reduce)', 'overflow-x:hidden', 'word-break:break-word',
-  ]) assert.ok(html.includes(characteristic), characteristic);
-  assert.doesNotMatch(html, /white-space:\s*nowrap|overflow-x:\s*auto/);
+  for (const [token, value] of Object.entries({
+    "qq-bg": "#000", "qq-text": "#e8e8e8", "qq-muted": "#8a8a8a", "qq-line": "#1a1a1a",
+  })) assert.match(css, new RegExp(`--${token}:${value}(?:;|\\n)`), token);
+  assert.match(css, /font-family:"Geist UI",Geist,ui-sans-serif,system-ui/);
+  assert.match(css, /summary\{[^}]*min-height:44px/);
+  assert.match(css, /summary:focus-visible\{[^}]*outline:2px solid var\(--qq-focus\)/);
+  assert.match(css, /summary::after\{[^}]*border-right:1\.5px solid currentColor/);
+  assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
+  assert.match(css, /env\(safe-area-inset-(?:left|right|bottom)\)/);
+  assert.match(css, /\.hp-meta\{[^}]*justify-self:end[^}]*text-align:right/);
+  assert.doesNotMatch(css.match(/\.hp-meta\{[^}]*\}/)[0], /(?:background|border):/);
+  for (const flatSurface of ["fight-details", "technical-audit", "callout-card", "body-card", "rule-card", "effect-card", "unknown-row", "chip"])
+    assert.match(css, new RegExp(`\\.${flatSurface}[^}]*background:transparent`), flatSurface);
+  const literalBackgrounds = [...css.matchAll(/background:(#[0-9a-f]+)/gi)].map((match) => match[1]);
+  assert.deepEqual(literalBackgrounds, ["#120808"], "only a true warning receives a tinted surface");
+  assert.equal((css.match(/border-radius:(?!0)/g) ?? []).length, 1, "only a true warning is rounded");
+  assert.equal((css.match(/text-transform:uppercase/g) ?? []).length, 1, "uppercase styling stays in site chrome");
+  assert.doesNotMatch(css, /--qq-(?:surface|raised)|box-shadow|(?:linear|radial)-gradient|border-left/);
+  assert.doesNotMatch(css, /white-space:\s*nowrap|overflow-x:\s*auto/);
+  assert.match(css, /overflow-x:hidden/);
+  assert.match(css, /overflow-wrap:anywhere/);
+  assert.match(css, /word-break:break-word/);
   const client = readFileSync(new URL("../src/client.js", import.meta.url), "utf8");
   assert.doesNotMatch(client, /\x08/, "regexes contain no literal backspace characters");
   assert.match(client, /\/\\b\(\?:formula\|AST\)\\b/);
+  assert.doesNotMatch(client, /hp-pill/);
+  assert.equal((client.match(/"hp-meta"/g) ?? []).length, 2);
   const order = ["renderBriefing(root", "renderCallouts(root", "renderCompactBodies(root", "renderFightDetails(root", "renderAudit(root"];
   let cursor = -1;
   for (const marker of order) { const next = client.indexOf(marker); assert.ok(next > cursor, marker); cursor = next; }
