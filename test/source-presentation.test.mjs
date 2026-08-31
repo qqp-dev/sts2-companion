@@ -180,6 +180,45 @@ test("event briefing presents checked branch outcomes as alternatives, never an 
   }
 });
 
+test("briefing qualifiers preserve predicates, clocks, branches, and observation limits as distinct types", () => {
+  for (const id of ["SLUMBERING_BEETLE_NORMAL", "SOUL_NEXUS_ELITE"]) {
+    const triggered = encounter(id).presentation.briefing.highlights
+      .find((row) => row.kind === "lifecycle" && row.headline === "Triggered rules");
+    assert.ok(triggered, `${id}: one-shot lifecycle rule remains prominent`);
+    assert.equal(triggered.condition, null, `${id}: one-shot cadence is not a predicate`);
+    assert.equal(triggered.clock, "once", `${id}: one-shot cadence remains visible as a clock`);
+  }
+
+  const subject = encounter("TEST_SUBJECT_BOSS").presentation.briefing.highlights;
+  const phase = subject.find((row) => row.headline === "Phases, revive and hatch");
+  assert.equal(phase.condition, "completed respawns = 1");
+  assert.equal(phase.clock, "first completed revive");
+  const forms = subject.find((row) => row.kind === "forms");
+  assert.equal(forms.condition, null);
+  assert.equal(forms.observation, "The form is not identified by encounter identity alone");
+
+  for (const id of ["DENSE_VEGETATION_EVENT_ENCOUNTER", "PUNCH_OFF_EVENT_ENCOUNTER"]) {
+    const event = encounter(id).presentation.briefing.highlights.find((row) => row.kind === "event");
+    assert.equal(event.condition, null, `${id}: alternative event branches are not predicates`);
+    assert.equal(event.branch, "Outside-combat results depend on the checked event branch");
+  }
+
+  for (const id of adapter.canonicalIds) {
+    for (const highlight of encounter(id).presentation.briefing.highlights) {
+      if (highlight.condition) {
+        assert.doesNotMatch(
+          highlight.condition,
+          /Clock ·|runtime modifier input|form is not identified|outside-combat results depend/i,
+          `${id}: condition contains only predicate semantics`,
+        );
+      }
+      if (highlight.clock) assert.equal(highlight.kind, "lifecycle", `${id}: clocks are lifecycle qualifiers`);
+      if (highlight.branch) assert.equal(highlight.kind, "event", `${id}: branches are event qualifiers`);
+      if (highlight.observation) assert.equal(highlight.kind, "forms", `${id}: observation limits qualify forms`);
+    }
+  }
+});
+
 test("compact effect lines rank player-visible mechanics above setup writes", () => {
   const cubex = encounter("CUBEX_CONSTRUCT_NORMAL").presentation;
   const cubexStrength = cubex.briefing.highlights.find((row) => row.headline.includes("Strength + Counter"));

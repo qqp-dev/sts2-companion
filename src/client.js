@@ -86,6 +86,9 @@
       heading(row, 3, highlight.headline, "briefing-title");
       row.append(el("p", "briefing-effect", highlight.effect));
       if (highlight.condition) row.append(el("p", "condition-line", `If / when · ${highlight.condition}`));
+      if (highlight.clock) row.append(el("p", "clock-line", `Clock · ${highlight.clock}`));
+      if (highlight.branch) row.append(el("p", "boundary-note", `Branch · ${highlight.branch}`));
+      if (highlight.observation) row.append(el("p", "boundary-note", `Observation · ${highlight.observation}`));
       if (highlight.unresolved) row.append(el("p", "unknown-line", `Unresolved · ${highlight.unresolved}`));
       highlights.append(row);
     });

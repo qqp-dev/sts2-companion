@@ -875,20 +875,19 @@ function briefingPresentation({ roster, bodies, production, lifecycle, event, un
     const branches = mechanics.flatMap((mechanic) => mechanic.branches.map((branch) => ({ ...branch, detailRef: mechanic.detailRef })));
     const branch = branches.map((value, index) => ({ value, index, salience: lifecycleBranchSalience(value) }))
       .sort((left, right) => left.salience - right.salience || left.index - right.index)[0].value;
-    const condition = [
-      branch.condition && branch.condition !== "always" ? branch.condition : null,
-      branch.repeat ? `Clock · ${branch.repeat}` : null,
-    ].filter(Boolean).join(" · ") || null;
+    const condition = branch.condition && branch.condition !== "always" ? branch.condition : null;
+    const clock = branch.repeat || null;
     const branchCount = branches.length;
     add({
       kind: "lifecycle", headline: family,
       effect: `${compactSequence(branch.effects, 1, { salience: lifecycleEffectSalience, separator: "; " })}${branchCount > 1 ? ` · ${branchCount} checked branches in details` : ""}`,
-      condition, detailRef: branch.detailRef, priority: LIFECYCLE_PRIORITY[family] ?? 35,
+      condition, ...(clock ? { clock } : {}), detailRef: branch.detailRef, priority: LIFECYCLE_PRIORITY[family] ?? 35,
     });
   }
   if (event?.effects.length) add({
     kind: "event", headline: "Event-fight consequences",
-    effect: compactAlternatives(event.effects), condition: "Outside-combat results depend on the checked event branch",
+    effect: compactAlternatives(event.effects), condition: null,
+    branch: "Outside-combat results depend on the checked event branch",
     detailRef: "event-consequences", priority: 6,
   });
   if (production?.rules.length) {
@@ -903,7 +902,8 @@ function briefingPresentation({ roster, bodies, production, lifecycle, event, un
     if (body.forms.length > 1) add({
       kind: "forms", headline: `${body.name} has ${body.forms.length} possible forms`,
       effect: compactSequence(body.forms.map(compactFormText), 3, { remainderLabel: "possible form" }),
-      condition: "The form is not identified by encounter identity alone", detailRef: body.detailRef, priority: 11 + body.bodyIndex / 100,
+      condition: null, observation: "The form is not identified by encounter identity alone",
+      detailRef: body.detailRef, priority: 11 + body.bodyIndex / 100,
     });
     body.initialEffects.filter((fact) => fact.primaryEligible).forEach((fact, factIndex) => add({
       kind: "opening", headline: `${body.name} · opening setup`, effect: fact.line,

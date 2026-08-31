@@ -347,14 +347,16 @@
         "kind": "lifecycle",
         "headline": "Phases, revive and hatch",
         "effect": "the same body · restore maximum and revived HP to 200 HP below A8; 212 HP at A8+ · +3 ordered effects in details · 4 checked branches in details",
-        "condition": "completed respawns = 1 · Clock · first completed revive",
+        "condition": "completed respawns = 1",
+        "clock": "first completed revive",
         "detailRef": "lifecycle-1"
       },
       {
         "kind": "forms",
         "headline": "Test Subject (runtime number) has 3 possible forms",
         "effect": "Phase 1 · 111 HP · A8 single player → Phase 2 · 200 HP below A8; 212 HP at A8+ → Phase 3 · 300 HP below A8; 313 HP at A8+",
-        "condition": "The form is not identified by encounter identity alone",
+        "condition": null,
+        "observation": "The form is not identified by encounter identity alone",
         "detailRef": "enemy-1"
       },
       {
@@ -409,7 +411,8 @@
         "kind": "event",
         "headline": "Event-fight consequences",
         "effect": "heal by the checked rest-site amount · or · lose HP equal to the event's checked HP-loss amount · +1 possible outcome in details",
-        "condition": "Outside-combat results depend on the checked event branch",
+        "condition": null,
+        "branch": "Outside-combat results depend on the checked event branch",
         "detailRef": "event-consequences"
       },
       {
@@ -527,7 +530,8 @@
         "kind": "event",
         "headline": "Event-fight consequences",
         "effect": "add an Injury curse to the deck · or · construct a relic reward for the reward list · +1 possible outcome in details",
-        "condition": "Outside-combat results depend on the checked event branch",
+        "condition": null,
+        "branch": "Outside-combat results depend on the checked event branch",
         "detailRef": "event-consequences"
       },
       {

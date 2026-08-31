@@ -338,6 +338,31 @@ test("representative collapsed briefings select mechanics while full disclosure 
   }
 });
 
+test("collapsed briefing renders clocks, branches, and observation limits without condition grammar", async () => {
+  for (const id of ["SLUMBERING_BEETLE_NORMAL", "SOUL_NEXUS_ELITE"]) {
+    const { root } = await runShadowClient(adapter.view(state(), id));
+    const collapsed = collapsedText(root);
+    assert.match(collapsed, /Clock · once/, id);
+    assert.doesNotMatch(collapsed, /If \/ when · (?:Clock · )?once/, id);
+  }
+
+  const subject = collapsedText((await runShadowClient(adapter.view(state(), "TEST_SUBJECT_BOSS"))).root);
+  assert.match(subject, /If \/ when · completed respawns = 1/);
+  assert.match(subject, /Clock · first completed revive/);
+  assert.match(subject, /Observation · The form is not identified by encounter identity alone/);
+  assert.doesNotMatch(subject, /If \/ when · (?:The form is not identified|completed respawns = 1 · Clock ·)/);
+
+  const dense = collapsedText((await runShadowClient(
+    adapter.view(state(), "DENSE_VEGETATION_EVENT_ENCOUNTER"),
+  )).root);
+  assert.match(dense, /Branch · Outside-combat results depend on the checked event branch/);
+  assert.doesNotMatch(dense, /If \/ when · Outside-combat results depend/);
+
+  const bowlbugs = collapsedText((await runShadowClient(adapter.view(state(), "BOWLBUGS_NORMAL"))).root);
+  assert.match(bowlbugs, /Unresolved · 1 runtime modifier input remains unresolved/);
+  assert.doesNotMatch(bowlbugs, /If \/ when · 1 runtime modifier input remains unresolved/);
+});
+
 test("unchanged payload is retried after a transient render failure", async () => {
   const payload = adapter.view(state(), "AXEBOTS_NORMAL");
   const client = await runShadowClient(payload, { failCreateOnce: "article" });
