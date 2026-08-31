@@ -1,19 +1,19 @@
 # Decision projection contract
 
-> **Status:** reconciled contract for the canonical source-first phone view and
-> future evidence-gated callouts. `/sts2` consumes the checked compact projection
-> through one validated adapter and renders a static mechanics capsule;
-> `/sts2/source` is a compatibility alias and `/sts2/legacy` is a temporary,
-> non-default rollback. Current observation has encounter
-> lifecycle/identity only, plus final completed-room encounter/model IDs. It does
-> **not** observe a live turn, HP, Block, Powers, intents, move history, counters,
-> hand/deck, model state/phase, or survivors. Live decision frames and editorial
-> callouts remain future work; current `callouts: []` means zero checked records.
+> **Status:** reconciled contract for the single practical phone guide and future
+> evidence-gated callouts. `/sts2` consumes the checked compact projection through
+> one validated adapter. Its collapsed surface renders practical static combat
+> mechanics; exact technical records remain in native disclosure. Current
+> observation has encounter lifecycle/identity only, plus final completed-room
+> encounter/model IDs. It does **not** observe a live turn, HP, Block, Powers,
+> intents, move history, counters, hand/deck, model state/phase, or survivors.
+> Live decision frames and editorial callouts remain future work; current
+> `callouts: []` means zero checked records and creates no empty guide section.
 
-This contract defines a rich static mechanics capsule as the primary projection
+This contract defines a practical static combat guide as the primary projection
 of an authoritative decoded combat blueprint, with an additive evidence-gated
 collection of useful human **thinking windows**. Normative words apply to the
-current static capsule where implemented and to future callout/live-frame work as
+current practical guide where implemented and to future callout/live-frame work as
 labeled. Examples are fixtures, not captured gameplay or observed outcomes.
 
 ## 1. Problem and non-goals
@@ -24,7 +24,7 @@ graphs, applicability, evidence, and authority machinery. A decision surface has
 a different job: expose the few consequences and counterfactual breakpoints that
 can change a choice within a declared horizon.
 
-A rich static mechanics capsule can honestly explain rules and conditions, but
+A practical static combat guide can honestly explain rules and conditions, but
 cannot by itself justify a present-tense imperative. Whether a fact matters
 depends on the realized lineup and state, current HP/Block/Powers, move history,
 ordered hooks, hidden/random branches, available interventions, and the horizon.
@@ -37,7 +37,7 @@ mechanics; it never supplies a missing current temporal cut.
 
 This design therefore separates:
 
-1. a safe **encounter capsule** when only static authority is available; and
+1. a safe **practical encounter guide** when only static authority is available; and
 2. a future live **decision frame** when authoritative rules can be joined to a
    sufficiently complete, time-stamped observation.
 
@@ -74,7 +74,7 @@ resolve ambiguity, establish freshness, or identify a less-visible state.
 
 ### Tactical callout collection and individual-card budget
 
-The rich static mechanics capsule is the primary product. Tactical callouts are
+The practical static combat guide is the primary product. Tactical callouts are
 an additive **evidence-gated collection with cardinality `0..N`**. The reducer
 MUST independently evaluate every candidate and MUST retain every distinct
 candidate that passes. It MUST NOT use scarcity, a per-fight quota, enemy count,
@@ -159,7 +159,7 @@ once:
 
 | Query | Question answered | Expanded content |
 |---|---|---|
-| `NOW` | What observation cut makes these claims valid? | Required observation context, parameters, freshness, and state ambiguity. Absent in a static capsule. |
+| `NOW` | What observation cut makes these claims valid? | Required observation context, parameters, freshness, and state ambiguity. Absent in a static guide. |
 | `IN` | What happens before I can decide again under the baseline? | Source-ordered raw/net threat and non-damage consequences, including cards, Powers, summons, state, and lifecycle. |
 | `BREAK` | Which counterfactual boundary changes that result? | Kill, Block, strip, or interrupt thresholds and consequence deltas; decision-sensitive multi-enemy states may supply a `FOCUS` removal frontier. These are mechanical levers and scenarios, not presumed card lines. |
 | `OUT/NEXT` | Where does the baseline leave the fight, and what follows? | Post-turn deltas and the next consequence envelope, expressed as effect signatures with conditions or branch structure. |
@@ -183,11 +183,12 @@ missing semantics.
 
 Information is progressively disclosed:
 
-1. **Primary static mechanics capsule:** roster, variants, HP/formulas, initial
-   state, moves/operations/graphs, production, events, lifecycle, and unknowns.
+1. **Primary practical combat guide:** roster possibilities, enemy/form HP
+   parameters, compact human effects, cycles/forks, production, event consequences,
+   lifecycle rules, clocks, conditions, and unknowns.
 2. **Collapsed tactical collection:** a ranked subset of passing callouts with an
    explicit total count and expansion path. It may be empty but is never the
-   primary mechanics surface.
+   primary guide surface.
 3. **Expanded decision/fight view:** every passing callout plus the six query
    families, complete frontiers, clocks, conditions, and persistent costs.
 4. **Exact detail and audit:** ordered operations, formulas, missing inputs,
@@ -197,9 +198,9 @@ Suppression at a higher level is view compression only. Every displayed callout
 MUST link to exact support, and every passing callout MUST remain reachable.
 Omission MUST NOT delete, rewrite, or silently discard a lower-level record.
 
-## 3. The two products
+## 3. The current guide and future decision projection
 
-### 3.1 Encounter capsule: honest static degradation
+### 3.1 Practical combat guide: honest static degradation
 
 An `EncounterCapsule` is parameterized encounter grammar. It may contain:
 
@@ -216,14 +217,14 @@ state/phase; roster possibility is not a realized lineup; produced is not
 co-present; a summon operation is not a complete summon lifecycle. Static
 conditions remain conditions and static branches remain sets.
 
-The capsule is useful now as a design/offline projection target because E1 can
-support identity, placement, roster structure, applicability, move operations,
-and behavior graphs within its declared coverage. It must still expose E1 gaps,
-including initial-state/Power coverage, event behavior, HP rounding conflict,
-and broader lifecycle families. Legacy annotations may decorate it only with a
-visible `legacyAnnotations` lane badge and may not close an authoritative gap.
-The canonical `/sts2` capsule remains a static source surface, not a live
-`DecisionFrame` or present-tense tactical observer.
+The checked adapter record is useful now because E1 can support identity,
+placement, roster structure, applicability, move operations, and behavior paths
+within its declared coverage. The guide must still state affected gaps plainly,
+including initial-state/Power coverage, event behavior, HP rounding conflict, and
+broader lifecycle families. Exact authority annotations remain inside Technical
+audit and may not close an authoritative gap. The canonical `/sts2` document is a
+practical static combat guide, not a live `DecisionFrame` or present-tense
+tactical observer.
 
 ### 3.2 Decision frame: future live product
 
@@ -247,7 +248,7 @@ turn. This definition avoids an implicit “typical play” policy and makes eve
 
 If an observation cannot identify a required state, affected results remain a
 set, conditional, range, or unknown. Unsupported “do it now” language is
-suppressed. The primary mechanics capsule and any independently qualifying
+suppressed. The primary practical guide and any independently qualifying
 source-backed static conditional callouts remain available and are labeled
 `STATIC`, never made to look current. Safety-critical observation failures may
 produce their own evidence-backed `UNKNOWN` callout.
@@ -1275,8 +1276,8 @@ source probability.
 
 | Condition | Required output |
 |---|---|
-| No live turn observation (the current product) | Keep the rich static mechanics capsule primary. Retain supported `static-conditional` callouts; reject only present-tense/live imperatives that require current state. Never emit `NOW`, incoming prediction, or a current threshold without observation refs. |
-| Authority manifest/version mismatch or mod ambiguity | No source-derived live frame. A safety-critical card says `UNKNOWN` with one mismatch reason; a version-explicit capsule is expanded detail only. |
+| No live turn observation (the current product) | Keep the practical static combat guide primary. Retain supported `static-conditional` callouts; reject only present-tense/live imperatives that require current state. Never emit `NOW`, incoming prediction, or a current threshold without observation refs. |
+| Authority manifest/version mismatch or mod ambiguity | No source-derived live frame. A safety-critical card says `UNKNOWN` with one mismatch reason; version detail remains in Technical audit. |
 | Missing typed formula input | Preserve conditional/set/range/unknown and list the input; never use zero, midpoint, or legacy default. |
 | Unknown numeric/effect semantics | Preserve the known target/order/condition coordinates and mark the unresolved coordinates unknown; MUST NOT fall back to a move ID or title. |
 | Unsupported operation/hook/lifecycle | Stop affected traces at that boundary and mark downstream consequences unknown; never treat it as a no-op. |
@@ -1308,7 +1309,7 @@ card still says `UNKNOWN` and the tap-through lists them all.
 A future implementation is acceptable only when automated fixtures establish:
 
 1. lane objects remain separate and every conflict keeps both refs/values;
-2. an input with no live turn observation still produces the rich static capsule
+2. an input with no live turn observation still produces the practical static guide
    and any qualifying source-backed conditional callouts, while live imperatives
    are rejected and no static text uses current language;
 3. END NOW means no further actions from the exact observation cut;
@@ -1403,7 +1404,7 @@ Automated fixtures MUST establish that:
    keeps attacks staggered, and synchronized spike avoided;
 9. zero passing candidates yields an honest no-qualified-record outcome rather
    than filler or a target quota; and
-10. the rich static mechanics capsule remains available regardless of callout
+10. the practical static combat guide remains available regardless of callout
     cardinality and never implies current HP, intent, phase, or move prediction.
 
 Individual-card renderer fixtures MAY enforce three visible rows, one primary
@@ -1418,7 +1419,7 @@ prose.
 At a representative narrow phone viewport, without horizontal scrolling, a
 player should be able to:
 
-- use the rich static mechanics capsule even when the callout count is zero;
+- use the practical static combat guide even when the callout count is zero;
 - see the total passing callout count and whether the collapsed subset has more;
 - expand once to reach every passing callout and its exact support;
 - distinguish static conditions from observed live imperatives;
@@ -1438,15 +1439,15 @@ terse output is not a defense for silently dropping passing candidates.
 This plan follows source migration gates and does not modify their artifacts or
 ownership.
 
-### Current canonical static capsule and offline contract work
+### Current practical combat guide and offline contract work
 
-- Canonical `/sts2`, its state payload, and browser client read only the checked
-  compact projection through one fail-closed adapter. They render rich static
-  mechanics, explicit unknowns, separate authority lanes, and affected evidence.
-- `/sts2/source` remains a compatibility alias. The clearly labeled
-  `/sts2/legacy` rollback preserves the old book for diagnosis but is not the
-  primary product. A projection failure returns 503 on source-first routes rather
-  than silently falling back to legacy facts.
+- `/sts2`, its bounded state payload, and browser client read only the checked
+  compact projection through one fail-closed adapter. The one user-facing
+  document renders practical static mechanics and explicit unknowns; raw authority
+  records and evidence are reachable only through Technical audit.
+- No alternate HTML product is part of this contract. A projection failure returns
+  503 on the guide and its implementation endpoints rather than substituting
+  unvalidated community/wiki facts.
 - Current checked data contains no editorial callout records, so the collection is
   honestly empty. The extractor remains editorially neutral.
 - Continue building callout schema/golden fixtures outside extraction. Static
@@ -1494,19 +1495,19 @@ does not trigger state inference from screen conventions or model IDs.
 
 ### C1/C2/C3 consumer gates
 
-- **C1 static capsule:** render the validated compact source capsule without
+- **C1 static guide:** render the validated compact checked projection without
   unsupported confidence/probability metrics. It does not compile live frames or
   invent editorial tactics.
-- **C2 staged source-first UI:** render only claim families whose E2 and
-  observation gates are green; a partially green frontier retains typed unknowns
-  and cannot become a positive focus conclusion. Retain immediate rollback and
-  expose legacy lane boundaries in tap-through detail only.
-- **C3/default switch (completed for the static capsule):** semantic fixtures,
+- **C2 staged authority UI:** render only claim families whose E2 and observation
+  gates are green; a partially green frontier retains typed unknowns and cannot
+  become a positive focus conclusion. Exact authority boundaries remain available
+  in Technical audit without becoming a second user-facing product.
+- **C3/default switch (completed for the static guide):** semantic fixtures,
   phone hierarchy/usability safeguards, version/mismatch behavior, fail-closed
   adapter tests, and reviewed route tests gate the canonical `/sts2` surface.
   Future live-frame or editorial features remain subject to their own gates.
 
-The current encounter lifecycle/identity reader can support capsule selection
+The current encounter lifecycle/identity reader can support guide selection
 and version context, not a live turn frame. Adding source authority without live
-state improves the capsule; adding live state without closed source semantics
+state improves the guide; adding live state without closed source semantics
 still must fail closed. Accurate decision prediction requires both.
