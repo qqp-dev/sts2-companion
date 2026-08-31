@@ -102,7 +102,7 @@
       const title = el("div", "body-name-wrap");
       heading(title, 3, bodyView.name, "body-title");
       title.append(el("p", "body-role", bodyView.role));
-      head.append(title, el("strong", "hp-pill", bodyView.hp));
+      head.append(title, el("strong", "hp-meta", bodyView.hp));
       card.append(head);
       if (bodyView.forms.length > 1) {
         const forms = el("div", "compact-forms");
@@ -172,7 +172,7 @@
       const title = el("div", "body-name-wrap");
       heading(title, 3, bodyView.name, "body-title");
       title.append(el("p", "body-role", bodyView.role));
-      head.append(title, el("strong", "hp-pill", bodyView.hp));
+      head.append(title, el("strong", "hp-meta", bodyView.hp));
       card.append(head);
       if (bodyView.hpHasRuntimeInputs) card.append(el("p", "condition-line", "HP condition · checked runtime state selects the value."));
       if (bodyView.forms.length) {
