@@ -1,6 +1,5 @@
+import { checkedCalloutCandidates } from "./checked-callouts.mjs";
 import { compileCalloutCollection } from "./decision-callouts.mjs";
-
-const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const TARGETS = Object.freeze({
   // Move recipients.
   allOpponentsOfSourceMonster: "all opponents",
@@ -127,14 +126,14 @@ export function expressionText(expression, depth = 0) {
     case "conditional": return `if ${conditionText(expression.condition, depth + 1)}, ${expressionText(expression.whenTrue, depth + 1)}; otherwise ${expressionText(expression.whenFalse, depth + 1)}`;
     case "allOf": return (expression.operands ?? []).map((item) => conditionText(item, depth + 1)).join(" and ") || "all checked conditions";
     case "anyOf": return (expression.operands ?? []).map((item) => conditionText(item, depth + 1)).join(" or ") || "a checked condition";
-    case "reference": return "checked amount";
+    case "reference": return "unresolved source reference";
     case "delegate": return expressionText(expression.expression, depth + 1);
     case "count": return "checked body count";
     case "graphLifetimeOnce": return "unused once-per-fight opportunity";
     case "methodBoolean": return "checked runtime condition";
     case "stateVariable": return "state-dependent value";
     case "runtimeInput": return "runtime-defined value";
-    default: return "checked value";
+    default: return "unsupported expression kind";
   }
 }
 function booleanConditionText(condition) {
@@ -176,26 +175,63 @@ export function conditionText(condition, depth = 0) {
   }
 }
 function practicalAmountText(value) {
-  if (value == null || typeof value !== "object") return value == null ? "checked amount" : String(value);
+  if (value == null || typeof value !== "object") return value == null ? null : String(value);
   if (value.kind === "runtimeInput") {
     const labels = Object.freeze({
       "monster.Respawns": "completed respawns",
       "power.amount": "the Power amount",
-      "targetPower.typeRawValue": "the affected Power's checked removal type",
+      "targetPower.typeRawValue": "the affected Power's removal type",
     });
-    return labels[value.name] ?? "runtime-defined amount";
+    return labels[value.name] ?? null;
   }
   switch (value.kind) {
     case "constant": return String(value.value);
-    case "convert": return practicalAmountText(value.expression);
-    case "range": return `${practicalAmountText(value.minimum)}–${practicalAmountText(value.maximum)}`;
-    case "ascensionSelect": return `A${value.threshold}+ ${practicalAmountText(value.atOrAbove)}; below A${value.threshold} ${practicalAmountText(value.below)}`;
-    case "count": return "checked body count";
-    case "stateVariable": return "state-dependent amount";
-    default: return "checked amount";
+    case "convert":
+    case "delegate": return practicalAmountText(value.expression);
+    case "range": {
+      const minimum = practicalAmountText(value.minimum), maximum = practicalAmountText(value.maximum);
+      return minimum === null || maximum === null ? null : `${minimum}–${maximum}`;
+    }
+    case "ascensionSelect": {
+      const above = practicalAmountText(value.atOrAbove), below = practicalAmountText(value.below);
+      return above === null || below === null ? null : `A${value.threshold}+ ${above}; below A${value.threshold} ${below}`;
+    }
+    case "arithmetic": {
+      const operator = OPERATORS[value.operator];
+      const operands = (value.operands ?? []).map(practicalAmountText);
+      return !operator || !operands.length || operands.includes(null) ? null : operands.join(` ${operator} `);
+    }
+    case "conditional": {
+      const whenTrue = practicalAmountText(value.whenTrue), whenFalse = practicalAmountText(value.whenFalse);
+      if (whenTrue === null || whenFalse === null) return null;
+      if (whenTrue === whenFalse) return whenTrue;
+      return `${whenTrue} when ${conditionText(value.condition)}; otherwise ${whenFalse}`;
+    }
+    case "count": return "body count at resolution";
+    case "stateVariable": {
+      const labels = Object.freeze({
+        axebotRespawnCount: "completed respawns",
+        "combat.currentSide": "combat side",
+        "initial.decimillipedeSharedMaxHp": "the encounter's shared starting HP roll",
+        "initial.toughEggHatchHp": "the stored hatched-form HP",
+      });
+      return labels[value.name] ?? "the named state value";
+    }
+    case "reference": return null;
+    default: return null;
   }
 }
-function amountText(value) { return practicalAmountText(value); }
+function amountText(value, unresolved) { return practicalAmountText(value) ?? unresolved; }
+function runtimeInputDetail(reference) {
+  if (typeof reference !== "string") return "named runtime input";
+  if (reference === "RUNTIME.COMBAT.CURRENT_SIDE") return "combat-side selection";
+  if (reference === "RUNTIME.INITIAL.DECIMILLIPEDE_SHARED_MAX_HP") return "shared starting-HP roll";
+  if (reference === "RUNTIME.INITIAL.TOUGH_EGG_HATCH_HP") return "stored hatched-form HP";
+  if (reference === "RUNTIME.EXTERNAL.POWER_AMOUNT_HOOKS") return "runtime Power modifiers";
+  if (reference.startsWith("RUNTIME.EXPRESSION.")) return "enemy-definition amount";
+  if (reference.includes("MULTIPLAYER")) return "player-count scaling input";
+  return "named runtime modifier";
+}
 function targetText(target) { return TARGETS[target] ?? "recipient unresolved"; }
 function cardOrPower(model) { return words(model); }
 function movePowerIdentity(operation) {
@@ -229,37 +265,40 @@ function rosterNode(node, names) {
 function initialEffect(fact) {
   const effect = fact.effect ?? {};
   const recipient = targetText(fact.recipient?.kind);
-  const amount = amountText(fact.baseValue?.expression);
   const model = effect.model ? cardOrPower(effect.model) : null;
+  const amount = amountText(fact.baseValue?.expression, "amount unresolved");
   let line;
   switch (effect.kind) {
-    case "applyPower": line = `${recipient} · apply ${amount} ${model}`; break;
-    case "gainBlock": line = `${recipient} · gain ${amount} Block`; break;
-    case "setMaxAndCurrentHp": line = `${recipient} · set max and starting HP to ${amount}`; break;
-    case "setCurrentHp": line = `${recipient} · set starting HP to ${amount}`; break;
-    case "setState": line = `${recipient} · set encounter state to ${amount}`; break;
-    case "forceMoveState": line = `${recipient} · set initial behavior state`; break;
+    case "applyPower": line = `${recipient} · ${model} ${amount}`; break;
+    case "gainBlock": line = `${recipient} · ${amount === "amount unresolved" ? "Block amount unresolved" : `${amount} Block`}`; break;
+    case "setMaxAndCurrentHp": line = `${recipient} · ${amount === "amount unresolved" ? "starting HP amount unresolved" : `set max and starting HP to ${amount}`}`; break;
+    case "setCurrentHp": line = `${recipient} · ${amount === "amount unresolved" ? "starting HP amount unresolved" : `set starting HP to ${amount}`}`; break;
+    case "setState": line = `${recipient} · ${amount === "amount unresolved" ? "initial encounter-state value unresolved" : `encounter state ${amount}`}`; break;
+    case "forceMoveState": line = `${recipient} · initial behavior state`; break;
     case "configurePowerTarget": line = `${recipient} · configure ${model ?? "Power"} target`; break;
-    case "afflictCard": line = `${recipient} · apply card affliction`; break;
-    case "subscribe": line = `${recipient} · listen for the checked fight trigger`; break;
-    case "relationship": line = `${recipient} · establish the checked body relationship`; break;
-    default: line = `${recipient} · checked initial effect unresolved`; break;
+    case "afflictCard": line = `${recipient} · card affliction`; break;
+    case "subscribe": line = `${recipient} · listen for the named fight trigger`; break;
+    case "relationship": line = `${recipient} · establish the named body relationship`; break;
+    default: line = `${recipient} · initial effect type unresolved`; break;
+  }
+  const unresolvedInputs = [...new Set((fact.runtimeInputs ?? []).map(runtimeInputDetail))];
+  if (effect.kind === "applyPower" && amount !== "amount unresolved" && unresolvedInputs.length) {
+    line = `${recipient} · ${model} base ${amount}`;
   }
   return {
     timing: lowerWords(fact.stage), line,
     condition: fact.condition?.kind === "unconditional" ? null : conditionText(fact.condition),
-    unresolved: (fact.runtimeInputs ?? []).length ? `${fact.runtimeInputs.length} runtime modifier input${fact.runtimeInputs.length === 1 ? "" : "s"} remain unresolved` : null,
+    unresolved: unresolvedInputs.length ? unresolvedInputs.join(" · ") : null,
   };
 }
-
 function moveEffects(move, names) {
   const operations = move.operations ?? [], consumed = new Set(), effects = [];
   const helperText = Object.freeze({
-    reattach: "reattach through the checked revive rule",
-    fabricate: "produce the checked bot body",
-    chooseCurse: "choose the checked curse",
-    hatch: "perform the checked hatch",
-    pressureState: "update the checked pressure state",
+    reattach: "reattach through the named revive rule",
+    fabricate: "produce a possible bot body",
+    chooseCurse: "choose the defined curse",
+    hatch: "perform the defined hatch",
+    pressureState: "update the pressure state",
   });
   for (let index = 0; index < operations.length; index += 1) {
     if (consumed.has(index)) continue;
@@ -268,33 +307,49 @@ function moveEffects(move, names) {
     switch (operation.kind) {
       case "attack": {
         const hitIndex = operations[index + 1]?.kind === "attackHitCount" ? index + 1 : -1;
-        const hits = hitIndex >= 0 ? amountText(operations[hitIndex].value) : "1";
+        const hits = hitIndex >= 0 ? amountText(operations[hitIndex].value, "hit count unresolved") : "1";
         if (hitIndex >= 0) consumed.add(hitIndex);
-        line = `${target} · ${amountText(operation.value)} damage${hits === "1" ? "" : ` × ${hits} hits`}`;
+        const amount = practicalAmountText(operation.value);
+        line = `${target} · ${amount === null ? "damage amount unresolved for this behavior" : `${amount} damage`}${hits === "1" ? "" : ` × ${hits} hits`}`;
         break;
       }
-      case "attackHitCount": line = `the preceding attack · ${amountText(operation.value)} hits`; break;
-      case "gainBlock": line = `${target} · gain ${amountText(operation.value)} Block`; break;
-      case "heal": line = `${target} · heal ${amountText(operation.value)} HP`; break;
-      case "applyPower": line = `${target} · apply ${amountText(operation.value)} ${cardOrPower(operation.model)}`; break;
+      case "attackHitCount": line = `the preceding attack · ${amountText(operation.value, "hit count unresolved")} hits`; break;
+      case "gainBlock": {
+        const amount = practicalAmountText(operation.value);
+        line = `${target} · ${amount === null ? "Block amount unresolved for this behavior" : `${amount} Block`}`;
+        break;
+      }
+      case "heal": {
+        const amount = practicalAmountText(operation.value);
+        line = `${target} · ${amount === null ? "healing amount unresolved for this behavior" : `heal ${amount} HP`}`;
+        break;
+      }
+      case "applyPower": {
+        const power = cardOrPower(operation.model), amount = practicalAmountText(operation.value);
+        line = `${target} · ${power} ${amount ?? "amount unresolved for this behavior"}`;
+        break;
+      }
       case "removePower": line = `${target} · remove ${movePowerIdentity(operation)}`; break;
-      case "addStatusCard": line = `${target} · add ${amountText(operation.value)} ${cardOrPower(operation.model)} card${String(operation.value?.value) === "1" ? "" : "s"}`; break;
+      case "addStatusCard": {
+        const amount = practicalAmountText(operation.value);
+        line = `${target} · ${amount === null ? `${cardOrPower(operation.model)} card count unresolved` : `add ${amount} ${cardOrPower(operation.model)} card${amount === "1" ? "" : "s"}`}`;
+        break;
+      }
       case "addGeneratedCard": line = `${target} · add 1 generated ${cardOrPower(operation.model)} card`; break;
       case "removeCard": line = `${target} · remove that card from combat`; break;
-      case "stateWrite": line = `${target} · update this behavior's checked counter or state`; break;
-      case "summon": line = `${target} · add ${modelName(operation.model, names)} in the checked slot`; break;
-      case "escape": line = `${target} · escape through the checked fight rule`; break;
-      case "kill": line = `${target} · enter the checked death rule`; break;
-      case "transition": line = operation.transition === "noOp" ? "no combat effect" : "advance the checked behavior state"; break;
-      case "helperEffect": line = helperText[operation.helper] ?? "checked linked effect; exact consequence unresolved"; break;
-      default: line = `${target} · checked effect details unresolved`; break;
+      case "stateWrite": line = `${target} · update this behavior's counter or state`; break;
+      case "summon": line = `${target} · add ${modelName(operation.model, names)} in the defined slot`; break;
+      case "escape": line = `${target} · escape through the defined fight rule`; break;
+      case "kill": line = `${target} · enter the defined death rule`; break;
+      case "transition": line = operation.transition === "noOp" ? "no combat effect" : "advance behavior state"; break;
+      case "helperEffect": line = helperText[operation.helper] ?? "linked effect consequence unresolved"; break;
+      default: line = `${target} · effect type unresolved`; break;
     }
     effects.push({ order: effects.length + 1, line });
   }
-  if (!effects.length) effects.push({ order: 1, line: "No checked combat effect in this behavior" });
+  if (!effects.length) effects.push({ order: 1, line: "No combat consequence in this behavior" });
   return effects;
 }
-
 function graphPresentation(body, effectLabels) {
   const graph = body.graph;
   if (!graph) return { headline: "Behavior graph unavailable", paths: [], exact: false };
@@ -332,13 +387,13 @@ function graphPresentation(body, effectLabels) {
   const initialNodes = Array.isArray(graph.initial) ? graph.initial : graph.initial == null ? [] : [graph.initial];
   const starts = initialNodes.map((nodeId) => labels.get(nodeId)).filter(Boolean);
   const parts = [];
-  if (starts.length) parts.push(`starts at ${starts.join(" / ")}`);
+  if (starts.length) parts.push(`opens with ${starts.join(" / ")}`);
   if (hasCycle) parts.push("repeating cycle");
   if (topology.followUpEdges) parts.push(`${topology.followUpEdges} follow-up${topology.followUpEdges === 1 ? "" : "s"}`);
   if (topology.randomBranches) parts.push(`${topology.randomBranches} random branch${topology.randomBranches === 1 ? "" : "es"}`);
   if (topology.conditionalBranches) parts.push(`${topology.conditionalBranches} conditional branch${topology.conditionalBranches === 1 ? "" : "es"}`);
   if (topology.mustOnceFlags) parts.push(`${topology.mustOnceFlags} once-only flag${topology.mustOnceFlags === 1 ? "" : "s"}`);
-  return { headline: parts.length ? `Behavior grammar · ${parts.join(" · ")}` : "Behavior grammar · fixed effect state", paths, exact: true };
+  return { headline: parts.length ? parts.join(" · ") : "fixed behavior sequence", paths, exact: true };
 }
 
 function lifecycleOperationsForBody(encounter, ownerModel, kind) {
@@ -375,7 +430,7 @@ function formHpText(state, stateIndex, body, encounter) {
 }
 function bodyPresentation(body, index, encounter, names) {
   const effectLabels = new Map();
-  (body.moves ?? []).forEach((move, moveIndex) => effectLabels.set(move.stateId, `Effect ${LETTERS[moveIndex] ?? moveIndex + 1}`));
+  (body.moves ?? []).forEach((move, moveIndex) => effectLabels.set(move.stateId, `sequence ${moveIndex + 1}`));
   const initial = encounter.roster.possibleInitialBodies.includes(body.canonicalModel);
   const produced = encounter.production?.producedBodies?.includes(body.canonicalModel) === true;
   const roles = [initial ? "possible initial body" : null, produced ? "produced possibility" : null].filter(Boolean);
@@ -385,15 +440,15 @@ function bodyPresentation(body, index, encounter, names) {
     name: nameOf(body),
     role: roles.join(" · ") || "encounter body",
     hp: hp ? `${rangeText(hp)} HP · A8 single player` : "HP is runtime-defined",
-    hpHasRuntimeInputs: JSON.stringify(body.hp?.expression ?? {}).includes('"stateVariable"') || JSON.stringify(body.hp?.expression ?? {}).includes('"runtimeInput"'),
+    hpNote: body.canonicalModel === "MONSTER.AXEBOT" ? "Respawns · +10 Max HP per completed respawn (0–2)" : null,
     forms: (body.states ?? []).map((state, stateIndex) => ({
       name: /^phase\d+$/.test(state.hpState ?? "") ? `Phase ${String(state.hpState).slice(5)} — ${localizedName(state.displayName)}` : localizedName(state.displayName),
       hp: formHpText(state, stateIndex, body, encounter),
     })),
     initialEffects: (body.initialState ?? []).map(initialEffect),
     effects: (body.moves ?? []).map((move, moveIndex) => ({
-      label: `Effect ${LETTERS[moveIndex] ?? moveIndex + 1}`,
-      timing: "during this possible behavior resolution",
+      marker: moveIndex + 1,
+      timing: "possible behavior sequence",
       moveIndex,
       orderedEffects: moveEffects(move, names),
     })),
@@ -421,9 +476,10 @@ function productionPresentation(production, names) {
     });
     return {
       owner: modelName(producer.ownerModel, names),
+      ownerIndex: names.has(producer.ownerModel) ? [...names.keys()].indexOf(producer.ownerModel) : null,
       cadence: `${count} added bod${count === "1" ? "y" : "ies"} per eligible trigger`,
-      condition: producer.availability?.expression ? conditionText(producer.availability.expression) : "checked availability rule",
-      repeat: repeatText ?? "checked repeat rule",
+      condition: producer.availability?.expression ? conditionText(producer.availability.expression) : "production availability condition unresolved",
+      repeat: repeatText ?? "production repeat boundary unresolved",
       attempts,
     };
   });
@@ -505,7 +561,7 @@ function lifecycleAttackText(operation, names, sequence, index) {
     return `${target} · perform ${owner}'s checked attack`;
   }
   if (operation.amount !== undefined || operation.formula !== undefined) {
-    return `${target} · deal ${amountText(operation.amount ?? operation.formula)} damage`;
+    return `${target} · deal ${amountText(operation.amount ?? operation.formula, "damage amount unresolved for this lifecycle rule")} damage`;
   }
   return `${target} · perform the checked attack; its damage amount is defined by that attack`;
 }
@@ -519,11 +575,11 @@ function lifecycleEffect(operation, names, sequence = [], index = 0) {
     case "precreateBody": return `${target} · prepare ${modelName(operation.model, names)} before adding it`;
     case "coreAddByRef": return `${target} · add ${operation.model ? modelName(operation.model, names) : "the exact created body"}`;
     case "coreDeathByRef": return `${target} · run this body's checked death handling`;
-    case "heal": return `${target} · restore HP by the named Power's checked amount`;
+    case "heal": return `${target} · restore HP by the named Power's amount`;
     case "reviveHpByRef": return `${target} · restore maximum and revived HP to ${operation.baseHp ? hpBranchText(operation.baseHp) : "the checked revive amount"}`;
     case "setMaxAndCurrentHp": return operation.value === 999999999
       ? `${target} · set HP to 999,999,999 for the explosion phase`
-      : `${target} · set max and current HP to the checked amount`;
+      : `${target} · max and current HP amount unresolved for this phase`;
     case "hatch": {
       const hp = operation.hpInclusiveRange?.atOrAboveA8;
       const below = operation.hpInclusiveRange?.belowA8;
@@ -536,7 +592,7 @@ function lifecycleEffect(operation, names, sequence = [], index = 0) {
     case "applyPowerByRef": return `${target} · apply ${cardOrPower(operation.power)} by its checked rule`;
     case "applyTargetedPower": return `${target} · apply ${cardOrPower(operation.power)}`;
     case "skipPowerApplication": return `${target} · skip ${cardOrPower(operation.power)} application`;
-    case "decrementPower": return `${target} · reduce ${cardOrPower(operation.power ?? operation.owner)} by ${operation.amount ?? "the checked amount"}`;
+    case "decrementPower": return `${target} · reduce ${cardOrPower(operation.power ?? operation.owner)} by ${operation.amount ?? "an amount defined by that Power"}`;
     case "snapshotPowers": return `${target} · remember current Powers except Minion for hatch cleanup`;
     case "removeSnapshottedPowers": return `${target} · remove the remembered Powers except ${cardOrPower(operation.retainedPower)}`;
     case "writeState": {
@@ -605,7 +661,28 @@ function lifecyclePresentationRecords(mechanics) {
   for (const [family, value] of Object.entries(mechanics ?? {})) visit(value, [family]);
   return result;
 }
-function lifecyclePresentation(lifecycle, names) {
+function lifecycleBodyIndexes(row, bodyIndexes, powerBodyIndexes) {
+  const models = new Set();
+  // Some checked relationship operations wrap a canonical owner in quantified prose.
+  // Extract only exact IDs already joined to this encounter; never infer a new model.
+  const addKnownModels = (value) => {
+    if (typeof value !== "string") return;
+    for (const model of bodyIndexes.keys()) {
+      const start = value.indexOf(model);
+      if (start < 0) continue;
+      const before = value[start - 1], after = value[start + model.length];
+      if ((!before || !/[A-Z0-9_.]/.test(before)) && (!after || !/[A-Z0-9_.]/.test(after))) models.add(model);
+    }
+  };
+  for (const key of ["ownerModel", "canonicalModel"]) addKnownModels(row[key]);
+  for (const key of ["ownerModels", "applicableConcreteModels"]) for (const model of row[key] ?? []) addKnownModels(model);
+  const operations = (row.transitions ?? row.branches ?? [row]).flatMap((branch) => branch.orderedEffects ?? row.orderedEffects ?? row.orderedPerPlayer ?? []);
+  for (const operation of operations) for (const key of ["owner", "model"]) addKnownModels(operation?.[key]);
+  const indexes = new Set([...models].map((model) => bodyIndexes.get(model)).filter((index) => index !== undefined));
+  for (const power of [row.power, row.producerPower, row.listener]) for (const index of powerBodyIndexes.get(power) ?? []) indexes.add(index);
+  return [...indexes].sort((a, b) => a - b);
+}
+function lifecyclePresentation(lifecycle, names, bodyIndexes = new Map(), powerBodyIndexes = new Map()) {
   const mechanics = [];
   for (const { path, row } of lifecyclePresentationRecords(lifecycle.mechanics ?? {})) {
     const transitions = row.transitions ?? row.branches ?? [row];
@@ -635,7 +712,7 @@ function lifecyclePresentation(lifecycle, names) {
     });
     const practicalBranches = branches.filter((branch) => branch.effects.length > 0);
     if (practicalBranches.length) {
-      mechanics.push({ family: LIFECYCLE_FAMILIES[path.join(".")] ?? "Other checked lifecycle rule", branches: practicalBranches });
+      mechanics.push({ family: LIFECYCLE_FAMILIES[path.join(".")] ?? "Other checked lifecycle rule", bodyIndexes: lifecycleBodyIndexes(row, bodyIndexes, powerBodyIndexes), branches: practicalBranches });
     }
   }
   return {
@@ -703,23 +780,49 @@ function validatedCollection(collection) {
 export function buildEncounterPresentation(encounter, options = {}) {
   if (!encounter || typeof encounter !== "object") throw new TypeError("encounter presentation requires an encounter object");
   const names = new Map((encounter.monsters ?? []).map((body) => [body.canonicalModel, nameOf(body)]));
+  const bodyIndexes = new Map((encounter.monsters ?? []).map((body, index) => [body.canonicalModel, index]));
+  const powerBodyIndexes = new Map();
+  const indexPower = (power, index) => {
+    if (typeof power !== "string" || !power.startsWith("POWER.")) return;
+    const indexes = powerBodyIndexes.get(power) ?? [];
+    if (!indexes.includes(index)) indexes.push(index);
+    powerBodyIndexes.set(power, indexes);
+  };
+  (encounter.monsters ?? []).forEach((body, index) => (body.initialState ?? []).forEach((fact) => indexPower(fact.effect?.model, index)));
+  // Retention policies name their Power but not its body. A body-anchored lifecycle
+  // operation on sameOwnerBody supplies that ownership edge without guessing targets.
+  for (const { row } of lifecyclePresentationRecords(encounter.lifecycle?.mechanics ?? {})) {
+    const ownerModels = [row.ownerModel, ...(row.ownerModels ?? []), row.canonicalModel, ...(row.applicableConcreteModels ?? [])];
+    const ownerIndexes = ownerModels.map((model) => bodyIndexes.get(model)).filter((index) => index !== undefined);
+    if (!ownerIndexes.length) continue;
+    for (const branch of row.transitions ?? row.branches ?? [row]) {
+      for (const operation of branch.orderedEffects ?? row.orderedEffects ?? row.orderedPerPlayer ?? []) {
+        if (operation?.target !== "sameOwnerBody") continue;
+        for (const power of [operation.power, operation.model, operation.owner, operation.retainedPower]) {
+          for (const index of ownerIndexes) indexPower(power, index);
+        }
+      }
+    }
+  }
+  const candidates = options.calloutCandidates ?? checkedCalloutCandidates(encounter.canonicalId);
   const callouts = options.calloutCollection
     ? validatedCollection(options.calloutCollection)
-    : compileCalloutCollection(options.calloutCandidates ?? encounter.callouts ?? [], options.calloutContext ?? {}, { collapsedLimit: options.collapsedLimit ?? 1 });
+    : compileCalloutCollection(candidates, options.calloutContext ?? {}, { collapsedLimit: options.collapsedLimit ?? 1 });
+  const production = productionPresentation(encounter.production, names);
+  const lifecycle = lifecyclePresentation(encounter.lifecycle ?? {}, names, bodyIndexes, powerBodyIndexes);
   const roster = {
     summary: rosterNode(encounter.roster?.grammar, names),
     cardinality: rangeText(encounter.roster?.cardinality),
     caveat: "Random and alternative branches are possibilities. Only one branch is selected; listed possibilities are not all co-present.",
   };
-  const unknowns = [
-    { headline: "Realized turn state is unavailable", detail: "Live HP, Block, Powers, intent, phase, survivors, hand, and move history are not observed." },
-    ...(encounter.knownUnknowns ?? []).map((row) => ({ headline: text(row.detail, words(row.unknownId)), detail: `${words(row.status)} · ${words(row.scope)} · ${words(row.reasonCode)}` })),
-  ];
+  const unknowns = (encounter.knownUnknowns ?? []).map((row) => ({
+    headline: text(row.detail, words(row.unknownId)),
+    detail: `${words(row.status)} · ${words(row.scope)} · ${words(row.reasonCode)}`,
+  }));
   return {
     context: contextPresentation(encounter), roster,
     bodies: (encounter.monsters ?? []).map((body, index) => bodyPresentation(body, index, encounter, names)),
-    production: productionPresentation(encounter.production, names),
-    lifecycle: lifecyclePresentation(encounter.lifecycle ?? {}, names),
+    production, lifecycle,
     event: eventPresentation(encounter.event),
     unknowns, callouts,
   };

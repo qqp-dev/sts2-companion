@@ -1,14 +1,15 @@
 # Decision projection contract
 
-> **Status:** reconciled contract for the single practical phone guide and future
-> evidence-gated callouts. `/sts2` consumes the checked compact projection through
-> one validated adapter. Its collapsed surface renders practical static combat
-> mechanics; exact technical records remain in native disclosure. Current
-> observation has encounter lifecycle/identity only, plus final completed-room
-> encounter/model IDs. It does **not** observe a live turn, HP, Block, Powers,
-> intents, move history, counters, hand/deck, model state/phase, or survivors.
-> Live decision frames and editorial callouts remain future work; current
-> `callouts: []` means zero checked records and creates no empty guide section.
+> **Status:** reconciled contract for the single practical phone guide, shipped
+> static editorial callouts, and future live frames. `/sts2` consumes the checked compact projection
+> through one validated adapter. Its collapsed surface renders
+> effect-first static combat mechanics; exact technical records remain in native
+> disclosure. Current observation has encounter lifecycle/identity only, plus the
+> final completed-room encounter/model IDs. It does **not** observe a live turn,
+> HP, Block, Powers, intents, move history, counters, hand/deck, target, model
+> state/phase, realized lineup, timer, or survivors. Two independently qualified
+> static-conditional editorial records currently ship; other encounters honestly
+> retain zero records and create no empty callout section.
 
 This contract defines a practical static combat guide as the primary projection
 of an authoritative decoded combat blueprint, with an additive evidence-gated
@@ -183,9 +184,10 @@ missing semantics.
 
 Information is progressively disclosed:
 
-1. **Primary practical combat guide:** roster possibilities, enemy/form HP
-   parameters, compact human effects, cycles/forks, production, event consequences,
-   lifecycle rules, clocks, conditions, and unknowns.
+1. **Primary practical combat guide:** visible detected/manual context, roster
+   possibilities, enemy/form HP parameters, starting state, compact ordered human
+   effects, sequence/fork context, body-adjacent production/lifecycle rules,
+   clocks, conditions, and named unknown inputs.
 2. **Collapsed tactical collection:** a ranked subset of passing callouts with an
    explicit total count and expansion path. It may be empty but is never the
    primary guide surface.
@@ -1448,10 +1450,14 @@ ownership.
 - No alternate HTML product is part of this contract. A projection failure returns
   503 on the guide and its implementation endpoints rather than substituting
   unvalidated community/wiki facts.
-- Current checked data contains no editorial callout records, so the collection is
-  honestly empty. The extractor remains editorially neutral.
-- Continue building callout schema/golden fixtures outside extraction. Static
-  conditional records may be added only when all seven gates and basis refs pass.
+- `src/checked-callouts.mjs` is an editorial registry separate from extraction. It
+  currently supplies one Axebot Stock replacement `WATCH` record and one
+  Decimillipede shared-finish-window `TACTIC` record. Both are static conditional,
+  body-addressable, pass all seven gates, and carry fact/condition/causal refs;
+  encounters absent from the registry remain honestly empty without filler.
+- Additional static conditional records may be added only after independent
+  seven-gate review and nonempty exact basis refs. The extractor remains
+  editorially neutral.
 - Do not expose a live decision frame, current threshold, current intent, or
   present-tense `FOCUS` without the observation gate.
 

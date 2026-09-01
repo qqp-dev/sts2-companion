@@ -64,17 +64,47 @@ test("practical effect signatures are deterministic and exclude move titles and 
   assert.deepEqual(buildEncounterPresentation(source), buildEncounterPresentation(source));
   const body = source.presentation.bodies[0];
   assert.equal(body.hp, "76–86 HP · A8 single player");
-  assert.match(body.initialEffects[0].line, /apply checked amount Stock/);
-  assert.match(body.behavior.headline, /starts at Effect A.*repeating cycle.*follow-ups/);
+  assert.match(body.initialEffects[0].line, /Stock amount unresolved/);
+  assert.match(body.initialEffects[0].unresolved, /enemy-definition amount.*runtime Power modifiers/);
+  assert.match(body.behavior.headline, /opens with sequence 1 \/ sequence 3.*repeating cycle.*follow-ups/);
   assert.deepEqual(body.effects[2].orderedEffects.map((row) => row.line), [
-    "all opponents · checked amount damage",
-    "the affected targets · apply 2 Weak",
-    "the affected targets · apply 2 Frail",
+    "all opponents · damage amount unresolved for this behavior",
+    "the affected targets · Weak 2",
+    "the affected targets · Frail 2",
   ]);
   const collapsed = JSON.stringify(body);
-  for (const raw of ["BOOT_UP_MOVE", "HAMMER_UPPERCUT_MOVE", "Boot Up", "Hammer Uppercut", "MONSTER.AXEBOT", "formula"])
+  for (const raw of ["checked amount", "Effect A", "Effect B", "Effect C", "BOOT_UP_MOVE", "HAMMER_UPPERCUT_MOVE", "Boot Up", "Hammer Uppercut", "MONSTER.AXEBOT", "formula"])
     assert.ok(!collapsed.includes(raw), raw);
   assert.equal(source.monsters[0].moves[0].title.text, "Boot Up", "exact title remains in audit data");
+});
+
+
+test("checked editorial candidates are static, independently qualified, and body-addressable", () => {
+  const axebot = encounter("AXEBOTS_NORMAL").presentation.callouts;
+  assert.equal(axebot.total, 1);
+  assert.equal(axebot.all[0].language, "static-conditional");
+  assert.equal(axebot.all[0].bodyIndex, 0);
+  assert.match(axebot.all[0].headline, /WATCH/);
+  assert.match(axebot.all[0].causalBasis, /replacement body.*same slot/i);
+  assert.ok(Object.values(axebot.all[0].qualifications).every(Boolean));
+  for (const refs of Object.values(axebot.all[0].basis)) assert.ok(refs.length > 0);
+  const axebotProof = new Set(encounter("AXEBOTS_NORMAL").proof.map((row) => row.factId));
+  axebot.all[0].basis.factRefs.forEach((ref) => assert.ok(axebotProof.has(ref), ref));
+  const axebotLifecycle = JSON.stringify(encounter("AXEBOTS_NORMAL").lifecycle);
+  [...axebot.all[0].basis.conditionRefs, ...axebot.all[0].basis.causalRefs]
+    .forEach((ref) => assert.ok(axebotLifecycle.includes(ref.replace(/\.(?:condition|orderedEffects|replacementWindowStopsCombatEnding)$/, "")), ref));
+  assert.doesNotMatch(JSON.stringify(axebot.all[0]), /do this now|next move|current HP/i);
+
+  const decimillipede = encounter("DECIMILLIPEDE_ELITE").presentation.callouts;
+  assert.equal(decimillipede.total, 1);
+  assert.match(decimillipede.all[0].headline, /TACTIC/);
+  assert.match(decimillipede.all[0].causalBasis, /other segment.*alive.*returns|returns.*other segment.*alive/i);
+  const decimillipedeProof = new Set(encounter("DECIMILLIPEDE_ELITE").proof.map((row) => row.factId));
+  decimillipede.all[0].basis.factRefs.forEach((ref) => assert.ok(decimillipedeProof.has(ref), ref));
+  const decimillipedeLifecycle = JSON.stringify(encounter("DECIMILLIPEDE_ELITE").lifecycle);
+  [...decimillipede.all[0].basis.conditionRefs, ...decimillipede.all[0].basis.causalRefs]
+    .forEach((ref) => assert.ok(decimillipedeLifecycle.includes(ref.replace(/\.(?:condition|orderedEffects)$/, "")), ref));
+  assert.equal(encounter("BOWLBUGS_NORMAL").presentation.callouts.total, 0, "no generic filler");
 });
 
 test("roster alternatives and produced bodies never become a co-presence claim", () => {
@@ -110,7 +140,7 @@ test("projection-wide target census has deliberate side, plurality, and iterator
   assert.equal(presentationInternals.targetText("futureUncheckedTarget"), "recipient unresolved");
 
   const obscura = strings(encounter("THE_OBSCURA_NORMAL").presentation.bodies).join(" ");
-  assert.match(obscura, /teammates · apply 3 Strength/);
+  assert.match(obscura, /teammates · Strength 3/);
   const kaiser = strings(encounter("KAISER_CRAB_BOSS").presentation.bodies).join(" ");
   assert.match(kaiser, /opponent side/);
   for (const id of ["QUEEN_BOSS", "FABRICATOR_NORMAL", "KNIGHTS_ELITE"])
@@ -205,6 +235,51 @@ test("all checked event effect kinds have deliberate practical consequences", ()
   assert.match(punch, /offer the constructed reward list/);
 });
 
+test("closed conditional and named state amounts remain practical", () => {
+  const egg = encounter("OVICOPTER_NORMAL").presentation.bodies.find((body) => body.name === "Tough Egg");
+  assert.match(egg.initialEffects[0].line, /Hatch base 2 when combat side = 2; otherwise 1/);
+  assert.doesNotMatch(egg.initialEffects[0].line, /amount unresolved/);
+  assert.equal(egg.initialEffects[0].unresolved, "combat-side selection · runtime Power modifiers");
+  assert.match(egg.initialEffects[2].line, /set max and starting HP to the stored hatched-form HP/);
+  assert.equal(egg.initialEffects[2].unresolved, "stored hatched-form HP");
+
+  for (const body of encounter("DECIMILLIPEDE_ELITE").presentation.bodies) {
+    assert.equal(body.hp, "46–52 HP · A8 single player");
+    const startingHp = body.initialEffects.filter((fact) => /starting HP/.test(fact.line));
+    assert.ok(startingHp.length > 0);
+    startingHp.forEach((fact) => assert.match(fact.line, /set max and starting HP to the encounter's shared starting HP roll/));
+    startingHp.forEach((fact) => assert.doesNotMatch(fact.line, /amount unresolved/));
+    startingHp.forEach((fact) => assert.equal(fact.unresolved, "shared starting-HP roll"));
+  }
+});
+
+test("body-owned lifecycle rules stay adjacent to the relevant enemy card", () => {
+  const kin = encounter("THE_KIN_BOSS").presentation;
+  const kinLinkedBodies = kin.lifecycle.mechanics.find((mechanic) => mechanic.branches.some((branch) => strings(branch).join(" ").includes("same Kin Priest")));
+  assert.deepEqual(kinLinkedBodies.bodyIndexes, [kin.bodies.findIndex((body) => body.name === "Kin Priest")]);
+
+  const waterfall = encounter("WATERFALL_GIANT_BOSS").presentation;
+  const steamRetention = waterfall.lifecycle.mechanics.filter((mechanic) => strings(mechanic).join(" ").includes("Steam Eruption") && mechanic.family === "Death and Power retention");
+  assert.equal(steamRetention.length, 3);
+  steamRetention.forEach((mechanic) => assert.deepEqual(mechanic.bodyIndexes, [0]));
+
+  const subject = encounter("TEST_SUBJECT_BOSS").presentation;
+  const painfulStabsRetention = subject.lifecycle.mechanics.filter((mechanic) => strings(mechanic).join(" ").includes("Painful Stabs") && mechanic.family === "Death and Power retention");
+  assert.equal(painfulStabsRetention.length, 2);
+  painfulStabsRetention.forEach((mechanic) => assert.deepEqual(mechanic.bodyIndexes, [0]));
+
+  const ovicopter = encounter("OVICOPTER_NORMAL").presentation;
+  const eggIndex = ovicopter.bodies.findIndex((body) => body.name === "Tough Egg");
+  const minionRetention = ovicopter.lifecycle.mechanics.filter((mechanic) => mechanic.family === "Death and Power retention");
+  assert.equal(minionRetention.length, 2);
+  minionRetention.forEach((mechanic) => assert.deepEqual(mechanic.bodyIndexes, [eggIndex]));
+
+  const boundary = presentationInternals.lifecyclePresentation({ mechanics: { relationships: [{
+    relationshipId: "test", orderedEffects: [{ kind: "kill", owner: "MONSTER.KIN_PRIESTESS", target: "sameOwnerBody" }],
+  }] } }, new Map(), new Map([["MONSTER.KIN_PRIEST", 0]]), new Map());
+  assert.deepEqual(boundary.mechanics[0].bodyIndexes, [], "canonical model prefixes do not route");
+});
+
 test("representative clocks, revive, hatch, production, and phase rules remain practical", () => {
   const battleworn = strings(encounter("BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER").presentation.lifecycle).join(" ");
   assert.match(battleworn, /Event fight clock/);
@@ -235,10 +310,13 @@ test("all 105 checked collapsed presentations reject source-identifier leakage",
   const rawIdentity = /\b(?:MONSTER|POWER|CARD|ENCOUNTER|SOURCE|RUNTIME)\.|\b[A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+\b/;
   const sourceDump = /\b(?:formula|AST|graph)\b/i;
   for (const id of adapter.canonicalIds) {
-    const visible = strings(encounter(id).presentation).join("\n");
+    const visiblePresentation = structuredClone(encounter(id).presentation);
+    delete visiblePresentation.callouts; // IDs and basis refs are audit-only; the renderer is tested separately.
+    const visible = strings(visiblePresentation).join("\n");
     assert.doesNotMatch(visible, rawIdentity, id);
     assert.doesNotMatch(visible, rawLifecycle, id);
     assert.doesNotMatch(visible, sourceDump, id);
+    assert.doesNotMatch(visible, /checked amount/i, id);
     assert.doesNotMatch(visible, /\b(?:current HP|current intent|survivors are|you should|do this now)\b/i, id);
   }
 });
@@ -269,23 +347,25 @@ test("presentation-consumed lifecycle identity references still fail the adapter
   }
 });
 
-test("one guide page has explicit local qq-like tokens and narrow accessibility safeguards", () => {
+test("one guide page has flat phone and desktop width contracts plus accessibility safeguards", () => {
   const html = httpInternals.guidePage("/sts2");
   assert.match(html, /name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/);
   const httpSource = readFileSync(new URL("../src/http.mjs", import.meta.url), "utf8");
-  assert.match(httpSource, /Local qq-like compatibility tokens/);
+  assert.match(httpSource, /Local qq-like design tokens/);
   assert.match(httpSource, /qq-ui does not publish a shared token contract/);
   for (const characteristic of [
-    '--qq-bg:#000', '--qq-surface:#0a0a0a', '--qq-text:#e8e8e8', '--qq-muted:#8a8a8a',
+    '--qq-bg:#000', '--qq-surface:#000', '--qq-text:#e8e8e8', '--qq-muted:#8a8a8a',
     '--qq-line:#1a1a1a', 'font-family:"Geist UI",Geist,ui-sans-serif,system-ui',
     'min-height:3.5rem', 'summary:focus-visible{outline:2px solid var(--qq-focus)',
-    '@media(prefers-reduced-motion:reduce)', 'overflow-x:hidden', 'word-break:break-word',
+    '@media(min-width:44rem)', 'grid-template-columns:repeat(auto-fit,minmax(20rem,1fr))',
+    '@media(max-width:21rem)', '@media(prefers-reduced-motion:reduce)', 'border-radius:0',
+    'overflow-x:hidden', 'word-break:break-word',
   ]) assert.ok(html.includes(characteristic), characteristic);
-  assert.doesNotMatch(html, /white-space:\s*nowrap|overflow-x:\s*auto/);
+  assert.doesNotMatch(html, /white-space:\s*nowrap|overflow-x:\s*auto|box-shadow|(?:linear|radial)-gradient/);
   const client = readFileSync(new URL("../src/client.js", import.meta.url), "utf8");
   assert.doesNotMatch(client, /\x08/, "regexes contain no literal backspace characters");
   assert.match(client, /\/\\b\(\?:formula\|AST\)\\b/);
-  const order = ["renderRoster(root", "renderBodies(root", "renderProduction(root", "renderEvent(root", "renderLifecycle(root", "renderUnknowns(root", "renderCallouts(root", "renderAudit(root"];
+  const order = ["renderBodies(root", "renderUnroutedProduction(root", "renderEvent(root", "renderEncounterRules(root", "renderGlobalCallouts(root", "renderUnknowns(root", "renderAudit(root"];
   let cursor = -1;
   for (const marker of order) { const next = client.indexOf(marker); assert.ok(next > cursor, marker); cursor = next; }
 });

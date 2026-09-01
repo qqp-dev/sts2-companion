@@ -34,6 +34,8 @@ function validateCandidate(candidate, index) {
   const causalRefs = refs(basis.causalRefs, `${id}.basis.causalRefs`);
   if (!Number.isSafeInteger(candidate.rank) || candidate.rank < 0) fail(`${id}.rank must be a non-negative integer`);
   const mechanic = candidate.mechanic == null ? null : string(candidate.mechanic, `${id}.mechanic`);
+  const bodyIndex = candidate.bodyIndex == null ? null : candidate.bodyIndex;
+  if (bodyIndex !== null && (!Number.isSafeInteger(bodyIndex) || bodyIndex < 0)) fail(`${id}.bodyIndex must be a non-negative integer`);
   let phaseControl = null;
   if (mechanic === "phase-control") {
     const causal = object(candidate.phaseControl, `${id}.phaseControl`);
@@ -45,7 +47,7 @@ function validateCandidate(candidate, index) {
     };
   }
   return {
-    id, distinctnessKey, language, mechanic,
+    id, distinctnessKey, language, mechanic, bodyIndex,
     headline: string(candidate.headline, `${id}.headline`),
     condition: string(candidate.condition, `${id}.condition`),
     causalBasis: string(candidate.causalBasis, `${id}.causalBasis`),

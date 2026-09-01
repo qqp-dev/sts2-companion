@@ -1,9 +1,9 @@
 {
   "name": "@hypermemetic-ai/sts2-companion",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Phone-first A9 / 2P Slay the Spire 2 reference book for qq.",
+  "description": "Phone-first checked static Slay the Spire 2 encounter companion for qq.",
   "main": "src/plugin.mjs",
   "exports": {
     ".": "./src/plugin.mjs",

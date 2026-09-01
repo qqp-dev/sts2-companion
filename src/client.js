@@ -5,7 +5,7 @@
   const basePath = root.dataset.basePath || "/sts2";
   const manualQuery = new URLSearchParams(window.location.search).getAll("encounter");
   const stateUrl = `${basePath}/state${manualQuery.length ? `?encounter=${encodeURIComponent(manualQuery[0])}` : ""}`;
-  const COLLAPSED_IMPLEMENTATION_WORDS = /\b(?:formula|AST)\b|\b(?:MONSTER|POWER|CARD|ENCOUNTER)\.|\b[A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+\b/;
+  const COLLAPSED_IMPLEMENTATION_WORDS = /\b(?:formula|AST)\b|\b(?:MONSTER|POWER|CARD|ENCOUNTER|SOURCE|RUNTIME)\.|\b[A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+\b/;
   let signature = "";
 
   function guideText(value) {
@@ -61,6 +61,12 @@
     return node;
   }
 
+  function selectionLabel(state, encounter) {
+    if (state.mode === "manual-reference") return `manual · ${encounter.canonicalId}`;
+    if (state.mode === "current-combat" || state.observation?.status === "combat") return "combat";
+    if (state.mode === "last-completed-room" || state.observation?.status === "last") return "last";
+    return "static reference";
+  }
   function renderVersionBoundary(state, parent) {
     const installed = state.observation?.installedVersion?.version;
     if (installed && state.observation.versionMatches) return;
@@ -71,140 +77,185 @@
       : `Installed version is unavailable; mechanics are checked for ${state.authority.gameVersion}.`));
     parent.append(warning);
   }
-
-  function renderRoster(parent, presentation) {
-    const node = section(parent, "Possible roster", "guide-section roster-section");
-    node.append(el("p", "slot-count", `${presentation.roster.cardinality} initial body slot${presentation.roster.cardinality === "1" ? "" : "s"}`));
-    node.append(el("p", "roster-line", presentation.roster.summary));
-    node.append(el("p", "boundary-note", presentation.roster.caveat));
+  function renderRosterCapsule(hero, presentation) {
+    const initialBodies = presentation.bodies.filter((body) => body.role.includes("possible initial body"));
+    const simple = presentation.roster.cardinality === "1"
+      && initialBodies.length === 1 && presentation.roster.summary === initialBodies[0].name;
+    if (simple) return;
+    const roster = el("aside", "roster-capsule");
+    roster.append(el("span", "capsule-label", `${presentation.roster.cardinality} possible initial`));
+    roster.append(el("span", "roster-line", presentation.roster.summary));
+    roster.append(el("span", "boundary-note", "Alternatives are possibilities, not a simultaneous lineup."));
+    hero.append(roster);
   }
+
   function renderInitialState(card, bodyView) {
     if (!bodyView.initialEffects.length) return;
-    const group = el("div", "mechanic-group");
+    const group = el("div", "mechanic-group starts-group");
     heading(group, 4, "Starts with", "minor-title");
     bodyView.initialEffects.forEach((fact) => {
       const row = el("div", "fact-row");
       row.append(el("p", "effect-line", fact.line));
       if (fact.condition) row.append(el("p", "condition-line", `When · ${fact.condition}`));
-      if (fact.unresolved) row.append(el("p", "unknown-line", `Unresolved · ${fact.unresolved}`));
+      if (fact.unresolved) row.append(el("p", "unknown-line", `Needs · ${fact.unresolved}`));
       group.append(row);
     });
     card.append(group);
   }
+  function renderEffects(card, bodyView) {
+    if (!bodyView.effects.length) return;
+    const group = el("div", "mechanic-group effects-group");
+    heading(group, 4, "Effects", "minor-title");
+    bodyView.effects.forEach((effect) => {
+      const effectRow = el("article", "effect-row");
+      effectRow.append(el("span", "sequence-marker", String(effect.marker)));
+      const list = el("ol", "effect-list");
+      effect.orderedEffects.forEach((item) => list.append(el("li", "effect-line", item.line)));
+      effectRow.append(list);
+      group.append(effectRow);
+    });
+    card.append(group);
+  }
   function renderBehavior(card, bodyView) {
-    const group = el("div", "mechanic-group");
-    heading(group, 4, "Opener, cycle & forks", "minor-title");
+    const group = el("div", "mechanic-group behavior-group");
+    heading(group, 4, "Pattern", "minor-title");
     group.append(el("p", "behavior-line", bodyView.behavior.headline));
     bodyView.behavior.paths.forEach((path) => group.append(el("p", "path-line", path)));
     card.append(group);
   }
-  function renderEffects(card, bodyView) {
-    if (!bodyView.effects.length) return;
-    const group = el("div", "mechanic-group");
-    heading(group, 4, "Effect signatures", "minor-title");
-    bodyView.effects.forEach((effect) => {
-      const effectCard = el("article", "effect-card");
-      heading(effectCard, 5, effect.label, "effect-title");
-      const list = el("ol", "effect-list");
-      effect.orderedEffects.forEach((item) => list.append(el("li", "effect-line", item.line)));
-      effectCard.append(list);
-      group.append(effectCard);
-    });
+  function renderForms(card, bodyView) {
+    if (!bodyView.forms.length) return;
+    const forms = el("div", "mechanic-group forms");
+    heading(forms, 4, "Forms / phases", "minor-title");
+    bodyView.forms.forEach((form) => forms.append(el("p", "form-line", `${form.name} · ${form.hp}`)));
+    card.append(forms);
+  }
+  function renderProductionRule(parent, rule) {
+    const card = el("article", "rule-card production-rule");
+    card.append(el("p", "effect-line", rule.cadence));
+    card.append(el("p", "condition-line", `When · ${rule.condition}`));
+    card.append(el("p", "clock-line", `Clock · ${rule.repeat}`));
+    rule.attempts.forEach((attempt) => card.append(el("p", "pool-line", attempt)));
+    parent.append(card);
+  }
+  function renderBodyProduction(card, bodyView, presentation) {
+    if (!presentation.production) return;
+    const rules = presentation.production.rules.filter((rule) => rule.ownerIndex === bodyView.bodyIndex);
+    if (!rules.length) return;
+    const group = el("div", "mechanic-group production-group");
+    heading(group, 4, "Produces", "minor-title");
+    group.append(el("p", "boundary-note", `${presentation.production.possibilities.join(" / ")} · possible produced bodies, not initial bodies.`));
+    rules.forEach((rule) => renderProductionRule(group, rule));
     card.append(group);
   }
-  function renderBodies(parent, encounter, presentation) {
-    const node = section(parent, "Enemies & forms", "guide-section enemies-section");
-    presentation.bodies.forEach((bodyView) => {
-      const card = el("article", "body-card");
-      const head = el("div", "body-head");
-      const title = el("div", "body-name-wrap");
-      heading(title, 3, bodyView.name, "body-title");
-      title.append(el("p", "body-role", bodyView.role));
-      head.append(title, el("strong", "hp-pill", bodyView.hp));
-      card.append(head);
-      if (bodyView.hpHasRuntimeInputs) card.append(el("p", "condition-line", "HP condition · checked runtime state selects the value."));
-      if (bodyView.forms.length) {
-        const forms = el("div", "mechanic-group forms");
-        heading(forms, 4, "Possible forms", "minor-title");
-        bodyView.forms.forEach((form) => forms.append(el("p", "form-line", `${form.name} · ${form.hp}`)));
-        card.append(forms);
-      }
-      renderInitialState(card, bodyView);
-      renderBehavior(card, bodyView);
-      renderEffects(card, bodyView);
-      node.append(card);
+  function renderLifecycleMechanic(parent, mechanic) {
+    const card = el("article", "rule-card lifecycle-card");
+    heading(card, 4, mechanic.family, "rule-title");
+    mechanic.branches.forEach((branch) => {
+      if (branch.condition) card.append(el("p", "condition-line", `When · ${branch.condition}`));
+      const list = el("ol", "effect-list");
+      branch.effects.forEach((effect) => list.append(el("li", "effect-line", effect)));
+      if (branch.effects.length) card.append(list);
+      if (branch.repeat) card.append(el("p", "clock-line", `Clock · ${branch.repeat}`));
     });
+    parent.append(card);
   }
-  function renderProduction(parent, presentation) {
-    if (!presentation.production) return;
-    const node = section(parent, "Adds, hatches & summons", "guide-section production-section");
-    node.append(el("p", "boundary-note", presentation.production.caveat));
-    const possibilities = el("div", "chips");
-    presentation.production.possibilities.forEach((name) => possibilities.append(el("span", "chip", name)));
-    node.append(possibilities);
-    presentation.production.rules.forEach((rule) => {
-      const card = el("article", "rule-card");
-      heading(card, 3, rule.owner, "rule-title");
-      card.append(el("p", "effect-line", rule.cadence));
-      card.append(el("p", "condition-line", `When · ${rule.condition}`));
-      card.append(el("p", "clock-line", `Clock · ${rule.repeat}`));
-      rule.attempts.forEach((attempt) => card.append(el("p", "pool-line", attempt)));
-      node.append(card);
-    });
-  }
-  function renderEvent(parent, presentation) {
-    if (!presentation.event || !presentation.event.effects.length) return;
-    const node = section(parent, "Event-fight consequences", "guide-section event-section");
-    const list = el("ul", "plain-list");
-    presentation.event.effects.forEach((effect) => list.append(el("li", "effect-line", effect)));
-    node.append(list);
-  }
-  function renderLifecycle(parent, presentation) {
-    if (!presentation.lifecycle.rules.length && !presentation.lifecycle.mechanics.length) return;
-    const node = section(parent, "Death, phases & clocks", "guide-section lifecycle-section");
-    presentation.lifecycle.rules.forEach((rule) => node.append(el("p", "lifecycle-line", rule)));
-    presentation.lifecycle.mechanics.forEach((mechanic) => {
-      const card = el("article", "rule-card lifecycle-card");
-      heading(card, 3, mechanic.family, "rule-title");
-      mechanic.branches.forEach((branch) => {
-        if (branch.condition && branch.condition !== "always") card.append(el("p", "condition-line", `When · ${branch.condition}`));
-        const list = el("ol", "effect-list");
-        branch.effects.forEach((effect) => list.append(el("li", "effect-line", effect)));
-        card.append(list);
-        if (branch.repeat) card.append(el("p", "clock-line", `Clock · ${branch.repeat}`));
-      });
-      node.append(card);
-    });
-  }
-  function renderUnknowns(parent, presentation) {
-    const node = section(parent, "What is not observed", "guide-section unknowns-section");
-    presentation.unknowns.forEach((item) => {
-      const row = el("article", "unknown-row");
-      heading(row, 3, item.headline, "unknown-title");
-      row.append(el("p", "unknown-line", item.detail));
-      node.append(row);
-    });
+  function renderBodyLifecycle(card, bodyView, presentation) {
+    const mechanics = presentation.lifecycle.mechanics.filter((mechanic) => mechanic.bodyIndexes.includes(bodyView.bodyIndex));
+    if (!mechanics.length) return;
+    const group = el("div", "mechanic-group lifecycle-group");
+    heading(group, 4, "Death / lifecycle", "minor-title");
+    mechanics.forEach((mechanic) => renderLifecycleMechanic(group, mechanic));
+    card.append(group);
   }
   function calloutCard(callout) {
     const card = el("article", "callout-card");
-    heading(card, 3, callout.headline, "callout-title");
+    heading(card, 4, callout.headline, "callout-title");
     card.append(el("p", "effect-line", callout.causalBasis));
     if (callout.condition) card.append(el("p", "condition-line", `When · ${callout.condition}`));
     return card;
   }
-  function renderCallouts(parent, collection) {
-    if (!collection.total) return;
-    const node = section(parent, "Checked editorial callouts", "guide-section callouts-section");
-    collection.collapsed.forEach((callout) => node.append(calloutCard(callout)));
-    if (collection.hasMore) {
-      const all = el("div", "all-callouts");
-      collection.all.forEach((callout) => all.append(calloutCard(callout)));
-      node.append(details(`Show all ${collection.total} callouts`, all, "detail callout-expander"));
+  function renderBodyCallouts(card, bodyView, collection) {
+    const callouts = collection.all.filter((callout) => callout.bodyIndex === bodyView.bodyIndex);
+    if (!callouts.length) return;
+    const group = el("div", "mechanic-group callouts-group");
+    callouts.forEach((callout) => group.append(calloutCard(callout)));
+    card.append(group);
+  }
+  function renderBodies(parent, presentation) {
+    const cards = el("section", "body-list");
+    presentation.bodies.forEach((bodyView) => {
+      const card = el("article", "body-card");
+      const head = el("div", "body-head");
+      const title = el("div", "body-name-wrap");
+      heading(title, 2, bodyView.name, "body-title");
+      title.append(el("p", "body-role", bodyView.role));
+      head.append(title, el("strong", "hp-pill", bodyView.hp));
+      card.append(head);
+      if (bodyView.hpNote) card.append(el("p", "hp-note", bodyView.hpNote));
+      renderInitialState(card, bodyView);
+      renderEffects(card, bodyView);
+      renderBehavior(card, bodyView);
+      renderForms(card, bodyView);
+      renderBodyProduction(card, bodyView, presentation);
+      renderBodyLifecycle(card, bodyView, presentation);
+      renderBodyCallouts(card, bodyView, presentation.callouts);
+      cards.append(card);
+    });
+    parent.append(cards);
+  }
+
+  function renderEvent(parent, presentation) {
+    if (!presentation.event || !presentation.event.effects.length) return;
+    const node = section(parent, "Event consequences", "guide-section event-section");
+    const list = el("ul", "plain-list");
+    presentation.event.effects.forEach((effect) => list.append(el("li", "effect-line", effect)));
+    node.append(list);
+  }
+  function renderEncounterRules(parent, presentation) {
+    const mechanics = presentation.lifecycle.mechanics.filter((mechanic) => mechanic.bodyIndexes.length === 0);
+    if (!presentation.lifecycle.rules.length && !mechanics.length) return;
+    const node = section(parent, "Encounter rules", "guide-section lifecycle-section");
+    const list = el("ul", "plain-list");
+    presentation.lifecycle.rules.forEach((rule) => list.append(el("li", "lifecycle-line", rule)));
+    if (presentation.lifecycle.rules.length) node.append(list);
+    mechanics.forEach((mechanic) => renderLifecycleMechanic(node, mechanic));
+  }
+  function renderUnroutedProduction(parent, presentation) {
+    if (!presentation.production) return;
+    const rules = presentation.production.rules.filter((rule) => rule.ownerIndex === null);
+    if (!rules.length) return;
+    const node = section(parent, "Produced bodies", "guide-section production-section");
+    node.append(el("p", "boundary-note", presentation.production.caveat));
+    rules.forEach((rule) => renderProductionRule(node, rule));
+  }
+  function renderUnknowns(parent, presentation) {
+    if (!presentation.unknowns.length) return;
+    const content = el("div", "unknown-content");
+    presentation.unknowns.forEach((item) => {
+      const row = el("article", "unknown-row");
+      heading(row, 3, item.headline, "unknown-title");
+      row.append(el("p", "unknown-line", item.detail));
+      content.append(row);
+    });
+    parent.append(details(`Known source gaps · ${presentation.unknowns.length}`, content, "known-gaps"));
+  }
+  function renderGlobalCallouts(parent, collection) {
+    const all = collection.all.filter((callout) => callout.bodyIndex === null);
+    if (!all.length) return;
+    const node = section(parent, "TACTIC / WATCH", "guide-section callouts-section");
+    const visibleIds = new Set(collection.collapsed.filter((callout) => callout.bodyIndex === null).map((callout) => callout.id));
+    const visible = all.filter((callout) => visibleIds.has(callout.id));
+    (visible.length ? visible : all.slice(0, 1)).forEach((callout) => node.append(calloutCard(callout)));
+    if (all.length > 1) {
+      const expanded = el("div", "all-callouts");
+      all.forEach((callout) => expanded.append(calloutCard(callout)));
+      node.append(details(`Show all ${all.length} callouts`, expanded, "detail callout-expander"));
     }
   }
   function renderAudit(parent, state, encounter) {
     const content = el("div", "audit-content");
-    content.append(el("p", "quiet", "Exact checked records, identifiers, expressions, behavior data and evidence pointers."));
+    content.append(el("p", "quiet", "Exact checked records, move titles and IDs, expressions, behavior data, callout basis, conflicts, and evidence pointers."));
     content.append(details("Authority & observed identity", { authority: state.authority, observation: state.observation }));
     content.append(details("Exact checked encounter record", encounter));
     parent.append(details("Technical audit", content, "technical-audit"));
@@ -217,7 +268,7 @@
       const empty = el("section", "empty-state");
       heading(empty, 1, state.status === "unresolved-observation" ? "Unsupported encounter identity" : "No encounter selected");
       empty.append(rawEl("p", "boundary-note", state.error || state.notices?.[0] || "No encounter is available."));
-      empty.append(el("p", "quiet", "Choose one checked encounter or wait for a locally observed encounter identity."));
+      empty.append(el("p", "quiet", "Choose one exact checked encounter or wait for a locally observed encounter identity."));
       root.append(empty);
       signature = nextSignature;
       return;
@@ -225,18 +276,22 @@
     const encounter = state.encounter, presentation = encounter.presentation;
     if (!presentation) throw new Error("guide presentation unavailable");
     const hero = el("header", "encounter-hero");
-    hero.append(el("p", "eyebrow", `${presentation.context.kind} · ${presentation.context.summary}`));
+    const selection = selectionLabel(state, encounter);
+    hero.append(state.mode === "manual-reference"
+      ? rawEl("p", "selection-context", selection)
+      : el("p", "selection-context", selection));
     heading(hero, 1, encounter.title, "encounter-title");
-    hero.append(el("p", "static-contract", "Checked static combat guide · no live turn prediction"));
+    hero.append(el("p", "eyebrow", `${presentation.context.kind} · ${presentation.context.summary}`));
+    renderRosterCapsule(hero, presentation);
+    hero.append(el("p", "static-contract", "Static reference · no live turn state, HP/Block/Powers, intent/target, phase/counter, lineup, or timer."));
     root.append(hero);
     renderVersionBoundary(state, root);
-    renderRoster(root, presentation);
-    renderBodies(root, encounter, presentation);
-    renderProduction(root, presentation);
+    renderBodies(root, presentation);
+    renderUnroutedProduction(root, presentation);
     renderEvent(root, presentation);
-    renderLifecycle(root, presentation);
+    renderEncounterRules(root, presentation);
+    renderGlobalCallouts(root, presentation.callouts);
     renderUnknowns(root, presentation);
-    renderCallouts(root, presentation.callouts);
     renderAudit(root, state, encounter);
     signature = nextSignature;
   }
@@ -250,5 +305,5 @@
     } catch { /* Preserve the last honest guide across transient local read failures. */ }
   }
   poll();
-  window.setInterval(poll, 4000);
+  window.setInterval(poll, 1500);
 })();
