@@ -277,7 +277,7 @@ test("guide client is DOM-text-only and selector polling is stable", () => {
   assert.match(clientSource, /getAll\("encounter"\)/);
   assert.match(clientSource, /encodeURIComponent\(manualQuery\[0\]\)/);
   assert.match(clientSource, /`\$\{basePath\}\/state/);
-  assert.match(clientSource, /setInterval\(poll/);
+  assert.match(clientSource, /setInterval\(poll, 1500\)/);
   assert.doesNotMatch(clientSource, /\/source\/state|\/legacy/);
 });
 
@@ -294,17 +294,49 @@ function descendants(node, result = []) {
   return result;
 }
 
-test("collapsed DOM is practical while one Technical audit retains exact raw records", async () => {
-  const payload = adapter.view(state(), "AXEBOTS_NORMAL");
+test("phone scan path is context-visible, effect-first, body-adjacent, and audit-complete", async () => {
+  const payload = adapter.view(state("AXEBOTS_NORMAL", "combat", ["MONSTER.AXEBOT"]));
   const { root } = await runShadowClient(payload);
   const collapsed = collapsedText(root);
-  for (const heading of ["Possible roster", "Enemies & forms", "Opener, cycle & forks", "Effect signatures", "Death, phases & clocks", "What is not observed", "Technical audit"])
-    assert.match(collapsed, new RegExp(heading));
-  assert.doesNotMatch(collapsed, /MONSTER\.|BOOT_UP_MOVE|Boot Up|\bformula\b|\bgraph\b/i);
-  assert.doesNotMatch(collapsed, /Checked editorial callouts|0 callouts/i);
+  for (const required of ["combat", "Axebot", "76–86 HP", "Starts with", "Stock amount unresolved", "Effects", "Weak 2", "Frail 2", "Pattern", "WATCH", "replacement body", "Technical audit"])
+    assert.match(collapsed, new RegExp(required));
+  for (const forbidden of ["Possible roster", "Enemies & forms", "Effect A", "Effect B", "Effect C", "checked amount", "BOOT_UP_MOVE", "Boot Up"])
+    assert.doesNotMatch(collapsed, new RegExp(forbidden, "i"));
+  const positions = ["combat", "Axebot", "76–86 HP", "Starts with", "Effects", "Pattern", "WATCH"].map((text) => collapsed.indexOf(text));
+  assert.deepEqual([...positions].sort((a, b) => a - b), positions, `scan order: ${collapsed}`);
   assert.match(root.textContent, /MONSTER\.AXEBOT/);
   assert.match(root.textContent, /BOOT_UP_MOVE/);
+  assert.match(root.textContent, /CALLOUT.AXEBOT.STOCK_REPLACEMENT/);
+  assert.doesNotMatch(collapsed, /CALLOUT\.|SOURCE\.|LIFECYCLE\.DEATH_PRODUCTION/);
   assert.equal(descendants(root).filter((node) => node.className === "technical-audit").length, 1);
+});
+
+test("primary capsule distinguishes combat, last, and exact manual selection", async () => {
+  const combat = collapsedText((await runShadowClient(adapter.view(state("AXEBOTS_NORMAL", "combat")))).root);
+  const last = collapsedText((await runShadowClient(adapter.view(state("AXEBOTS_NORMAL", "last")))).root);
+  const manual = collapsedText((await runShadowClient(adapter.view(state("BOWLBUGS_NORMAL", "combat"), "AXEBOTS_NORMAL"))).root);
+  assert.match(combat, /combat/); assert.match(last, /last/);
+  assert.match(manual, /manual · AXEBOTS_NORMAL/);
+  assert.doesNotMatch(manual, /combat · BOWLBUGS_NORMAL/);
+});
+
+
+test("production remains body-adjacent without turning possibilities into an observed lineup", async () => {
+  const payload = adapter.view(state("FABRICATOR_NORMAL", "combat", ["MONSTER.FABRICATOR", "MONSTER.ZAPBOT"]));
+  const collapsed = collapsedText((await runShadowClient(payload)).root);
+  assert.match(collapsed, /Fabricator possible initial body/);
+  assert.match(collapsed, /Guardbot produced possibility/);
+  assert.match(collapsed, /Produces/);
+  assert.match(collapsed, /possible produced bodies, not initial bodies/);
+  assert.doesNotMatch(collapsed, /observed lineup|currently present|survivors are/i);
+});
+
+test("representative guides contain no prediction or live-state advice", async () => {
+  for (const id of ["AXEBOTS_NORMAL", "BOWLBUGS_NORMAL", "FABRICATOR_NORMAL", "DECIMILLIPEDE_ELITE", "TEST_SUBJECT_BOSS"]) {
+    const collapsed = collapsedText((await runShadowClient(adapter.view(state(id, "last")))).root);
+    assert.doesNotMatch(collapsed, /\b(?:do this now|next move|incoming|currently has|current phase|current target|observed lineup|survivors are)\b/i, id);
+    assert.equal((collapsed.match(/Static reference/g) ?? []).length, 1, id);
+  }
 });
 
 test("complex collapsed fixtures preserve practical lifecycle semantics without debug leakage", async () => {
@@ -318,7 +350,8 @@ test("complex collapsed fixtures preserve practical lifecycle semantics without 
   for (const [id, required] of fixtures) {
     const { root } = await runShadowClient(adapter.view(state(), id)); const collapsed = collapsedText(root);
     required.forEach((pattern) => assert.match(collapsed, pattern, id));
-    assert.doesNotMatch(collapsed, /\b(?:MONSTER|POWER|SOURCE|RUNTIME)\.|\b[A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+\b|ShouldPower|HasAmalgamDied|\bformula\b|\bAST\b|\bgraph\b/i, id);
+    const withoutExactManualContext = collapsed.replace(`manual · ${id}`, "");
+    assert.doesNotMatch(withoutExactManualContext, /\b(?:MONSTER|POWER|SOURCE|RUNTIME)\.|\b[A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+\b|ShouldPower|HasAmalgamDied|\bformula\b|\bAST\b|\bgraph\b/i, id);
   }
 });
 
@@ -342,8 +375,8 @@ test("renderer gives 0 callouts no chrome and preserves 1/3 expansion semantics"
     payload.encounter.presentation.callouts = compileCalloutCollection(candidates, {}, { collapsedLimit: 1 });
     return (await runShadowClient(payload)).root;
   };
-  const zero = await renderCount(0); assert.doesNotMatch(collapsedText(zero), /callout/i);
-  const one = await renderCount(1); assert.match(collapsedText(one), /Checked editorial callouts/); assert.match(collapsedText(one), /Editorial note 1/);
+  const zero = await renderCount(0); assert.doesNotMatch(collapsedText(zero), /TACTIC|WATCH|callout/i);
+  const one = await renderCount(1); assert.match(collapsedText(one), /TACTIC \/ WATCH/); assert.match(collapsedText(one), /Editorial note 1/);
   const three = await renderCount(3); const collapsed = collapsedText(three);
   assert.match(collapsed, /Editorial note 1/); assert.match(collapsed, /Show all 3 callouts/);
   assert.doesNotMatch(collapsed, /Editorial note [23]/);
@@ -373,6 +406,8 @@ test("callout evidence, language, distinctness, and causality gates remain enfor
   assert.equal(compileCalloutCollection([candidate("STATIC", 1), duplicate]).total, 1);
   const missing = candidate("BAD", 1); missing.basis.factRefs = [];
   assert.throws(() => compileCalloutCollection([missing]), /factRefs/);
+  const badBody = candidate("BAD_BODY", 1); badBody.bodyIndex = -1;
+  assert.throws(() => compileCalloutCollection([badBody]), /bodyIndex/);
 });
 
 test("README and decision contract document only the one product view", () => {
