@@ -172,22 +172,21 @@ signature states the target, amount and hit structure, ordered status/card/Power
 state/lifecycle effects, and their timing and conditions. It is the canonical
 human projection for both current and future enemy consequences.
 
-The collapsed card MUST NOT display enemy move IDs or titles. Names are excluded
-by default, not an optional renderer preference, and must not consume the phone
-thinking window. Move IDs and titles are **audit/navigation metadata only**.
-They are available in exact-detail drill-down when needed to join source facts or
-disambiguate traces; their presence in support data never licenses them as
-collapsed explanatory text. If a number, effect, target, order, timing, or
-condition is unresolved, it remains typed as conditional/set/range/unknown. The
-renderer MUST NOT fall back to a move ID or title as if the name explained the
-missing semantics.
+The collapsed guide MUST NOT display raw move IDs. Localized move names MAY and
+normally SHOULD appear when they are useful recognition anchors, but the effect
+signature remains the practical content; a name never substitutes for missing
+semantics. If a checked numeric getter remains symbolic, the renderer uses the
+exact retained encounter/body/move value when one exists, labels it as
+wiki/reference-backed, and keeps the symbolic expression in Technical audit. It
+MUST NOT label that fallback as source-closed or obtain it through fuzzy matching.
 
 Information is progressively disclosed:
 
-1. **Primary practical combat guide:** visible detected/manual context, roster
-   possibilities, enemy/form HP parameters, starting state, compact ordered human
-   effects, sequence/fork context, body-adjacent production/lifecycle rules,
-   clocks, conditions, and named unknown inputs.
+1. **Primary practical combat guide:** compact practical placement, configured
+   HP/kind, recognized move/effect rows, explicit numbered phases or honest
+   opener/cycle/branch/response labels, transitions, repeat cues, and only
+   encounter-distinct actionable rules. Exact retained values fill symbolic
+   checked coordinates with quiet provenance.
 2. **Collapsed tactical collection:** a ranked subset of passing callouts with an
    explicit total count and expansion path. It may be empty but is never the
    primary guide surface.
@@ -1284,7 +1283,7 @@ source probability.
 | Unknown numeric/effect semantics | Preserve the known target/order/condition coordinates and mark the unresolved coordinates unknown; MUST NOT fall back to a move ID or title. |
 | Unsupported operation/hook/lifecycle | Stop affected traces at that boundary and mark downstream consequences unknown; never treat it as a no-op. |
 | Unknown branch condition/eligibility/history | Structured branch set without probability. |
-| Unresolved lane conflict | Retain both lane values and conflict refs; do not choose via precedence. |
+| Source/reference disagreement | A genuinely closed checked source value supersedes the retained fallback; otherwise show the exact retained value. Keep both values, closure state, merge reason, and conflict refs in Technical audit. |
 | Stale or unordered observations | Exclude the stale claim or reject the cut; do not carry it forward. |
 | Empty belief set | Contradiction diagnostic and no derived prediction. |
 | Trace limit reached | Explicit truncated/symbolic remainder; never renormalize surviving traces. |
@@ -1443,10 +1442,12 @@ ownership.
 
 ### Current practical combat guide and offline contract work
 
-- `/sts2`, its bounded state payload, and browser client read only the checked
-  compact projection through one fail-closed adapter. The one user-facing
-  document renders practical static mechanics and explicit unknowns; raw authority
-  records and evidence are reachable only through Technical audit.
+- `/sts2`, its bounded state payload, and browser client require the checked
+  compact projection through one fail-closed adapter. The adapter performs an
+  exact-ID best-available presentation merge with the retained guide: checked
+  source wins only when closed; otherwise the exact reference value is visible
+  with provenance. Raw source/reference authority, symbolic expressions, merge
+  reasons, conflicts, and evidence are reachable through Technical audit.
 - No alternate HTML product is part of this contract. A projection failure returns
   503 on the guide and its implementation endpoints rather than substituting
   unvalidated community/wiki facts.

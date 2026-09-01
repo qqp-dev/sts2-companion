@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 
+import { encounterFor, scaledEncounter, bookMeta } from "./book.mjs";
 import { normalizeMonsterWireIdForState } from "./state.mjs";
 import { buildEncounterPresentation } from "./source-presentation.mjs";
 
@@ -510,7 +511,7 @@ function validateProjection(root) {
   for (const key of ["archive", "current"]) for (const [index, row] of array(payload.legacyAnnotations[key], `legacyAnnotations.${key}`).entries()) {
     object(row, `legacyAnnotations.${key}[${index}]`); string(row.factId, `legacyAnnotations.${key}[${index}].factId`); expect(factRows, row.factId, "legacy annotation fact");
   }
-  return { schema, metadata, payload, source, encounters, encounterIndex, monsterIndex, moveIndex, graphIndex, stateIndex, factRows, evidenceIndex, observationIndex, stateModelObservationIndex, placementByEncounter, eventTurns };
+  return { schema, metadata, projectionAuthority: authority, payload, source, encounters, encounterIndex, monsterIndex, moveIndex, graphIndex, stateIndex, factRows, evidenceIndex, observationIndex, stateModelObservationIndex, placementByEncounter, eventTurns };
 }
 
 function rosterRecord(selection) {
@@ -556,8 +557,10 @@ function observedRecord(state, exactObservations, stateModelObservations, select
   return { status, source: typeof state?.source === "string" ? state.source : null, freshness: "read-at-request", encounterId, observedBodies: bodies, installedVersion: release, versionMatches: release?.version ? version(release.version) === GAME_VERSION : null };
 }
 
-function makeCompiler(v) {
-  const { schema, metadata, payload, source, encounterIndex, monsterIndex, factRows, evidenceIndex, observationIndex, stateModelObservationIndex, placementByEncounter, eventTurns } = v;
+function makeCompiler(v, options = {}) {
+  const configuredPlayers = Number(options.players ?? bookMeta.players ?? 2);
+  if (!Number.isSafeInteger(configuredPlayers) || configuredPlayers < 1 || configuredPlayers > 4) fail("configured players must be an integer from 1 through 4");
+  const { schema, metadata, projectionAuthority, payload, source, encounterIndex, monsterIndex, factRows, evidenceIndex, observationIndex, stateModelObservationIndex, placementByEncounter, eventTurns } = v;
   const movesByModel = new Map(), statesByModel = new Map(), initialByModel = new Map(), graphByModel = new Map();
   for (const move of source.moves) for (const model of move.applicableConcreteModels) { const rows = movesByModel.get(model) ?? []; rows.push(move); movesByModel.set(model, rows); }
   for (const rows of movesByModel.values()) rows.sort((a, b) => a.ordinal - b.ordinal || a.canonicalId.localeCompare(b.canonicalId));
@@ -717,12 +720,34 @@ function makeCompiler(v) {
       conflicts: payload.conflicts.filter((row) => closure.has(row.left?.factId) || closure.has(row.right?.factId)).map((row) => compact(row)),
       comparisons: payload.laneComparisons.filter((row) => closure.has(row.left?.factId) || closure.has(row.right?.factId)).map((row) => compact(row)),
       knownUnknowns: payload.knownUnknowns.filter((row) => row.affectedFactIds.some((factId) => closure.has(factId))).map((row) => ({ unknownId: row.unknownId, status: row.status, scope: row.scope, reasonCode: row.reasonCode, detail: row.detail, affectedFactIds: [...new Set(row.affectedFactIds.filter((factId) => closure.has(factId)))] })),
-      legacyAnnotations: legacyRecord(encounter), proof: [...closure].sort().map(proofFor),
+      legacyAnnotations: legacyRecord(encounter), sourceAuthority: compact(projectionAuthority), proof: [...closure].sort().map(proofFor),
     };
-    encounterView.presentation = buildEncounterPresentation(encounterView);
+    // The retained guide is joined by the exact canonical encounter key only. It
+    // remains a distinct audit lane: checked source fields win only when their
+    // practical value is closed; symbolic source expressions retain this exact
+    // configured reference value in the primary guide.
+    const retained = encounterFor(encounter.canonicalId);
+    const reference = retained ? scaledEncounter(retained, { players: configuredPlayers }) : null;
+    encounterView.reference = reference ? {
+      authority: "wiki-reference",
+      matching: "exact-canonical-id",
+      canonicalId: encounter.canonicalId,
+      configuration: {
+        ascension: bookMeta.ascension,
+        players: configuredPlayers,
+        targetVersion: bookMeta.targetVersion,
+        targetBranch: bookMeta.targetBranch,
+      },
+      record: reference,
+    } : null;
+    encounterView.presentation = buildEncounterPresentation(encounterView, {
+      reference,
+      scaling: reference ? { players: configuredPlayers, act: reference.actNumber, kind: reference.kind } : null,
+      referenceMeta: bookMeta,
+    });
     const result = {
       status: "selected", mode,
-      authority: { lane: "SOURCE", gameVersion: metadata.game.version, branch: metadata.game.branch, sourceSchemaVersion: metadata.sourceSchemaVersion, sourceExtractorVersion: metadata.sourceExtractorVersion, projectionSchemaVersion: schema, generatorVersion: metadata.generator.version, dllSha256: DLL_SHA256, conflictPolicy: "explicit-no-precedence", staticOnly: true },
+      authority: { lane: "SOURCE", gameVersion: metadata.game.version, branch: metadata.game.branch, sourceSchemaVersion: metadata.sourceSchemaVersion, sourceExtractorVersion: metadata.sourceExtractorVersion, projectionSchemaVersion: schema, generatorVersion: metadata.generator.version, dllSha256: DLL_SHA256, conflictPolicy: "checked-source-when-closed-else-exact-reference", staticOnly: true },
       observation, encounter: encounterView,
       notices: ["Static source mechanics and possibilities; not a next-move prediction.", "Live HP, Block, Powers, intent, turn, phase, and hand are not observed.", "Possible initial bodies, observed body IDs, and produced bodies are separate sets.", "No source-qualified tactical callouts are published in the checked artifact; [] is not a quota."],
     };
@@ -735,7 +760,7 @@ function makeCompiler(v) {
 export function createSourceAdapter(options = {}) {
   try {
     const root = "projection" in options ? jsonValue(options.projection, "projection input") : JSON.parse(readFileSync(options.projectionPath ?? DEFAULT_PROJECTION, "utf8"));
-    const validated = validateProjection(root); const compile = makeCompiler(validated); const { metadata } = validated;
+    const validated = validateProjection(root); const compile = makeCompiler(validated, { players: options.players }); const { metadata } = validated;
     const adapter = {
       available: true, error: null, schemaVersion: validated.schema, canonicalIds: [...validated.encounterIndex.keys()].sort(),
       resolveObserved(state) {

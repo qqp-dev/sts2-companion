@@ -79,6 +79,106 @@ test("practical effect signatures are deterministic and exclude move titles and 
 });
 
 
+
+test("Ceremonial Beast best-available adapter keeps the approved phase guide and source audit", () => {
+  const beast = encounter("CEREMONIAL_BEAST_BOSS");
+  const primary = beast.presentation.primary;
+  assert.equal(primary.header.stats, "576 HP · BOSS");
+  assert.equal(primary.header.placement, "Overgrowth");
+  assert.deepEqual(primary.bodies[0].sections.map((section) => [section.number, section.title]), [
+    ["01", "Break the Plow"], ["02", "Three-turn loop"],
+  ]);
+  const scan = strings(primary).join(" ");
+  for (const expected of ["Stamp", "Plow 352", "20 damage", "+2 Strength", "STUNNED", "loses all Strength", "Beast Cry", "1 Ringing", "Stomp", "17 damage", "Crush", "19 damage", "+4 Strength", "repeat"])
+    assert.match(scan, new RegExp(expected.replace(/[+]/g, "\\+"), "i"), expected);
+  assert.match(primary.provenance.label, /wiki\/reference values · A9 \/ 2P presentation/);
+  assert.ok(primary.provenance.values.some((row) => row.authority === "wiki-reference"));
+  assert.doesNotMatch(scan, /unresolved|Death removal|Fight completion|all enemies escape/i);
+  const audit = JSON.stringify(beast);
+  assert.match(audit, /get_PlowAmount/);
+  assert.match(audit, /"kind":"reference"/);
+  assert.match(audit, /rawSource/);
+});
+
+test("best-available merge obeys configured scaling and exact-only fallback boundaries", () => {
+  const singlePlayer = createSourceAdapter({ projection: artifact, players: 1 });
+  assert.equal(singlePlayer.available, true, singlePlayer.error);
+  const primary = singlePlayer.view(idle, "CEREMONIAL_BEAST_BOSS").encounter.presentation.primary;
+  assert.equal(primary.header.stats, "288 HP · BOSS");
+  assert.match(strings(primary).join(" "), /Plow 176/);
+  assert.match(strings(primary).join(" "), /20 damage/);
+  assert.equal(primary.provenance.label, "wiki/reference values · A9 / 1P presentation");
+
+  for (const players of [0, 1.5, 5, "many"])
+    assert.match(createSourceAdapter({ projection: artifact, players }).error, /configured players/);
+
+  const sourceOnly = encounter("BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER");
+  assert.equal(sourceOnly.reference, null);
+  assert.equal(sourceOnly.presentation.primary, null);
+});
+
+test("a closed checked source disagreement wins visibly while both values remain auditable", () => {
+  const changed = structuredClone(artifact);
+  const ringing = changed.payload.sourceFacts.moves.find((move) => move.canonicalId === "MONSTER.CEREMONIAL_BEAST#BEAST_CRY_MOVE");
+  assert.ok(ringing);
+  ringing.operations.find((operation) => operation.kind === "applyPower").value = { kind: "constant", value: "2", valueType: "decimal" };
+  changed.metadata.payloadSha256 = adapterInternals.payloadDigest(changed.payload);
+  const changedAdapter = createSourceAdapter({ projection: changed });
+  assert.equal(changedAdapter.available, true, changedAdapter.error);
+  const beast = changedAdapter.view(idle, "CEREMONIAL_BEAST_BOSS").encounter;
+  const cry = beast.presentation.primary.bodies[0].sections[1].rows.find((row) => row.name === "Beast Cry");
+  assert.equal(cry.detail, "2 Ringing");
+  const merge = beast.presentation.primary.provenance.values.find((row) => row.path.includes("Beast Cry"));
+  assert.deepEqual({ authority: merge.authority, presented: merge.presentedValue, retained: merge.retainedReferenceValue, conflict: merge.conflict }, {
+    authority: "checked-source", presented: "2 Ringing", retained: "1 Ringing", conflict: true,
+  });
+  assert.equal(beast.reference.record.lineup[0].moves.find((move) => move.name === "Beast Cry").text, "Applies 1 Ringing.");
+});
+
+test("best-available move merge requires the exact power target and amount sign", () => {
+  assert.equal(presentationInternals.mechanicAtom("Gains -2 Strength.").text, "-2 Strength");
+  assert.equal(presentationInternals.mechanicAtom("Gains 2/4 Strength.").amountPolarity, "positive");
+  const lagavulin = encounter("LAGAVULIN_MATRIARCH_BOSS");
+  const soulSiphon = lagavulin.presentation.primary.bodies[0].sections
+    .flatMap((section) => section.rows).find((row) => row.name === "Soul Siphon");
+  assert.equal(soulSiphon.detail, "Removes 2 Strength and 2 Dexterity from the player · +2 Strength");
+  const retainedDebuff = lagavulin.presentation.primary.provenance.values.find((row) => row.path.endsWith("Soul Siphon · effect 1"));
+  const closedSelfBuff = lagavulin.presentation.primary.provenance.values.find((row) => row.path.endsWith("Soul Siphon · effect 2"));
+  assert.equal(retainedDebuff.authority, "wiki-reference");
+  assert.deepEqual({ authority: closedSelfBuff.authority, presented: closedSelfBuff.presentedValue, conflict: closedSelfBuff.conflict }, {
+    authority: "checked-source", presented: "+2 Strength", conflict: false,
+  });
+
+  const changed = structuredClone(artifact);
+  const sourceMove = changed.payload.sourceFacts.moves.find((move) => move.canonicalId === "MONSTER.LAGAVULIN_MATRIARCH#SOUL_SIPHON_MOVE");
+  const selfStrength = sourceMove.operations.find((operation) => operation.kind === "applyPower"
+    && operation.model === "POWER.STRENGTH_POWER" && operation.target === "sourceMonster");
+  selfStrength.value.expression.value = -3;
+  changed.metadata.payloadSha256 = adapterInternals.payloadDigest(changed.payload);
+  const changedAdapter = createSourceAdapter({ projection: changed });
+  assert.equal(changedAdapter.available, true, changedAdapter.error);
+  const changedLagavulin = changedAdapter.view(idle, "LAGAVULIN_MATRIARCH_BOSS").encounter;
+  const changedSoulSiphon = changedLagavulin.presentation.primary.bodies[0].sections
+    .flatMap((section) => section.rows).find((row) => row.name === "Soul Siphon");
+  assert.equal(changedSoulSiphon.detail, "Removes 2 Strength and 2 Dexterity from the player · +2 Strength");
+  const retainedSelfBuff = changedLagavulin.presentation.primary.provenance.values.find((row) => row.path.endsWith("Soul Siphon · effect 2"));
+  assert.match(retainedSelfBuff.reason, /no exact projected source operation coordinate/);
+  assert.equal(retainedSelfBuff.authority, "wiki-reference");
+});
+
+test("explicit reference phase roles use numbered phase structure without inventing initial bodies", () => {
+  const subject = encounter("TEST_SUBJECT_BOSS").presentation.primary;
+  assert.equal(subject.header.stats, "288 HP · BOSS");
+  assert.deepEqual(subject.bodies.map((body) => [body.initial, body.sections[0].number, body.sections[0].title]), [
+    [true, "01", "Phase 1 · Response"],
+    [false, "02", "Phase 2 · Response"],
+    [false, "03", "Phase 3 · Cycle"],
+  ]);
+  assert.equal(subject.bodies[0].sections.at(-1).transitionAfter, true);
+  assert.equal(subject.bodies[1].sections.at(-1).transitionAfter, true);
+  assert.equal(subject.bodies[2].sections.at(-1).transitionAfter, false);
+});
+
 test("checked editorial candidates are static, independently qualified, and body-addressable", () => {
   const axebot = encounter("AXEBOTS_NORMAL").presentation.callouts;
   assert.equal(axebot.total, 1);
@@ -312,6 +412,7 @@ test("all 105 checked collapsed presentations reject source-identifier leakage",
   for (const id of adapter.canonicalIds) {
     const visiblePresentation = structuredClone(encounter(id).presentation);
     delete visiblePresentation.callouts; // IDs and basis refs are audit-only; the renderer is tested separately.
+    if (visiblePresentation.primary) delete visiblePresentation.primary.provenance.values; // Per-value merge reasons are Technical-audit detail.
     const visible = strings(visiblePresentation).join("\n");
     assert.doesNotMatch(visible, rawIdentity, id);
     assert.doesNotMatch(visible, rawLifecycle, id);
@@ -359,13 +460,21 @@ test("one guide page has flat phone and desktop width contracts plus accessibili
     'min-height:3.5rem', 'summary:focus-visible{outline:2px solid var(--qq-focus)',
     '@media(min-width:44rem)', 'grid-template-columns:repeat(auto-fit,minmax(20rem,1fr))',
     '@media(max-width:21rem)', '@media(prefers-reduced-motion:reduce)', 'border-radius:0',
-    'overflow-x:hidden', 'word-break:break-word',
+    'overflow-x:hidden', 'word-break:break-word', '.move-row{display:grid', '.phase-transition',
   ]) assert.ok(html.includes(characteristic), characteristic);
   assert.doesNotMatch(html, /white-space:\s*nowrap|overflow-x:\s*auto|box-shadow|(?:linear|radial)-gradient/);
+  const css = httpInternals.GUIDE_CSS;
+  assert.match(css, /\.move-row-uncued \.move-mechanic\{grid-column:2\}/);
+  assert.match(css, /\.version-warning\{[^}]*border:1px[^}]*background:/);
+  assert.equal((css.match(/border:1px/g) ?? []).length, 1, "version warning is the only enclosing border");
+  for (const selector of ["primary-body", "phase-section", "move-row", "threshold-line", "selection-context", "body-card", "rule-card", "unknown-row", "callout-card", "technical-audit"])
+    assert.doesNotMatch(css, new RegExp(`\\.${selector}\\{[^}]*\\bborder:`, "s"), `${selector} has no enclosing border`);
+  for (const selector of ["primary-body", "phase-section", "move-row", "threshold-line", "selection-context", "body-card", "rule-card", "unknown-row", "callout-card", "technical-audit"])
+    assert.doesNotMatch(css, new RegExp(`\\.${selector}\\{[^}]*background:(?!transparent)`, "s"), `${selector} has no card background`);
   const client = readFileSync(new URL("../src/client.js", import.meta.url), "utf8");
   assert.doesNotMatch(client, /\x08/, "regexes contain no literal backspace characters");
   assert.match(client, /\/\\b\(\?:formula\|AST\)\\b/);
-  const order = ["renderBodies(root", "renderUnroutedProduction(root", "renderEvent(root", "renderEncounterRules(root", "renderGlobalCallouts(root", "renderUnknowns(root", "renderAudit(root"];
+  const order = ["renderPrimaryHero(root", "renderVersionBoundary(state, root", "renderPrimaryBodies(root", "renderPrimaryNotes(root", "renderGlobalCallouts(root", "renderPrimaryFooter(root", "renderAudit(root"];
   let cursor = -1;
   for (const marker of order) { const next = client.indexOf(marker); assert.ok(next > cursor, marker); cursor = next; }
 });
