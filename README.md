@@ -35,18 +35,28 @@ monster IDs. The flat default scan path is:
    detected/manual context;
 2. explicit numbered phases when the retained pattern declares phases;
 3. otherwise honest `Opener`, `Cycle`, `Branch`, or `Response` sections;
-4. recognized move names with concise effects, transitions, repeat cues, and
-   body-adjacent encounter-distinct rules;
+4. turn/condition cues and numbered sequence steps with concise consequences,
+   transitions, repeat cues, and body-adjacent encounter-distinct rules;
 5. zero or more independently qualified flat `TACTIC`/`WATCH` lines; and
 6. quiet A9/player-count provenance plus collapsed **Technical audit**.
 
 The primary guide uses the best available value per practical coordinate. A
 projected checked value supersedes the retained guide only when it is actually
 closed. If its source expression remains symbolic, the exact retained A9/body/
-move value is shown with configured multiplayer scaling and quiet
-`wiki/reference` provenance—never as source-closed and never as an `unresolved`
-placeholder when that exact fallback exists. Matching is exact only; the adapter
-does not guess aliases, fold case, or fuzzy-match fallback records.
+move value is rendered as a consequence with configured multiplayer scaling and
+quiet `wiki/reference` provenance—never as source-closed and never as an
+`unresolved` placeholder when that exact fallback exists. Matching is exact only;
+the adapter does not guess aliases, fold case, or fuzzy-match fallback records.
+
+Primary copy is consequence-first: it answers **when does it happen, what happens,
+and what must the player track or target?** Ordinary canonical move labels are not
+primary row headings. Player-facing tracked keywords and statuses such as Strength,
+Ringing, Vulnerable, Weak, Stunned, and Block remain visible, as do actor, target,
+and summoned-enemy identities such as Zapbot. Opaque named Powers and internal
+concepts are expressed through thresholds and outcomes rather than unexplained
+stack nouns. Exact canonical move/Power labels, source IDs, retained wiki labels,
+and per-value provenance remain unchanged as audit/reconciliation metadata inside
+the collapsed **Technical audit**.
 
 Possible initial bodies and produced bodies remain visibly distinct. Random and
 alternative roster branches are possibilities, not a claim that every listed

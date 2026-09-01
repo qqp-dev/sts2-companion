@@ -60,11 +60,22 @@ export async function renderCeremonialPhone() {
 async function main() {
   const { root, payload, snapshot } = await renderCeremonialPhone();
   const collapsed = collapsedDomText(root);
-  const approved = ["576 HP · BOSS", "01", "Break the Plow", "Plow 352", "20 damage", "+2 Strength", "STUNNED", "02", "Three-turn loop", "1 Ringing", "17 damage", "19 damage", "+4 Strength", "Watch:", "wiki/reference values · A9 / 2P presentation"];
+  const approved = [
+    "576 HP · BOSS", "01", "Force the stun", "First turn", "No attack", "Then each turn",
+    "20 damage", "+2 Strength", "At 352 HP or below", "Immediately Stunned", "loses all Strength",
+    "takes no action", "02", "Three-turn loop", "1", "Apply 1 Ringing", "2", "17 damage", "3",
+    "19 damage", "+4 Strength", "repeat 1 → 2 → 3", "Watch:",
+    "wiki/reference values · A9 / 2P presentation",
+  ];
   let cursor = -1;
   for (const value of approved) { const next = collapsed.indexOf(value, cursor + 1); assert.ok(next > cursor, `${value} is missing or out of order`); cursor = next; }
+  const forbidden = /Stamp|Break the Plow|Gain 352 Plow|Beast Cry|Stomp|Crush/;
+  assert.doesNotMatch(collapsed, forbidden);
+  assert.doesNotMatch(JSON.stringify(payload.encounter.presentation.primary), forbidden);
   assert.doesNotMatch(collapsed, /unresolved|Death removal|Fight completion|all enemies escape|Ordinary|Boss · Boss/i);
-  assert.match(JSON.stringify(payload.encounter), /get_PlowAmount/);
+  const audit = JSON.stringify(payload.encounter);
+  for (const retained of ["Stamp", "Plow", "Beast Cry", "Stomp", "Crush", "PlowPower", "get_PlowAmount"])
+    assert.match(audit, new RegExp(retained), retained);
   assert.match(JSON.stringify(payload.encounter.sourceAuthority), /rawSource/);
   if (process.argv.includes("--write")) writeFileSync(SNAPSHOT, snapshot);
   else if (process.argv.includes("--check")) assert.equal(snapshot, readFileSync(SNAPSHOT, "utf8"), "phone snapshot drifted");

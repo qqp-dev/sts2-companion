@@ -908,10 +908,62 @@ function bestMove(referenceMove, sourceBody, scaling, bodyIndex, provenanceValue
 function moveRow(move, cue = null, atoms = move.atoms) {
   return {
     cue,
-    name: move.name,
     detail: atoms.map((atom) => atom.text).filter(Boolean).join(" · "),
     authorities: [...new Set(atoms.map((atom) => atom.authority))],
   };
+}
+function numberedRows(moves, transform = (move) => move.atoms) {
+  return moves.map((move, index) => moveRow(move, String(index + 1), transform(move, index)));
+}
+function escapedPattern(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+function exactPhraseSpans(value, phrases) {
+  const spans = [];
+  for (const phrase of phrases.filter(Boolean)) {
+    const expression = new RegExp(`(^|[^A-Za-z0-9])(${escapedPattern(phrase)})(?=[^A-Za-z0-9]|$)`, "g");
+    for (const match of value.matchAll(expression)) {
+      const start = match.index + match[1].length;
+      spans.push([start, start + match[2].length]);
+    }
+  }
+  return spans;
+}
+function isConsequencePatternCitation(value, start, end, protectedSpans) {
+  if (protectedSpans.some(([left, right]) => start >= left && end <= right)) return false;
+  const before = value.slice(0, start);
+  const after = value.slice(end);
+
+  // These nouns expose a value the player tracks. A label collision in this
+  // grammatical role is a concept, not a citation of the same-named action.
+  if (/^(?:'s)?\s+(?:timer|countdown|counter|count|threshold|amount|stacks?)\b/i.test(after)) return false;
+  if (/^\s+(?:wears? off|expires?|remains?|is (?:active|inactive))\b/i.test(after)) return false;
+
+  // Bullets, arrows, and positional dashes are explicit move-sequence syntax
+  // in retained patterns. A probability prefix may sit between a bullet and name.
+  if (/(?:•|→|—)\s*$/.test(before) || /^\s*→/.test(after)) return true;
+
+  const boundary = Math.max(before.lastIndexOf("."), before.lastIndexOf("!"), before.lastIndexOf("?"), before.lastIndexOf("•"), before.lastIndexOf("→"));
+  const clause = before.slice(boundary + 1);
+  const actionCue = /(?:\b(?:use[sd]?|using|used|opens?|openers?|starts?|resumes?|repeat(?:s|ed)?|pick(?:s|ed)?|select(?:s|ed)?|choose[sd]?|switch(?:es|ed)?|activate[sd]?|enter(?:s|ed)?|follow(?:s|ed)?\s+up|alternates?|alternate|cycles?)\b|\b(?:after|before|between|with|then|via|at|to|from)\s+|\bchance\s+of\s+|\b(?:cycle|sequence|moves?|pattern|order|chance)\s*:)[^.!?•→]*$/i;
+  if (actionCue.test(clause)) return true;
+
+  // Some patterns put the move citation in subject position and describe its
+  // consequence or usage immediately afterward.
+  return /^(?:'s\s+(?:damage|Block|effect|hits?)\b|\s+(?:opener\s+slot|appl(?:y|ies)|deals?|gains?|summons?|does|wakes?|starts?\s+at|has\s+been\s+used|cannot\s+be\s+used|can\s+only\s+be\s+used|every\s+turn|it\s+repeats?)\b)/i.test(after);
+}
+function consequencePattern(value, moves, protectedPhrases = []) {
+  const source = String(value ?? "");
+  const numbered = new Map(moves.map((move, index) => [move.name, index + 1]));
+  const names = [...numbered.keys()].filter(Boolean).sort((left, right) => right.length - left.length);
+  if (!names.length) return source;
+  const protectedSpans = exactPhraseSpans(source, protectedPhrases);
+  const expression = new RegExp(`(^|[^A-Za-z0-9])(${names.map(escapedPattern).join("|")})(?=[^A-Za-z0-9]|$)`, "g");
+  return source.replace(expression, (matched, prefix, name, offset) => {
+    const start = offset + prefix.length;
+    return isConsequencePatternCitation(source, start, start + name.length, protectedSpans)
+      ? `${prefix}step ${numbered.get(name)}` : matched;
+  });
 }
 function exactMoveMap(moves) {
   const map = new Map();
@@ -921,36 +973,41 @@ function exactMoveMap(moves) {
   }
   return map;
 }
-function ceremonialSections(referenceBody, moves) {
+function ceremonialSections(referenceBody, moves, scaling = {}) {
   if (referenceBody.monsterId !== "CEREMONIAL_BEAST") return null;
   const byName = exactMoveMap(moves);
-  const required = ["Stamp", "Plow", "Stun", "Beast Cry", "Stomp", "Crush"];
-  if (!byName || required.some((name) => !byName.has(name))) return null;
+  if (!byName || !["Stamp", "Plow", "Stun", "Beast Cry", "Stomp", "Crush"].every((name) => byName.has(name))) return null;
   const stampRecord = referenceBody.moves.find((move) => move.name === "Stamp");
-  const stunRecord = referenceBody.moves.find((move) => move.name === "Stun");
-  const pattern = referenceBody.pattern?.text ?? "";
-  // The layout is enabled only while the retained exact facts continue to state
-  // the approved threshold transition. The structure never supplies a number.
-  if (!/two distinct phases/i.test(pattern) || !/loses all Strength/i.test(stampRecord?.sourceA9 ?? "") || !/Does nothing/i.test(stunRecord?.sourceA9 ?? "")) return null;
   const stamp = byName.get("Stamp");
-  const stampPower = stamp.atoms.filter((atom) => atom.kind === "power");
+  const scaledThreshold = stamp.atoms.find((atom) => atom.subject?.toLowerCase() === "plow" && atom.amount !== null);
+  const rawThreshold = mechanicAtoms(stampRecord?.sourceA9).find((atom) => atom.subject?.toLowerCase() === "plow" && atom.amount !== null);
+  const threshold = Number(scaling.players ?? 2) === 1 ? rawThreshold?.amount : scaledThreshold?.amount;
+  if (!threshold) return null;
+  const stun = byName.get("Stun");
+  const stunState = stun.atoms.find((atom) => atom.kind === "state")?.text ?? "Stunned";
+  const noAction = stun.atoms.find((atom) => atom.kind === "action")?.text ?? "takes no action";
   const phaseOne = {
-    number: "01", title: "Break the Plow",
+    number: "01", title: "Force the stun",
     rows: [
-      moveRow(stamp, "First turn", stampPower.map((atom) => ({ ...atom, text: `gain ${atom.text}` }))),
-      moveRow(byName.get("Plow"), "Then every turn"),
+      { cue: "First turn", detail: "No attack", authorities: [...new Set(stamp.atoms.map((atom) => atom.authority))] },
+      moveRow(byName.get("Plow"), "Then each turn"),
     ],
-    marker: { label: "STUNNED", detail: "loses all Strength · takes no action" },
-    transitionAfter: true,
-    repeat: null,
+    marker: {
+      label: `At ${threshold} HP or below`,
+      detail: `Immediately ${stunState.replace(/^STUNNED$/i, "Stunned")} · loses all Strength · ${noAction}`,
+    },
+    transitionAfter: true, repeat: null,
   };
   const phaseTwoMoves = [byName.get("Beast Cry"), byName.get("Stomp"), byName.get("Crush")];
-  return [phaseOne, {
+  const phaseTwo = {
     number: "02", title: "Three-turn loop",
-    rows: phaseTwoMoves.map((move) => moveRow(move)),
+    rows: numberedRows(phaseTwoMoves, (move, index) => index === 0
+      ? move.atoms.map((atom) => ({ ...atom, text: `Apply ${atom.text}` }))
+      : move.atoms),
     marker: null, transitionAfter: false,
-    repeat: "↻ repeat Beast Cry → Stomp → Crush",
-  }];
+    repeat: "↻ repeat 1 → 2 → 3",
+  };
+  return [phaseOne, phaseTwo];
 }
 function namesInExactText(moves, value) {
   const source = String(value ?? "");
@@ -966,13 +1023,13 @@ function genericSections(referenceBody, moves) {
       selected.forEach((move) => used.add(move.name));
       return {
         number: String(index + 1).padStart(2, "0"), title: `Phase ${match[1]}`,
-        rows: selected.map((move) => moveRow(move)), marker: null,
+        rows: numberedRows(selected), marker: null,
         transitionAfter: index < phaseChunks.length - 1,
         repeat: /repeat|cycle/i.test(match[2]) ? "↻ repeat" : null,
       };
     });
     const remaining = moves.filter((move) => !used.has(move.name));
-    if (remaining.length) sections.at(-1).rows.push(...remaining.map((move) => moveRow(move)));
+    if (remaining.length) sections.at(-1).rows.push(...numberedRows(remaining));
     return sections;
   }
   const openerMatch = /Opener\s*\(turn 1\):\s*([^.]+)\./i.exec(pattern);
@@ -980,12 +1037,16 @@ function genericSections(referenceBody, moves) {
     const openers = namesInExactText(moves, openerMatch[1]);
     const sections = [];
     if (openers.length) sections.push({ number: null, title: "Opener", rows: openers.map((move) => moveRow(move, "Turn 1")), marker: null, transitionAfter: true, repeat: null });
-    sections.push({ number: null, title: "Cycle", rows: moves.map((move) => moveRow(move)), marker: null, transitionAfter: false, repeat: /repeat|cycle/i.test(pattern) ? "↻ repeat" : null });
+    sections.push({ number: null, title: "Cycle", rows: numberedRows(moves), marker: null, transitionAfter: false, repeat: /repeat|cycle/i.test(pattern) ? "↻ repeat" : null });
     return sections;
   }
   const title = referenceBody.pattern?.type === "random-with-constraint" || /\b(?:if|random|either)\b/i.test(pattern) ? "Branch"
     : /\brespond|after being|when\b/i.test(pattern) ? "Response" : "Cycle";
-  return [{ number: null, title, rows: moves.map((move) => moveRow(move)), marker: null, transitionAfter: false, repeat: /repeat|cycle|every turn/i.test(pattern) ? "↻ repeat" : null, note: pattern || null }];
+  return [{
+    number: null, title, rows: numberedRows(moves), marker: null, transitionAfter: false,
+    repeat: /repeat|cycle|every turn/i.test(pattern) ? "↻ repeat" : null,
+    note: pattern ? consequencePattern(pattern, moves, [referenceBody.displayName]) : null,
+  }];
 }
 function referencePhaseNumber(referenceBody) {
   const match = /^phase\s+(\d+)$/i.exec(referenceBody.role ?? "");
@@ -1018,33 +1079,120 @@ function isPracticalInitial(encounter, sourceBody, referenceBody) {
   if (sourceBody) return encounter.roster?.possibleInitialBodies?.includes(sourceBody.canonicalModel) === true;
   return referenceBody.role !== "summoned";
 }
-function practicalRole(encounter, sourceBody, referenceBody) {
+function practicalRole(encounter, sourceBody, referenceBody, moves = []) {
   const initial = isPracticalInitial(encounter, sourceBody, referenceBody);
-  if (referenceBody.role) return referenceBody.role;
+  if (referenceBody.role) return consequencePattern(referenceBody.role, moves, [referenceBody.displayName]);
   return initial ? "initial body" : "encounter body";
 }
-function uniqueReferenceNotes(reference) {
+function consequenceNote(value, moves) {
+  const citations = moves.map((move) => {
+    const consequence = move.atoms.map((atom) => atom.text).filter(Boolean).join(" · ")
+      .replace(new RegExp(`^${escapedPattern(move.name)}(?:\\s*·\\s*|$)`, "i"), "");
+    const bare = consequence ? `“${consequence}” step` : "listed step";
+    return {
+      name: move.name,
+      bare,
+      definite: `the ${bare}`,
+      standalone: consequence || "Listed step",
+    };
+  }).sort((left, right) => right.name.length - left.name.length);
+  let rendered = String(value ?? "");
+  if (!citations.length) return rendered;
+
+  // A capitalized move title is rewritten only where the sentence identifies it
+  // as an action. The same token can also be an ordinary verb, status, or tracked
+  // noun (for example, "bombs that explode" and "Hatch timer"). Replacing those
+  // lexical uses globally loses meaning and often breaks the surrounding grammar.
+  const replaceExactName = (source, citation, replacement) => source.replace(
+    new RegExp(`(^|[^A-Za-z0-9])(${escapedPattern(citation.name)})(?=[^A-Za-z0-9]|$)`, "gi"),
+    (matched, prefix, name) => name === citation.name ? `${prefix}${replacement}` : matched,
+  );
+
+  // Lists explicitly introduced as moves are citations even though later items
+  // are separated only by commas or conjunctions.
+  rendered = rendered.replace(/\bmoves?\s+—\s*[^.—]*(?=\s+—|[.;]|$)/gi, (list) => {
+    let rewritten = list;
+    for (const citation of citations) rewritten = replaceExactName(rewritten, citation, citation.bare);
+    return rewritten;
+  });
+
+  for (const citation of citations) {
+    const name = escapedPattern(citation.name);
+    const exactName = `(${name})(?=[^A-Za-z0-9]|$)`;
+
+    // Preserve the noun owned by a move citation: "Fade's Intangible" becomes
+    // "Intangible from the … step", rather than an ungrammatical step possessive.
+    rendered = rendered.replace(
+      new RegExp(`(^|[^A-Za-z0-9])((?:the)\\s+first\\s+iteration\\s+of\\s+)${exactName}'s\\s+([A-Za-z][A-Za-z-]*)`, "gi"),
+      (matched, prefix, lead, found, noun) => found === citation.name
+        ? `${prefix}${lead[0] === "T" ? "The" : "the"} first ${noun} from ${citation.definite}` : matched,
+    );
+    rendered = rendered.replace(
+      new RegExp(`(^|[^A-Za-z0-9])${exactName}'s\\s+([A-Za-z][A-Za-z-]*)`, "gi"),
+      (matched, prefix, found, noun) => found === citation.name
+        ? `${prefix}${noun} from ${citation.definite}` : matched,
+    );
+
+    // The source phrase already supplies its article, so use a bare descriptor.
+    rendered = rendered.replace(
+      new RegExp(`(^|[^A-Za-z0-9])((?:the\\s+)?usual\\s+)${exactName}`, "gi"),
+      (matched, prefix, lead, found) => found === citation.name
+        ? `${prefix}${lead}${citation.bare}` : matched,
+    );
+
+    // These grammatical cues identify an actual move citation. Supply an article
+    // with a consequence label, but never splice it into an arbitrary token match.
+    rendered = rendered.replace(
+      new RegExp(`(^|[^A-Za-z0-9])((?:use[sd]?|using|activate[sd]?|activating|with|via|after|to|then|(?:version|iteration)\\s+of)\\s+)${exactName}`, "gi"),
+      (matched, prefix, lead, found) => found === citation.name
+        ? `${prefix}${lead}${citation.definite}` : matched,
+    );
+
+    // A title followed by a parenthetical at the start of a rule is a label, not
+    // sentence prose. Render its consequence directly instead of retaining a slot.
+    rendered = rendered.replace(
+      new RegExp(`^(${name})(?=\\s*\\()`, "i"),
+      (matched, found) => found === citation.name ? citation.standalone : matched,
+    );
+  }
+  return rendered.replace(/\s+([.,;:])/g, "$1");
+}
+function uniqueReferenceNotes(reference, moves) {
   const seen = new Set(), notes = [];
   for (const line of [...(reference.rules ?? []), ...(reference.timing ?? [])]) {
-    const normalized = String(line).trim();
+    const normalized = consequenceNote(String(line).trim(), moves);
     if (!normalized || seen.has(normalized)) continue;
     seen.add(normalized); notes.push(normalized);
   }
   return notes;
+}
+function primaryReferenceMove(referenceBody, referenceMove, scaling) {
+  // Plow is an HP threshold rather than a displayed stack amount. In the active
+  // fixture its one-player value remains the raw A9 threshold; multiplayer uses
+  // the checked opt-in scaling already applied to referenceMove.text.
+  if (referenceBody.monsterId === "CEREMONIAL_BEAST" && referenceMove.name === "Stamp"
+      && Number(scaling?.players ?? 2) === 1) {
+    return { ...referenceMove, text: referenceMove.sourceA9 };
+  }
+  return referenceMove;
 }
 function primaryPresentation(encounter, options) {
   const reference = options.reference;
   if (!reference) return null;
   const provenanceValues = [];
   const maximumPhase = Math.max(0, ...reference.lineup.map((body) => referencePhaseNumber(body) ?? 0));
+  const practicalMoves = [];
   const bodies = reference.lineup.map((referenceBody, bodyIndex) => {
     const sourceBody = exactSourceBody(encounter, referenceBody);
-    const moves = referenceBody.moves.map((move) => bestMove(move, sourceBody, options.scaling, bodyIndex, provenanceValues));
-    const sections = ceremonialSections(referenceBody, moves) ?? genericSections(referenceBody, moves);
+    const moves = referenceBody.moves.map((move) => bestMove(
+      primaryReferenceMove(referenceBody, move, options.scaling), sourceBody, options.scaling, bodyIndex, provenanceValues,
+    ));
+    practicalMoves.push(...moves);
+    const sections = ceremonialSections(referenceBody, moves, options.scaling) ?? genericSections(referenceBody, moves);
     return {
       bodyIndex,
       name: referenceBody.displayName,
-      role: practicalRole(encounter, sourceBody, referenceBody),
+      role: practicalRole(encounter, sourceBody, referenceBody, moves),
       initial: isPracticalInitial(encounter, sourceBody, referenceBody),
       hp: practicalHp(sourceBody, referenceBody, options.scaling, bodyIndex, provenanceValues),
       setup: referenceBody.startsWith ? `Starts with · ${referenceBody.startsWith}` : null,
@@ -1066,7 +1214,7 @@ function primaryPresentation(encounter, options) {
       kind,
     },
     bodies,
-    notes: uniqueReferenceNotes(reference),
+    notes: uniqueReferenceNotes(reference, practicalMoves),
     provenance: {
       label: `wiki/reference values · A9 / ${players}P presentation`,
       matching: "exact canonical encounter and monster IDs only",
@@ -1138,8 +1286,15 @@ export function buildEncounterPresentation(encounter, options = {}) {
     headline: text(row.detail, words(row.unknownId)),
     detail: `${words(row.status)} · ${words(row.scope)} · ${words(row.reasonCode)}`,
   }));
+  const projectedPrimary = primaryPresentation(encounter, options);
+  const mergeProvenance = projectedPrimary?.provenance ?? null;
+  const primary = projectedPrimary ? {
+    ...projectedPrimary,
+    provenance: { label: projectedPrimary.provenance.label },
+  } : null;
   return {
-    primary: primaryPresentation(encounter, options),
+    primary,
+    audit: { mergeProvenance },
     context: contextPresentation(encounter), roster,
     bodies: (encounter.monsters ?? []).map((body, index) => bodyPresentation(body, index, encounter, names)),
     production, lifecycle,

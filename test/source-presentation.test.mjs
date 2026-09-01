@@ -80,34 +80,62 @@ test("practical effect signatures are deterministic and exclude move titles and 
 
 
 
-test("Ceremonial Beast best-available adapter keeps the approved phase guide and source audit", () => {
+test("Ceremonial Beast consequence-first guide keeps exact canonical source audit", () => {
   const beast = encounter("CEREMONIAL_BEAST_BOSS");
   const primary = beast.presentation.primary;
   assert.equal(primary.header.stats, "576 HP · BOSS");
   assert.equal(primary.header.placement, "Overgrowth");
   assert.deepEqual(primary.bodies[0].sections.map((section) => [section.number, section.title]), [
-    ["01", "Break the Plow"], ["02", "Three-turn loop"],
+    ["01", "Force the stun"], ["02", "Three-turn loop"],
   ]);
   const scan = strings(primary).join(" ");
-  for (const expected of ["Stamp", "Plow 352", "20 damage", "+2 Strength", "STUNNED", "loses all Strength", "Beast Cry", "1 Ringing", "Stomp", "17 damage", "Crush", "19 damage", "+4 Strength", "repeat"])
-    assert.match(scan, new RegExp(expected.replace(/[+]/g, "\\+"), "i"), expected);
+  for (const expected of [
+    "First turn", "No attack", "Then each turn", "20 damage", "+2 Strength", "At 352 HP or below",
+    "Immediately Stunned", "loses all Strength", "takes no action", "Apply 1 Ringing", "17 damage",
+    "19 damage", "+4 Strength", "repeat 1 → 2 → 3",
+  ]) assert.match(scan, new RegExp(expected.replace(/[+]/g, "\\+"), "i"), expected);
+  for (const forbidden of ["Stamp", "Break the Plow", "Gain 352 Plow", "Beast Cry", "Stomp", "Crush"])
+    assert.doesNotMatch(scan, new RegExp(forbidden, "i"), forbidden);
   assert.match(primary.provenance.label, /wiki\/reference values · A9 \/ 2P presentation/);
-  assert.ok(primary.provenance.values.some((row) => row.authority === "wiki-reference"));
+  assert.deepEqual(Object.keys(primary.provenance), ["label"]);
   assert.doesNotMatch(scan, /unresolved|Death removal|Fight completion|all enemies escape/i);
+
   const audit = JSON.stringify(beast);
-  assert.match(audit, /get_PlowAmount/);
+  for (const retained of ["Stamp", "Plow", "Beast Cry", "Stomp", "Crush", "PlowPower", "get_PlowAmount"])
+    assert.match(audit, new RegExp(retained), retained);
   assert.match(audit, /"kind":"reference"/);
   assert.match(audit, /rawSource/);
+  assert.ok(beast.presentation.audit.mergeProvenance.values.some((row) => row.authority === "wiki-reference"));
 });
 
-test("best-available merge obeys configured scaling and exact-only fallback boundaries", () => {
+test("pattern projection preserves actor identities and tracked timers while suppressing action citations", () => {
+  const eel = encounter("TERROR_EEL_ELITE");
+  const eelPattern = eel.presentation.primary.bodies[0].sections[0].note;
+  assert.match(eelPattern, /The Terror Eel alternates between step 1 and step 2, starting with step 1/);
+  assert.match(eelPattern, /uses step 4 before resuming the step 1\/step 2 cycle/);
+  assert.doesNotMatch(eelPattern, /step 4 Eel|between Crash and Thrash|uses Terror|• Terror applies/);
+  assert.match(JSON.stringify(eel.reference), /Crash|Thrash|Terror/);
+
+  const ovicopter = encounter("OVICOPTER_NORMAL");
+  const egg = ovicopter.presentation.primary.bodies.find((body) => body.name === "Tough Egg");
+  const eggPattern = egg.sections[0].note;
+  assert.match(eggPattern, /its Hatch timer counts down/);
+  assert.match(eggPattern, /uses step 1 to transform into a Hatchling/);
+  assert.doesNotMatch(eggPattern, /step 1 timer|uses Hatch to transform/);
+  assert.match(JSON.stringify(ovicopter.reference), /"name":"Hatch"/);
+});
+
+test("best-available merge obeys one- and two-player threshold scaling and exact-only fallback boundaries", () => {
   const singlePlayer = createSourceAdapter({ projection: artifact, players: 1 });
   assert.equal(singlePlayer.available, true, singlePlayer.error);
-  const primary = singlePlayer.view(idle, "CEREMONIAL_BEAST_BOSS").encounter.presentation.primary;
+  const beast = singlePlayer.view(idle, "CEREMONIAL_BEAST_BOSS").encounter;
+  const primary = beast.presentation.primary;
   assert.equal(primary.header.stats, "288 HP · BOSS");
-  assert.match(strings(primary).join(" "), /Plow 176/);
+  assert.match(strings(primary).join(" "), /At 160 HP or below/);
+  assert.doesNotMatch(strings(primary).join(" "), /Plow 160|Plow 176/);
   assert.match(strings(primary).join(" "), /20 damage/);
   assert.equal(primary.provenance.label, "wiki/reference values · A9 / 1P presentation");
+  assert.equal(beast.presentation.audit.mergeProvenance.values[0].presentedValue, "Plow 160");
 
   for (const players of [0, 1.5, 5, "many"])
     assert.match(createSourceAdapter({ projection: artifact, players }).error, /configured players/);
@@ -126,9 +154,10 @@ test("a closed checked source disagreement wins visibly while both values remain
   const changedAdapter = createSourceAdapter({ projection: changed });
   assert.equal(changedAdapter.available, true, changedAdapter.error);
   const beast = changedAdapter.view(idle, "CEREMONIAL_BEAST_BOSS").encounter;
-  const cry = beast.presentation.primary.bodies[0].sections[1].rows.find((row) => row.name === "Beast Cry");
-  assert.equal(cry.detail, "2 Ringing");
-  const merge = beast.presentation.primary.provenance.values.find((row) => row.path.includes("Beast Cry"));
+  const cry = beast.presentation.primary.bodies[0].sections[1].rows.find((row) => row.cue === "1");
+  assert.equal(cry.detail, "Apply 2 Ringing");
+  assert.equal(Object.hasOwn(cry, "name"), false);
+  const merge = beast.presentation.audit.mergeProvenance.values.find((row) => row.path.includes("Beast Cry"));
   assert.deepEqual({ authority: merge.authority, presented: merge.presentedValue, retained: merge.retainedReferenceValue, conflict: merge.conflict }, {
     authority: "checked-source", presented: "2 Ringing", retained: "1 Ringing", conflict: true,
   });
@@ -140,10 +169,12 @@ test("best-available move merge requires the exact power target and amount sign"
   assert.equal(presentationInternals.mechanicAtom("Gains 2/4 Strength.").amountPolarity, "positive");
   const lagavulin = encounter("LAGAVULIN_MATRIARCH_BOSS");
   const soulSiphon = lagavulin.presentation.primary.bodies[0].sections
-    .flatMap((section) => section.rows).find((row) => row.name === "Soul Siphon");
+    .flatMap((section) => section.rows).find((row) => row.cue === "5");
   assert.equal(soulSiphon.detail, "Removes 2 Strength and 2 Dexterity from the player · +2 Strength");
-  const retainedDebuff = lagavulin.presentation.primary.provenance.values.find((row) => row.path.endsWith("Soul Siphon · effect 1"));
-  const closedSelfBuff = lagavulin.presentation.primary.provenance.values.find((row) => row.path.endsWith("Soul Siphon · effect 2"));
+  assert.equal(Object.hasOwn(soulSiphon, "name"), false);
+  const provenance = lagavulin.presentation.audit.mergeProvenance.values;
+  const retainedDebuff = provenance.find((row) => row.path.endsWith("Soul Siphon · effect 1"));
+  const closedSelfBuff = provenance.find((row) => row.path.endsWith("Soul Siphon · effect 2"));
   assert.equal(retainedDebuff.authority, "wiki-reference");
   assert.deepEqual({ authority: closedSelfBuff.authority, presented: closedSelfBuff.presentedValue, conflict: closedSelfBuff.conflict }, {
     authority: "checked-source", presented: "+2 Strength", conflict: false,
@@ -159,9 +190,9 @@ test("best-available move merge requires the exact power target and amount sign"
   assert.equal(changedAdapter.available, true, changedAdapter.error);
   const changedLagavulin = changedAdapter.view(idle, "LAGAVULIN_MATRIARCH_BOSS").encounter;
   const changedSoulSiphon = changedLagavulin.presentation.primary.bodies[0].sections
-    .flatMap((section) => section.rows).find((row) => row.name === "Soul Siphon");
+    .flatMap((section) => section.rows).find((row) => row.cue === "5");
   assert.equal(changedSoulSiphon.detail, "Removes 2 Strength and 2 Dexterity from the player · +2 Strength");
-  const retainedSelfBuff = changedLagavulin.presentation.primary.provenance.values.find((row) => row.path.endsWith("Soul Siphon · effect 2"));
+  const retainedSelfBuff = changedLagavulin.presentation.audit.mergeProvenance.values.find((row) => row.path.endsWith("Soul Siphon · effect 2"));
   assert.match(retainedSelfBuff.reason, /no exact projected source operation coordinate/);
   assert.equal(retainedSelfBuff.authority, "wiki-reference");
 });
@@ -412,13 +443,93 @@ test("all 105 checked collapsed presentations reject source-identifier leakage",
   for (const id of adapter.canonicalIds) {
     const visiblePresentation = structuredClone(encounter(id).presentation);
     delete visiblePresentation.callouts; // IDs and basis refs are audit-only; the renderer is tested separately.
-    if (visiblePresentation.primary) delete visiblePresentation.primary.provenance.values; // Per-value merge reasons are Technical-audit detail.
+    delete visiblePresentation.audit; // Exact merge paths and reasons render only inside Technical audit.
     const visible = strings(visiblePresentation).join("\n");
     assert.doesNotMatch(visible, rawIdentity, id);
     assert.doesNotMatch(visible, rawLifecycle, id);
     assert.doesNotMatch(visible, sourceDump, id);
     assert.doesNotMatch(visible, /checked amount/i, id);
     assert.doesNotMatch(visible, /\b(?:current HP|current intent|survivors are|you should|do this now)\b/i, id);
+  }
+});
+
+test("primary rule prose preserves lexical meaning while rewriting canonical move citations", () => {
+  const livingFog = encounter("LIVING_FOG_NORMAL");
+  const fogNotes = livingFog.presentation.primary.notes.join(" ");
+  assert.match(fogNotes, /Gas Bombs that explode for damage and then die/);
+  assert.doesNotMatch(fogNotes, /Gas Bombs that (?:the|“)|step for damage/);
+
+  const ovicopter = encounter("OVICOPTER_NORMAL");
+  const eggNotes = ovicopter.presentation.primary.notes.join(" ");
+  assert.match(eggNotes, /Tough Eggs that hatch into Hatchlings/);
+  assert.match(eggNotes, /its Hatch timer counts down/);
+  assert.match(eggNotes, /Hatch timer starts at 2/);
+  assert.match(eggNotes, /uses the “Hatches into a Hatchling[^”]+” step to transform/);
+  assert.doesNotMatch(eggNotes, /the “[^”]+” step (?:into Hatchlings|timer)/);
+
+  const queen = encounter("QUEEN_BOSS");
+  const queenNotes = queen.presentation.primary.notes.join(" ");
+  assert.match(queenNotes, /switch intents to the “4×5 damage” step/);
+  assert.match(queenNotes, /skipping the usual “\+2 Strength” step/);
+  assert.match(queenNotes, /not use the “\+2 Strength” step/);
+  assert.doesNotMatch(queenNotes, /usual the|Off with Your Head|usual Enrage|use Enrage/);
+
+  const soulNotes = encounter("SOUL_FYSH_BOSS").presentation.primary.notes.join(" ");
+  assert.match(soulNotes, /The first Intangible from the “2 Intangible” step fades instantly/);
+  assert.doesNotMatch(soulNotes, /iteration of .* step|Fade's|step's/);
+
+  assert.ok(livingFog.reference.record.lineup.some((body) => body.moves.some((move) => move.name === "Explode")));
+  assert.ok(ovicopter.reference.record.lineup.some((body) => body.moves.some((move) => move.name === "Hatch")));
+  assert.ok(queen.reference.record.lineup.some((body) => body.moves.some((move) => move.name === "Enrage")));
+});
+
+test("all practical rows and structural prose suppress labels while rule prose suppresses move citations", () => {
+  const escaped = (label) => label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const boundaryPattern = (label) => new RegExp(`(^|[^A-Za-z0-9])${escaped(label)}(?=[^A-Za-z0-9]|$)`);
+  const withoutSemanticMoveUses = (value, bodyName, moveName) => {
+    const withoutEntity = String(value).replace(
+      new RegExp(`(^|[^A-Za-z0-9])${escaped(bodyName)}(?=[^A-Za-z0-9]|$)`, "g"),
+      "$1[entity]",
+    );
+    return withoutEntity.replace(
+      new RegExp(String.raw`(^|[^A-Za-z0-9])${escaped(moveName)}(?=\s+(?:timer|countdown|counter|count|threshold|amount|stacks?|wears? off|expires?)\b)`, "gi"),
+      "$1[tracked concept]",
+    );
+  };
+  const citationPatterns = (label) => {
+    const name = escaped(label);
+    const end = "(?=[^A-Za-z0-9]|$)";
+    return [
+      new RegExp(`(^|[^A-Za-z0-9])(?:[Uu]se[sd]?|[Uu]sing|[Aa]ctivate[sd]?|[Aa]ctivating|[Ww]ith|[Vv]ia|[Aa]fter|[Tt]o|[Tt]hen|[Uu]sual|(?:[Vv]ersion|[Ii]teration)\\s+of)\\s+(?:the\\s+)?${name}${end}`, "m"),
+      new RegExp(`(^|[^A-Za-z0-9])${name}'s${end}`, "m"),
+      new RegExp(`^${name}(?=\\s*\\()`, "m"),
+      new RegExp(`\\b[Mm]oves?\\s+—[^.]*?(^|[^A-Za-z0-9])${name}${end}`, "m"),
+    ];
+  };
+  for (const id of adapter.canonicalIds) {
+    const selected = encounter(id);
+    const primary = selected.presentation.primary;
+    if (!primary) continue;
+    const allMoveNames = selected.reference.record.lineup.flatMap((body) => body.moves.map((move) => move.name));
+    const notes = primary.notes.join("\n");
+    for (const moveName of allMoveNames) for (const pattern of citationPatterns(moveName))
+      assert.doesNotMatch(notes, pattern, `${id}: ${moveName}`);
+    for (const body of primary.bodies) {
+      const structural = [
+        body.role,
+        ...body.sections.flatMap((section) => [section.title, section.note, section.repeat]),
+      ].filter(Boolean).join("\n");
+      const bodyMoves = selected.reference.record.lineup[body.bodyIndex].moves.map((move) => move.name);
+      for (const moveName of bodyMoves) {
+        const ordinaryCitations = withoutSemanticMoveUses(structural, body.name, moveName);
+        assert.doesNotMatch(ordinaryCitations, boundaryPattern(moveName), `${id}: ${moveName}`);
+      }
+      for (const section of body.sections) for (const row of section.rows) {
+        assert.equal(Object.hasOwn(row, "name"), false, `${id} projected a move-name slot`);
+        assert.ok(row.cue, `${id} projected a consequence without a structural cue`);
+        assert.ok(row.detail, `${id} projected an empty consequence`);
+      }
+    }
   }
 });
 
@@ -460,16 +571,16 @@ test("one guide page has flat phone and desktop width contracts plus accessibili
     'min-height:3.5rem', 'summary:focus-visible{outline:2px solid var(--qq-focus)',
     '@media(min-width:44rem)', 'grid-template-columns:repeat(auto-fit,minmax(20rem,1fr))',
     '@media(max-width:21rem)', '@media(prefers-reduced-motion:reduce)', 'border-radius:0',
-    'overflow-x:hidden', 'word-break:break-word', '.move-row{display:grid', '.phase-transition',
+    'overflow-x:hidden', 'word-break:break-word', '.sequence-row{display:grid', '.phase-transition',
   ]) assert.ok(html.includes(characteristic), characteristic);
   assert.doesNotMatch(html, /white-space:\s*nowrap|overflow-x:\s*auto|box-shadow|(?:linear|radial)-gradient/);
   const css = httpInternals.GUIDE_CSS;
-  assert.match(css, /\.move-row-uncued \.move-mechanic\{grid-column:2\}/);
+  assert.match(css, /\.sequence-row-uncued \.sequence-detail\{grid-column:2\}/);
   assert.match(css, /\.version-warning\{[^}]*border:1px[^}]*background:/);
   assert.equal((css.match(/border:1px/g) ?? []).length, 1, "version warning is the only enclosing border");
-  for (const selector of ["primary-body", "phase-section", "move-row", "threshold-line", "selection-context", "body-card", "rule-card", "unknown-row", "callout-card", "technical-audit"])
+  for (const selector of ["primary-body", "phase-section", "sequence-row", "threshold-line", "selection-context", "body-card", "rule-card", "unknown-row", "callout-card", "technical-audit"])
     assert.doesNotMatch(css, new RegExp(`\\.${selector}\\{[^}]*\\bborder:`, "s"), `${selector} has no enclosing border`);
-  for (const selector of ["primary-body", "phase-section", "move-row", "threshold-line", "selection-context", "body-card", "rule-card", "unknown-row", "callout-card", "technical-audit"])
+  for (const selector of ["primary-body", "phase-section", "sequence-row", "threshold-line", "selection-context", "body-card", "rule-card", "unknown-row", "callout-card", "technical-audit"])
     assert.doesNotMatch(css, new RegExp(`\\.${selector}\\{[^}]*background:(?!transparent)`, "s"), `${selector} has no card background`);
   const client = readFileSync(new URL("../src/client.js", import.meta.url), "utf8");
   assert.doesNotMatch(client, /\x08/, "regexes contain no literal backspace characters");
