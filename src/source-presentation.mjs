@@ -1,5 +1,6 @@
 import { checkedCalloutCandidates } from "./checked-callouts.mjs";
 import { compileCalloutCollection } from "./decision-callouts.mjs";
+import { scaleMechanicsText, scaleRange } from "./book.mjs";
 const TARGETS = Object.freeze({
   // Move recipients.
   allOpponentsOfSourceMonster: "all opponents",
@@ -758,12 +759,279 @@ function eventPresentation(event) {
   };
 }
 
+
+const COMBAT_STATS = new Set(["strength", "dexterity", "vigor"]);
+
+function sentenceParts(value) {
+  return String(value ?? "").split(/(?<=\.)\s+/).map((part) => part.trim().replace(/\.$/, "")).filter(Boolean);
+}
+function mechanicAtom(sentence) {
+  const value = String(sentence ?? "").trim().replace(/\.$/, "");
+  let match = /^Deals?\s+(.+?)\s+damage$/i.exec(value);
+  if (match) return { kind: "attack", amount: match[1], subject: "damage", text: `${match[1]} damage`, sentence: value };
+  match = /^Gains?\s+(.+)$/i.exec(value);
+  if (match) {
+    const payload = match[1];
+    const amountFirst = /^(\S+)\s+(.+)$/.exec(payload);
+    if (amountFirst && COMBAT_STATS.has(amountFirst[2].toLowerCase())) {
+      return { kind: "power", amount: amountFirst[1], subject: amountFirst[2], text: `+${amountFirst[1]} ${amountFirst[2]}`, sentence: value };
+    }
+    const amountLast = /^(.+?)\s+(\S+)$/.exec(payload);
+    if (amountLast && /^\d+(?:[–\-/]\d+)*$/.test(amountLast[2])) {
+      return { kind: "power", amount: amountLast[2], subject: amountLast[1], text: payload, sentence: value };
+    }
+    if (amountFirst && /^\d+(?:[–×\-/]\d+)*$/.test(amountFirst[1])) {
+      const kind = /\bBlock\b/i.test(amountFirst[2]) ? "block" : "power";
+      return { kind, amount: amountFirst[1], subject: amountFirst[2], text: payload, sentence: value };
+    }
+    return { kind: "power", amount: null, subject: payload, text: `gain ${payload}`, sentence: value };
+  }
+  match = /^Applies?\s+(.+)$/i.exec(value);
+  if (match) {
+    const amountFirst = /^(\S+)\s+(.+)$/.exec(match[1]);
+    return { kind: "power", amount: amountFirst?.[1] ?? null, subject: amountFirst?.[2] ?? match[1], text: match[1], sentence: value };
+  }
+  if (/^Stunned$/i.test(value)) return { kind: "state", amount: null, subject: "Stunned", text: "STUNNED", sentence: value };
+  if (/^Does nothing$/i.test(value)) return { kind: "action", amount: null, subject: "action", text: "takes no action", sentence: value };
+  if (/^When\b/i.test(value)) return { kind: "condition", amount: null, subject: "condition", text: value, sentence: value };
+  return { kind: "effect", amount: null, subject: "effect", text: value, sentence: value };
+}
+function mechanicAtoms(value) { return sentenceParts(value).map(mechanicAtom); }
+function exactMonsterId(canonicalModel) {
+  return typeof canonicalModel === "string" && canonicalModel.startsWith("MONSTER.") ? canonicalModel.slice(8) : null;
+}
+function formatPracticalRange(values) {
+  if (!Array.isArray(values) || !values.length) return null;
+  return values.length === 1 || values[0] === values.at(-1) ? String(values[0]) : `${values[0]}–${values.at(-1)}`;
+}
+function exactSourceBody(encounter, referenceBody) {
+  const matches = (encounter.monsters ?? []).filter((body) => exactMonsterId(body.canonicalModel) === referenceBody.monsterId);
+  return matches.length === 1 ? matches[0] : null;
+}
+function exactSourceMove(sourceBody, referenceMove) {
+  const matches = (sourceBody?.moves ?? []).filter((move) => move.title?.text === referenceMove.name);
+  return matches.length === 1 ? matches[0] : null;
+}
+function operationForAtom(atom, operations, used) {
+  const expectedKind = atom.kind === "attack" ? "attack" : atom.kind === "block" ? "gainBlock" : atom.kind === "power" ? "applyPower" : null;
+  if (!expectedKind) return null;
+  for (let index = 0; index < operations.length; index += 1) {
+    if (used.has(index) || operations[index]?.kind !== expectedKind) continue;
+    if (expectedKind === "applyPower" && cardOrPower(operations[index].model).toLowerCase() !== atom.subject.toLowerCase()) continue;
+    used.add(index); return operations[index];
+  }
+  return null;
+}
+function sourceMergedAtom(rawAtom, scaledAtom, operation, scaling) {
+  const amount = practicalAmountText(operation?.value);
+  if (amount === null || rawAtom.amount === null) return null;
+  const sourceSentence = rawAtom.sentence.replace(rawAtom.amount, amount);
+  const scaledSentence = scaleMechanicsText(`${sourceSentence}.`, scaling ?? {}).replace(/\.$/, "");
+  const replacement = mechanicAtom(scaledSentence);
+  return replacement.kind === scaledAtom.kind ? { ...replacement, authority: "checked-source" } : null;
+}
+function bestMove(referenceMove, sourceBody, scaling, bodyIndex, provenanceValues) {
+  const sourceMove = exactSourceMove(sourceBody, referenceMove);
+  const rawAtoms = mechanicAtoms(referenceMove.sourceA9);
+  const scaledAtoms = mechanicAtoms(referenceMove.text);
+  const used = new Set();
+  const atoms = scaledAtoms.map((scaledAtom, index) => {
+    const rawAtom = rawAtoms[index] ?? scaledAtom;
+    const operation = sourceMove ? operationForAtom(rawAtom, sourceMove.operations ?? [], used) : null;
+    const closed = operation ? sourceMergedAtom(rawAtom, scaledAtom, operation, scaling) : null;
+    const authority = closed ? "checked-source" : "wiki-reference";
+    provenanceValues.push({
+      path: `body ${bodyIndex + 1} · ${referenceMove.name} · effect ${index + 1}`,
+      authority,
+      presentedValue: closed?.text ?? scaledAtom.text,
+      retainedReferenceValue: scaledAtom.text,
+      conflict: closed ? closed.text !== scaledAtom.text : false,
+      reason: closed ? "projected checked value is closed"
+        : sourceMove ? "projected source value remains symbolic; retained exact reference value"
+          : "no exact localized source move join; retained exact reference value",
+    });
+    return closed ?? { ...scaledAtom, authority };
+  });
+  return { name: referenceMove.name, atoms, sourceMatchedExactly: sourceMove !== null };
+}
+function moveRow(move, cue = null, atoms = move.atoms) {
+  return {
+    cue,
+    name: move.name,
+    detail: atoms.map((atom) => atom.text).filter(Boolean).join(" · "),
+    authorities: [...new Set(atoms.map((atom) => atom.authority))],
+  };
+}
+function exactMoveMap(moves) {
+  const map = new Map();
+  for (const move of moves) {
+    if (map.has(move.name)) return null;
+    map.set(move.name, move);
+  }
+  return map;
+}
+function ceremonialSections(referenceBody, moves) {
+  if (referenceBody.monsterId !== "CEREMONIAL_BEAST") return null;
+  const byName = exactMoveMap(moves);
+  const required = ["Stamp", "Plow", "Stun", "Beast Cry", "Stomp", "Crush"];
+  if (!byName || required.some((name) => !byName.has(name))) return null;
+  const stampRecord = referenceBody.moves.find((move) => move.name === "Stamp");
+  const stunRecord = referenceBody.moves.find((move) => move.name === "Stun");
+  const pattern = referenceBody.pattern?.text ?? "";
+  // The layout is enabled only while the retained exact facts continue to state
+  // the approved threshold transition. The structure never supplies a number.
+  if (!/two distinct phases/i.test(pattern) || !/loses all Strength/i.test(stampRecord?.sourceA9 ?? "") || !/Does nothing/i.test(stunRecord?.sourceA9 ?? "")) return null;
+  const stamp = byName.get("Stamp");
+  const stampPower = stamp.atoms.filter((atom) => atom.kind === "power");
+  const phaseOne = {
+    number: "01", title: "Break the Plow",
+    rows: [
+      moveRow(stamp, "First turn", stampPower.map((atom) => ({ ...atom, text: `gain ${atom.text}` }))),
+      moveRow(byName.get("Plow"), "Then every turn"),
+    ],
+    marker: { label: "STUNNED", detail: "loses all Strength · takes no action" },
+    transitionAfter: true,
+    repeat: null,
+  };
+  const phaseTwoMoves = [byName.get("Beast Cry"), byName.get("Stomp"), byName.get("Crush")];
+  return [phaseOne, {
+    number: "02", title: "Three-turn loop",
+    rows: phaseTwoMoves.map((move) => moveRow(move)),
+    marker: null, transitionAfter: false,
+    repeat: "↻ repeat Beast Cry → Stomp → Crush",
+  }];
+}
+function namesInExactText(moves, value) {
+  const source = String(value ?? "");
+  return moves.filter((move) => source.includes(move.name));
+}
+function genericSections(referenceBody, moves) {
+  const pattern = referenceBody.pattern?.text ?? "";
+  const phaseChunks = [...pattern.matchAll(/Phase\s+(\d+):([\s\S]*?)(?=Phase\s+\d+:|$)/g)];
+  if (phaseChunks.length) {
+    const used = new Set();
+    const sections = phaseChunks.map((match, index) => {
+      const selected = namesInExactText(moves, match[2]).filter((move) => !used.has(move.name));
+      selected.forEach((move) => used.add(move.name));
+      return {
+        number: String(index + 1).padStart(2, "0"), title: `Phase ${match[1]}`,
+        rows: selected.map((move) => moveRow(move)), marker: null,
+        transitionAfter: index < phaseChunks.length - 1,
+        repeat: /repeat|cycle/i.test(match[2]) ? "↻ repeat" : null,
+      };
+    });
+    const remaining = moves.filter((move) => !used.has(move.name));
+    if (remaining.length) sections.at(-1).rows.push(...remaining.map((move) => moveRow(move)));
+    return sections;
+  }
+  const openerMatch = /Opener\s*\(turn 1\):\s*([^.]+)\./i.exec(pattern);
+  if (openerMatch) {
+    const openers = namesInExactText(moves, openerMatch[1]);
+    const sections = [];
+    if (openers.length) sections.push({ number: null, title: "Opener", rows: openers.map((move) => moveRow(move, "Turn 1")), marker: null, transitionAfter: true, repeat: null });
+    sections.push({ number: null, title: "Cycle", rows: moves.map((move) => moveRow(move)), marker: null, transitionAfter: false, repeat: /repeat|cycle/i.test(pattern) ? "↻ repeat" : null });
+    return sections;
+  }
+  const title = referenceBody.pattern?.type === "random-with-constraint" || /\b(?:if|random|either)\b/i.test(pattern) ? "Branch"
+    : /\brespond|after being|when\b/i.test(pattern) ? "Response" : "Cycle";
+  return [{ number: null, title, rows: moves.map((move) => moveRow(move)), marker: null, transitionAfter: false, repeat: /repeat|cycle|every turn/i.test(pattern) ? "↻ repeat" : null, note: pattern || null }];
+}
+function referencePhaseNumber(referenceBody) {
+  const match = /^phase\s+(\d+)$/i.exec(referenceBody.role ?? "");
+  return match ? Number(match[1]) : null;
+}
+function roleNumberedSections(referenceBody, sections, maximumPhase) {
+  const phase = referencePhaseNumber(referenceBody);
+  if (phase === null || !sections.length) return sections;
+  return sections.map((section, index) => ({
+    ...section,
+    number: index === 0 ? String(phase).padStart(2, "0") : section.number,
+    title: index === 0 ? `Phase ${phase} · ${section.title}` : section.title,
+    transitionAfter: index === sections.length - 1 && phase < maximumPhase ? true : section.transitionAfter,
+  }));
+}
+function practicalHp(sourceBody, referenceBody, scaling, bodyIndex, provenanceValues) {
+  const range = sourceBody?.hp?.a8SinglePlayer;
+  if (Number.isSafeInteger(range?.minimum) && Number.isSafeInteger(range?.maximum)) {
+    const base = range.minimum === range.maximum ? [range.minimum] : [range.minimum, range.maximum];
+    const rendered = scaleRange(base, scaling ?? {});
+    provenanceValues.push({ path: `body ${bodyIndex + 1} · HP`, authority: "checked-source", reason: "projected A8 HP is closed; configured multiplayer scaling applied" });
+    return formatPracticalRange(rendered);
+  }
+  provenanceValues.push({ path: `body ${bodyIndex + 1} · HP`, authority: "wiki-reference", reason: "projected checked HP remains symbolic; retained exact configured reference value" });
+  return formatPracticalRange(referenceBody.hp);
+}
+function isPracticalInitial(encounter, sourceBody, referenceBody) {
+  const phase = referencePhaseNumber(referenceBody);
+  if (phase !== null) return phase === 1;
+  if (sourceBody) return encounter.roster?.possibleInitialBodies?.includes(sourceBody.canonicalModel) === true;
+  return referenceBody.role !== "summoned";
+}
+function practicalRole(encounter, sourceBody, referenceBody) {
+  const initial = isPracticalInitial(encounter, sourceBody, referenceBody);
+  if (referenceBody.role) return referenceBody.role;
+  return initial ? "initial body" : "encounter body";
+}
+function uniqueReferenceNotes(reference) {
+  const seen = new Set(), notes = [];
+  for (const line of [...(reference.rules ?? []), ...(reference.timing ?? [])]) {
+    const normalized = String(line).trim();
+    if (!normalized || seen.has(normalized)) continue;
+    seen.add(normalized); notes.push(normalized);
+  }
+  return notes;
+}
+function primaryPresentation(encounter, options) {
+  const reference = options.reference;
+  if (!reference) return null;
+  const provenanceValues = [];
+  const maximumPhase = Math.max(0, ...reference.lineup.map((body) => referencePhaseNumber(body) ?? 0));
+  const bodies = reference.lineup.map((referenceBody, bodyIndex) => {
+    const sourceBody = exactSourceBody(encounter, referenceBody);
+    const moves = referenceBody.moves.map((move) => bestMove(move, sourceBody, options.scaling, bodyIndex, provenanceValues));
+    const sections = ceremonialSections(referenceBody, moves) ?? genericSections(referenceBody, moves);
+    return {
+      bodyIndex,
+      name: referenceBody.displayName,
+      role: practicalRole(encounter, sourceBody, referenceBody),
+      initial: isPracticalInitial(encounter, sourceBody, referenceBody),
+      hp: practicalHp(sourceBody, referenceBody, options.scaling, bodyIndex, provenanceValues),
+      setup: referenceBody.startsWith ? `Starts with · ${referenceBody.startsWith}` : null,
+      sections: roleNumberedSections(referenceBody, sections, maximumPhase),
+      watch: referenceBody.monsterId === "CEREMONIAL_BEAST"
+        ? ["crossing the phase threshold clears accumulated Strength."] : [],
+      sourceMatchedExactly: sourceBody !== null,
+    };
+  });
+  let possibleInitial = bodies.filter((body) => body.initial);
+  if (!possibleInitial.length) possibleInitial = bodies.filter((body) => reference.lineup[body.bodyIndex].role !== "summoned");
+  const single = possibleInitial.length === 1 ? possibleInitial[0] : null;
+  const kind = ({ boss: "BOSS", elite: "ELITE", hallway: "ORDINARY" })[reference.kind] ?? String(reference.kind ?? "ENCOUNTER").toUpperCase();
+  const players = options.scaling?.players ?? options.referenceMeta?.players ?? 2;
+  return {
+    header: {
+      stats: single?.hp ? `${single.hp} HP · ${kind}` : kind,
+      placement: reference.act,
+      kind,
+    },
+    bodies,
+    notes: uniqueReferenceNotes(reference),
+    provenance: {
+      label: `wiki/reference values · A9 / ${players}P presentation`,
+      matching: "exact canonical encounter and monster IDs only",
+      mergePolicy: "checked source when closed; otherwise retained exact reference",
+      values: provenanceValues,
+    },
+  };
+}
+
 function contextPresentation(encounter) {
   const memberships = encounter.placement?.memberships ?? [];
   const primary = memberships[0];
+  const practicalKind = primary ? words(primary.tier ?? primary.roomClass) : words(encounter.kind);
   return {
-    kind: words(encounter.kind),
-    summary: primary ? [words(primary.actId), words(primary.tier), words(primary.roomClass)].join(" · ") : words(encounter.kind),
+    kind: practicalKind,
+    summary: primary ? words(primary.actId) : practicalKind,
     additionalPlacements: Math.max(0, memberships.length - 1),
   };
 }
@@ -820,6 +1088,7 @@ export function buildEncounterPresentation(encounter, options = {}) {
     detail: `${words(row.status)} · ${words(row.scope)} · ${words(row.reasonCode)}`,
   }));
   return {
+    primary: primaryPresentation(encounter, options),
     context: contextPresentation(encounter), roster,
     bodies: (encounter.monsters ?? []).map((body, index) => bodyPresentation(body, index, encounter, names)),
     production, lifecycle,
@@ -832,5 +1101,6 @@ export const presentationInternals = Object.freeze({
   words, rosterNode, moveEffects, graphPresentation, initialEffect, targetText,
   productionPresentation, lifecyclePresentation, lifecyclePresentationRecords, lifecycleEffect,
   retentionPolicyText, lifecycleWriteText, eventPresentation, eventEffect, validatedCollection,
+  mechanicAtom, mechanicAtoms, primaryPresentation, genericSections, ceremonialSections, roleNumberedSections,
   BOOLEAN_CONDITIONS, EVENT_EFFECT_KINDS, LIFECYCLE_WRITES, TARGETS,
 });

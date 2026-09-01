@@ -19,12 +19,13 @@ XDG data root, and the alternate Megacrit Flatpak root.
 
 The current default authority is local
 `data/encounter-facts-v0.111.0.json`: source-lane mechanics and A8
-single-player HP values are projected through the strict adapter, while
-unclosed inputs remain named. `data/encounters.json` preserves the earlier
-A9/2P community book as an exported and offline-tested legacy artifact; it is
-not a runtime fallback for the default page. Runtime makes no wiki or other
-network requests. It compares checked authority with local `release_info.json`
-when readable; a mismatch is shown rather than mixing mechanics.
+single-player HP values are projected through the strict adapter. The practical
+presentation joins `data/encounters.json` by exact canonical IDs: a closed checked
+source coordinate wins, while a symbolic coordinate retains the exact configured
+A9/2P reference value with separate provenance. The raw expression and both lanes
+remain in Technical audit. Runtime makes no wiki or other network requests. It
+compares checked authority with local `release_info.json`; a mismatch is shown as
+an exceptional warning.
 
 The checked-in `tools/.wiki/pages.json` records full article/patch wikitext,
 revision IDs and UTC harvest time. Regeneration is deliberately split into a
@@ -60,8 +61,9 @@ The cognitive/decision-facing projection contract is documented in
 [`docs/decision-projection.md`](decision-projection.md). Its phone surface uses
 an evidence-gated `0..N` collection of independently qualified callouts. A collapsed view may show a ranked subset only with the total
 count and an expansion path; this is a display budget, never a candidate quota.
-Ordered, typed effect signatures remain primary; enemy move names are audit-only.
-Full horizon-qualified frontiers and exact provenance stay behind expansion.
+Ordered, typed effect signatures remain primary; useful localized move names are
+recognition anchors, while raw move IDs stay audit-only. Full horizon-qualified
+frontiers and exact provenance stay behind expansion.
 The current renderer preserves those E1/E2 gates while keeping exact support in
 Technical audit.
 
@@ -69,9 +71,10 @@ The checked raw-source authority is `data/game-v0.111.0-source.json`, generated 
 `tools/extract-source.py`. It remains an offline generation input rather than a
 runtime browser dependency; completion applies only to each declared source
 denominator. The app reads the generated compact
-`data/encounter-facts-v0.111.0.json` once through its fail-closed adapter. It
-does **not** use `data/encounters.json` or community/wiki annotations as a
-runtime fallback.
+`data/encounter-facts-v0.111.0.json` through its fail-closed adapter; that gate is
+still mandatory. For practical presentation only, the adapter uses the retained
+`data/encounters.json` record on exact encounter/body joins when a checked value
+is symbolic. This fallback is visibly labeled and cannot become source authority.
 
 ### Wave A source coverage
 

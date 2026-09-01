@@ -1,0 +1,52 @@
+# StS2 Companion phone snapshot · 390px
+main.guide-state.guide-state-selected
+  header.encounter-hero.primary-hero
+    h1.encounter-title "CEREMONIAL BEAST"
+    p.encounter-stats "576 HP · BOSS"
+    p.encounter-placement "Overgrowth"
+    p.selection-context "Manual · Static reference"
+  div.primary-body-list
+    section.primary-body
+      section.phase-section
+        header.phase-head
+          span.phase-number "01"
+          h2.phase-title "Break the Plow"
+        div.move-row
+          span.move-cue "First turn"
+          p.move-mechanic
+            strong.move-name "Stamp"
+            span.move-detail " — gain Plow 352"
+        div.move-row
+          span.move-cue "Then every turn"
+          p.move-mechanic
+            strong.move-name "Plow"
+            span.move-detail " — 20 damage · +2 Strength"
+        p.threshold-line
+          strong.threshold-label "STUNNED"
+          span.threshold-detail " · loses all Strength · takes no action"
+      div.phase-transition "↓"
+      section.phase-section
+        header.phase-head
+          span.phase-number "02"
+          h2.phase-title "Three-turn loop"
+        div.move-row
+          p.move-mechanic
+            strong.move-name "Beast Cry"
+            span.move-detail " — 1 Ringing"
+        div.move-row
+          p.move-mechanic
+            strong.move-name "Stomp"
+            span.move-detail " — 17 damage"
+        div.move-row
+          p.move-mechanic
+            strong.move-name "Crush"
+            span.move-detail " — 19 damage · +4 Strength"
+        p.repeat-line "↻ repeat Beast Cry → Stomp → Crush"
+      p.watch-line
+        strong.watch-label "Watch:"
+        span.watch-detail " crossing the phase threshold clears accumulated Strength."
+  footer.guide-footer
+    p.provenance-line "wiki/reference values · A9 / 2P presentation"
+  details.technical-audit
+    summary.detail-title "Technical audit"
+    [collapsed]

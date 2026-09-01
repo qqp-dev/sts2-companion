@@ -9,6 +9,7 @@ import { runInNewContext } from "node:vm";
 import { compileCalloutCollection } from "../src/decision-callouts.mjs";
 import { createSts2Handler } from "../src/http.mjs";
 import { createSourceAdapter, internals as adapterInternals } from "../src/source-adapter.mjs";
+import { semanticSnapshot } from "../tools/reproduce-ceremonial-guide.mjs";
 import { normalizeMonsterWireIdForState, parseSave } from "../src/state.mjs";
 
 const artifact = JSON.parse(readFileSync(new URL("../data/encounter-facts-v0.111.0.json", import.meta.url), "utf8"));
@@ -294,19 +295,46 @@ function descendants(node, result = []) {
   return result;
 }
 
-test("phone scan path is context-visible, effect-first, body-adjacent, and audit-complete", async () => {
+test("Ceremonial Beast phone DOM follows the approved flat two-phase scan path", async () => {
+  const payload = adapter.view(state(), "CEREMONIAL_BEAST_BOSS");
+  const { root } = await runShadowClient(payload);
+  const collapsed = collapsedText(root);
+  const ordered = [
+    "CEREMONIAL BEAST", "576 HP · BOSS", "Overgrowth", "01", "Break the Plow",
+    "First turn", "Stamp", "Plow 352", "Then every turn", "20 damage", "+2 Strength",
+    "STUNNED", "loses all Strength", "takes no action", "↓", "02", "Three-turn loop",
+    "Beast Cry", "1 Ringing", "Stomp", "17 damage", "Crush", "19 damage", "+4 Strength",
+    "repeat Beast Cry", "Watch:", "clears accumulated Strength", "wiki/reference values · A9 / 2P presentation", "Technical audit",
+  ];
+  let cursor = -1;
+  for (const value of ordered) {
+    const next = collapsed.indexOf(value, cursor + 1);
+    assert.ok(next > cursor, `${value} follows prior scan content: ${collapsed}`); cursor = next;
+  }
+  assert.doesNotMatch(collapsed, /unresolved|Death removal|Fight completion|all enemies escape|Ordinary|Boss · Boss/i);
+  for (const cardClass of ["body-card", "rule-card", "unknown-row", "roster-capsule", "known-gaps"])
+    assert.equal(descendants(root).filter((node) => node.className.split(/\s+/).includes(cardClass)).length, 0, cardClass);
+  assert.equal(descendants(root).filter((node) => node.className === "technical-audit").length, 1);
+  assert.match(root.textContent, /get_PlowAmount/);
+  assert.match(root.textContent, /rawSource/);
+  assert.match(root.textContent, /Exact retained wiki\/reference record/);
+  assert.equal(`# StS2 Companion phone snapshot · 390px\n${semanticSnapshot(root)}\n`, fixture("ceremonial-beast-phone.snap"));
+});
+
+test("phone scan path is context-visible, move-led, body-adjacent, and audit-complete", async () => {
   const payload = adapter.view(state("AXEBOTS_NORMAL", "combat", ["MONSTER.AXEBOT"]));
   const { root } = await runShadowClient(payload);
   const collapsed = collapsedText(root);
-  for (const required of ["combat", "Axebot", "76–86 HP", "Starts with", "Stock amount unresolved", "Effects", "Weak 2", "Frail 2", "Pattern", "WATCH", "replacement body", "Technical audit"])
-    assert.match(collapsed, new RegExp(required));
-  for (const forbidden of ["Possible roster", "Enemies & forms", "Effect A", "Effect B", "Effect C", "checked amount", "BOOT_UP_MOVE", "Boot Up"])
+  for (const required of ["Combat", "AXEBOT", "182–206 HP", "Starts with · Stock 2", "Opener", "Hammer Uppercut", "18 damage", "Cycle", "Boot Up", "30 Block", "WATCH", "replacement body", "Technical audit"])
+    assert.match(collapsed, new RegExp(required.replace(/[+]/g, "\\+")));
+  for (const forbidden of ["Possible roster", "Effects", "Stock amount unresolved", "checked amount", "BOOT_UP_MOVE", "MONSTER.AXEBOT"])
     assert.doesNotMatch(collapsed, new RegExp(forbidden, "i"));
-  const positions = ["combat", "Axebot", "76–86 HP", "Starts with", "Effects", "Pattern", "WATCH"].map((text) => collapsed.indexOf(text));
+  const positions = ["AXEBOT", "182–206 HP", "Combat", "Starts with", "Opener", "Cycle", "WATCH"].map((text) => collapsed.indexOf(text));
   assert.deepEqual([...positions].sort((a, b) => a - b), positions, `scan order: ${collapsed}`);
   assert.match(root.textContent, /MONSTER\.AXEBOT/);
   assert.match(root.textContent, /BOOT_UP_MOVE/);
   assert.match(root.textContent, /CALLOUT.AXEBOT.STOCK_REPLACEMENT/);
+  assert.match(root.textContent, /Editorial callout records/);
   assert.doesNotMatch(collapsed, /CALLOUT\.|SOURCE\.|LIFECYCLE\.DEATH_PRODUCTION/);
   assert.equal(descendants(root).filter((node) => node.className === "technical-audit").length, 1);
 });
@@ -315,19 +343,19 @@ test("primary capsule distinguishes combat, last, and exact manual selection", a
   const combat = collapsedText((await runShadowClient(adapter.view(state("AXEBOTS_NORMAL", "combat")))).root);
   const last = collapsedText((await runShadowClient(adapter.view(state("AXEBOTS_NORMAL", "last")))).root);
   const manual = collapsedText((await runShadowClient(adapter.view(state("BOWLBUGS_NORMAL", "combat"), "AXEBOTS_NORMAL"))).root);
-  assert.match(combat, /combat/); assert.match(last, /last/);
-  assert.match(manual, /manual · AXEBOTS_NORMAL/);
-  assert.doesNotMatch(manual, /combat · BOWLBUGS_NORMAL/);
+  assert.match(combat, /Combat · Static reference/); assert.match(last, /Last fight · Static reference/);
+  assert.match(manual, /Manual · Static reference/);
+  assert.doesNotMatch(manual, /AXEBOTS_NORMAL|BOWLBUGS_NORMAL|Combat ·/);
 });
 
 
 test("production remains body-adjacent without turning possibilities into an observed lineup", async () => {
   const payload = adapter.view(state("FABRICATOR_NORMAL", "combat", ["MONSTER.FABRICATOR", "MONSTER.ZAPBOT"]));
   const collapsed = collapsedText((await runShadowClient(payload)).root);
-  assert.match(collapsed, /Fabricator possible initial body/);
-  assert.match(collapsed, /Guardbot produced possibility/);
-  assert.match(collapsed, /Produces/);
-  assert.match(collapsed, /possible produced bodies, not initial bodies/);
+  assert.match(collapsed, /Fabricator 372 HP · initial body/);
+  assert.match(collapsed, /Guardbot 40–50 HP · summoned/);
+  assert.match(collapsed, /Fabricate.*Summons 1 defensive bot/s);
+  assert.match(collapsed, /Zapbot 45–57 HP · summoned/);
   assert.doesNotMatch(collapsed, /observed lineup|currently present|survivors are/i);
 });
 
@@ -342,15 +370,15 @@ test("representative guides contain no prediction or live-state advice", async (
 test("complex collapsed fixtures preserve practical lifecycle semantics without debug leakage", async () => {
   const fixtures = [
     ["BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER", [/Event fight clock/, /record that the event fight ran out of time/, /escape and leave the fight/]],
-    ["TEST_SUBJECT_BOSS", [/completed respawns = 1/, /Adaptable revival/, /Test Subject death/]],
-    ["OVICOPTER_NORMAL", [/reduce Hatch by 1/, /hatch with 19–22 HP below A8; 20–23 HP at A8\+/]],
-    ["WATERFALL_GIANT_BOSS", [/remember Steam Eruption's current amount/, /snapshotted Steam Eruption amount/]],
-    ["LIVING_FOG_NORMAL", [/perform Gas Bomb's checked attack/]],
+    ["TEST_SUBJECT_BOSS", [/revives into Phase 2/, /three listed bodies are sequential phases/, /on-kill and Fatal effects trigger/i]],
+    ["OVICOPTER_NORMAL", [/Tough Egg/, /Hatchling/, /Hatches into a Hatchling with 48–55 HP/]],
+    ["WATERFALL_GIANT_BOSS", [/Steam Eruption/, /Pressure Up/, /Explode/]],
+    ["LIVING_FOG_NORMAL", [/Gas Bomb/, /Explode.*9 damage · Dies/s]],
   ];
   for (const [id, required] of fixtures) {
     const { root } = await runShadowClient(adapter.view(state(), id)); const collapsed = collapsedText(root);
     required.forEach((pattern) => assert.match(collapsed, pattern, id));
-    const withoutExactManualContext = collapsed.replace(`manual · ${id}`, "");
+    const withoutExactManualContext = collapsed.replace("Manual · Static reference", "");
     assert.doesNotMatch(withoutExactManualContext, /\b(?:MONSTER|POWER|SOURCE|RUNTIME)\.|\b[A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+\b|ShouldPower|HasAmalgamDied|\bformula\b|\bAST\b|\bgraph\b/i, id);
   }
 });

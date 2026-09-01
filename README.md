@@ -26,29 +26,34 @@ menu item linking to its configured `/sts2` base path.
 ## What the guide means
 
 The document and its bounded `/sts2/state` and `/sts2/client.js` implementation
-endpoints read only the checked compact projection
-`data/encounter-facts-v0.111.0.json`, once at startup, through one strict
-adapter. The flat default scan path is:
+endpoints read the checked compact projection
+`data/encounter-facts-v0.111.0.json` through one strict adapter. The adapter also
+joins the retained `data/encounters.json` guide by exact canonical encounter and
+monster IDs. The flat default scan path is:
 
-1. detected `combat`/`last` context, or the exact manual selector;
-2. encounter and possible initial-roster context;
-3. each possible enemy/body with checked A8 single-player HP where closed;
-4. starting state, compact ordered effect signatures, then sequence/fork context;
-5. body-adjacent production, death, revive, hatch, phase, escape, and clock rules;
-6. zero or more independently qualified static `TACTIC`/`WATCH` callouts.
+1. compact encounter title, configured HP/kind, practical placement, and static
+   detected/manual context;
+2. explicit numbered phases when the retained pattern declares phases;
+3. otherwise honest `Opener`, `Cycle`, `Branch`, or `Response` sections;
+4. recognized move names with concise effects, transitions, repeat cues, and
+   body-adjacent encounter-distinct rules;
+5. zero or more independently qualified flat `TACTIC`/`WATCH` lines; and
+6. quiet A9/player-count provenance plus collapsed **Technical audit**.
 
-Effects are primary. Closed constants retain their values and operation order,
-including hit count, Block, Powers/status quantities, cards, summons, and
-lifecycle consequences. Numeric sequence markers connect effects to the pattern
-without displaying move names. When a source expression or required runtime
-modifier does not close, the guide names the affected coordinate/input (for
-example, `damage amount unresolved for this behavior` or `runtime Power
-modifiers`) rather than substituting a legacy value or generic `checked amount`.
+The primary guide uses the best available value per practical coordinate. A
+projected checked value supersedes the retained guide only when it is actually
+closed. If its source expression remains symbolic, the exact retained A9/body/
+move value is shown with configured multiplayer scaling and quiet
+`wiki/reference` provenance—never as source-closed and never as an `unresolved`
+placeholder when that exact fallback exists. Matching is exact only; the adapter
+does not guess aliases, fold case, or fuzzy-match fallback records.
 
 Possible initial bodies and produced bodies remain visibly distinct. Random and
 alternative roster branches are possibilities, not a claim that every listed
-body is present. Raw identifiers, move titles, expressions, graphs, callout
-basis refs, conflicts, and evidence pointers stay inside **Technical audit**.
+body is present. Source expressions (including symbolic getters), raw identifiers,
+behavior graphs, source authority, exact retained records, per-value merge reasons,
+conflicts, callout basis refs, and evidence pointers remain reachable inside
+**Technical audit**.
 
 The editorial registry is deliberately separate from source extraction. It
 currently contains one source-backed conditional callout for Axebot Stock
@@ -65,9 +70,10 @@ realized lineup/survivors, timer, hand, or branch. It never fabricates a current
 imperative from encounter identity.
 
 The projection's `matchingPolicy.prefixStripping:false` governs exact observed
-identity matching. The adapter does not guess aliases, fold case, or fuzzy-match.
-A missing, malformed, unsupported-version or oversized projection fails closed;
-checked mechanics are never silently replaced with community/wiki values.
+identity matching. A missing, malformed, unsupported-version or oversized
+projection still fails closed; the reference book never bypasses that source
+projection gate. Version mismatch remains an explicit warning rather than a
+silent authority claim.
 
 ## Authority and detailed contracts
 
@@ -80,10 +86,10 @@ DLL SHA-256:
 
 `encounterProjection.ready` is required. The broader
 `encounterCompanion.ready` intentionally remains false and is not a static-guide
-gate. Unknown inputs stay named/conditional; they are never converted to zero or
-a guessed default. The older A9/2P community book remains an exported,
-offline-tested artifact; the default renderer does not use it as authority or
-fallback.
+gate. Unknown inputs are never converted to zero or a guessed default. The
+retained A9/2P community book is a presentation fallback, not source authority:
+it is selected only by exact IDs, remains separately labeled/auditable, and is
+superseded coordinate-by-coordinate when the checked source value closes.
 
 Detailed schema/readiness and implementation authority:
 
@@ -126,10 +132,12 @@ GAME_ROOT="${STS2_GAME_ROOT:-/home/qqp/.var/app/com.valvesoftware.Steam/.local/s
 .venv-source/bin/python tools/extract-source.py --game-root "$GAME_ROOT" --check
 ```
 
-Run all Node and Python tests with:
+Run all Node and Python tests, and independently check the approved 390px
+Ceremonial Beast snapshot, with:
 
 ```sh
 npm test
+npm run check:phone-snapshot
 ```
 
 No generated data change is expected for presentation or adapter-consumer work.

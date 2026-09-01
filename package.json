@@ -22,7 +22,8 @@
   "scripts": {
     "test": "node --test && python3 -m unittest discover -s test -p 'test_*.py'",
     "build:encounter-facts": "python3 tools/generate-encounter-facts.py",
-    "check:encounter-facts": "python3 tools/generate-encounter-facts.py --check"
+    "check:encounter-facts": "python3 tools/generate-encounter-facts.py --check",
+    "check:phone-snapshot": "node tools/reproduce-ceremonial-guide.mjs --check"
   },
   "dsh": {
     "bundle": {

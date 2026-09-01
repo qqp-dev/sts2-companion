@@ -62,10 +62,10 @@
   }
 
   function selectionLabel(state, encounter) {
-    if (state.mode === "manual-reference") return `manual · ${encounter.canonicalId}`;
-    if (state.mode === "current-combat" || state.observation?.status === "combat") return "combat";
-    if (state.mode === "last-completed-room" || state.observation?.status === "last") return "last";
-    return "static reference";
+    if (state.mode === "manual-reference") return "Manual · Static reference";
+    if (state.mode === "current-combat" || state.observation?.status === "combat") return "Combat · Static reference";
+    if (state.mode === "last-completed-room" || state.observation?.status === "last") return "Last fight · Static reference";
+    return "Static reference";
   }
   function renderVersionBoundary(state, parent) {
     const installed = state.observation?.installedVersion?.version;
@@ -255,10 +255,95 @@
   }
   function renderAudit(parent, state, encounter) {
     const content = el("div", "audit-content");
-    content.append(el("p", "quiet", "Exact checked records, move titles and IDs, expressions, behavior data, callout basis, conflicts, and evidence pointers."));
-    content.append(details("Authority & observed identity", { authority: state.authority, observation: state.observation }));
-    content.append(details("Exact checked encounter record", encounter));
+    content.append(el("p", "quiet", "Exact checked source records, symbolic expressions, retained reference records, merge provenance, behavior data, callout basis, conflicts, and evidence pointers."));
+    content.append(details("Authority & observed identity", { authority: state.authority, sourceAuthority: encounter.sourceAuthority, observation: state.observation }));
+    if (encounter.reference) content.append(details("Exact retained wiki/reference record", encounter.reference));
+    if (encounter.presentation?.primary) content.append(details("Best-available merge provenance", encounter.presentation.primary.provenance));
+    if (encounter.presentation?.callouts?.all?.length) content.append(details("Editorial callout records", encounter.presentation.callouts));
+    const checked = { ...encounter }; delete checked.presentation; delete checked.reference;
+    content.append(details("Exact checked source encounter record", checked));
     parent.append(details("Technical audit", content, "technical-audit"));
+  }
+
+  function renderPrimaryHero(parent, state, encounter, primary) {
+    const hero = el("header", "encounter-hero primary-hero");
+    heading(hero, 1, String(encounter.title).toUpperCase(), "encounter-title");
+    hero.append(el("p", "encounter-stats", primary.header.stats));
+    hero.append(el("p", "encounter-placement", primary.header.placement));
+    hero.append(el("p", "selection-context", selectionLabel(state, encounter)));
+    parent.append(hero);
+  }
+  function renderPrimarySection(parent, phase) {
+    const sectionNode = el("section", "phase-section");
+    const head = el("header", "phase-head");
+    if (phase.number) head.append(el("span", "phase-number", phase.number));
+    heading(head, 2, phase.title, "phase-title");
+    sectionNode.append(head);
+    if (phase.note) sectionNode.append(el("p", "phase-note", phase.note));
+    phase.rows.forEach((row) => {
+      const line = el("div", "move-row");
+      if (row.cue) line.append(el("span", "move-cue", row.cue));
+      const mechanic = el("p", "move-mechanic");
+      mechanic.append(el("strong", "move-name", row.name));
+      if (row.detail) mechanic.append(el("span", "move-detail", ` — ${row.detail}`));
+      line.append(mechanic); sectionNode.append(line);
+    });
+    if (phase.marker) {
+      const marker = el("p", "threshold-line");
+      marker.append(el("strong", "threshold-label", phase.marker.label));
+      marker.append(el("span", "threshold-detail", ` · ${phase.marker.detail}`));
+      sectionNode.append(marker);
+    }
+    if (phase.repeat) sectionNode.append(el("p", "repeat-line", phase.repeat));
+    parent.append(sectionNode);
+    if (phase.transitionAfter) parent.append(el("div", "phase-transition", "↓"));
+  }
+  function renderPrimaryCallouts(parent, bodyIndex, collection) {
+    const all = collection.all.filter((callout) => callout.bodyIndex === bodyIndex);
+    if (!all.length) return;
+    const visibleIds = new Set(collection.collapsed.filter((callout) => callout.bodyIndex === bodyIndex).map((callout) => callout.id));
+    const visible = all.filter((callout) => visibleIds.has(callout.id));
+    (visible.length ? visible : all.slice(0, 1)).forEach((callout) => parent.append(calloutCard(callout)));
+  }
+  function renderPrimaryBodies(parent, primary, callouts) {
+    const list = el("div", "primary-body-list");
+    const showBodyHeaders = primary.bodies.length > 1;
+    primary.bodies.forEach((body) => {
+      const bodyNode = el("section", "primary-body");
+      if (showBodyHeaders) {
+        const head = el("header", "primary-body-head");
+        heading(head, 2, body.name, "body-title");
+        head.append(el("p", "body-meta", `${body.hp} HP · ${body.role}`));
+        bodyNode.append(head);
+      }
+      if (body.setup) bodyNode.append(el("p", "setup-line", body.setup));
+      body.sections.forEach((phase) => renderPrimarySection(bodyNode, phase));
+      body.watch.forEach((watch) => {
+        const line = el("p", "watch-line");
+        line.append(el("strong", "watch-label", "Watch:"));
+        line.append(el("span", "watch-detail", ` ${watch}`));
+        bodyNode.append(line);
+      });
+      renderPrimaryCallouts(bodyNode, body.bodyIndex, callouts);
+      list.append(bodyNode);
+    });
+    parent.append(list);
+  }
+  function renderPrimaryNotes(parent, primary) {
+    if (!primary.notes.length) return;
+    const notes = el("section", "reference-notes");
+    primary.notes.forEach((note) => {
+      const line = el("p", "reference-note");
+      line.append(el("strong", "reference-note-label", "Rule:"));
+      line.append(el("span", "", ` ${note}`));
+      notes.append(line);
+    });
+    parent.append(notes);
+  }
+  function renderPrimaryFooter(parent, primary) {
+    const footer = el("footer", "guide-footer");
+    footer.append(el("p", "provenance-line", primary.provenance.label));
+    parent.append(footer);
   }
 
   function render(state, nextSignature) {
@@ -275,13 +360,24 @@
     }
     const encounter = state.encounter, presentation = encounter.presentation;
     if (!presentation) throw new Error("guide presentation unavailable");
+    if (presentation.primary) {
+      renderPrimaryHero(root, state, encounter, presentation.primary);
+      renderVersionBoundary(state, root);
+      renderPrimaryBodies(root, presentation.primary, presentation.callouts);
+      renderPrimaryNotes(root, presentation.primary);
+      renderGlobalCallouts(root, presentation.callouts);
+      renderPrimaryFooter(root, presentation.primary);
+      renderAudit(root, state, encounter);
+      signature = nextSignature;
+      return;
+    }
     const hero = el("header", "encounter-hero");
     const selection = selectionLabel(state, encounter);
     hero.append(state.mode === "manual-reference"
       ? rawEl("p", "selection-context", selection)
       : el("p", "selection-context", selection));
     heading(hero, 1, encounter.title, "encounter-title");
-    hero.append(el("p", "eyebrow", `${presentation.context.kind} · ${presentation.context.summary}`));
+    hero.append(el("p", "eyebrow", `${presentation.context.summary} · ${presentation.context.kind}`));
     renderRosterCapsule(hero, presentation);
     hero.append(el("p", "static-contract", "Static reference · no live turn state, HP/Block/Powers, intent/target, phase/counter, lineup, or timer."));
     root.append(hero);
