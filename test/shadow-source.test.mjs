@@ -314,6 +314,10 @@ test("Ceremonial Beast phone DOM follows the approved flat two-phase scan path",
   assert.doesNotMatch(collapsed, /unresolved|Death removal|Fight completion|all enemies escape|Ordinary|Boss · Boss/i);
   for (const cardClass of ["body-card", "rule-card", "unknown-row", "roster-capsule", "known-gaps"])
     assert.equal(descendants(root).filter((node) => node.className.split(/\s+/).includes(cardClass)).length, 0, cardClass);
+  const moveRows = descendants(root).filter((node) => node.className.split(/\s+/).includes("move-row"));
+  const uncuedRows = moveRows.filter((node) => !node.children.some((child) => child.className === "move-cue"));
+  assert.deepEqual(uncuedRows.map((node) => node.children[0].textContent), ["Beast Cry — 1 Ringing", "Stomp — 17 damage", "Crush — 19 damage · +4 Strength"]);
+  assert.ok(uncuedRows.every((node) => node.className.split(/\s+/).includes("move-row-uncued")));
   assert.equal(descendants(root).filter((node) => node.className === "technical-audit").length, 1);
   assert.match(root.textContent, /get_PlowAmount/);
   assert.match(root.textContent, /rawSource/);

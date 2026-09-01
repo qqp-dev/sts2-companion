@@ -29,15 +29,15 @@ main.guide-state.guide-state-selected
         header.phase-head
           span.phase-number "02"
           h2.phase-title "Three-turn loop"
-        div.move-row
+        div.move-row.move-row-uncued
           p.move-mechanic
             strong.move-name "Beast Cry"
             span.move-detail " — 1 Ringing"
-        div.move-row
+        div.move-row.move-row-uncued
           p.move-mechanic
             strong.move-name "Stomp"
             span.move-detail " — 17 damage"
-        div.move-row
+        div.move-row.move-row-uncued
           p.move-mechanic
             strong.move-name "Crush"
             span.move-detail " — 19 damage · +4 Strength"

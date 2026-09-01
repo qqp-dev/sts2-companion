@@ -135,6 +135,37 @@ test("a closed checked source disagreement wins visibly while both values remain
   assert.equal(beast.reference.record.lineup[0].moves.find((move) => move.name === "Beast Cry").text, "Applies 1 Ringing.");
 });
 
+test("best-available move merge requires the exact power target and amount sign", () => {
+  assert.equal(presentationInternals.mechanicAtom("Gains -2 Strength.").text, "-2 Strength");
+  assert.equal(presentationInternals.mechanicAtom("Gains 2/4 Strength.").amountPolarity, "positive");
+  const lagavulin = encounter("LAGAVULIN_MATRIARCH_BOSS");
+  const soulSiphon = lagavulin.presentation.primary.bodies[0].sections
+    .flatMap((section) => section.rows).find((row) => row.name === "Soul Siphon");
+  assert.equal(soulSiphon.detail, "Removes 2 Strength and 2 Dexterity from the player · +2 Strength");
+  const retainedDebuff = lagavulin.presentation.primary.provenance.values.find((row) => row.path.endsWith("Soul Siphon · effect 1"));
+  const closedSelfBuff = lagavulin.presentation.primary.provenance.values.find((row) => row.path.endsWith("Soul Siphon · effect 2"));
+  assert.equal(retainedDebuff.authority, "wiki-reference");
+  assert.deepEqual({ authority: closedSelfBuff.authority, presented: closedSelfBuff.presentedValue, conflict: closedSelfBuff.conflict }, {
+    authority: "checked-source", presented: "+2 Strength", conflict: false,
+  });
+
+  const changed = structuredClone(artifact);
+  const sourceMove = changed.payload.sourceFacts.moves.find((move) => move.canonicalId === "MONSTER.LAGAVULIN_MATRIARCH#SOUL_SIPHON_MOVE");
+  const selfStrength = sourceMove.operations.find((operation) => operation.kind === "applyPower"
+    && operation.model === "POWER.STRENGTH_POWER" && operation.target === "sourceMonster");
+  selfStrength.value.expression.value = -3;
+  changed.metadata.payloadSha256 = adapterInternals.payloadDigest(changed.payload);
+  const changedAdapter = createSourceAdapter({ projection: changed });
+  assert.equal(changedAdapter.available, true, changedAdapter.error);
+  const changedLagavulin = changedAdapter.view(idle, "LAGAVULIN_MATRIARCH_BOSS").encounter;
+  const changedSoulSiphon = changedLagavulin.presentation.primary.bodies[0].sections
+    .flatMap((section) => section.rows).find((row) => row.name === "Soul Siphon");
+  assert.equal(changedSoulSiphon.detail, "Removes 2 Strength and 2 Dexterity from the player · +2 Strength");
+  const retainedSelfBuff = changedLagavulin.presentation.primary.provenance.values.find((row) => row.path.endsWith("Soul Siphon · effect 2"));
+  assert.match(retainedSelfBuff.reason, /no exact projected source operation coordinate/);
+  assert.equal(retainedSelfBuff.authority, "wiki-reference");
+});
+
 test("explicit reference phase roles use numbered phase structure without inventing initial bodies", () => {
   const subject = encounter("TEST_SUBJECT_BOSS").presentation.primary;
   assert.equal(subject.header.stats, "288 HP · BOSS");
@@ -433,6 +464,7 @@ test("one guide page has flat phone and desktop width contracts plus accessibili
   ]) assert.ok(html.includes(characteristic), characteristic);
   assert.doesNotMatch(html, /white-space:\s*nowrap|overflow-x:\s*auto|box-shadow|(?:linear|radial)-gradient/);
   const css = httpInternals.GUIDE_CSS;
+  assert.match(css, /\.move-row-uncued \.move-mechanic\{grid-column:2\}/);
   assert.match(css, /\.version-warning\{[^}]*border:1px[^}]*background:/);
   assert.equal((css.match(/border:1px/g) ?? []).length, 1, "version warning is the only enclosing border");
   for (const selector of ["primary-body", "phase-section", "move-row", "threshold-line", "selection-context", "body-card", "rule-card", "unknown-row", "callout-card", "technical-audit"])

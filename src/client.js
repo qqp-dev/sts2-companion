@@ -281,7 +281,7 @@
     sectionNode.append(head);
     if (phase.note) sectionNode.append(el("p", "phase-note", phase.note));
     phase.rows.forEach((row) => {
-      const line = el("div", "move-row");
+      const line = el("div", row.cue ? "move-row" : "move-row move-row-uncued");
       if (row.cue) line.append(el("span", "move-cue", row.cue));
       const mechanic = el("p", "move-mechanic");
       mechanic.append(el("strong", "move-name", row.name));

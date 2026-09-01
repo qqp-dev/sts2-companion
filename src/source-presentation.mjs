@@ -765,31 +765,52 @@ const COMBAT_STATS = new Set(["strength", "dexterity", "vigor"]);
 function sentenceParts(value) {
   return String(value ?? "").split(/(?<=\.)\s+/).map((part) => part.trim().replace(/\.$/, "")).filter(Boolean);
 }
+function signedGainText(amount, subject) {
+  return `${/^[+−-]/.test(amount) ? "" : "+"}${amount} ${subject}`;
+}
 function mechanicAtom(sentence) {
   const value = String(sentence ?? "").trim().replace(/\.$/, "");
   let match = /^Deals?\s+(.+?)\s+damage$/i.exec(value);
-  if (match) return { kind: "attack", amount: match[1], subject: "damage", text: `${match[1]} damage`, sentence: value };
+  if (match) return {
+    kind: "attack", amount: match[1], subject: "damage", text: `${match[1]} damage`, sentence: value,
+    operationTarget: "allOpponentsOfSourceMonster", amountPolarity: operationAmountPolarity(match[1]),
+  };
   match = /^Gains?\s+(.+)$/i.exec(value);
   if (match) {
     const payload = match[1];
     const amountFirst = /^(\S+)\s+(.+)$/.exec(payload);
     if (amountFirst && COMBAT_STATS.has(amountFirst[2].toLowerCase())) {
-      return { kind: "power", amount: amountFirst[1], subject: amountFirst[2], text: `+${amountFirst[1]} ${amountFirst[2]}`, sentence: value };
+      return {
+        kind: "power", amount: amountFirst[1], subject: amountFirst[2], text: signedGainText(amountFirst[1], amountFirst[2]), sentence: value,
+        operationTarget: "sourceMonster", amountPolarity: operationAmountPolarity(amountFirst[1]),
+      };
     }
     const amountLast = /^(.+?)\s+(\S+)$/.exec(payload);
     if (amountLast && /^\d+(?:[–\-/]\d+)*$/.test(amountLast[2])) {
-      return { kind: "power", amount: amountLast[2], subject: amountLast[1], text: payload, sentence: value };
+      return {
+        kind: "power", amount: amountLast[2], subject: amountLast[1], text: payload, sentence: value,
+        operationTarget: "sourceMonster", amountPolarity: operationAmountPolarity(amountLast[2]),
+      };
     }
     if (amountFirst && /^\d+(?:[–×\-/]\d+)*$/.test(amountFirst[1])) {
       const kind = /\bBlock\b/i.test(amountFirst[2]) ? "block" : "power";
-      return { kind, amount: amountFirst[1], subject: amountFirst[2], text: payload, sentence: value };
+      return {
+        kind, amount: amountFirst[1], subject: amountFirst[2], text: payload, sentence: value,
+        operationTarget: "sourceMonster", amountPolarity: operationAmountPolarity(amountFirst[1]),
+      };
     }
-    return { kind: "power", amount: null, subject: payload, text: `gain ${payload}`, sentence: value };
+    return {
+      kind: "power", amount: null, subject: payload, text: `gain ${payload}`, sentence: value,
+      operationTarget: "sourceMonster", amountPolarity: null,
+    };
   }
   match = /^Applies?\s+(.+)$/i.exec(value);
   if (match) {
     const amountFirst = /^(\S+)\s+(.+)$/.exec(match[1]);
-    return { kind: "power", amount: amountFirst?.[1] ?? null, subject: amountFirst?.[2] ?? match[1], text: match[1], sentence: value };
+    return {
+      kind: "power", amount: amountFirst?.[1] ?? null, subject: amountFirst?.[2] ?? match[1], text: match[1], sentence: value,
+      operationTarget: "registeredTargets", amountPolarity: operationAmountPolarity(amountFirst?.[1]),
+    };
   }
   if (/^Stunned$/i.test(value)) return { kind: "state", amount: null, subject: "Stunned", text: "STUNNED", sentence: value };
   if (/^Does nothing$/i.test(value)) return { kind: "action", amount: null, subject: "action", text: "takes no action", sentence: value };
@@ -812,13 +833,42 @@ function exactSourceMove(sourceBody, referenceMove) {
   const matches = (sourceBody?.moves ?? []).filter((move) => move.title?.text === referenceMove.name);
   return matches.length === 1 ? matches[0] : null;
 }
+function sharedAmountPolarity(values) {
+  const polarities = values.map(operationAmountPolarity);
+  return polarities[0] && polarities.every((value) => value === polarities[0]) ? polarities[0] : null;
+}
+function operationAmountPolarity(value) {
+  if (typeof value === "string") {
+    const components = value.split(/(?<=\d)[–×\/-](?=[+-]?\d)/);
+    if (components.length > 1 && components.every((component) => /^[+-]?\d+(?:\.\d+)?$/.test(component))) {
+      return sharedAmountPolarity(components);
+    }
+  }
+  if (typeof value === "number" || (typeof value === "string" && /^[+-]?\d+(?:\.\d+)?$/.test(value))) {
+    const number = Number(value);
+    return number < 0 ? "negative" : number > 0 ? "positive" : "zero";
+  }
+  if (!value || typeof value !== "object") return null;
+  switch (value.kind) {
+    case "constant": return operationAmountPolarity(value.value);
+    case "convert":
+    case "delegate": return operationAmountPolarity(value.expression);
+    case "range": return sharedAmountPolarity([value.minimum, value.maximum]);
+    case "ascensionSelect": return sharedAmountPolarity([value.atOrAbove, value.below]);
+    case "conditional": return sharedAmountPolarity([value.whenTrue, value.whenFalse]);
+    default: return null;
+  }
+}
 function operationForAtom(atom, operations, used) {
   const expectedKind = atom.kind === "attack" ? "attack" : atom.kind === "block" ? "gainBlock" : atom.kind === "power" ? "applyPower" : null;
   if (!expectedKind) return null;
   for (let index = 0; index < operations.length; index += 1) {
-    if (used.has(index) || operations[index]?.kind !== expectedKind) continue;
-    if (expectedKind === "applyPower" && cardOrPower(operations[index].model).toLowerCase() !== atom.subject.toLowerCase()) continue;
-    used.add(index); return operations[index];
+    const operation = operations[index];
+    if (used.has(index) || operation?.kind !== expectedKind) continue;
+    if (atom.operationTarget && operation.target !== atom.operationTarget) continue;
+    if (expectedKind === "applyPower" && cardOrPower(operation.model).toLowerCase() !== atom.subject.toLowerCase()) continue;
+    if (atom.amountPolarity && operationAmountPolarity(operation.value) !== atom.amountPolarity) continue;
+    used.add(index); return operation;
   }
   return null;
 }
@@ -847,8 +897,9 @@ function bestMove(referenceMove, sourceBody, scaling, bodyIndex, provenanceValue
       retainedReferenceValue: scaledAtom.text,
       conflict: closed ? closed.text !== scaledAtom.text : false,
       reason: closed ? "projected checked value is closed"
-        : sourceMove ? "projected source value remains symbolic; retained exact reference value"
-          : "no exact localized source move join; retained exact reference value",
+        : operation ? "matched projected source value remains symbolic; retained exact reference value"
+          : sourceMove ? "no exact projected source operation coordinate; retained exact reference value"
+            : "no exact localized source move join; retained exact reference value",
     });
     return closed ?? { ...scaledAtom, authority };
   });
