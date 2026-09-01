@@ -10,38 +10,31 @@ main.guide-state.guide-state-selected
       section.phase-section
         header.phase-head
           span.phase-number "01"
-          h2.phase-title "Break the Plow"
-        div.move-row
-          span.move-cue "First turn"
-          p.move-mechanic
-            strong.move-name "Stamp"
-            span.move-detail " — gain Plow 352"
-        div.move-row
-          span.move-cue "Then every turn"
-          p.move-mechanic
-            strong.move-name "Plow"
-            span.move-detail " — 20 damage · +2 Strength"
+          h2.phase-title "Force the stun"
+        p.sequence-row
+          strong.sequence-cue "First turn"
+          span.sequence-detail " · No attack"
+        p.sequence-row
+          strong.sequence-cue "Then each turn"
+          span.sequence-detail " · 20 damage · +2 Strength"
         p.threshold-line
-          strong.threshold-label "STUNNED"
-          span.threshold-detail " · loses all Strength · takes no action"
+          strong.threshold-label "At 352 HP or below"
+          span.threshold-detail " · Immediately Stunned · loses all Strength · takes no action"
       div.phase-transition "↓"
       section.phase-section
         header.phase-head
           span.phase-number "02"
           h2.phase-title "Three-turn loop"
-        div.move-row.move-row-uncued
-          p.move-mechanic
-            strong.move-name "Beast Cry"
-            span.move-detail " — 1 Ringing"
-        div.move-row.move-row-uncued
-          p.move-mechanic
-            strong.move-name "Stomp"
-            span.move-detail " — 17 damage"
-        div.move-row.move-row-uncued
-          p.move-mechanic
-            strong.move-name "Crush"
-            span.move-detail " — 19 damage · +4 Strength"
-        p.repeat-line "↻ repeat Beast Cry → Stomp → Crush"
+        p.sequence-row
+          strong.sequence-cue "1"
+          span.sequence-detail " · Apply 1 Ringing"
+        p.sequence-row
+          strong.sequence-cue "2"
+          span.sequence-detail " · 17 damage"
+        p.sequence-row
+          strong.sequence-cue "3"
+          span.sequence-detail " · 19 damage · +4 Strength"
+        p.repeat-line "↻ repeat 1 → 2 → 3"
       p.watch-line
         strong.watch-label "Watch:"
         span.watch-detail " crossing the phase threshold clears accumulated Strength."

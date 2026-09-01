@@ -258,7 +258,7 @@
     content.append(el("p", "quiet", "Exact checked source records, symbolic expressions, retained reference records, merge provenance, behavior data, callout basis, conflicts, and evidence pointers."));
     content.append(details("Authority & observed identity", { authority: state.authority, sourceAuthority: encounter.sourceAuthority, observation: state.observation }));
     if (encounter.reference) content.append(details("Exact retained wiki/reference record", encounter.reference));
-    if (encounter.presentation?.primary) content.append(details("Best-available merge provenance", encounter.presentation.primary.provenance));
+    if (encounter.presentation?.audit?.mergeProvenance) content.append(details("Best-available merge provenance", encounter.presentation.audit.mergeProvenance));
     if (encounter.presentation?.callouts?.all?.length) content.append(details("Editorial callout records", encounter.presentation.callouts));
     const checked = { ...encounter }; delete checked.presentation; delete checked.reference;
     content.append(details("Exact checked source encounter record", checked));
@@ -281,12 +281,15 @@
     sectionNode.append(head);
     if (phase.note) sectionNode.append(el("p", "phase-note", phase.note));
     phase.rows.forEach((row) => {
-      const line = el("div", row.cue ? "move-row" : "move-row move-row-uncued");
-      if (row.cue) line.append(el("span", "move-cue", row.cue));
-      const mechanic = el("p", "move-mechanic");
-      mechanic.append(el("strong", "move-name", row.name));
-      if (row.detail) mechanic.append(el("span", "move-detail", ` — ${row.detail}`));
-      line.append(mechanic); sectionNode.append(line);
+      if (!row.detail) return;
+      const line = el("p", row.cue ? "sequence-row" : "sequence-row sequence-row-uncued");
+      if (row.cue) {
+        line.append(el("strong", "sequence-cue", row.cue));
+        line.append(el("span", "sequence-detail", ` · ${row.detail}`));
+      } else {
+        line.append(el("span", "sequence-detail", row.detail));
+      }
+      sectionNode.append(line);
     });
     if (phase.marker) {
       const marker = el("p", "threshold-line");

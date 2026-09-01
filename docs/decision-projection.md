@@ -172,18 +172,29 @@ signature states the target, amount and hit structure, ordered status/card/Power
 state/lifecycle effects, and their timing and conditions. It is the canonical
 human projection for both current and future enemy consequences.
 
-The collapsed guide MUST NOT display raw move IDs. Localized move names MAY and
-normally SHOULD appear when they are useful recognition anchors, but the effect
-signature remains the practical content; a name never substitutes for missing
-semantics. If a checked numeric getter remains symbolic, the renderer uses the
-exact retained encounter/body/move value when one exists, labels it as
-wiki/reference-backed, and keeps the symbolic expression in Technical audit. It
-MUST NOT label that fallback as source-closed or obtain it through fuzzy matching.
+The primary guide is consequence-first: it answers **when does it happen, what
+happens, and what must the player track or target?** It MUST NOT automatically
+emit ordinary localized move names or raw move IDs. Turn and condition cues,
+numbered sequence steps, branches, transitions, repeat markers, and semantic
+effects carry the practical structure without an empty name slot. Player-facing
+keywords and statuses remain when their presence or amount is directly tracked;
+actor, target, enemy, and summon identities remain when they identify something
+the player fights or targets. Opaque named Powers and internal concepts MUST be
+translated into their threshold and gameplay outcome rather than presented as an
+unexplained noun or stack amount.
+
+Exact localized move/Power names, canonical IDs, retained wiki labels, source
+evidence, and merge provenance remain unchanged as audit/reconciliation metadata
+inside Technical audit. If a checked numeric getter remains symbolic, the
+renderer uses the exact retained encounter/body/move value when one exists,
+labels the consequence as wiki/reference-backed, and keeps the symbolic
+expression in Technical audit. It MUST NOT label that fallback as source-closed
+or obtain it through fuzzy matching.
 
 Information is progressively disclosed:
 
 1. **Primary practical combat guide:** compact practical placement, configured
-   HP/kind, recognized move/effect rows, explicit numbered phases or honest
+   HP/kind, cue-led consequence rows, explicit numbered phases or honest
    opener/cycle/branch/response labels, transitions, repeat cues, and only
    encounter-distinct actionable rules. Exact retained values fill symbolic
    checked coordinates with quiet provenance.

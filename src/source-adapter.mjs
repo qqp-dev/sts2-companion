@@ -582,7 +582,14 @@ function makeCompiler(v, options = {}) {
     const moves = (movesByModel.get(model) ?? []).map((move) => { closure.add(move.factId); return {
       canonicalId: move.canonicalId, factId: move.factId, stateId: move.stateId,
       title: { classification: move.title.classification, text: typeof move.title.english === "string" ? move.title.english : null, localizationKey: typeof move.title.localizationKey === "string" ? move.title.localizationKey : null },
-      intents: move.intents.map((row) => compact(row)), operations: move.operations.map((row, order) => ({ order, ...compact(row) })),
+      intents: move.intents.map((row) => compact(row)),
+      operations: move.operations.map((row, order) => {
+        const operation = { order, ...compact(row) };
+        if (row.kind === "applyPower" && typeof row.sinkSymbolSignature === "string") {
+          operation.sourcePowerEvidence = row.sinkSymbolSignature;
+        }
+        return operation;
+      }),
     }; });
     const graph = graphByModel.get(model); if (graph) closure.add(graph.factId);
     const name = monster.name.kind === "localizedText"
