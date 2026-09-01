@@ -235,6 +235,51 @@ test("all checked event effect kinds have deliberate practical consequences", ()
   assert.match(punch, /offer the constructed reward list/);
 });
 
+test("closed conditional and named state amounts remain practical", () => {
+  const egg = encounter("OVICOPTER_NORMAL").presentation.bodies.find((body) => body.name === "Tough Egg");
+  assert.match(egg.initialEffects[0].line, /Hatch base 2 when combat side = 2; otherwise 1/);
+  assert.doesNotMatch(egg.initialEffects[0].line, /amount unresolved/);
+  assert.equal(egg.initialEffects[0].unresolved, "combat-side selection · runtime Power modifiers");
+  assert.match(egg.initialEffects[2].line, /set max and starting HP to the stored hatched-form HP/);
+  assert.equal(egg.initialEffects[2].unresolved, "stored hatched-form HP");
+
+  for (const body of encounter("DECIMILLIPEDE_ELITE").presentation.bodies) {
+    assert.equal(body.hp, "46–52 HP · A8 single player");
+    const startingHp = body.initialEffects.filter((fact) => /starting HP/.test(fact.line));
+    assert.ok(startingHp.length > 0);
+    startingHp.forEach((fact) => assert.match(fact.line, /set max and starting HP to the encounter's shared starting HP roll/));
+    startingHp.forEach((fact) => assert.doesNotMatch(fact.line, /amount unresolved/));
+    startingHp.forEach((fact) => assert.equal(fact.unresolved, "shared starting-HP roll"));
+  }
+});
+
+test("body-owned lifecycle rules stay adjacent to the relevant enemy card", () => {
+  const kin = encounter("THE_KIN_BOSS").presentation;
+  const kinLinkedBodies = kin.lifecycle.mechanics.find((mechanic) => mechanic.branches.some((branch) => strings(branch).join(" ").includes("same Kin Priest")));
+  assert.deepEqual(kinLinkedBodies.bodyIndexes, [kin.bodies.findIndex((body) => body.name === "Kin Priest")]);
+
+  const waterfall = encounter("WATERFALL_GIANT_BOSS").presentation;
+  const steamRetention = waterfall.lifecycle.mechanics.filter((mechanic) => strings(mechanic).join(" ").includes("Steam Eruption") && mechanic.family === "Death and Power retention");
+  assert.equal(steamRetention.length, 3);
+  steamRetention.forEach((mechanic) => assert.deepEqual(mechanic.bodyIndexes, [0]));
+
+  const subject = encounter("TEST_SUBJECT_BOSS").presentation;
+  const painfulStabsRetention = subject.lifecycle.mechanics.filter((mechanic) => strings(mechanic).join(" ").includes("Painful Stabs") && mechanic.family === "Death and Power retention");
+  assert.equal(painfulStabsRetention.length, 2);
+  painfulStabsRetention.forEach((mechanic) => assert.deepEqual(mechanic.bodyIndexes, [0]));
+
+  const ovicopter = encounter("OVICOPTER_NORMAL").presentation;
+  const eggIndex = ovicopter.bodies.findIndex((body) => body.name === "Tough Egg");
+  const minionRetention = ovicopter.lifecycle.mechanics.filter((mechanic) => mechanic.family === "Death and Power retention");
+  assert.equal(minionRetention.length, 2);
+  minionRetention.forEach((mechanic) => assert.deepEqual(mechanic.bodyIndexes, [eggIndex]));
+
+  const boundary = presentationInternals.lifecyclePresentation({ mechanics: { relationships: [{
+    relationshipId: "test", orderedEffects: [{ kind: "kill", owner: "MONSTER.KIN_PRIESTESS", target: "sameOwnerBody" }],
+  }] } }, new Map(), new Map([["MONSTER.KIN_PRIEST", 0]]), new Map());
+  assert.deepEqual(boundary.mechanics[0].bodyIndexes, [], "canonical model prefixes do not route");
+});
+
 test("representative clocks, revive, hatch, production, and phase rules remain practical", () => {
   const battleworn = strings(encounter("BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER").presentation.lifecycle).join(" ");
   assert.match(battleworn, /Event fight clock/);

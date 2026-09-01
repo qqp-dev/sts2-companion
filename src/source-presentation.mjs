@@ -201,10 +201,21 @@ function practicalAmountText(value) {
       const operands = (value.operands ?? []).map(practicalAmountText);
       return !operator || !operands.length || operands.includes(null) ? null : operands.join(` ${operator} `);
     }
+    case "conditional": {
+      const whenTrue = practicalAmountText(value.whenTrue), whenFalse = practicalAmountText(value.whenFalse);
+      if (whenTrue === null || whenFalse === null) return null;
+      if (whenTrue === whenFalse) return whenTrue;
+      return `${whenTrue} when ${conditionText(value.condition)}; otherwise ${whenFalse}`;
+    }
     case "count": return "body count at resolution";
     case "stateVariable": {
-      const labels = Object.freeze({ axebotRespawnCount: "completed respawns" });
-      return labels[value.name] ?? null;
+      const labels = Object.freeze({
+        axebotRespawnCount: "completed respawns",
+        "combat.currentSide": "combat side",
+        "initial.decimillipedeSharedMaxHp": "the encounter's shared starting HP roll",
+        "initial.toughEggHatchHp": "the stored hatched-form HP",
+      });
+      return labels[value.name] ?? "the named state value";
     }
     case "reference": return null;
     default: return null;
@@ -213,6 +224,9 @@ function practicalAmountText(value) {
 function amountText(value, unresolved) { return practicalAmountText(value) ?? unresolved; }
 function runtimeInputDetail(reference) {
   if (typeof reference !== "string") return "named runtime input";
+  if (reference === "RUNTIME.COMBAT.CURRENT_SIDE") return "combat-side selection";
+  if (reference === "RUNTIME.INITIAL.DECIMILLIPEDE_SHARED_MAX_HP") return "shared starting-HP roll";
+  if (reference === "RUNTIME.INITIAL.TOUGH_EGG_HATCH_HP") return "stored hatched-form HP";
   if (reference === "RUNTIME.EXTERNAL.POWER_AMOUNT_HOOKS") return "runtime Power modifiers";
   if (reference.startsWith("RUNTIME.EXPRESSION.")) return "enemy-definition amount";
   if (reference.includes("MULTIPLAYER")) return "player-count scaling input";
@@ -649,10 +663,21 @@ function lifecyclePresentationRecords(mechanics) {
 }
 function lifecycleBodyIndexes(row, bodyIndexes, powerBodyIndexes) {
   const models = new Set();
-  for (const key of ["ownerModel", "canonicalModel"]) if (typeof row[key] === "string") models.add(row[key]);
-  for (const key of ["ownerModels", "applicableConcreteModels"]) for (const model of row[key] ?? []) models.add(model);
+  // Some checked relationship operations wrap a canonical owner in quantified prose.
+  // Extract only exact IDs already joined to this encounter; never infer a new model.
+  const addKnownModels = (value) => {
+    if (typeof value !== "string") return;
+    for (const model of bodyIndexes.keys()) {
+      const start = value.indexOf(model);
+      if (start < 0) continue;
+      const before = value[start - 1], after = value[start + model.length];
+      if ((!before || !/[A-Z0-9_.]/.test(before)) && (!after || !/[A-Z0-9_.]/.test(after))) models.add(model);
+    }
+  };
+  for (const key of ["ownerModel", "canonicalModel"]) addKnownModels(row[key]);
+  for (const key of ["ownerModels", "applicableConcreteModels"]) for (const model of row[key] ?? []) addKnownModels(model);
   const operations = (row.transitions ?? row.branches ?? [row]).flatMap((branch) => branch.orderedEffects ?? row.orderedEffects ?? row.orderedPerPlayer ?? []);
-  for (const operation of operations) for (const key of ["owner", "model"]) if (typeof operation?.[key] === "string" && operation[key].startsWith("MONSTER.")) models.add(operation[key]);
+  for (const operation of operations) for (const key of ["owner", "model"]) addKnownModels(operation?.[key]);
   const indexes = new Set([...models].map((model) => bodyIndexes.get(model)).filter((index) => index !== undefined));
   for (const power of [row.power, row.producerPower, row.listener]) for (const index of powerBodyIndexes.get(power) ?? []) indexes.add(index);
   return [...indexes].sort((a, b) => a - b);
@@ -757,13 +782,28 @@ export function buildEncounterPresentation(encounter, options = {}) {
   const names = new Map((encounter.monsters ?? []).map((body) => [body.canonicalModel, nameOf(body)]));
   const bodyIndexes = new Map((encounter.monsters ?? []).map((body, index) => [body.canonicalModel, index]));
   const powerBodyIndexes = new Map();
-  (encounter.monsters ?? []).forEach((body, index) => (body.initialState ?? []).forEach((fact) => {
-    const power = fact.effect?.model;
+  const indexPower = (power, index) => {
     if (typeof power !== "string" || !power.startsWith("POWER.")) return;
     const indexes = powerBodyIndexes.get(power) ?? [];
     if (!indexes.includes(index)) indexes.push(index);
     powerBodyIndexes.set(power, indexes);
-  }));
+  };
+  (encounter.monsters ?? []).forEach((body, index) => (body.initialState ?? []).forEach((fact) => indexPower(fact.effect?.model, index)));
+  // Retention policies name their Power but not its body. A body-anchored lifecycle
+  // operation on sameOwnerBody supplies that ownership edge without guessing targets.
+  for (const { row } of lifecyclePresentationRecords(encounter.lifecycle?.mechanics ?? {})) {
+    const ownerModels = [row.ownerModel, ...(row.ownerModels ?? []), row.canonicalModel, ...(row.applicableConcreteModels ?? [])];
+    const ownerIndexes = ownerModels.map((model) => bodyIndexes.get(model)).filter((index) => index !== undefined);
+    if (!ownerIndexes.length) continue;
+    for (const branch of row.transitions ?? row.branches ?? [row]) {
+      for (const operation of branch.orderedEffects ?? row.orderedEffects ?? row.orderedPerPlayer ?? []) {
+        if (operation?.target !== "sameOwnerBody") continue;
+        for (const power of [operation.power, operation.model, operation.owner, operation.retainedPower]) {
+          for (const index of ownerIndexes) indexPower(power, index);
+        }
+      }
+    }
+  }
   const candidates = options.calloutCandidates ?? checkedCalloutCandidates(encounter.canonicalId);
   const callouts = options.calloutCollection
     ? validatedCollection(options.calloutCollection)
