@@ -853,40 +853,31 @@
         "sections": [
           {
             "number": null,
-            "title": "Checked behavior effects",
+            "title": "Cycle",
             "rows": [
               {
-                "cue": "Effect 1",
-                "detail": "damage amount set at runtime to all opponents · runtime-set Block to self",
+                "cue": "1",
+                "detail": "6 damage · 12 Block",
                 "authorities": [
-                  "checked-source"
+                  "wiki-reference"
                 ]
               },
               {
-                "cue": "Effect 2",
-                "detail": "damage amount set at runtime to all opponents · runtime-set Block to self",
+                "cue": "2",
+                "detail": "13 damage",
                 "authorities": [
-                  "checked-source"
-                ]
-              },
-              {
-                "cue": "Effect 3",
-                "detail": "damage amount set at runtime to all opponents",
-                "authorities": [
-                  "checked-source"
+                  "wiki-reference"
                 ]
               }
             ],
             "marker": null,
             "transitionAfter": false,
-            "repeat": null,
-            "note": "Consequences are source-backed; exact action names and ordering details remain in Technical audit."
+            "repeat": "↻ repeat",
+            "note": "Repeats a fixed cycle: • step 1 • step 1 • step 2"
           }
         ],
         "watch": [],
-        "sourceMatchedExactly": false,
-        "sourceOnlySupplement": true,
-        "mechanicsAuthority": "checked source mechanics"
+        "sourceMatchedExactly": true
       },
       {
         "bodyIndex": 1,
@@ -898,26 +889,24 @@
         "sections": [
           {
             "number": null,
-            "title": "Checked behavior effects",
+            "title": "Cycle",
             "rows": [
               {
-                "cue": "Each use",
-                "detail": "damage amount set at runtime to all opponents",
+                "cue": "1",
+                "detail": "11 damage",
                 "authorities": [
-                  "checked-source"
+                  "wiki-reference"
                 ]
               }
             ],
             "marker": null,
             "transitionAfter": false,
-            "repeat": null,
-            "note": "Consequences are source-backed; exact action names and ordering details remain in Technical audit."
+            "repeat": "↻ repeat",
+            "note": "Uses step 1 every turn."
           }
         ],
         "watch": [],
-        "sourceMatchedExactly": false,
-        "sourceOnlySupplement": true,
-        "mechanicsAuthority": "checked source mechanics"
+        "sourceMatchedExactly": true
       },
       {
         "bodyIndex": 2,
@@ -929,33 +918,31 @@
         "sections": [
           {
             "number": null,
-            "title": "Checked behavior effects",
+            "title": "Cycle",
             "rows": [
               {
-                "cue": "Effect 1",
-                "detail": "damage amount set at runtime to all opponents",
+                "cue": "1",
+                "detail": "8 damage",
                 "authorities": [
-                  "checked-source"
+                  "wiki-reference"
                 ]
               },
               {
-                "cue": "Effect 2",
-                "detail": "+3 Strength to self",
+                "cue": "2",
+                "detail": "+3 Strength",
                 "authorities": [
-                  "checked-source"
+                  "wiki-reference"
                 ]
               }
             ],
             "marker": null,
             "transitionAfter": false,
             "repeat": null,
-            "note": "Consequences are source-backed; exact action names and ordering details remain in Technical audit."
+            "note": "Alternates between step 1 and step 2, starting with step 1."
           }
         ],
         "watch": [],
-        "sourceMatchedExactly": false,
-        "sourceOnlySupplement": true,
-        "mechanicsAuthority": "checked source mechanics"
+        "sourceMatchedExactly": true
       },
       {
         "bodyIndex": 3,
@@ -967,33 +954,31 @@
         "sections": [
           {
             "number": null,
-            "title": "Checked behavior effects",
+            "title": "Cycle",
             "rows": [
               {
-                "cue": "Effect 1",
-                "detail": "damage amount set at runtime to all opponents · update this body's checked behavior state",
+                "cue": "1",
+                "detail": "6 Block",
                 "authorities": [
                   "checked-source"
                 ]
               },
               {
-                "cue": "Effect 2",
-                "detail": "runtime-set Block to self · update this body's checked behavior state",
+                "cue": "2",
+                "detail": "16 damage",
                 "authorities": [
-                  "checked-source"
+                  "wiki-reference"
                 ]
               }
             ],
             "marker": null,
             "transitionAfter": false,
             "repeat": null,
-            "note": "Consequences are source-backed; exact action names and ordering details remain in Technical audit."
+            "note": "Alternates between step 1 and step 2, starting with step 1."
           }
         ],
         "watch": [],
-        "sourceMatchedExactly": false,
-        "sourceOnlySupplement": true,
-        "mechanicsAuthority": "checked source mechanics"
+        "sourceMatchedExactly": true
       },
       {
         "bodyIndex": 4,
@@ -1005,36 +990,34 @@
         "sections": [
           {
             "number": null,
-            "title": "Checked behavior effects",
+            "title": "Cycle",
             "rows": [
               {
-                "cue": "Effect 1",
-                "detail": "Apply 2 Frail to the affected targets",
+                "cue": "1",
+                "detail": "2 Frail",
                 "authorities": [
                   "checked-source"
                 ]
               },
               {
-                "cue": "Effect 2",
-                "detail": "runtime-set damage × runtime-set hits to all opponents",
+                "cue": "2",
+                "detail": "1×9 damage",
                 "authorities": [
-                  "checked-source"
+                  "wiki-reference"
                 ]
               }
             ],
             "marker": null,
             "transitionAfter": false,
-            "repeat": null,
-            "note": "Consequences are source-backed; exact action names and ordering details remain in Technical audit."
+            "repeat": "↻ repeat",
+            "note": "Opens with step 1, then uses step 2 every turn after."
           }
         ],
         "watch": [],
-        "sourceMatchedExactly": false,
-        "sourceOnlySupplement": true,
-        "mechanicsAuthority": "checked source mechanics"
+        "sourceMatchedExactly": true
       }
     ],
-    "collapsed": "RUBY RAIDERS ORDINARY Overgrowth Manual · Static reference 3 initial bodies Choose exactly 3 distinct raiders without replacement from 5: Axe Raider, Assassin Raider, Brute Raider, Crossbow Raider, Tracker Raider. Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup. Axe Raider 46–50 HP · possible body · checked source mechanics Checked behavior effects Consequences are source-backed; exact action names and ordering details remain in Technical audit. Effect 1 · damage amount set at runtime to all opponents · runtime-set Block to self Effect 2 · damage amount set at runtime to all opponents · runtime-set Block to self Effect 3 · damage amount set at runtime to all opponents Assassin Raider 41–52 HP · possible body · checked source mechanics Checked behavior effects Consequences are source-backed; exact action names and ordering details remain in Technical audit. Each use · damage amount set at runtime to all opponents Brute Raider 68–74 HP · possible body · checked source mechanics Checked behavior effects Consequences are source-backed; exact action names and ordering details remain in Technical audit. Effect 1 · damage amount set at runtime to all opponents Effect 2 · +3 Strength to self Crossbow Raider 41–48 HP · possible body · checked source mechanics Checked behavior effects Consequences are source-backed; exact action names and ordering details remain in Technical audit. Effect 1 · damage amount set at runtime to all opponents · update this body's checked behavior state Effect 2 · runtime-set Block to self · update this body's checked behavior state Tracker Raider 48–57 HP · possible body · checked source mechanics Checked behavior effects Consequences are source-backed; exact action names and ordering details remain in Technical audit. Effect 1 · Apply 2 Frail to the affected targets Effect 2 · runtime-set damage × runtime-set hits to all opponents checked source + wiki/reference values · checked A8 / retained A9 · 2P presentation Technical audit"
+    "collapsed": "RUBY RAIDERS ORDINARY Overgrowth Manual · Static reference 3 initial bodies Choose exactly 3 distinct raiders without replacement from 5: Axe Raider, Assassin Raider, Brute Raider, Crossbow Raider, Tracker Raider. Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup. Axe Raider 46–50 HP · possible body Cycle Repeats a fixed cycle: • step 1 • step 1 • step 2 1 · 6 damage · 12 Block 2 · 13 damage ↻ repeat Assassin Raider 41–52 HP · possible body Cycle Uses step 1 every turn. 1 · 11 damage ↻ repeat Brute Raider 68–74 HP · possible body Cycle Alternates between step 1 and step 2, starting with step 1. 1 · 8 damage 2 · +3 Strength Crossbow Raider 41–48 HP · possible body Cycle Alternates between step 1 and step 2, starting with step 1. 1 · 6 Block 2 · 16 damage Tracker Raider 48–57 HP · possible body Cycle Opens with step 1, then uses step 2 every turn after. 1 · 2 Frail 2 · 1×9 damage ↻ repeat wiki/reference values · A9 / 2P presentation Technical audit"
   },
   "BOWLBUGS_NORMAL": {
     "roster": {

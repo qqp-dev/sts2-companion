@@ -70,6 +70,27 @@ test("exact practical roster analysis is deterministic, ordered, duplicate-safe,
   assert.ok(strangler.outcomes.some((row) => row.filter((model) => model === "MONSTER.TWIG_SLIME_S").length === 2));
 });
 
+test("Ruby Raiders use unique exact same-encounter names to retain practical mechanics", () => {
+  const bodies = view("RUBY_RAIDERS_NORMAL").presentation.primary.bodies;
+  assert.equal(bodies.length, 5);
+  assert.ok(bodies.every((body) => body.sourceMatchedExactly === true));
+  assert.ok(bodies.every((body) => body.sourceOnlySupplement !== true));
+  assert.ok(bodies.every((body) => body.sections.every((section) => section.title !== "Checked behavior effects")));
+
+  const byName = new Map(bodies.map((body) => [body.name, body]));
+  const assassin = JSON.stringify(byName.get("Assassin Raider"));
+  assert.match(assassin, /every turn/);
+  assert.match(assassin, /11 damage/);
+
+  const axe = byName.get("Axe Raider");
+  assert.deepEqual(axe.sections.flatMap((section) => section.rows.map((row) => row.cue)), ["1", "2"]);
+  assert.match(axe.sections[0].note, /step 1 • step 1 • step 2/);
+  const axeDetails = axe.sections.flatMap((section) => section.rows.map((row) => row.detail));
+  assert.match(axeDetails[0], /6 damage/);
+  assert.match(axeDetails[0], /12 Block/);
+  assert.match(axeDetails[1], /13 damage/);
+});
+
 test("independent draw nodes stay distinct from one shared category draw", () => {
   const fixed = (model) => ({ kind: "fixed", model });
   const choice = () => ({ kind: "uniformChoice", choices: [fixed("MONSTER.LEAF"), fixed("MONSTER.TWIG")] });

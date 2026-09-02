@@ -827,8 +827,15 @@ function formatPracticalRange(values) {
   return values.length === 1 || values[0] === values.at(-1) ? String(values[0]) : `${values[0]}–${values.at(-1)}`;
 }
 function exactSourceBody(encounter, referenceBody) {
-  const matches = (encounter.monsters ?? []).filter((body) => exactMonsterId(body.canonicalModel) === referenceBody.monsterId);
-  return matches.length === 1 ? matches[0] : null;
+  const sourceBodies = encounter.monsters ?? [];
+  const idMatches = sourceBodies.filter((body) => exactMonsterId(body.canonicalModel) === referenceBody.monsterId);
+  if (idMatches.length === 1) return idMatches[0];
+  if (idMatches.length > 1 || typeof referenceBody.displayName !== "string") return null;
+  // `sourceBodies` is already scoped by the exact canonical encounter join. A
+  // unique byte-for-byte display name is therefore an exact fallback key, not
+  // a fuzzy or cross-encounter lookup.
+  const nameMatches = sourceBodies.filter((body) => nameOf(body) === referenceBody.displayName);
+  return nameMatches.length === 1 ? nameMatches[0] : null;
 }
 function exactSourceMove(sourceBody, referenceMove) {
   const matches = (sourceBody?.moves ?? []).filter((move) => move.title?.text === referenceMove.name);
@@ -1891,8 +1898,8 @@ function primaryPresentation(encounter, options) {
         ? `checked source + wiki/reference values · checked A8 / retained A9 · ${players}P presentation`
         : `wiki/reference values · A9 / ${players}P presentation`,
       matching: sourceSupplements
-        ? "exact canonical encounter and exact source model IDs; unmatched retained body IDs do not create joins"
-        : "exact canonical encounter and monster IDs only",
+        ? "exact canonical encounter and unique source model ID or display-name keys; unmatched or ambiguous retained body keys do not create joins"
+        : "exact canonical encounter and unique monster ID or display-name keys",
       mergePolicy: sourceSupplements
         ? "checked source-only supplemental cards; checked source when closed for exact retained joins; otherwise retained exact reference"
         : "checked source when closed; otherwise retained exact reference",
@@ -1989,7 +1996,7 @@ export const presentationInternals = Object.freeze({
   productionPresentation, lifecyclePresentation, lifecyclePresentationRecords, lifecycleEffect,
   retentionPolicyText, lifecycleWriteText, eventPresentation, eventEffect, validatedCollection,
   mechanicAtom, mechanicAtoms, primaryPresentation, eventPrimaryPresentation, genericSections, ceremonialSections, roleNumberedSections,
-  completeSourceOperationDetail, supplementalSourceSections,
+  completeSourceOperationDetail, supplementalSourceSections, exactSourceBody,
   exactGraphContract, stateIncrement, axebotSections, terrorEelSections,
   BOOLEAN_CONDITIONS, EVENT_EFFECT_KINDS, LIFECYCLE_WRITES, TARGETS,
 });
