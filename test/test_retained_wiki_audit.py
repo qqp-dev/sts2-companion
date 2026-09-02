@@ -238,6 +238,46 @@ class BuildAndFailureContractTests(unittest.TestCase):
         with self.assertRaisesRegex(wiki.AuditError, "absent without exact approved snapshot gap"):
             wiki._module_manifest(REPO_ROOT, index, policy)
 
+    def test_unclassified_patch_enemy_leaf_fails_closed(self):
+        policy = wiki.load_json(REPO_ROOT / wiki.DEFAULT_POLICY)
+        pages_document = wiki.load_json(REPO_ROOT / "tools/.wiki/pages.json")
+        patch_key = pages_document["meta"]["patchPage"]
+        patch_page = json.loads(json.dumps(pages_document["pages"][patch_key]))
+        next_section = "\n=== Colorless Cards: ==="
+        self.assertIn(next_section, patch_page["wikitext"])
+        patch_page["wikitext"] = patch_page["wikitext"].replace(
+            next_section,
+            "\n* Buffed Foo: damage increased from 1 to 2\n" + next_section,
+            1,
+        )
+
+        with self.assertRaisesRegex(
+            wiki.AuditError,
+            r"patch enemy bullet 11 lacks reviewed classification: Buffed Foo",
+        ):
+            wiki._add_patch_atoms(
+                wiki.AtomCollector(policy), patch_key, patch_page, policy,
+                {"patchEnemyFacts": 0},
+            )
+
+    def test_only_exact_patch_enemy_grouping_parent_is_exempt(self):
+        policy = wiki.load_json(REPO_ROOT / wiki.DEFAULT_POLICY)
+        pages_document = wiki.load_json(REPO_ROOT / "tools/.wiki/pages.json")
+        patch_key = pages_document["meta"]["patchPage"]
+        patch_page = json.loads(json.dumps(pages_document["pages"][patch_key]))
+        patch_page["wikitext"] = patch_page["wikitext"].replace(
+            "* Buffed Axebot:", "* Buffed Foo:", 1,
+        )
+
+        with self.assertRaisesRegex(
+            wiki.AuditError,
+            r"patch enemy bullet 1 lacks reviewed classification: Buffed Foo",
+        ):
+            wiki._add_patch_atoms(
+                wiki.AtomCollector(policy), patch_key, patch_page, policy,
+                {"patchEnemyFacts": 0},
+            )
+
     def test_malformed_json_fails_with_context(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "bad.json"

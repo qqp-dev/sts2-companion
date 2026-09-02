@@ -1244,11 +1244,21 @@ def _add_patch_atoms(
         is_enemy_balance = section_path == ("CONTENT & BALANCE", "Enemies:")
         if is_enemy_balance:
             enemy_ordinal += 1
-            # The first bullet is a grouping parent; reviewed facts are the nine
-            # exact child/leaf coordinates in policy.
+            # The exact first bullet is the reviewed grouping parent; every
+            # other bullet must have an explicit policy classification so a
+            # snapshot refresh cannot silently omit a new enemy mechanic.
             classification = classifications.get(enemy_ordinal)
             if not classification:
-                continue
+                is_reviewed_grouping_parent = (
+                    enemy_ordinal == 1
+                    and match.group(1) == "*"
+                    and text_value == "Buffed Axebot:"
+                )
+                if is_reviewed_grouping_parent:
+                    continue
+                raise AuditError(
+                    f"patch enemy bullet {enemy_ordinal} lacks reviewed classification: {text_value}"
+                )
             expected = classification["excerptSha256"]
             if sha256_bytes(text_value.encode("utf-8")) != expected:
                 raise AuditError(f"patch enemy bullet {enemy_ordinal} changed without reviewed classification")
