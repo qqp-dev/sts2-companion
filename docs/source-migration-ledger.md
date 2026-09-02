@@ -83,7 +83,7 @@ Ruby Raiders/Bowlbugs do not become five-/four-body initial lineups. Determinist
 presentation and phone-DOM fixtures cover Flyconid, Slimes Weak, Strangler, Ruby
 Raiders, and both Bowlbug selection kinds.
 
-## Retained-wiki audit baseline (deferred)
+## Retained-wiki inventory foundation (P1a landed; semantic review deferred)
 
 The reviewed offline audit baseline records three corrections for later P1/P2
 work: Kin Follower's bad module type is in `tools/.wiki/Bosses.lua`; Fabricator's
@@ -92,6 +92,13 @@ HP is already represented. Therefore the corrected objective missing-Note count 
 **79**, and the corrected grand missing/unparsed count is **103**. These are audit
 classification totals, not source closure and not changes to the P0b event or P0c
 roster primary implementations.
+
+P1a materializes that baseline as the deterministic 4,433-origin offline artifact
+`data/wiki-reconciliation-v0.111.0.json`; its contract is documented in
+[`wiki-reconciliation.md`](wiki-reconciliation.md). Inventory completeness is
+true, but the index-listed missing Events module keeps snapshot completeness
+false and all unmapped mechanics remain non-final `captured-unreconciled` for
+P1b. The artifact is not runtime input and cannot override source authority.
 
 ## Three-wave source-first model (development only)
 
