@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
-import { bookMeta, encounterFor, encounterIds, scaleMechanicsText, scaleRange, scaledEncounter, scalingCategories } from "../src/book.mjs";
+import { archivedEncounterFor, bookMeta, encounterFor, encounterIds, scaleMechanicsText, scaleRange, scaledEncounter, scalingCategories } from "../src/book.mjs";
 import { createSts2Handler } from "../src/http.mjs";
 import { apply, inject, name } from "../src/plugin.mjs";
 import { createStateReader, parseLog, parseReleaseInfo, parseSave } from "../src/state.mjs";
@@ -514,8 +514,9 @@ test("Gains PowerName N default powers scale by the HP factor", () => {
   );
 });
 
-test("deprecated Glory Doormaker remains a known book encounter", () => {
-  const door = encounterFor("DOORMAKER_BOSS");
+test("deprecated Glory Doormaker remains archive-only and is not a current selector", () => {
+  assert.equal(encounterFor("DOORMAKER_BOSS"), null);
+  const door = archivedEncounterFor("DOORMAKER_BOSS");
   assert.equal(door.act, "Glory");
   assert.equal(door.kind, "boss");
   assert.equal(door.lineup[0].displayName, "Doormaker");

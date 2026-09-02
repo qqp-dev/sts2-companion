@@ -8,11 +8,12 @@ only**. It is not imported by a runtime route, it does not refresh the network,
 and it cannot override closed reverse-engineered facts in
 `data/game-v0.111.0-source.json` or their checked compact projection.
 
-P1a captures origins; it does not decide that mechanics are represented. Every
-mechanical origin without a later reviewed mapping has review state
-`captured-unreconciled`. That phrase means only “the structural origin cannot
-silently disappear.” It is not a final audit disposition, a source-closure
-claim, or evidence that primary/audit presentation contains the claim.
+P1a captured origins. P1b0 adds a reviewed final-mapping control plane for
+membership and already-known typed conflicts only. Every mechanical origin
+without a reviewed mapping still has review state `captured-unreconciled`. That
+phrase means only “the structural origin cannot silently disappear.” It is not a
+final audit disposition, a source-closure claim, or evidence that primary/audit
+presentation contains the claim.
 
 The artifact targets `v0.111.0` on `public-beta`. Its manifest hashes
 `pages.json`, `index.json`, all six retained Lua files, the retained book, raw
@@ -40,8 +41,8 @@ These terms must not be collapsed:
    reports the bounded encounter-projection scope as complete.
 4. **Semantic reconciliation completeness** asks whether every mechanical atom
    has a reviewed final disposition and exact representation/provenance path.
-   This remains false because 3,568 records are `captured-unreconciled`. Overall
-   reconciliation readiness is consequently false.
+   This remains false because 3,519 records are still `captured-unreconciled`
+   after P1b0. Overall reconciliation readiness is consequently false.
 
 The checked Events waiver and 69 shorthand `Power Infobox` plus two `Intents`
 invocations are first-class snapshot limitations. Their template bodies are not
@@ -71,8 +72,9 @@ commas, or `<br>` markup.
 The reviewed denominators are enforced both by category and origin family. The
 artifact also reports, without conflation, 89 current source encounters (81
 ordinary and eight event), 108 reachable current source models, 315 compact
-moves, eight compact states, 82 retained generated encounters, and 106 retained
-body IDs including archived Doormaker.
+moves, eight compact states, 81 current retained encounters, one archived
+Doormaker encounter, one current Mysterious Knight event reference, 105 current
+body IDs, and one archived body ID.
 
 ## Exclusions and membership
 
@@ -83,11 +85,19 @@ navigation, category links, update history, beta boilerplate, dialogue/source
 blocks, HTML comments, out-of-scope patch bullets, Trivia, reviewed tactics, and
 three exact non-combat Notes. The origin records remain in the artifact.
 
-Doormaker page/module origins are structurally `deprecated`, never current.
-Mysterious Knight page/module origins are `current`, while the artifact records
-that the retained generated book's page manifest omits Mysterious Knight and
-still includes archived Doormaker. Resolving that membership mapping belongs to
-P1b; P1a does not mutate generated/runtime data.
+Doormaker page/module origins are structurally `deprecated`, never current. The
+generated book stores Doormaker only under `archive.encounters`. It is not a
+current adapter selector, source encounter, primary card, fallback, or current
+coverage denominator. Its 36 mechanical captured origins are final-mapped
+`stale/deprecated/version-ambiguous`; 31 non-guide Doormaker origins remain
+P1a exclusions and are not double-dispositioned.
+
+Mysterious Knight page/module origins are `current`. Deterministic book
+generation now emits `retainedReferences.MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER` as
+the current event reconciliation/reference record, including identity, HP,
+setup, three moves, and weighted no-repeat Pattern. It is not a current
+`encounters` selector. The P0b event card remains checked-source-only;
+unresolved wiki values do not fall back into that primary.
 
 The corrected research review is preserved as a non-applied baseline: Kin
 Follower's bad `Type=Boss` origin is `tools/.wiki/Bosses.lua`; Fabricator's
@@ -123,22 +133,39 @@ ID disappears, write mode also fails unless the policy adds an explicit reviewed
 reviewed policy update. Newly captured origins remain `captured-unreconciled`;
 regeneration never promotes them based on substring matches.
 
-## P1b handoff
+## P1b0 control plane
 
-P1b must review every mechanical atom and assign exactly one final disposition:
+`tools/wiki-reconciliation-policy-v0.111.0.json` now carries `finalMappings`.
+Each mapped origin has an exact origin ID, a live `claimId` guard, exactly one
+final disposition, a typed semantic mapping, `authorityComparison` with
+closure and no-silent-merge resolution, representation JSON pointers, rationale,
+owner, severity, and reviewed version. Structural rules are allowed only with
+an exact expected ID set and count; the builder materializes and validates each
+record. There is no substring rule or same-title inference.
 
-- `primary-present`
-- `audit-present`
-- `source-present-not-projected`
-- `retained-book-only`
-- `conflict`
-- `missing/unparsed`
-- `intentionally-excluded`
-- `stale/deprecated/version-ambiguous`
+P1b0 maps 49 origins: 13 known wiki/source conflict atoms and 36 Doormaker
+mechanical stale atoms. Research counted 13 Infested Prism atoms as combined
+move rows and 42 Doormaker stale atoms; production uses 13 conflict origins
+(Radiate damage claims agree at 13 and stay unreconciled until P1b2) and 36
+Doormaker mechanical origins. The compact projection's 26 title conflicts are
+cross-linked table-driven from `payload.conflicts`, remain dual-lane
+unresolved in compact, and keep source titles as hero-copy authority.
 
-For a represented claim, P1b must add a typed semantic mapping and exact
-source/compact/book/presentation provenance coordinate. Substring similarity is
-never a representation mapping. P1b must also close current membership conflicts
-(including Mysterious Knight/Doormaker) without treating the retained wiki as
-source authority. Power/intent localization and exact Technical-audit provenance
-remain P1c; objective Note closure remains P2; tactics remain optional P3.
+Closed source wins primary/presentation. Wiki/retained values stay auditable.
+`sourceFlags` strings are not the sole machine-readable conflict
+representation; book `typedConflicts` and reconciliation mappings are.
+
+### Build order
+
+Avoid digest cycles:
+
+1. `python3 tools/generate-book.py` — current + archive + retained references;
+2. `npm run build:encounter-facts` — compact projection from source + the new book;
+3. `npm run build:wiki-reconciliation` — final census last.
+
+Runtime never imports the wiki artifact. Compact typed conflicts are generated
+from the retained book/source inputs.
+
+Later slices: P1b1 identity/HP/Power atoms; P1b2 move/pattern atoms; P1c
+Power/intent localization; P2 the 79 objective Note gaps; optional P3 tactics.
+

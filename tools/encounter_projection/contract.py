@@ -6,7 +6,7 @@ from typing import Any
 
 SCHEMA_VERSION = 11
 GENERATOR_NAME = "sts2-encounter-facts"
-GENERATOR_VERSION = "11.0.0"
+GENERATOR_VERSION = "11.1.0"
 SOURCE_SCHEMA_VERSION = 14
 SOURCE_EXTRACTOR_VERSION = "14.0.0"
 
@@ -16,7 +16,7 @@ SOURCE_ARTIFACT = {
 }
 LEGACY_ARTIFACT = {
     "id": "INPUT.LEGACY", "path": "data/encounters.json",
-    "sha256": "0c01dd0b851c501acea59fb41b10a828030ad2c3e63f9fc624f98b6e403e0103", "size": 170154,
+    "sha256": "91161c59e780329371c930a01d3ae8916becc3c6dfa4574e9692c8a21c398df3", "size": 177972,
 }
 PROJECTION_INPUTS = [SOURCE_ARTIFACT, LEGACY_ARTIFACT]
 GAME = {"branch": "v0.111.0", "commit": "41cef1ea", "mainAssemblyHash": 1579942752, "version": "v0.111.0"}

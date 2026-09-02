@@ -2,9 +2,10 @@
 '''Build the local encounter book from checked-in wiki.gg snapshots.
 
 Authoritative StS2 enemy article wikitext is preferred per body. The older
-Module:Enemies snapshots are retained only as structured fallback. This script
-is deterministic and offline; tools/harvest-wiki.py is the development-only
-network step.
+Module:Enemies snapshots are retained only as structured fallback. Current
+encounters, the archived Doormaker record, and the Mysterious Knight event
+reference are written to separate containers. This script is deterministic and
+offline; tools/harvest-wiki.py is the development-only network step.
 '''
 from copy import deepcopy
 from pathlib import Path
@@ -492,6 +493,100 @@ GAME_AUDIT_VALUES = {
     "Infested Prism": {"moves": {"Radiate": "Deals 13 damage. Gains 13 Block."}},
 }
 
+# Structured retained/source disagreements. Presentation fields keep the
+# closed-source value; these records are the machine-readable conflict lane.
+# sourceFlags remain human breadcrumbs and are never the sole representation.
+TYPED_CONFLICTS_BY_BODY = {
+    "Axebot": [{
+        "id": "RETAINED.CONFLICT.AXEBOT.A8_HP",
+        "kind": "a8-hp-range",
+        "actor": "Axebot",
+        "field": "hpA8",
+        "retainedValue": [78, 86],
+        "sourceValue": [76, 86],
+        "resolution": "source-wins",
+        "authority": "closed-source",
+        "sourceFactId": "SOURCE.MONSTER.AXEBOT",
+    }],
+    "Owl Magistrate": [{
+        "id": "RETAINED.CONFLICT.OWL_MAGISTRATE.A8_HP",
+        "kind": "a8-hp-range",
+        "actor": "Owl Magistrate",
+        "field": "hpA8",
+        "retainedValue": [243],
+        "sourceValue": [247],
+        "resolution": "source-wins",
+        "authority": "closed-source",
+        "sourceFactId": "SOURCE.MONSTER.OWL_MAGISTRATE",
+    }],
+    "Scroll of Biting": [{
+        "id": "RETAINED.CONFLICT.SCROLL_OF_BITING.A8_HP",
+        "kind": "a8-hp-range",
+        "actor": "Scroll of Biting",
+        "field": "hpA8",
+        "retainedValue": [32, 39],
+        "sourceValue": [33, 39],
+        "resolution": "source-wins",
+        "authority": "closed-source",
+        "sourceFactId": "SOURCE.MONSTER.SCROLL_OF_BITING",
+    }],
+    "Slimed Berserker": [{
+        "id": "RETAINED.CONFLICT.SLIMED_BERSERKER.A8_HP",
+        "kind": "a8-hp-range",
+        "actor": "Slimed Berserker",
+        "field": "hpA8",
+        "retainedValue": [276],
+        "sourceValue": [281],
+        "resolution": "source-wins",
+        "authority": "closed-source",
+        "sourceFactId": "SOURCE.MONSTER.SLIMED_BERSERKER",
+    }],
+    "Infested Prism": [{
+        "id": "RETAINED.CONFLICT.INFESTED_PRISM.RADIATE",
+        "kind": "move-effect",
+        "actor": "Infested Prism",
+        "move": "Radiate",
+        "field": "damage-and-block",
+        "retainedValue": {"damage": 13, "block": 18},
+        "sourceValue": {"damage": 13, "block": 13},
+        "resolution": "source-wins",
+        "authority": "closed-source",
+        "sourceFactId": "SOURCE.MOVE.MONSTER.INFESTED_PRISM.RADIATE_MOVE",
+    }],
+    "Terror Eel": [{
+        "id": "RETAINED.CONFLICT.TERROR_EEL.MOVE_TITLE.TERROR",
+        "kind": "move-title",
+        "actor": "Terror Eel",
+        "move": "Terror",
+        "field": "title",
+        "retainedValue": "Terror",
+        "sourceValue": "Terrorize",
+        "resolution": "source-wins",
+        "authority": "closed-source",
+        "sourceFactId": "SOURCE.MOVE.MONSTER.TERROR_EEL.TERROR_MOVE",
+        "independentKnownUnknown": {
+            "unknownId": "UNKNOWN.MOVE_TITLE.MONSTER.TERROR_EEL.STUN_MOVE",
+            "move": "Stun",
+            "reasonCode": "SOURCE_MOVE_TITLE_MISSING_OR_INTERNAL",
+            "note": "Stun localization remains independently missing; it is never inferred from Terror/Terrorize.",
+        },
+    }],
+    "Kin Follower": [{
+        "id": "RETAINED.CONFLICT.KIN_FOLLOWER.TYPE",
+        "kind": "identity-type",
+        "actor": "Kin Follower",
+        "field": "Type",
+        "retainedValue": "Boss",
+        "sourceValue": "Minion",
+        "articleValue": "Minion",
+        "resolution": "source-wins",
+        "authority": "closed-source",
+        "retainedOriginPath": "tools/.wiki/Bosses.lua",
+        "sourceFactId": "SOURCE.MONSTER.KIN_FOLLOWER",
+        "sourceInitialFactId": "INITIAL.MONSTER.KIN_FOLLOWER.AFTERADDEDTOROOM.000.APPLYPOWER",
+    }],
+}
+
 
 # Fail closed if the checked-in patch snapshot is not the authoritative list
 # these overrides were transcribed from. Article values may drift; patch wins.
@@ -537,29 +632,43 @@ def apply_patch_override(name, body):
     return body
 
 
+def apply_typed_conflicts(name, body):
+    specs = TYPED_CONFLICTS_BY_BODY.get(name)
+    if not specs:
+        return body
+    existing = body.setdefault("typedConflicts", [])
+    seen = {item["id"] for item in existing}
+    for spec in specs:
+        if spec["id"] in seen:
+            continue
+        existing.append(deepcopy(spec))
+        seen.add(spec["id"])
+    existing.sort(key=lambda item: item["id"])
+    return body
+
+
 def apply_game_audit_override(name, body):
     audit = GAME_AUDIT_VALUES.get(name)
-    if not audit:
-        return body
-    conflicts = []
-    if "hpA8" in audit:
-        expected = audit["hpA8"]
-        actual = body.get("hpA8")
-        if actual != expected:
-            conflicts.append(f"hpA8 article={actual} game={expected}")
-        body["hpA8"] = expected
-    moves = {move["name"]: move for move in body.get("moves", [])}
-    for move_name, expected in audit.get("moves", {}).items():
-        actual = moves.get(move_name, {}).get("textA9")
-        if actual != expected:
-            conflicts.append(f"{move_name} article={actual!r} game={expected!r}")
-        if move_name in moves:
-            moves[move_name]["textA9"] = expected
-        else:
-            body.setdefault("moves", []).append({"name": move_name, "textA9": expected})
-    if conflicts:
-        body.setdefault("sourceFlags", []).extend(f"GAME OVERRIDE: {conflict}" for conflict in conflicts)
-    return body
+    if audit:
+        conflicts = []
+        if "hpA8" in audit:
+            expected = audit["hpA8"]
+            actual = body.get("hpA8")
+            if actual != expected:
+                conflicts.append(f"hpA8 article={actual} game={expected}")
+            body["hpA8"] = expected
+        moves = {move["name"]: move for move in body.get("moves", [])}
+        for move_name, expected in audit.get("moves", {}).items():
+            actual = moves.get(move_name, {}).get("textA9")
+            if actual != expected:
+                conflicts.append(f"{move_name} article={actual!r} game={expected!r}")
+            if move_name in moves:
+                moves[move_name]["textA9"] = expected
+            else:
+                body.setdefault("moves", []).append({"name": move_name, "textA9": expected})
+        if conflicts:
+            body.setdefault("sourceFlags", []).extend(f"GAME OVERRIDE: {conflict}" for conflict in conflicts)
+    return apply_typed_conflicts(name, body)
 
 
 def merged_body(name):
@@ -701,7 +810,7 @@ add("Overgrowth", "boss", {"CEREMONIAL_BEAST_BOSS":[L("Ceremonial Beast")], "THE
  ], "VANTOM_BOSS":[L("Vantom")]})
 add("Underdocks", "boss", {"LAGAVULIN_MATRIARCH_BOSS":[L("Lagavulin Matriarch")], "SOUL_FYSH_BOSS":[L("Soul Fysh")], "WATERFALL_GIANT_BOSS":[L("Waterfall Giant")]})
 add("Hive", "boss", {"THE_INSATIABLE_BOSS":[L("The Insatiable")], "KNOWLEDGE_DEMON_BOSS":[L("Knowledge Demon")], "KAISER_CRAB_BOSS":[L("Crusher"),L("Rocket")]})
-add("Glory", "boss", {"QUEEN_BOSS":[L("Queen"),L("Torch Head Amalgam")], "TEST_SUBJECT_BOSS":[L("Test Subject", role="phase 1"),L("Test Subject (Phase 2)", role="phase 2"),L("Test Subject (Phase 3)", role="phase 3")], "AEONGLASS_BOSS":[L("Aeonglass")], "DOORMAKER_BOSS":[L("Doormaker")]})
+add("Glory", "boss", {"QUEEN_BOSS":[L("Queen"),L("Torch Head Amalgam")], "TEST_SUBJECT_BOSS":[L("Test Subject", role="phase 1"),L("Test Subject (Phase 2)", role="phase 2"),L("Test Subject (Phase 3)", role="phase 3")], "AEONGLASS_BOSS":[L("Aeonglass")]})
 
 
 ENCOUNTER_NOTES = {
@@ -724,9 +833,25 @@ ENCOUNTER_NOTES = {
     },
 }
 
-used_titles = sorted({MODULE_BODIES[spec["body"]]["articleTitle"] for encounter in ENCOUNTERS.values() for spec in encounter["lineup"]})
+ARCHIVE_ENCOUNTERS = {}
+add_archive = lambda act, kind, ids: ARCHIVE_ENCOUNTERS.update((eid, {"act": act, "kind": kind, "lineup": lineup, "membership": "archived"}) for eid, lineup in ids.items())
+add_archive("Glory", "boss", {"DOORMAKER_BOSS": [L("Doormaker")]})
 
-for encounter_id, encounter in ENCOUNTERS.items():
+REFERENCE_SPECS = {
+    "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER": {
+        "act": "Hive",
+        "kind": "event",
+        "membership": "current",
+        "canonicalEncounter": "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+        "notACurrentSelector": True,
+        "authority": "retained-wiki-audit-only",
+        "sourcePrimary": "checked-source-only",
+        "lineup": [L("Mysterious Knight")],
+    }
+}
+
+
+def materialize_encounter(encounter_id, encounter):
     lineup = []
     for spec in encounter["lineup"]:
         source_body = merged_body(spec["body"])
@@ -739,7 +864,9 @@ for encounter_id, encounter in ENCOUNTERS.items():
             **({"pattern": deepcopy(spec["pattern"])} if spec.get("pattern") else {}),
             **({"pack": spec["pack"]} if spec.get("pack") else {}),
         })
-    encounter["name"] = encounter_id.removesuffix("_WEAK").removesuffix("_NORMAL").removesuffix("_ELITE").removesuffix("_BOSS").replace("_", " ").title()
+    suffix = "_EVENT_ENCOUNTER" if encounter_id.endswith("_EVENT_ENCOUNTER") else ""
+    name_id = encounter_id[:-len(suffix)] if suffix else encounter_id
+    encounter["name"] = name_id.removesuffix("_WEAK").removesuffix("_NORMAL").removesuffix("_ELITE").removesuffix("_BOSS").replace("_", " ").title()
     encounter["lineup"] = lineup
     rules, timing = [], []
     for body in lineup:
@@ -758,19 +885,82 @@ for encounter_id, encounter in ENCOUNTERS.items():
     timing.extend(extra.get("timing", []))
     encounter["rules"] = list(dict.fromkeys(rules))
     encounter["timing"] = list(dict.fromkeys(timing))
+    return encounter
 
-page_meta = []
-for title in used_titles:
-    page = ARTICLE_PAGES[title]
-    page_meta.append({
-        "title": page["title"], "url": page["url"],
-        "revisionId": page["revisionId"], "revisionTimestamp": page["revisionTimestamp"],
+
+def page_meta_for(titles):
+    rows = []
+    for title in titles:
+        page = ARTICLE_PAGES[title]
+        rows.append({
+            "title": page["title"], "url": page["url"],
+            "revisionId": page["revisionId"], "revisionTimestamp": page["revisionTimestamp"],
+        })
+    return rows
+
+
+def titles_from(encounters):
+    return {MODULE_BODIES[spec["body"]]["articleTitle"] for encounter in encounters.values() for spec in encounter["lineup"]}
+
+
+current_titles = sorted(titles_from(ENCOUNTERS) | titles_from({eid: {"lineup": spec["lineup"]} for eid, spec in REFERENCE_SPECS.items()}))
+archive_titles = sorted(titles_from(ARCHIVE_ENCOUNTERS))
+
+for encounter_id, encounter in ENCOUNTERS.items():
+    materialize_encounter(encounter_id, encounter)
+for encounter_id, encounter in ARCHIVE_ENCOUNTERS.items():
+    materialize_encounter(encounter_id, encounter)
+
+retained_references = {}
+for encounter_id, spec in REFERENCE_SPECS.items():
+    record = materialize_encounter(encounter_id, {
+        "act": spec["act"],
+        "kind": spec["kind"],
+        "lineup": spec["lineup"],
     })
+    record.update({
+        "membership": spec["membership"],
+        "canonicalEncounter": spec["canonicalEncounter"],
+        "notACurrentSelector": spec["notACurrentSelector"],
+        "authority": spec["authority"],
+        "sourcePrimary": spec["sourcePrimary"],
+        "kind": spec["kind"],
+    })
+    retained_references[encounter_id] = record
+if set(current_titles) & set(archive_titles):
+    raise RuntimeError(f"current/archive wiki page overlap: {sorted(set(current_titles) & set(archive_titles))}")
+if "Mysterious Knight" not in current_titles:
+    raise RuntimeError("Mysterious Knight is absent from current retained pages")
+if "Doormaker" not in archive_titles or "Doormaker" in current_titles:
+    raise RuntimeError("Doormaker is not exclusively archived")
+
+current_body_ids = {
+    body["monsterId"]
+    for encounter in ENCOUNTERS.values()
+    for body in encounter["lineup"]
+    if body.get("monsterId")
+}
+archive_body_ids = {
+    body["monsterId"]
+    for encounter in ARCHIVE_ENCOUNTERS.values()
+    for body in encounter["lineup"]
+    if body.get("monsterId")
+}
+reference_body_ids = {
+    body["monsterId"]
+    for encounter in retained_references.values()
+    for body in encounter["lineup"]
+    if body.get("monsterId")
+}
+
+page_meta = page_meta_for(current_titles)
+archive_page_meta = page_meta_for(archive_titles)
 patch_page = SNAPSHOT["pages"][SNAPSHOT["meta"]["patchPage"]]
 output = {
     "meta": {
         "source": "wiki.gg StS2 enemy/elite/boss article pages; Module:Enemies snapshots as fallback; named game-audit overrides from v0.111.0 CIL",
         "wikiPages": page_meta,
+        "archivedWikiPages": archive_page_meta,
         "patchPage": {
             "title": patch_page["title"], "url": patch_page["url"],
             "revisionId": patch_page["revisionId"], "revisionTimestamp": patch_page["revisionTimestamp"],
@@ -778,10 +968,31 @@ output = {
         "harvestedAt": SNAPSHOT["meta"]["harvestedAt"],
         "targetVersion": "v0.111.0", "targetBranch": "public-beta",
         "ascension": "A8 HP; A9 move/block/buff values", "players": 2,
+        "membership": {
+            "currentEncounters": len(ENCOUNTERS),
+            "archivedEncounters": len(ARCHIVE_ENCOUNTERS),
+            "currentRetainedReferences": len(retained_references),
+            "currentWikiPages": len(page_meta),
+            "archivedWikiPages": len(archive_page_meta),
+            "currentBodyIds": len(current_body_ids),
+            "archivedBodyIds": len(archive_body_ids),
+            "currentReferenceBodyIds": len(reference_body_ids),
+        },
     },
     "encounters": dict(sorted(ENCOUNTERS.items())),
+    "archive": {
+        "reason": "absentFromCurrentSourceEncounterCensus",
+        "encounters": dict(sorted(ARCHIVE_ENCOUNTERS.items())),
+    },
+    "retainedReferences": dict(sorted(retained_references.items())),
 }
+if "DOORMAKER_BOSS" in output["encounters"] or "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER" in output["encounters"]:
+    raise RuntimeError("archive/reference records leaked into current encounters")
 (ROOT / "data/encounters.json").write_text(json.dumps(output, indent=2, ensure_ascii=False) + "\n")
 unknown_patterns = sum(body["pattern"]["type"] == "unknown" for encounter in ENCOUNTERS.values() for body in encounter["lineup"])
 missing_hp = sum(not body.get("hpA8") for encounter in ENCOUNTERS.values() for body in encounter["lineup"])
-print(f"wrote {len(ENCOUNTERS)} encounters from {len(used_titles)} article pages ({unknown_patterns} unknown patterns, {missing_hp} missing HP bodies)")
+print(
+    f"wrote {len(ENCOUNTERS)} current encounters, {len(ARCHIVE_ENCOUNTERS)} archived, "
+    f"{len(retained_references)} current references from {len(page_meta)} current article pages "
+    f"({unknown_patterns} unknown patterns, {missing_hp} missing HP bodies)"
+)

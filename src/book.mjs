@@ -4,11 +4,24 @@ const DATA = JSON.parse(readFileSync(new URL("../data/encounters.json", import.m
 const ACT_NUMBER = Object.freeze({ Overgrowth: 1, Underdocks: 1, Hive: 2, Glory: 3 });
 
 export const encounterIds = Object.freeze(Object.keys(DATA.encounters));
+export const archivedEncounterIds = Object.freeze(Object.keys(DATA.archive?.encounters ?? {}));
+export const retainedReferenceIds = Object.freeze(Object.keys(DATA.retainedReferences ?? {}));
 export const bookMeta = Object.freeze(DATA.meta);
 
+function unprefixedEncounterId(id) {
+  return String(id ?? "").replace(/^ENCOUNTER\./, "");
+}
+
 export function encounterFor(id) {
-  const key = String(id ?? "").replace(/^ENCOUNTER\./, "");
-  return DATA.encounters[key] ?? null;
+  return DATA.encounters[unprefixedEncounterId(id)] ?? null;
+}
+
+export function archivedEncounterFor(id) {
+  return DATA.archive?.encounters?.[unprefixedEncounterId(id)] ?? null;
+}
+
+export function retainedReferenceFor(id) {
+  return DATA.retainedReferences?.[unprefixedEncounterId(id)] ?? null;
 }
 
 export function actScale({ act, kind } = {}) {

@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-import { encounterFor, encounterIds } from "../src/book.mjs";
+import { archivedEncounterFor, encounterFor, encounterIds, retainedReferenceFor } from "../src/book.mjs";
 
 const artifactBytes = readFileSync(new URL("../data/game-v0.111.0-source.json", import.meta.url));
 const artifact = JSON.parse(artifactBytes);
@@ -448,9 +448,13 @@ test("named random roster and production regressions retain exact structure", ()
 });
 
 test("source artifact is not consumed and runtime wiki book remains byte-identical", () => {
-  assert.equal(sha256(oldBookBytes), "0c01dd0b851c501acea59fb41b10a828030ad2c3e63f9fc624f98b6e403e0103");
-  assert.equal(encounterIds.length, 82);
-  assert.ok(encounterFor("DOORMAKER_BOSS"));
+  assert.equal(sha256(oldBookBytes), "91161c59e780329371c930a01d3ae8916becc3c6dfa4574e9692c8a21c398df3");
+  assert.equal(encounterIds.length, 81);
+  assert.equal(encounterFor("DOORMAKER_BOSS"), null);
+  assert.ok(archivedEncounterFor("DOORMAKER_BOSS"));
+  assert.equal(encounterFor("MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"), null);
+  assert.equal(retainedReferenceFor("MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER").authority, "retained-wiki-audit-only");
+  assert.equal(retainedReferenceFor("MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER").sourcePrimary, "checked-source-only");
   assert.equal(encounterFor("BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER"), null);
   assert.equal(encounterFor("AEONGLASS_BOSS").name, "Aeonglass");
   for (const file of ["../src/book.mjs", "../src/client.js", "../src/http.mjs", "../src/plugin.mjs", "../src/state.mjs"]) {

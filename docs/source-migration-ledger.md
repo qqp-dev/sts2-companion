@@ -100,6 +100,21 @@ true, but the index-listed missing Events module keeps snapshot completeness
 false and all unmapped mechanics remain non-final `captured-unreconciled` for
 P1b. The artifact is not runtime input and cannot override source authority.
 
+## P1b0 current membership and typed-conflict control plane
+
+P1b0 extends the P1a census with a fail-closed reviewed final-mapping schema.
+It repairs retained membership so Mysterious Knight is the current event
+reconciliation/reference record and Doormaker is archive-only, records the 13
+known wiki/source conflict origins with source-wins resolution, and cross-links
+the existing 26 compact title conflicts without replacing them. Non-conflict
+mechanical atoms stay `captured-unreconciled` (3,519 remaining). Semantic
+readiness stays false. Production Doormaker mechanical stale count is 36, not
+the research 42; Infested Prism Radiate conflict origins are the two Block
+claims, while damage claims agree at 13.
+
+Build order is book → compact projection → wiki reconciliation. Ordinary/event
+primary counts remain 81+8. Wiki is never source authority.
+
 ## Three-wave source-first model (development only)
 
 Source-first migration is split into independently reviewable waves:

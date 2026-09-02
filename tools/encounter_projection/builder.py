@@ -821,6 +821,7 @@ def _legacy_body(row: dict[str, Any], fact_id: str) -> dict[str, Any]:
     allowed = {
         "count", "displayName", "hpA8", "monsterId", "moves", "pack", "patchChecked",
         "pattern", "role", "sourceFlags", "sourcePage", "startsWithA9", "type",
+        "typedConflicts",
     }
     return {
         "annotations": {key: deepcopy(row[key]) for key in sorted(row) if key in allowed},
@@ -830,18 +831,29 @@ def _legacy_body(row: dict[str, Any], fact_id: str) -> dict[str, Any]:
 
 
 def _legacy_annotations(legacy: dict[str, Any], facts: _Facts) -> dict[str, Any]:
-    current = []
-    archive = []
-    for encounter_id, row in legacy["encounters"].items():
+    if "DOORMAKER_BOSS" in legacy.get("encounters", {}):
+        raise SourceExtractionError("Doormaker leaked into current retained encounters")
+    if "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER" in legacy.get("encounters", {}):
+        raise SourceExtractionError("Mysterious Knight leaked into current retained encounters")
+    archive_encounters = ((legacy.get("archive") or {}).get("encounters")) or {}
+    if set(archive_encounters) != {"DOORMAKER_BOSS"}:
+        raise SourceExtractionError("retained archive must contain exactly DOORMAKER_BOSS")
+    references = legacy.get("retainedReferences") or {}
+    if set(references) != {"MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"}:
+        raise SourceExtractionError("retained references must contain exactly MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER")
+    if references["MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"].get("notACurrentSelector") is not True:
+        raise SourceExtractionError("Mysterious Knight retained reference must not be a current selector")
+
+    def project(encounter_id: str, row: dict[str, Any], pointer_prefix: str) -> dict[str, Any]:
         encounter_fact = f"LEGACY.ENCOUNTER.{encounter_id}"
-        ep = f"/encounters/{_pointer_token(encounter_id)}"
+        ep = f"{pointer_prefix}/{_pointer_token(encounter_id)}"
         facts.add(encounter_fact, "legacy", f"EVIDENCE.{encounter_fact}", "INPUT.LEGACY", [ep, "/meta/targetBranch", "/meta/targetVersion"])
         bodies = []
         for index, body in enumerate(row["lineup"]):
             body_fact = f"LEGACY.BODY.{encounter_id}.{index}"
             facts.add(body_fact, "legacy", f"EVIDENCE.{body_fact}", "INPUT.LEGACY", [f"{ep}/lineup/{index}"])
             bodies.append(_legacy_body(body, body_fact))
-        projected = {
+        return {
             "annotations": {
                 "act": row["act"], "displayName": row["name"], "roomClass": row["kind"],
                 "rules": deepcopy(row["rules"]), "timing": deepcopy(row["timing"]),
@@ -853,13 +865,18 @@ def _legacy_annotations(legacy: dict[str, Any], facts: _Facts) -> dict[str, Any]
                 "missingPerFactFields": ["confidence", "status"],
             },
         }
-        if encounter_id == "DOORMAKER_BOSS":
-            projected["archiveReason"] = "absentFromCurrentSourceEncounterCensus"
-            archive.append(projected)
-        else:
-            projected["canonicalEncounterRef"] = f"SOURCE.ENCOUNTER.{encounter_id}"
-            projected["joinBasis"] = "exactCanonicalEncounterId"
-            current.append(projected)
+
+    current = []
+    for encounter_id, row in legacy["encounters"].items():
+        projected = project(encounter_id, row, "/encounters")
+        projected["canonicalEncounterRef"] = f"SOURCE.ENCOUNTER.{encounter_id}"
+        projected["joinBasis"] = "exactCanonicalEncounterId"
+        current.append(projected)
+    archive = []
+    for encounter_id, row in archive_encounters.items():
+        projected = project(encounter_id, row, "/archive/encounters")
+        projected["archiveReason"] = "absentFromCurrentSourceEncounterCensus"
+        archive.append(projected)
     return {
         "archive": archive, "current": current, "moveTitleFallbackCandidates": [],
         "provenanceContract": {
