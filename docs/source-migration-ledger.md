@@ -26,7 +26,9 @@ coordinate retains the exact configured A9/player-count reference value with
 separate provenance. The eight current event encounters instead compile a
 source-only primary from checked roster, HP/scaling, initialization, operations,
 graphs, and combat lifecycle; no retained record is manufactured. Raw expressions
-and all available lanes remain in Technical audit. Runtime makes no wiki or other network requests. It
+and all available lanes remain in Technical audit. Variable roster structure and
+presence roles come only from the closed source grammar; retained flat lineups do
+not override selection semantics. Runtime makes no wiki or other network requests. It
 compares checked authority with local `release_info.json`; a mismatch is shown as
 an exceptional warning.
 
@@ -55,6 +57,32 @@ for a source-only card. These cards describe only combat: they do not recommend 
 event option, interpret dialogue, or turn unrelated option/reward effects into
 combat consequences.
 
+## P0c exact practical roster projection
+
+Variable initial rosters now compile directly from the adapter-validated four-kind
+source grammar. The bounded deterministic analysis preserves fixed order,
+uniform/dependent category choices, independent repeated draws and duplicate
+outcomes, plus filtered distinct N-of-M draws without replacement. Declared
+cardinality must equal analyzed outcome cardinality; unknown selection semantics,
+empty branches, invalid counts, and malformed future shapes make the strict adapter
+unavailable rather than reaching a flattening renderer.
+
+The phone capsule labels actual initial cardinality and states that alternative
+body cards are not a simultaneous lineup. Exact outcome count bounds drive
+`always present`, `possible body`, and `possible up to N copies`, with one card per
+possible source body type. Missing retained-realization alternatives use their
+exact source model only, carry checked-source mechanics provenance, and leave
+symbolic values runtime-set. They do not manufacture a legacy annotation or
+wiki/reference merge. The exact retained flat record remains separately reachable
+in Technical audit.
+
+Possible initial, observed, and produced bodies remain separate. In particular, a
+live Flyconid realization does not erase its other medium-slime possibility, the
+Strangler's two small-slime nodes remain independent, and source pool catalogs for
+Ruby Raiders/Bowlbugs do not become five-/four-body initial lineups. Deterministic
+presentation and phone-DOM fixtures cover Flyconid, Slimes Weak, Strangler, Ruby
+Raiders, and both Bowlbug selection kinds.
+
 ## Retained-wiki audit baseline (deferred)
 
 The reviewed offline audit baseline records three corrections for later P1/P2
@@ -62,8 +90,8 @@ work: Kin Follower's bad module type is in `tools/.wiki/Bosses.lua`; Fabricator'
 retained book already lists all four summoned bots; and Waterfall Giant's terminal
 HP is already represented. Therefore the corrected objective missing-Note count is
 **79**, and the corrected grand missing/unparsed count is **103**. These are audit
-classification totals, not source closure and not changes to this P0b primary
-implementation.
+classification totals, not source closure and not changes to the P0b event or P0c
+roster primary implementations.
 
 ## Three-wave source-first model (development only)
 

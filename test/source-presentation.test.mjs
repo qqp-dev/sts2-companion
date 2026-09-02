@@ -59,6 +59,30 @@ function calloutProjection(count) {
   return buildEncounterPresentation(encounter("AXEBOTS_NORMAL"), { calloutCollection: collection });
 }
 
+test("retained bodies resolve by unique exact keys within their canonical encounter", () => {
+  const ruby = encounter("RUBY_RAIDERS_NORMAL");
+  const assassinReference = ruby.reference.record.lineup.find((body) => body.displayName === "Assassin Raider");
+  const assassinSource = ruby.monsters.find((body) => body.canonicalModel === "MONSTER.ASSASSIN_RUBY_RAIDER");
+  assert.ok(assassinReference);
+  assert.ok(assassinSource);
+  assert.equal(presentationInternals.exactSourceBody(ruby, assassinReference), assassinSource,
+    "a unique exact display name joins when the retained monster ID differs");
+
+  assert.equal(presentationInternals.exactSourceBody(ruby, { ...assassinReference, displayName: "assassin raider" }), null,
+    "display-name keys remain exact and case-sensitive");
+  const duplicateName = structuredClone(assassinSource);
+  duplicateName.canonicalModel = "MONSTER.OTHER_ASSASSIN";
+  assert.equal(presentationInternals.exactSourceBody(
+    { ...ruby, monsters: [...ruby.monsters, duplicateName] }, assassinReference,
+  ), null, "an ambiguous display name does not create a join");
+
+  const canonicalSource = { ...structuredClone(assassinSource), canonicalModel: "MONSTER.ASSASSIN_RAIDER" };
+  canonicalSource.name = { kind: "localizedText", text: "Different localized name" };
+  assert.equal(presentationInternals.exactSourceBody(
+    { ...ruby, monsters: [canonicalSource, assassinSource] }, assassinReference,
+  ), canonicalSource, "the canonical monster ID remains the primary exact key");
+});
+
 test("practical effect signatures are deterministic and exclude move titles and raw IDs", () => {
   assert.equal(adapter.available, true, adapter.error);
   const source = encounter("AXEBOTS_NORMAL");
@@ -576,9 +600,12 @@ test("all practical rows and structural prose suppress labels while rule prose s
         body.role,
         ...body.sections.flatMap((section) => [section.title, section.note, section.repeat]),
       ].filter(Boolean).join("\n");
-      const bodyMoves = selected.reference
-        ? selected.reference.record.lineup[body.bodyIndex].moves.map((move) => move.name)
-        : selected.monsters[body.bodyIndex].moves.map((move) => move.title.text);
+      const exactReferenceBody = selected.reference?.record.lineup.find((candidate) => candidate.displayName === body.name);
+      const bodyMoves = body.sourceOnlySupplement
+        ? selected.monsters.flatMap((candidate) => candidate.moves.map((move) => move.title.text)).filter((title) => typeof title === "string" && title)
+        : exactReferenceBody
+          ? exactReferenceBody.moves.map((move) => move.name)
+          : selected.monsters[body.bodyIndex].moves.map((move) => move.title.text);
       for (const moveName of bodyMoves) {
         const ordinaryCitations = withoutSemanticMoveUses(structural, body.name, moveName);
         assert.doesNotMatch(ordinaryCitations, boundaryPattern(moveName), `${id}: ${moveName}`);

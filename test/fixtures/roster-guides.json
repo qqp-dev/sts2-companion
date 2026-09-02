@@ -1,0 +1,1395 @@
+{
+  "FLYCONID_NORMAL": {
+    "roster": {
+      "cardinality": "2",
+      "cardinalityLabel": "2 initial bodies",
+      "variable": true,
+      "selection": {
+        "kind": "allOf",
+        "order": "fixed",
+        "relationship": "fixed order",
+        "items": [
+          {
+            "kind": "uniformAlternatives",
+            "selection": "one uniformly",
+            "unit": "medium slime",
+            "choices": [
+              {
+                "kind": "fixed",
+                "name": "Leaf Slime (M)"
+              },
+              {
+                "kind": "fixed",
+                "name": "Twig Slime (M)"
+              }
+            ]
+          },
+          {
+            "kind": "fixed",
+            "name": "Flyconid"
+          }
+        ]
+      },
+      "lines": [
+        "Always: Flyconid.",
+        "Fixed order: (Choose exactly one medium slime uniformly: Leaf Slime (M) or Twig Slime (M)) → Flyconid."
+      ],
+      "caveat": "Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup.",
+      "bodies": [
+        {
+          "name": "Flyconid",
+          "minimum": 1,
+          "maximum": 1,
+          "role": "always present"
+        },
+        {
+          "name": "Leaf Slime (M)",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        },
+        {
+          "name": "Twig Slime (M)",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        }
+      ]
+    },
+    "bodies": [
+      {
+        "bodyIndex": 0,
+        "name": "Flyconid",
+        "role": "always present",
+        "initial": true,
+        "hp": "112–116",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Branch",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "2 Vulnerable",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "9 damage · 2 Frail",
+                "authorities": [
+                  "wiki-reference",
+                  "checked-source"
+                ]
+              },
+              {
+                "cue": "3",
+                "detail": "12 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "On its first turn, it randomly picks step 2 (2/3 chance) or step 3 (1/3 chance). After that, each turn it randomly picks one of three moves: step 1 (3/6 chance), step 2 (2/6 chance), or step 3 (1/6 chance). It cannot use the same move twice in a row."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 1,
+        "name": "Leaf Slime (M)",
+        "role": "possible body",
+        "initial": true,
+        "hp": "72–79",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Cycle",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "9 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "Shuffles 2 Slimed into your discard pile",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "Always starts with step 2, then alternates between step 1 and step 2."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 2,
+        "name": "Twig Slime (M)",
+        "role": "possible body",
+        "initial": true,
+        "hp": "59–63",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Checked behavior effects",
+            "rows": [
+              {
+                "cue": "Effect 1",
+                "detail": "damage amount set at runtime to all opponents",
+                "authorities": [
+                  "checked-source"
+                ]
+              },
+              {
+                "cue": "Effect 2",
+                "detail": "Add 1 Slimed to the affected targets",
+                "authorities": [
+                  "checked-source"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "Consequences are source-backed; exact action names and ordering details remain in Technical audit."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": false,
+        "sourceOnlySupplement": true,
+        "mechanicsAuthority": "checked source mechanics"
+      }
+    ],
+    "collapsed": "SHROOM AND SLIME ORDINARY Overgrowth Manual · Static reference 2 initial bodies Always: Flyconid. Fixed order: (Choose exactly one medium slime uniformly: Leaf Slime (M) or Twig Slime (M)) → Flyconid. Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup. Flyconid 112–116 HP · always present Branch On its first turn, it randomly picks step 2 (2/3 chance) or step 3 (1/3 chance). After that, each turn it randomly picks one of three moves: step 1 (3/6 chance), step 2 (2/6 chance), or step 3 (1/6 chance). It cannot use the same move twice in a row. 1 · 2 Vulnerable 2 · 9 damage · 2 Frail 3 · 12 damage Leaf Slime (M) 72–79 HP · possible body Cycle Always starts with step 2, then alternates between step 1 and step 2. 1 · 9 damage 2 · Shuffles 2 Slimed into your discard pile Twig Slime (M) 59–63 HP · possible body · checked source mechanics Checked behavior effects Consequences are source-backed; exact action names and ordering details remain in Technical audit. Effect 1 · damage amount set at runtime to all opponents Effect 2 · Add 1 Slimed to the affected targets checked source + wiki/reference values · checked A8 / retained A9 · 2P presentation Technical audit"
+  },
+  "SLIMES_WEAK": {
+    "roster": {
+      "cardinality": "3",
+      "cardinalityLabel": "3 initial bodies",
+      "variable": true,
+      "selection": {
+        "kind": "uniformAlternatives",
+        "selection": "one uniformly",
+        "unit": "body",
+        "choices": [
+          {
+            "kind": "allOf",
+            "order": "fixed",
+            "relationship": "fixed order",
+            "items": [
+              {
+                "kind": "fixed",
+                "name": "Leaf Slime (S)"
+              },
+              {
+                "kind": "uniformAlternatives",
+                "selection": "one uniformly",
+                "unit": "medium slime",
+                "choices": [
+                  {
+                    "kind": "fixed",
+                    "name": "Leaf Slime (M)"
+                  },
+                  {
+                    "kind": "fixed",
+                    "name": "Twig Slime (M)"
+                  }
+                ]
+              },
+              {
+                "kind": "fixed",
+                "name": "Twig Slime (S)"
+              }
+            ]
+          },
+          {
+            "kind": "allOf",
+            "order": "fixed",
+            "relationship": "fixed order",
+            "items": [
+              {
+                "kind": "fixed",
+                "name": "Twig Slime (S)"
+              },
+              {
+                "kind": "uniformAlternatives",
+                "selection": "one uniformly",
+                "unit": "medium slime",
+                "choices": [
+                  {
+                    "kind": "fixed",
+                    "name": "Leaf Slime (M)"
+                  },
+                  {
+                    "kind": "fixed",
+                    "name": "Twig Slime (M)"
+                  }
+                ]
+              },
+              {
+                "kind": "fixed",
+                "name": "Leaf Slime (S)"
+              }
+            ]
+          }
+        ]
+      },
+      "lines": [
+        "Always: Leaf Slime (S) + Twig Slime (S).",
+        "Choose one of 2 orders uniformly: Leaf Slime (S) → Choose exactly one medium slime uniformly: Leaf Slime (M) or Twig Slime (M) → Twig Slime (S) OR Twig Slime (S) → Choose exactly one medium slime uniformly: Leaf Slime (M) or Twig Slime (M) → Leaf Slime (S)."
+      ],
+      "caveat": "Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup.",
+      "bodies": [
+        {
+          "name": "Leaf Slime (S)",
+          "minimum": 1,
+          "maximum": 1,
+          "role": "always present"
+        },
+        {
+          "name": "Twig Slime (S)",
+          "minimum": 1,
+          "maximum": 1,
+          "role": "always present"
+        },
+        {
+          "name": "Leaf Slime (M)",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        },
+        {
+          "name": "Twig Slime (M)",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        }
+      ]
+    },
+    "bodies": [
+      {
+        "bodyIndex": 0,
+        "name": "Leaf Slime (S)",
+        "role": "always present",
+        "initial": true,
+        "hp": "26–35",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Branch",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "4 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "Shuffles 1 Slimed into your discard pile",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "Randomly picks step 1 or step 2 each turn. Cannot use the same move twice in a row."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 1,
+        "name": "Twig Slime (S)",
+        "role": "always present",
+        "initial": true,
+        "hp": "17–26",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Cycle",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "5 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": "↻ repeat",
+            "note": "Uses step 1 every turn."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 2,
+        "name": "Leaf Slime (M)",
+        "role": "possible body",
+        "initial": true,
+        "hp": "72–79",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Checked behavior effects",
+            "rows": [
+              {
+                "cue": "Effect 1",
+                "detail": "damage amount set at runtime to all opponents",
+                "authorities": [
+                  "checked-source"
+                ]
+              },
+              {
+                "cue": "Effect 2",
+                "detail": "Add 2 Slimed to the affected targets",
+                "authorities": [
+                  "checked-source"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "Consequences are source-backed; exact action names and ordering details remain in Technical audit."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": false,
+        "sourceOnlySupplement": true,
+        "mechanicsAuthority": "checked source mechanics"
+      },
+      {
+        "bodyIndex": 3,
+        "name": "Twig Slime (M)",
+        "role": "possible body",
+        "initial": true,
+        "hp": "59–63",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Branch",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "12 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "Shuffles 1 Slimed into your discard pile",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "Always starts with step 2. After that, each turn it randomly picks step 1 (67%) or step 2 (33%). Cannot use step 2 twice in a row."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      }
+    ],
+    "collapsed": "GROUP OF SLIMES ORDINARY Overgrowth Manual · Static reference 3 initial bodies Always: Leaf Slime (S) + Twig Slime (S). Choose one of 2 orders uniformly: Leaf Slime (S) → Choose exactly one medium slime uniformly: Leaf Slime (M) or Twig Slime (M) → Twig Slime (S) OR Twig Slime (S) → Choose exactly one medium slime uniformly: Leaf Slime (M) or Twig Slime (M) → Leaf Slime (S). Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup. Leaf Slime (S) 26–35 HP · always present Branch Randomly picks step 1 or step 2 each turn. Cannot use the same move twice in a row. 1 · 4 damage 2 · Shuffles 1 Slimed into your discard pile Twig Slime (S) 17–26 HP · always present Cycle Uses step 1 every turn. 1 · 5 damage ↻ repeat Leaf Slime (M) 72–79 HP · possible body · checked source mechanics Checked behavior effects Consequences are source-backed; exact action names and ordering details remain in Technical audit. Effect 1 · damage amount set at runtime to all opponents Effect 2 · Add 2 Slimed to the affected targets Twig Slime (M) 59–63 HP · possible body Branch Always starts with step 2. After that, each turn it randomly picks step 1 (67%) or step 2 (33%). Cannot use step 2 twice in a row. 1 · 12 damage 2 · Shuffles 1 Slimed into your discard pile checked source + wiki/reference values · checked A8 / retained A9 · 2P presentation Technical audit"
+  },
+  "SLITHERING_STRANGLER_NORMAL": {
+    "roster": {
+      "cardinality": "2–3",
+      "cardinalityLabel": "2–3 initial bodies",
+      "variable": true,
+      "selection": {
+        "kind": "allOf",
+        "order": "fixed",
+        "relationship": "fixed order",
+        "items": [
+          {
+            "kind": "uniformAlternatives",
+            "selection": "one uniformly",
+            "unit": "body",
+            "choices": [
+              {
+                "kind": "fixed",
+                "name": "Snapping Jaxfruit"
+              },
+              {
+                "kind": "uniformAlternatives",
+                "selection": "one uniformly",
+                "unit": "medium slime",
+                "choices": [
+                  {
+                    "kind": "fixed",
+                    "name": "Leaf Slime (M)"
+                  },
+                  {
+                    "kind": "fixed",
+                    "name": "Twig Slime (M)"
+                  }
+                ]
+              },
+              {
+                "kind": "allOf",
+                "order": "fixed",
+                "relationship": "independent draws",
+                "items": [
+                  {
+                    "kind": "uniformAlternatives",
+                    "selection": "one uniformly",
+                    "unit": "small slime",
+                    "choices": [
+                      {
+                        "kind": "fixed",
+                        "name": "Leaf Slime (S)"
+                      },
+                      {
+                        "kind": "fixed",
+                        "name": "Twig Slime (S)"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "uniformAlternatives",
+                    "selection": "one uniformly",
+                    "unit": "small slime",
+                    "choices": [
+                      {
+                        "kind": "fixed",
+                        "name": "Leaf Slime (S)"
+                      },
+                      {
+                        "kind": "fixed",
+                        "name": "Twig Slime (S)"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "fixed",
+            "name": "Slithering Strangler"
+          }
+        ]
+      },
+      "lines": [
+        "Always: Slithering Strangler.",
+        "Fixed order: (Choose one of 3 equiprobable support categories: Snapping Jaxfruit OR Choose exactly one medium slime uniformly: Leaf Slime (M) or Twig Slime (M) OR 2 independent draws; each uniformly chooses exactly one small slime: Leaf Slime (S) or Twig Slime (S); duplicates are possible: Leaf Slime (S) + Leaf Slime (S) or Twig Slime (S) + Twig Slime (S)) → Slithering Strangler."
+      ],
+      "caveat": "Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup.",
+      "bodies": [
+        {
+          "name": "Slithering Strangler",
+          "minimum": 1,
+          "maximum": 1,
+          "role": "always present"
+        },
+        {
+          "name": "Snapping Jaxfruit",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        },
+        {
+          "name": "Leaf Slime (M)",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        },
+        {
+          "name": "Twig Slime (M)",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        },
+        {
+          "name": "Leaf Slime (S)",
+          "minimum": 0,
+          "maximum": 2,
+          "role": "possible up to 2 copies"
+        },
+        {
+          "name": "Twig Slime (S)",
+          "minimum": 0,
+          "maximum": 2,
+          "role": "possible up to 2 copies"
+        }
+      ]
+    },
+    "bodies": [
+      {
+        "bodyIndex": 0,
+        "name": "Slithering Strangler",
+        "role": "always present",
+        "initial": true,
+        "hp": "118–123",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Branch",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "3 Constrict",
+                "authorities": [
+                  "checked-source"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "8 damage · 10 Block",
+                "authorities": [
+                  "wiki-reference",
+                  "checked-source"
+                ]
+              },
+              {
+                "cue": "3",
+                "detail": "13 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": "↻ repeat",
+            "note": "Always opens with step 1. After that, it randomly picks step 2 or step 3 (equal chance, can repeat). After either attack, it always uses step 1 again, then returns to the random pick. The pattern is: • step 1 • 50/50 chance to use step 3 or step 2 • step 1 • 50/50 chance to use step 3 or step 2"
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 1,
+        "name": "Snapping Jaxfruit",
+        "role": "possible body",
+        "initial": true,
+        "hp": "74–79",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Checked behavior effects",
+            "rows": [
+              {
+                "cue": "Each use",
+                "detail": "damage amount set at runtime to all opponents · +2 Strength to self",
+                "authorities": [
+                  "checked-source"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "Consequences are source-backed; exact action names and ordering details remain in Technical audit."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": false,
+        "sourceOnlySupplement": true,
+        "mechanicsAuthority": "checked source mechanics"
+      },
+      {
+        "bodyIndex": 2,
+        "name": "Leaf Slime (M)",
+        "role": "possible body",
+        "initial": true,
+        "hp": "72–79",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Checked behavior effects",
+            "rows": [
+              {
+                "cue": "Effect 1",
+                "detail": "damage amount set at runtime to all opponents",
+                "authorities": [
+                  "checked-source"
+                ]
+              },
+              {
+                "cue": "Effect 2",
+                "detail": "Add 2 Slimed to the affected targets",
+                "authorities": [
+                  "checked-source"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "Consequences are source-backed; exact action names and ordering details remain in Technical audit."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": false,
+        "sourceOnlySupplement": true,
+        "mechanicsAuthority": "checked source mechanics"
+      },
+      {
+        "bodyIndex": 3,
+        "name": "Twig Slime (M)",
+        "role": "possible body",
+        "initial": true,
+        "hp": "59–63",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Checked behavior effects",
+            "rows": [
+              {
+                "cue": "Effect 1",
+                "detail": "damage amount set at runtime to all opponents",
+                "authorities": [
+                  "checked-source"
+                ]
+              },
+              {
+                "cue": "Effect 2",
+                "detail": "Add 1 Slimed to the affected targets",
+                "authorities": [
+                  "checked-source"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "Consequences are source-backed; exact action names and ordering details remain in Technical audit."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": false,
+        "sourceOnlySupplement": true,
+        "mechanicsAuthority": "checked source mechanics"
+      },
+      {
+        "bodyIndex": 4,
+        "name": "Leaf Slime (S)",
+        "role": "possible up to 2 copies",
+        "initial": true,
+        "hp": "26–35",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Branch",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "4 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "Shuffles 1 Slimed into your discard pile",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "Randomly picks step 1 or step 2 each turn. Cannot use the same move twice in a row."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 5,
+        "name": "Twig Slime (S)",
+        "role": "possible up to 2 copies",
+        "initial": true,
+        "hp": "17–26",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Checked behavior effects",
+            "rows": [
+              {
+                "cue": "Each use",
+                "detail": "damage amount set at runtime to all opponents",
+                "authorities": [
+                  "checked-source"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "Consequences are source-backed; exact action names and ordering details remain in Technical audit."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": false,
+        "sourceOnlySupplement": true,
+        "mechanicsAuthority": "checked source mechanics"
+      }
+    ],
+    "collapsed": "STRANGLER AND FRIEND ORDINARY Overgrowth Manual · Static reference 2–3 initial bodies Always: Slithering Strangler. Fixed order: (Choose one of 3 equiprobable support categories: Snapping Jaxfruit OR Choose exactly one medium slime uniformly: Leaf Slime (M) or Twig Slime (M) OR 2 independent draws; each uniformly chooses exactly one small slime: Leaf Slime (S) or Twig Slime (S); duplicates are possible: Leaf Slime (S) + Leaf Slime (S) or Twig Slime (S) + Twig Slime (S)) → Slithering Strangler. Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup. Slithering Strangler 118–123 HP · always present Branch Always opens with step 1. After that, it randomly picks step 2 or step 3 (equal chance, can repeat). After either attack, it always uses step 1 again, then returns to the random pick. The pattern is: • step 1 • 50/50 chance to use step 3 or step 2 • step 1 • 50/50 chance to use step 3 or step 2 1 · 3 Constrict 2 · 8 damage · 10 Block 3 · 13 damage ↻ repeat Snapping Jaxfruit 74–79 HP · possible body · checked source mechanics Checked behavior effects Consequences are source-backed; exact action names and ordering details remain in Technical audit. Each use · damage amount set at runtime to all opponents · +2 Strength to self Leaf Slime (M) 72–79 HP · possible body · checked source mechanics Checked behavior effects Consequences are source-backed; exact action names and ordering details remain in Technical audit. Effect 1 · damage amount set at runtime to all opponents Effect 2 · Add 2 Slimed to the affected targets Twig Slime (M) 59–63 HP · possible body · checked source mechanics Checked behavior effects Consequences are source-backed; exact action names and ordering details remain in Technical audit. Effect 1 · damage amount set at runtime to all opponents Effect 2 · Add 1 Slimed to the affected targets Leaf Slime (S) 26–35 HP · possible up to 2 copies Branch Randomly picks step 1 or step 2 each turn. Cannot use the same move twice in a row. 1 · 4 damage 2 · Shuffles 1 Slimed into your discard pile Twig Slime (S) 17–26 HP · possible up to 2 copies · checked source mechanics Checked behavior effects Consequences are source-backed; exact action names and ordering details remain in Technical audit. Each use · damage amount set at runtime to all opponents checked source + wiki/reference values · checked A8 / retained A9 · 2P presentation Technical audit"
+  },
+  "RUBY_RAIDERS_NORMAL": {
+    "roster": {
+      "cardinality": "3",
+      "cardinalityLabel": "3 initial bodies",
+      "variable": true,
+      "selection": {
+        "kind": "distinctSelection",
+        "count": 3,
+        "poolSize": 5,
+        "unit": "raider",
+        "constraint": "distinct models",
+        "draws": "without replacement",
+        "choices": [
+          {
+            "kind": "fixed",
+            "name": "Axe Raider"
+          },
+          {
+            "kind": "fixed",
+            "name": "Assassin Raider"
+          },
+          {
+            "kind": "fixed",
+            "name": "Brute Raider"
+          },
+          {
+            "kind": "fixed",
+            "name": "Crossbow Raider"
+          },
+          {
+            "kind": "fixed",
+            "name": "Tracker Raider"
+          }
+        ]
+      },
+      "lines": [
+        "Choose exactly 3 distinct raiders without replacement from 5: Axe Raider, Assassin Raider, Brute Raider, Crossbow Raider, Tracker Raider."
+      ],
+      "caveat": "Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup.",
+      "bodies": [
+        {
+          "name": "Axe Raider",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        },
+        {
+          "name": "Assassin Raider",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        },
+        {
+          "name": "Brute Raider",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        },
+        {
+          "name": "Crossbow Raider",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        },
+        {
+          "name": "Tracker Raider",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        }
+      ]
+    },
+    "bodies": [
+      {
+        "bodyIndex": 0,
+        "name": "Axe Raider",
+        "role": "possible body",
+        "initial": true,
+        "hp": "46–50",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Cycle",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "6 damage · 12 Block",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "13 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": "↻ repeat",
+            "note": "Repeats a fixed cycle: • step 1 • step 1 • step 2"
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 1,
+        "name": "Assassin Raider",
+        "role": "possible body",
+        "initial": true,
+        "hp": "41–52",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Cycle",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "11 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": "↻ repeat",
+            "note": "Uses step 1 every turn."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 2,
+        "name": "Brute Raider",
+        "role": "possible body",
+        "initial": true,
+        "hp": "68–74",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Cycle",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "8 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "+3 Strength",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "Alternates between step 1 and step 2, starting with step 1."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 3,
+        "name": "Crossbow Raider",
+        "role": "possible body",
+        "initial": true,
+        "hp": "41–48",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Cycle",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "6 Block",
+                "authorities": [
+                  "checked-source"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "16 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "Alternates between step 1 and step 2, starting with step 1."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 4,
+        "name": "Tracker Raider",
+        "role": "possible body",
+        "initial": true,
+        "hp": "48–57",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Cycle",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "2 Frail",
+                "authorities": [
+                  "checked-source"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "1×9 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": "↻ repeat",
+            "note": "Opens with step 1, then uses step 2 every turn after."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      }
+    ],
+    "collapsed": "RUBY RAIDERS ORDINARY Overgrowth Manual · Static reference 3 initial bodies Choose exactly 3 distinct raiders without replacement from 5: Axe Raider, Assassin Raider, Brute Raider, Crossbow Raider, Tracker Raider. Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup. Axe Raider 46–50 HP · possible body Cycle Repeats a fixed cycle: • step 1 • step 1 • step 2 1 · 6 damage · 12 Block 2 · 13 damage ↻ repeat Assassin Raider 41–52 HP · possible body Cycle Uses step 1 every turn. 1 · 11 damage ↻ repeat Brute Raider 68–74 HP · possible body Cycle Alternates between step 1 and step 2, starting with step 1. 1 · 8 damage 2 · +3 Strength Crossbow Raider 41–48 HP · possible body Cycle Alternates between step 1 and step 2, starting with step 1. 1 · 6 Block 2 · 16 damage Tracker Raider 48–57 HP · possible body Cycle Opens with step 1, then uses step 2 every turn after. 1 · 2 Frail 2 · 1×9 damage ↻ repeat wiki/reference values · A9 / 2P presentation Technical audit"
+  },
+  "BOWLBUGS_NORMAL": {
+    "roster": {
+      "cardinality": "3",
+      "cardinalityLabel": "3 initial bodies",
+      "variable": true,
+      "selection": {
+        "kind": "allOf",
+        "order": "fixed",
+        "relationship": "fixed order",
+        "items": [
+          {
+            "kind": "fixed",
+            "name": "Bowlbug (Rock)"
+          },
+          {
+            "kind": "distinctSelection",
+            "count": 2,
+            "poolSize": 3,
+            "unit": "worker",
+            "constraint": "distinct models",
+            "draws": "without replacement",
+            "choices": [
+              {
+                "kind": "fixed",
+                "name": "Bowlbug (Egg)"
+              },
+              {
+                "kind": "fixed",
+                "name": "Bowlbug (Silk)"
+              },
+              {
+                "kind": "fixed",
+                "name": "Bowlbug (Nectar)"
+              }
+            ]
+          }
+        ]
+      },
+      "lines": [
+        "Always: Bowlbug (Rock).",
+        "Fixed order: Bowlbug (Rock) → (Choose exactly 2 distinct workers without replacement from 3: Bowlbug (Egg), Bowlbug (Silk), Bowlbug (Nectar))."
+      ],
+      "caveat": "Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup.",
+      "bodies": [
+        {
+          "name": "Bowlbug (Rock)",
+          "minimum": 1,
+          "maximum": 1,
+          "role": "always present"
+        },
+        {
+          "name": "Bowlbug (Egg)",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        },
+        {
+          "name": "Bowlbug (Silk)",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        },
+        {
+          "name": "Bowlbug (Nectar)",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        }
+      ]
+    },
+    "bodies": [
+      {
+        "bodyIndex": 0,
+        "name": "Bowlbug (Rock)",
+        "role": "always present",
+        "initial": true,
+        "hp": "110–117",
+        "setup": "Starts with · Imbalanced",
+        "sections": [
+          {
+            "number": null,
+            "title": "Branch",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "16 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "STUNNED · takes no action",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": "↻ repeat",
+            "note": "Uses step 1 every turn. However, if step 1's damage is fully prevented by a player, the Bowlbug (Rock) becomes Stunned and uses step 2 on its next turn, then resumes step 1."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 1,
+        "name": "Bowlbug (Egg)",
+        "role": "possible body",
+        "initial": true,
+        "hp": "55–57",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Cycle",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "8 damage · 16 Block",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": "↻ repeat",
+            "note": "Uses step 1 every turn."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 2,
+        "name": "Bowlbug (Silk)",
+        "role": "possible body",
+        "initial": true,
+        "hp": "98–105",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Cycle",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "5×2 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "1 Weak",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": null,
+            "note": "Alternates between step 2 and step 1."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 3,
+        "name": "Bowlbug (Nectar)",
+        "role": "possible body",
+        "initial": true,
+        "hp": "86–93",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Cycle",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "3 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "+16 Strength",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": "↻ repeat",
+            "note": "Opens with step 1, then uses step 2 once, then uses step 1 every turn after."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      }
+    ],
+    "collapsed": "BOWLBUG SWARM ORDINARY Hive Manual · Static reference 3 initial bodies Always: Bowlbug (Rock). Fixed order: Bowlbug (Rock) → (Choose exactly 2 distinct workers without replacement from 3: Bowlbug (Egg), Bowlbug (Silk), Bowlbug (Nectar)). Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup. Bowlbug (Rock) 110–117 HP · always present Starts with · Imbalanced Branch Uses step 1 every turn. However, if step 1's damage is fully prevented by a player, the Bowlbug (Rock) becomes Stunned and uses step 2 on its next turn, then resumes step 1. 1 · 16 damage 2 · STUNNED · takes no action ↻ repeat Bowlbug (Egg) 55–57 HP · possible body Cycle Uses step 1 every turn. 1 · 8 damage · 16 Block ↻ repeat Bowlbug (Silk) 98–105 HP · possible body Cycle Alternates between step 2 and step 1. 1 · 5×2 damage 2 · 1 Weak Bowlbug (Nectar) 86–93 HP · possible body Cycle Opens with step 1, then uses step 2 once, then uses step 1 every turn after. 1 · 3 damage 2 · +16 Strength ↻ repeat wiki/reference values · A9 / 2P presentation Technical audit"
+  },
+  "BOWLBUGS_WEAK": {
+    "roster": {
+      "cardinality": "2",
+      "cardinalityLabel": "2 initial bodies",
+      "variable": true,
+      "selection": {
+        "kind": "allOf",
+        "order": "fixed",
+        "relationship": "fixed order",
+        "items": [
+          {
+            "kind": "fixed",
+            "name": "Bowlbug (Rock)"
+          },
+          {
+            "kind": "uniformAlternatives",
+            "selection": "one uniformly",
+            "unit": "worker",
+            "choices": [
+              {
+                "kind": "fixed",
+                "name": "Bowlbug (Egg)"
+              },
+              {
+                "kind": "fixed",
+                "name": "Bowlbug (Nectar)"
+              }
+            ]
+          }
+        ]
+      },
+      "lines": [
+        "Always: Bowlbug (Rock).",
+        "Fixed order: Bowlbug (Rock) → (Choose exactly one worker uniformly: Bowlbug (Egg) or Bowlbug (Nectar))."
+      ],
+      "caveat": "Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup.",
+      "bodies": [
+        {
+          "name": "Bowlbug (Rock)",
+          "minimum": 1,
+          "maximum": 1,
+          "role": "always present"
+        },
+        {
+          "name": "Bowlbug (Egg)",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        },
+        {
+          "name": "Bowlbug (Nectar)",
+          "minimum": 0,
+          "maximum": 1,
+          "role": "possible body"
+        }
+      ]
+    },
+    "bodies": [
+      {
+        "bodyIndex": 0,
+        "name": "Bowlbug (Rock)",
+        "role": "always present",
+        "initial": true,
+        "hp": "110–117",
+        "setup": "Starts with · Imbalanced",
+        "sections": [
+          {
+            "number": null,
+            "title": "Branch",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "16 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "STUNNED · takes no action",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": "↻ repeat",
+            "note": "Uses step 1 every turn. However, if step 1's damage is fully prevented by a player, the Bowlbug (Rock) becomes Stunned and uses step 2 on its next turn, then resumes step 1."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 1,
+        "name": "Bowlbug (Egg)",
+        "role": "possible body",
+        "initial": true,
+        "hp": "55–57",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Cycle",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "8 damage · 16 Block",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": "↻ repeat",
+            "note": "Uses step 1 every turn."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      },
+      {
+        "bodyIndex": 2,
+        "name": "Bowlbug (Nectar)",
+        "role": "possible body",
+        "initial": true,
+        "hp": "86–93",
+        "setup": null,
+        "sections": [
+          {
+            "number": null,
+            "title": "Cycle",
+            "rows": [
+              {
+                "cue": "1",
+                "detail": "3 damage",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              },
+              {
+                "cue": "2",
+                "detail": "+16 Strength",
+                "authorities": [
+                  "wiki-reference"
+                ]
+              }
+            ],
+            "marker": null,
+            "transitionAfter": false,
+            "repeat": "↻ repeat",
+            "note": "Opens with step 1, then uses step 2 once, then uses step 1 every turn after."
+          }
+        ],
+        "watch": [],
+        "sourceMatchedExactly": true
+      }
+    ],
+    "collapsed": "BOWLBUGS ORDINARY Hive Manual · Static reference 2 initial bodies Always: Bowlbug (Rock). Fixed order: Bowlbug (Rock) → (Choose exactly one worker uniformly: Bowlbug (Egg) or Bowlbug (Nectar)). Body cards cover every possible type. Alternatives are not all co-present; encounter identity alone does not reveal the selected lineup. Bowlbug (Rock) 110–117 HP · always present Starts with · Imbalanced Branch Uses step 1 every turn. However, if step 1's damage is fully prevented by a player, the Bowlbug (Rock) becomes Stunned and uses step 2 on its next turn, then resumes step 1. 1 · 16 damage 2 · STUNNED · takes no action ↻ repeat Bowlbug (Egg) 55–57 HP · possible body Cycle Uses step 1 every turn. 1 · 8 damage · 16 Block ↻ repeat Bowlbug (Nectar) 86–93 HP · possible body Cycle Opens with step 1, then uses step 2 once, then uses step 1 every turn after. 1 · 3 damage 2 · +16 Strength ↻ repeat wiki/reference values · A9 / 2P presentation Technical audit"
+  }
+}

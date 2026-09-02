@@ -205,10 +205,48 @@ replacement-only opener, interruption, or cycle re-entry, the practical sequence
 MUST preserve that topology rather than placing every registered move in one
 cycle. Retained prose and title conflicts remain unchanged in Technical audit.
 
+### Practical initial-roster contract
+
+The checked `encounter.roster.grammar` is authoritative for the phone-facing
+initial roster. A retained flat lineup is a reference/body catalog only and MUST
+NOT replace a fixed sequence, uniform choice, dependent outer choice, or filtered
+choice. The practical compiler recursively preserves:
+
+- declared and analyzed initial cardinality, including ranges;
+- fixed all-of order and alternative order branches;
+- one uniform draw at each `uniformChoice` node, with nested node occurrences
+  treated as independent draws rather than one shared result;
+- `filteredChoice` count, `modelCountLimit`, distinct models, and
+  `withoutReplacement` draw semantics; and
+- exact per-model minimum/maximum multiplicity across ordered outcomes.
+
+A variable roster renders one compact capsule between encounter context and body
+mechanics. It labels actual initial cardinality (`3 initial bodies`, not `5 possible
+initial`), explains nested relationships in ordinary language, and states that the
+body cards cover alternatives that are not all co-present. One mechanics card is
+rendered per possible body type, never per physical copy. Presence copy is derived
+from exact bounds: required singleton = `always present`, optional singleton =
+`possible body`, and optional repeated type = `possible up to N copies`.
+
+A source-possible model absent from the retained realization MUST use only its
+exact checked source model for supplemental HP/setup/behavior mechanics. It is
+labeled checked-source, creates no synthetic wiki/reference merge record, and
+keeps symbolic amounts as runtime-set known-unknowns. No fuzzy body join or
+cross-encounter retained body is allowed. Unsupported future grammar or filtered
+draw semantics MUST fail closed rather than flattening.
+
+Possible initial membership, an observed live realization, and produced/summoned
+membership are independent concepts. Observation may select the encounter but MUST
+NOT rewrite the static roster capsule or remove alternative mechanics cards;
+production MUST NOT be described as initial co-presence. The exact source AST,
+cardinality, possible/observed/produced sets, retained lane, and proof references
+remain available in Technical audit.
+
 Information is progressively disclosed:
 
 1. **Primary practical combat guide:** compact practical placement, configured
-   HP/kind, cue-led consequence rows, explicit numbered phases or honest
+   HP/kind, exact variable-roster capsule and presence roles, cue-led consequence
+   rows, explicit numbered phases or honest
    opener/cycle/branch/response labels, transitions, repeat cues, and only
    encounter-distinct actionable rules. Exact retained values fill symbolic
    checked coordinates with quiet provenance.
@@ -1470,8 +1508,10 @@ ownership.
 - `/sts2`, its bounded state payload, and browser client require the checked
   compact projection through one fail-closed adapter. Retained-backed encounters
   use an exact-ID best-available presentation merge: checked source wins only when
-  closed; otherwise the exact reference value is visible with provenance. The
-  eight exact current event encounters use a separate source-only primary compiler
+  closed; otherwise the exact reference value is visible with provenance. Variable
+  initial rosters use the recursive checked-grammar contract above and source-only
+  supplemental cards where an exact retained model join is absent. The eight exact
+  current event encounters use a separate source-only primary compiler
   over checked roster, HP/scaling, initialization, operations, graphs, and joined
   combat lifecycle. It creates no retained record or wiki fallback. Raw source and
   reference authority (where present), symbolic expressions, merge reasons,
