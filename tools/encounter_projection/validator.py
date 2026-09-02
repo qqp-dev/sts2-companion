@@ -1887,8 +1887,8 @@ def _validate_source_facts(source_facts: Any, source: dict[str, Any]) -> dict[st
     }
 
 _LEGACY_BODY_FIELDS = {
-    "count", "displayName", "hpA8", "monsterId", "moves", "pack", "patchChecked",
-    "pattern", "role", "sourceFlags", "sourcePage", "startsWithA9", "type",
+    "count", "displayName", "hpA8", "hpBelowA8", "monsterId", "moves", "pack", "patchChecked",
+    "pattern", "retainedProvenance", "role", "sourceFlags", "sourcePage", "startsWithA9", "type",
     "typedConflicts",
 }
 
@@ -1954,18 +1954,49 @@ def _validate_legacy_annotations(value: Any, source_sets: dict[str, set[str]]) -
                     _fail(bp + ".factId", "duplicate/mismatched legacy body fact")
                 all_fact_ids.add(body_fact)
                 body_annotations = _object(bo["annotations"], bp + ".annotations", _LEGACY_BODY_FIELDS, {
-                    "count", "displayName", "hpA8", "monsterId", "moves", "pattern", "sourcePage", "type",
+                    "count", "displayName", "hpA8", "hpBelowA8", "monsterId", "moves", "pattern", "retainedProvenance", "sourcePage", "type",
                 })
                 _string(body_annotations["monsterId"], bp + ".annotations.monsterId")
                 _string(body_annotations["displayName"], bp + ".annotations.displayName")
                 _integer(body_annotations["count"], bp + ".annotations.count", minimum=1)
-                hp = _list(body_annotations["hpA8"], bp + ".annotations.hpA8")
-                if len(hp) not in {1, 2} or any(type(item) is not int or item <= 0 for item in hp):
-                    _fail(bp + ".annotations.hpA8", "must be a one/two endpoint positive integer range")
+                for hp_field in ("hpBelowA8", "hpA8"):
+                    hp = _list(body_annotations[hp_field], bp + f".annotations.{hp_field}")
+                    if len(hp) not in {1, 2} or any(type(item) is not int or item <= 0 for item in hp):
+                        _fail(bp + f".annotations.{hp_field}", "must be a one/two endpoint positive integer range")
+                    if len(hp) == 2 and hp[0] > hp[1]:
+                        _fail(bp + f".annotations.{hp_field}", "range endpoints must be ordered")
                 pattern = _object(body_annotations["pattern"], bp + ".annotations.pattern", {"text", "type"})
                 _string(pattern["text"], bp + ".annotations.pattern.text")
                 _string(pattern["type"], bp + ".annotations.pattern.type")
                 _string(body_annotations["sourcePage"], bp + ".annotations.sourcePage")
+                provenance = _object(body_annotations["retainedProvenance"], bp + ".annotations.retainedProvenance",
+                                     {"article", "articleLocator", "bodyKey", "module"})
+                body_key = _string(provenance["bodyKey"], bp + ".annotations.retainedProvenance.bodyKey")
+                if body_key != body_annotations["displayName"]:
+                    _fail(bp + ".annotations.retainedProvenance.bodyKey", "must exactly own the retained display body")
+                article = _object(provenance["article"], bp + ".annotations.retainedProvenance.article",
+                                  {"owner", "pageKey", "revisionId", "template", "templateOrdinal"})
+                if article["owner"] != body_key or not isinstance(article["revisionId"], int) or article["revisionId"] <= 0:
+                    _fail(bp + ".annotations.retainedProvenance.article", "article owner/revision mismatch")
+                _string(article["pageKey"], bp + ".annotations.retainedProvenance.article.pageKey")
+                if article["template"] not in {"Enemy Infobox", "#invoke:Infobox"} or not isinstance(article["templateOrdinal"], int) or article["templateOrdinal"] <= 0:
+                    _fail(bp + ".annotations.retainedProvenance.article", "invalid exact article template coordinate")
+                locator = _object(provenance["articleLocator"], bp + ".annotations.retainedProvenance.articleLocator",
+                                  {"pageKey", "sectionOwner"})
+                if locator["pageKey"] != article["pageKey"]:
+                    _fail(bp + ".annotations.retainedProvenance.articleLocator", "page key does not match article coordinate")
+                _string(locator["sectionOwner"], bp + ".annotations.retainedProvenance.articleLocator.sectionOwner")
+                module = _object(provenance["module"], bp + ".annotations.retainedProvenance.module",
+                                 {"path", "reason", "recordOrdinal", "synthetic", "tableKey"}, set())
+                if module.get("synthetic") is True:
+                    if body_key != "Hatchling" or set(module) != {"synthetic", "reason"}:
+                        _fail(bp + ".annotations.retainedProvenance.module", "only Hatchling may use the explicit synthetic module fallback")
+                    _string(module["reason"], bp + ".annotations.retainedProvenance.module.reason")
+                else:
+                    if set(module) != {"path", "recordOrdinal", "tableKey"} or module["tableKey"] != body_key:
+                        _fail(bp + ".annotations.retainedProvenance.module", "invalid exact retained module coordinate")
+                    if not str(module["path"]).startswith("tools/.wiki/") or not isinstance(module["recordOrdinal"], int) or module["recordOrdinal"] <= 0:
+                        _fail(bp + ".annotations.retainedProvenance.module", "invalid module path/ordinal")
                 for move_index, move in enumerate(_list(body_annotations["moves"], bp + ".annotations.moves")):
                     mp = f"{bp}.annotations.moves[{move_index}]"
                     mo = _object(move, mp, {"intent", "name", "textA9"}, {"name", "textA9"})

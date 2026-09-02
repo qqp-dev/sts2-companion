@@ -819,8 +819,8 @@ def _initial_legacy_comparisons(
 
 def _legacy_body(row: dict[str, Any], fact_id: str) -> dict[str, Any]:
     allowed = {
-        "count", "displayName", "hpA8", "monsterId", "moves", "pack", "patchChecked",
-        "pattern", "role", "sourceFlags", "sourcePage", "startsWithA9", "type",
+        "count", "displayName", "hpA8", "hpBelowA8", "monsterId", "moves", "pack", "patchChecked",
+        "pattern", "retainedProvenance", "role", "sourceFlags", "sourcePage", "startsWithA9", "type",
         "typedConflicts",
     }
     return {

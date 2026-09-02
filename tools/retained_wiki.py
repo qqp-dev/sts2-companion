@@ -1,7 +1,7 @@
 """Pure retained-wiki inventory parser and deterministic artifact builder.
 
 The wiki snapshot is reconciliation input, never runtime or source authority.
-This module captures structural claims and, when the reviewed P1b0 policy names
+This module captures structural claims and, when the reviewed P1b0/P1b1 policies name
 an exact origin, materializes a typed final mapping. Wiki remains coverage and
 reconciliation evidence, never source authority.
 """
@@ -24,6 +24,8 @@ TARGET_VERSION = "v0.111.0"
 TARGET_BRANCH = "public-beta"
 DEFAULT_ARTIFACT = "data/wiki-reconciliation-v0.111.0.json"
 DEFAULT_POLICY = "tools/wiki-reconciliation-policy-v0.111.0.json"
+DEFAULT_P1B1_POLICY = "tools/wiki-reconciliation-p1b1-policy-v0.111.0.json"
+PRIMARY_SEMANTIC_SURFACE = "data/primary-semantic-surface-v0.111.0.json"
 MODULE_STEMS = ("Bosses", "Elites", "Glory", "Hive", "Overgrowth", "Underdocks")
 
 CATEGORY_NAMES = {
@@ -414,11 +416,76 @@ def split_power_claims(raw: str) -> list[str]:
                 index += len(match.group(0))
                 start = index
                 continue
+            if raw[index] == ",":
+                lines.append(raw[start:index])
+                index += 1
+                start = index
+                continue
         index += 1
     if curly or square:
         raise AuditError("unbalanced starting-Power field")
     lines.append(raw[start:])
-    return [line.strip() for line in lines if plain(line)]
+    delimited = [line.strip() for line in lines if plain(line)]
+    result: list[str] = []
+    for line in delimited:
+        powers = list(iter_templates(line, "BD2"))
+        if len(powers) <= 1:
+            result.append(line)
+            continue
+        # A retained field may place named Powers side by side without a comma
+        # (Tough Egg: Minion + Hatch 2). Preserve any prefix on the first Power
+        # and any amount/Ascension suffix on the final Power.
+        for power_index, (power_start, power_end, _, _) in enumerate(powers):
+            piece_start = 0 if power_index == 0 else power_start
+            piece_end = powers[power_index + 1][0] if power_index + 1 < len(powers) else len(line)
+            piece = line[piece_start:piece_end].strip()
+            if piece:
+                result.append(piece)
+    return result
+
+
+def normalized_starting_power(raw: str, *, kind: str, owner: str, parent_field: str | None = None) -> dict[str, Any]:
+    value = plain(raw)
+    result: dict[str, Any] = {"kind": kind, "owner": owner, "value": value}
+    if parent_field is not None:
+        result["parentField"] = parent_field
+    calls = list(iter_templates(raw, "BD2"))
+    if len(calls) != 1:
+        result["parseStatus"] = "unparsed-power-identity"
+        return result
+    parsed = calls[0][3]
+    if not parsed.positional or not plain(parsed.positional[0]):
+        result["parseStatus"] = "unparsed-power-identity"
+        return result
+    result["power"] = plain(parsed.positional[0])
+    without_power = raw[:calls[0][0]] + " " + raw[calls[0][1]:]
+    ascensions: list[dict[str, int]] = []
+    for template_name in ("Asc2", "Asc"):
+        for start, end, _, asc in iter_templates(without_power, template_name):
+            if len(asc.positional) < 2:
+                continue
+            try:
+                threshold = int(asc.positional[0].strip())
+                selected_index = -1 if template_name == "Asc2" else 1
+                amount = int(asc.positional[selected_index].strip())
+            except (ValueError, IndexError):
+                continue
+            ascensions.append({"threshold": threshold, "amount": amount})
+        without_power = remove_template_spans(without_power, [template_name])
+    base_match = re.search(r"-?\d+", without_power)
+    if base_match:
+        result["baseAmount"] = int(base_match.group(0))
+    if ascensions:
+        ascensions.sort(key=lambda row: row["threshold"])
+        result["ascensionAmounts"] = ascensions
+    selected = result.get("baseAmount")
+    for row in ascensions:
+        if row["threshold"] <= 9:
+            selected = row["amount"]
+    if selected is not None:
+        result["amountAtA9"] = selected
+    result["parseStatus"] = "typed"
+    return result
 
 
 def _excerpt(raw: str) -> str:
@@ -605,7 +672,9 @@ def _add_article_atoms(
                         field="Powers", fieldOrdinal=_field_ordinal(parsed, "Powers"),
                         claimOrdinal=claim_ordinal),
                     excerpt=claim,
-                    normalized={"kind": "starting-power", "owner": owner, "value": plain(claim)},
+                    normalized=(normalized_starting_power(claim, kind="starting-power", owner=owner)
+                                if _membership(owner) == "current"
+                                else {"kind": "starting-power", "owner": owner, "value": plain(claim)}),
                     membership=_membership(owner),
                 )
         for key in ("Image", "Icon"):
@@ -668,7 +737,9 @@ def _add_article_atoms(
                         template="#invoke:Infobox", templateOrdinal=source_ordinal,
                         field=key, fieldOrdinal=field_ordinal, claimOrdinal=claim_ordinal),
                     excerpt=claim,
-                    normalized={"kind": "starting-power", "owner": owner, "stateField": key, "value": plain(claim)},
+                    normalized=({**normalized_starting_power(claim, kind="starting-power", owner=owner), "stateField": key}
+                                if _membership(owner) == "current"
+                                else {"kind": "starting-power", "owner": owner, "stateField": key, "value": plain(claim)}),
                     membership=_membership(owner),
                 )
         images = parsed.named.get("images")
@@ -1149,8 +1220,8 @@ def _add_module_atoms(
                     origin=_module_origin(relative_path, table_key, record_ordinal,
                         field="StartsWith", fieldOrdinal=field_ordinal, claimOrdinal=claim_ordinal),
                     excerpt=claim,
-                    normalized={"kind": "module-starting-power", "owner": table_key,
-                                "parentField": starts, "value": plain(claim)},
+                    normalized=normalized_starting_power(
+                        claim, kind="module-starting-power", owner=table_key, parent_field=starts),
                     membership=membership,
                 )
         roster = lua_string_field(block, "InPartyWith")
@@ -1324,6 +1395,7 @@ DOCUMENTS = {
     "retained-archive": "data/encounters.json",
     "retained-reference": "data/encounters.json",
     "technical-audit": "data/encounter-facts-v0.111.0.json",
+    "primary-presentation": PRIMARY_SEMANTIC_SURFACE,
 }
 
 
@@ -1366,12 +1438,16 @@ def values_equivalent(left: Any, right: Any) -> bool:
     return left_hp is not None and left_hp == right_hp
 
 
-def _mapping_documents(book: dict[str, Any], compact: dict[str, Any], raw_source: dict[str, Any]) -> dict[str, Any]:
-    return {
+def _mapping_documents(book: dict[str, Any], compact: dict[str, Any], raw_source: dict[str, Any],
+                       primary_surface: dict[str, Any] | None = None) -> dict[str, Any]:
+    documents = {
         "data/game-v0.111.0-source.json": raw_source,
         "data/encounter-facts-v0.111.0.json": compact,
         "data/encounters.json": book,
     }
+    if primary_surface is not None:
+        documents[PRIMARY_SEMANTIC_SURFACE] = primary_surface
+    return documents
 
 
 def _validate_representation(mapping: dict[str, Any], documents: dict[str, Any], *, require_conflict_lanes: bool) -> None:
@@ -1430,6 +1506,229 @@ def _validate_representation(mapping: dict[str, Any], documents: dict[str, Any],
             raise AuditError(f"conflict {mapping.get('id')} lacks source-wins resolution")
         if not authority.get("sourceFactRefs") or not authority.get("compactFactRefs"):
             raise AuditError(f"conflict {mapping.get('id')} lacks source/compact fact refs")
+
+
+_RETAINED_NORMAL_POINTER = re.compile(r"^/encounters/(\d+)/retainedBodies/(\d+)/hpBelowA8$")
+_RETAINED_A8_POINTER = re.compile(r"^/encounters/(\d+)/retainedBodies/(\d+)/hpA8SinglePlayer$")
+_SOURCE_NORMAL_POINTER = re.compile(r"^/encounters/(\d+)/sourceModels/(\d+)/hp/belowA8$")
+_SOURCE_A8_POINTER = re.compile(r"^/encounters/(\d+)/sourceModels/(\d+)/hp/a8SinglePlayer$")
+_PRIMARY_A8_POINTER = re.compile(r"^/encounters/(\d+)/primaryByPlayers/(\d+)/bodies/(\d+)/hp/a8SinglePlayer$")
+
+
+def _surface_value(row: dict[str, Any], documents: dict[str, Any]) -> Any:
+    if row.get("path") != PRIMARY_SEMANTIC_SURFACE:
+        raise AuditError(f"HP value evidence must use the typed primary semantic surface: {row.get('jsonPointer')}")
+    return resolve_json_pointer(documents[PRIMARY_SEMANTIC_SURFACE], row["jsonPointer"])
+
+
+def _hp_body_scope(mapping: dict[str, Any], documents: dict[str, Any], row: dict[str, Any],
+                   matcher: re.Pattern[str]) -> tuple[int, int, dict[str, Any]]:
+    match = matcher.fullmatch(row.get("jsonPointer", ""))
+    if not match:
+        raise AuditError(f"P1b1 HP value evidence has wrong semantic coordinate: {row.get('jsonPointer')}")
+    encounter_index, body_index = map(int, match.groups())
+    surface = documents[PRIMARY_SEMANTIC_SURFACE]
+    try:
+        body = surface["encounters"][encounter_index]["retainedBodies"][body_index]
+    except (IndexError, KeyError, TypeError) as exc:
+        raise AuditError("P1b1 HP retained body coordinate is unresolved") from exc
+    semantic = mapping["semanticMapping"]
+    actor_models = set(semantic.get("actorModels") or [])
+    if not actor_models or not actor_models.intersection(body.get("sourceModels") or []):
+        raise AuditError(f"P1b1 HP value evidence belongs to another actor/form: {row['jsonPointer']}")
+    expected_states = set(semantic.get("stateIds") or [])
+    body_state = body.get("stateId")
+    if expected_states:
+        if body_state not in expected_states:
+            raise AuditError(f"P1b1 HP value evidence belongs to another state: {row['jsonPointer']}")
+    elif body_state is not None:
+        raise AuditError(f"P1b1 base HP evidence substituted a state/form: {row['jsonPointer']}")
+    return encounter_index, body_index, body
+
+
+def _hp_source_scope(mapping: dict[str, Any], documents: dict[str, Any], row: dict[str, Any],
+                     matcher: re.Pattern[str]) -> tuple[dict[str, Any], Any]:
+    match = matcher.fullmatch(row.get("jsonPointer", ""))
+    if not match:
+        raise AuditError(f"P1b1 HP source evidence has wrong semantic coordinate: {row.get('jsonPointer')}")
+    encounter_index, model_index = map(int, match.groups())
+    surface = documents[PRIMARY_SEMANTIC_SURFACE]
+    try:
+        model = surface["encounters"][encounter_index]["sourceModels"][model_index]
+    except (IndexError, KeyError, TypeError) as exc:
+        raise AuditError("P1b1 HP source coordinate is unresolved") from exc
+    if model.get("canonicalModel") not in set(mapping["semanticMapping"].get("actorModels") or []):
+        raise AuditError(f"P1b1 HP source evidence belongs to another actor: {row['jsonPointer']}")
+    return model, _surface_value(row, documents)
+
+
+def _validate_hp_value_evidence(mapping: dict[str, Any], documents: dict[str, Any]) -> None:
+    """Enforce exact typed value, body/state, Ascension, player, and source-closure evidence."""
+    semantic = mapping["semanticMapping"]
+    kind = semantic.get("kind")
+    if kind == "patch-hp-transition":
+        authority = mapping["authorityComparison"]
+        if mapping["disposition"] != "missing/unparsed" or authority["closure"] != "unjoined" or authority["sourceFactRefs"]:
+            raise AuditError("P1b1 historical HP transition was optimistically represented")
+        return
+    if kind not in {"normal-hp-range", "a8-hp-range", "normal-and-a8-hp-ranges"}:
+        return
+    authority = mapping["authorityComparison"]
+    representations = mapping["representation"]
+    non_wiki = [row for row in representations if row.get("layer") != "wiki-origin"]
+
+    if kind == "normal-hp-range":
+        retained = semantic.get("retainedValue")
+        if not _is_typed_hp_range(retained):
+            raise AuditError("P1b1 normal HP lacks a typed retained range")
+        retained_rows = [row for row in non_wiki if row.get("evidenceRole") == "retained-normal-value"]
+        if not retained_rows:
+            raise AuditError("P1b1 normal HP has no exact retained value evidence")
+        represented_states = set()
+        for row in retained_rows:
+            _, _, body = _hp_body_scope(mapping, documents, row, _RETAINED_NORMAL_POINTER)
+            value = _surface_value(row, documents)
+            if value != retained or row.get("expectedValue") != retained:
+                raise AuditError("P1b1 normal HP exact retained value evidence mismatch")
+            if body.get("hpBelowA8Authority") != "retained-wiki-reference":
+                raise AuditError("P1b1 normal HP lost retained-wiki authority")
+            if body.get("stateId"):
+                represented_states.add(body["stateId"])
+        if represented_states != set(semantic.get("stateIds") or []):
+            raise AuditError("P1b1 normal HP state ownership/value coordinates disagree")
+        if any(row.get("evidenceRole") == "retained-normal-value" and "hpA8SinglePlayer" in row.get("jsonPointer", "")
+               for row in non_wiki):
+            raise AuditError("P1b1 normal HP substituted an A8 value")
+
+        source_rows = [row for row in non_wiki if row.get("evidenceRole") == "same-scope-source-value"
+                       and _SOURCE_NORMAL_POINTER.fullmatch(row.get("jsonPointer", ""))]
+        source_models = []
+        for row in source_rows:
+            model, value = _hp_source_scope(mapping, documents, row, _SOURCE_NORMAL_POINTER)
+            if not _is_typed_hp_range(value) or value != semantic.get("sourceValue"):
+                raise AuditError("P1b1 normal HP exact source value evidence mismatch")
+            source_models.append(model)
+        if semantic.get("stateIds") and source_rows:
+            raise AuditError("P1b1 normal HP used another state's model value as source evidence")
+        closure = authority["closure"]
+        if closure == "closed":
+            source_value = semantic.get("sourceValue")
+            if not _is_typed_hp_range(source_value) or not source_rows:
+                raise AuditError("P1b1 normal HP source closure lacks exact value evidence")
+            exact_fact_ids = sorted({row["factId"] for row in source_models})
+            if authority["sourceFactRefs"] != exact_fact_ids or authority["compactFactRefs"] != exact_fact_ids:
+                raise AuditError("P1b1 normal HP source closure uses ownership/non-value fact refs")
+            if mapping["disposition"] == "conflict":
+                if source_value == retained:
+                    raise AuditError("P1b1 normal HP conflict values do not conflict")
+            elif source_value != retained:
+                raise AuditError("P1b1 normal HP silently merged different exact values")
+        elif closure == "knownUnknown":
+            if semantic.get("sourceValue") is not None or source_rows or authority["sourceFactRefs"] or authority["compactFactRefs"]:
+                raise AuditError("P1b1 retained-only normal HP was incorrectly source-closed")
+            if semantic.get("authorityStatus") != "retained-reference-only":
+                raise AuditError("P1b1 retained-only normal HP authority status drifted")
+        else:
+            raise AuditError("P1b1 represented normal HP has invalid authority closure")
+        return
+
+    if kind == "a8-hp-range":
+        retained = semantic.get("retainedValue")
+        represented = semantic.get("sourceOrFallbackValue")
+        if not _is_typed_hp_range(retained) or not _is_typed_hp_range(represented):
+            raise AuditError("P1b1 A8 HP lacks a typed exact range")
+        body_rows = [row for row in non_wiki if _RETAINED_A8_POINTER.fullmatch(row.get("jsonPointer", ""))]
+        primary_rows = [row for row in non_wiki if _PRIMARY_A8_POINTER.fullmatch(row.get("jsonPointer", ""))]
+        if mapping["disposition"] == "primary-present" and (not body_rows or not primary_rows):
+            raise AuditError("P1b1 primary A8 HP lacks typed body/primary value evidence")
+        body_bindings: dict[int, list[dict[str, Any]]] = {}
+        represented_states = set()
+        for row in body_rows:
+            encounter_index, _, body = _hp_body_scope(mapping, documents, row, _RETAINED_A8_POINTER)
+            if _surface_value(row, documents) != represented or row.get("expectedValue") != represented:
+                raise AuditError("P1b1 A8 exact body value evidence mismatch")
+            body_bindings.setdefault(encounter_index, []).append(body)
+            if body.get("stateId"):
+                represented_states.add(body["stateId"])
+        if represented_states != set(semantic.get("stateIds") or []):
+            raise AuditError("P1b1 A8 state ownership/value coordinates disagree")
+        players_seen = set()
+        for row in primary_rows:
+            match = _PRIMARY_A8_POINTER.fullmatch(row["jsonPointer"])
+            encounter_index, player_index, body_ordinal = map(int, match.groups())
+            encounter = documents[PRIMARY_SEMANTIC_SURFACE]["encounters"][encounter_index]
+            try:
+                primary = encounter["primaryByPlayers"][player_index]
+            except (IndexError, KeyError, TypeError) as exc:
+                raise AuditError("P1b1 A8 primary player coordinate is unresolved") from exc
+            if row.get("players") != primary["players"] or _surface_value(row, documents) != represented:
+                raise AuditError("P1b1 A8 player scope/value evidence mismatch")
+            if not any(body_ordinal in body["primaryBodyOrdinals"] for body in body_bindings.get(encounter_index, [])):
+                raise AuditError("P1b1 A8 primary value belongs to another body/state")
+            players_seen.add(primary["players"])
+        if mapping["disposition"] == "primary-present" and players_seen != {1, 2}:
+            raise AuditError("P1b1 A8 HP lacks exact 1P/2P scope evidence")
+        if any(_RETAINED_NORMAL_POINTER.fullmatch(row.get("jsonPointer", "")) for row in primary_rows):
+            raise AuditError("P1b1 A8 HP substituted a base value")
+
+        source_rows = [row for row in non_wiki if row.get("evidenceRole") == "same-scope-source-value"
+                       and _SOURCE_A8_POINTER.fullmatch(row.get("jsonPointer", ""))]
+        source_models = []
+        source_values = []
+        for row in source_rows:
+            model, value = _hp_source_scope(mapping, documents, row, _SOURCE_A8_POINTER)
+            if not _is_typed_hp_range(value):
+                raise AuditError("P1b1 A8 exact source value is not typed")
+            source_models.append(model)
+            source_values.append(value)
+        if semantic.get("stateIds") and source_rows:
+            raise AuditError("P1b1 A8 HP used another state's model value as source evidence")
+        if authority["closure"] == "closed":
+            if not source_rows or len({canonical_json_bytes(value) for value in source_values}) != 1:
+                raise AuditError("P1b1 A8 source closure lacks one exact source value")
+            exact_fact_ids = sorted({row["factId"] for row in source_models})
+            if authority["sourceFactRefs"] != exact_fact_ids or authority["compactFactRefs"] != exact_fact_ids:
+                raise AuditError("P1b1 A8 source closure uses ownership/non-value fact refs")
+            source_value = source_values[0]
+            if mapping["disposition"] == "conflict":
+                if source_value != semantic.get("sourceValue") or source_value == retained or represented != source_value:
+                    raise AuditError("P1b1 A8 source-winning conflict values drifted")
+            elif source_value != retained or represented != retained:
+                raise AuditError("P1b1 A8 closed value does not exactly match the claim")
+        elif authority["closure"] == "knownUnknown":
+            if source_rows or authority["sourceFactRefs"] or authority["compactFactRefs"] or represented != retained:
+                raise AuditError("P1b1 retained-fallback A8 HP was incorrectly source-closed")
+        else:
+            raise AuditError("P1b1 represented A8 HP has invalid authority closure")
+        return
+
+    normal = semantic.get("normalValue")
+    ascended = semantic.get("a8Value")
+    if not _is_typed_hp_range(normal) or not _is_typed_hp_range(ascended):
+        raise AuditError("P1b1 dual HP mapping lacks typed normal/A8 ranges")
+    normal_rows = [row for row in non_wiki if _SOURCE_NORMAL_POINTER.fullmatch(row.get("jsonPointer", ""))]
+    a8_source_rows = [row for row in non_wiki if _SOURCE_A8_POINTER.fullmatch(row.get("jsonPointer", ""))]
+    primary_rows = [row for row in non_wiki if _PRIMARY_A8_POINTER.fullmatch(row.get("jsonPointer", ""))]
+    if not normal_rows or not a8_source_rows or not primary_rows:
+        raise AuditError("P1b1 dual HP mapping lacks exact source/primary coordinates")
+    source_models = []
+    for row in normal_rows:
+        model, value = _hp_source_scope(mapping, documents, row, _SOURCE_NORMAL_POINTER)
+        if value != normal:
+            raise AuditError("P1b1 dual HP normal range mismatch")
+        source_models.append(model)
+    for row in a8_source_rows:
+        model, value = _hp_source_scope(mapping, documents, row, _SOURCE_A8_POINTER)
+        if value != ascended:
+            raise AuditError("P1b1 dual HP A8 range mismatch")
+        source_models.append(model)
+    if any(_surface_value(row, documents) != ascended for row in primary_rows):
+        raise AuditError("P1b1 dual HP primary A8 range mismatch")
+    if {row.get("players") for row in primary_rows} != {1, 2}:
+        raise AuditError("P1b1 dual HP lacks exact 1P/2P coordinates")
+    exact_fact_ids = sorted({row["factId"] for row in source_models})
+    if authority["closure"] != "closed" or authority["sourceFactRefs"] != exact_fact_ids:
+        raise AuditError("P1b1 dual HP source closure/fact refs drifted")
 
 
 def _attach_mapping(record: dict[str, Any], mapping: dict[str, Any]) -> None:
@@ -1611,6 +1910,847 @@ def apply_final_mappings(
     }
 
 
+
+P1B1_TARGET_CATEGORIES = {
+    "identity-placement-roster-lead", "hp-ascension-scaling", "starting-power-status-stack",
+}
+
+
+def _pointer_token(value: str) -> str:
+    return value.replace("~", "~0").replace("/", "~1")
+
+
+def _range_claim(value: str) -> dict[str, int]:
+    numbers = [int(item.replace(",", "")) for item in re.findall(r"\d[\d,]*", value)]
+    if len(numbers) not in {1, 2}:
+        raise AuditError(f"P1b1 HP claim is not a fixed/range value: {value!r}")
+    return {"minimum": numbers[0], "maximum": numbers[-1]}
+
+
+def _is_typed_hp_range(value: Any) -> bool:
+    return (isinstance(value, dict) and set(value) == {"minimum", "maximum"}
+            and type(value["minimum"]) is int and type(value["maximum"]) is int
+            and 0 < value["minimum"] <= value["maximum"])
+
+
+def _expression_integer(expression: dict[str, Any], ascension: int) -> int | None:
+    kind = expression.get("kind")
+    if kind == "constant" and type(expression.get("value")) is int:
+        return expression["value"]
+    if kind == "convert":
+        return _expression_integer(expression.get("expression") or {}, ascension)
+    if kind == "ascensionSelect":
+        branch = expression.get("atOrAbove") if ascension >= expression.get("threshold", 999) else expression.get("below")
+        return _expression_integer(branch or {}, ascension)
+    return None
+
+
+def _below_a8_range(hp: dict[str, Any]) -> dict[str, int] | None:
+    expression = hp.get("expression") or {}
+    if expression.get("kind") != "range":
+        return None
+    minimum = _expression_integer(expression.get("minimum") or {}, 0)
+    maximum = _expression_integer(expression.get("maximum") or {}, 0)
+    if minimum is None or maximum is None:
+        return None
+    return {"minimum": minimum, "maximum": maximum}
+
+
+def _surface_indexes(surface: dict[str, Any]) -> dict[str, Any]:
+    if surface.get("schemaVersion") != 1 or surface.get("summary", {}).get("encounterCount") != 89:
+        raise AuditError("P1b1 primary semantic surface schema/census drifted")
+    if surface["summary"].get("nonNullOnePlayerPrimaries") != 89 or surface["summary"].get("nonNullTwoPlayerPrimaries") != 89:
+        raise AuditError("P1b1 primary semantic surface lost a compiled primary")
+    article: dict[tuple[Any, ...], list[dict[str, Any]]] = {}
+    module: dict[tuple[Any, ...], list[dict[str, Any]]] = {}
+    encounters: dict[str, dict[str, Any]] = {}
+    for encounter_index, encounter in enumerate(surface["encounters"]):
+        encounter_id = encounter["canonicalId"]
+        if encounter_id in encounters:
+            raise AuditError(f"duplicate semantic-surface encounter {encounter_id}")
+        encounters[encounter_id] = {"index": encounter_index, "row": encounter}
+        for body_index, body in enumerate(encounter["retainedBodies"]):
+            ref = {"encounterIndex": encounter_index, "bodyIndex": body_index,
+                   "encounter": encounter, "body": body}
+            provenance = body["provenance"]
+            a = provenance["article"]
+            article.setdefault((a["pageKey"], a["revisionId"], a["template"], a["templateOrdinal"]), []).append(ref)
+            m = provenance["module"]
+            if not m.get("synthetic"):
+                module.setdefault((m["path"], m["tableKey"], m["recordOrdinal"]), []).append(ref)
+    return {"article": article, "module": module, "encounters": encounters}
+
+
+def _body_refs(record: dict[str, Any], indexes: dict[str, Any], aliases: dict[tuple[Any, ...], str]) -> list[dict[str, Any]]:
+    origin = record["origin"]
+    if origin["kind"] == "page" and "template" in origin:
+        key = (origin["pageKey"], origin["revisionId"], origin["template"], origin["templateOrdinal"])
+        return indexes["article"].get(key, [])
+    if origin["kind"] == "module":
+        key = (origin["path"], origin["tableKey"], origin["recordOrdinal"])
+        refs = indexes["module"].get(key, [])
+        if refs:
+            return refs
+        encounter_id = aliases.get(key)
+        if encounter_id:
+            encounter_ref = indexes["encounters"][encounter_id]
+            return [{"encounterIndex": encounter_ref["index"], "bodyIndex": None,
+                     "encounter": encounter_ref["row"], "body": None}]
+    return []
+
+
+def _surface_pointer(ref: dict[str, Any], suffix: str = "") -> str:
+    base = f"/encounters/{ref['encounterIndex']}"
+    if ref.get("bodyIndex") is not None:
+        base += f"/retainedBodies/{ref['bodyIndex']}"
+    return base + suffix
+
+
+def _source_model_refs(refs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    result: list[dict[str, Any]] = []
+    seen: set[tuple[int, int]] = set()
+    for ref in refs:
+        if not ref.get("body"):
+            continue
+        for model in ref["body"]["sourceModels"]:
+            for model_index, row in enumerate(ref["encounter"]["sourceModels"]):
+                if row["canonicalModel"] != model:
+                    continue
+                key = (ref["encounterIndex"], model_index)
+                if key not in seen:
+                    seen.add(key)
+                    result.append({**ref, "modelIndex": model_index, "model": row})
+                break
+    return result
+
+
+def _state_coordinates(refs: list[dict[str, Any]], model_refs: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[str]]:
+    representations: list[dict[str, Any]] = []
+    fact_ids: list[str] = []
+    seen: set[tuple[int, str]] = set()
+    for ref in refs:
+        state_id = ref.get("body", {}).get("stateId") if ref.get("body") else None
+        if not state_id:
+            continue
+        for model_ref in model_refs:
+            if model_ref["encounterIndex"] != ref["encounterIndex"]:
+                continue
+            for state_index, state in enumerate(model_ref["model"]["states"]):
+                if state.get("stateId") != state_id:
+                    continue
+                key = (model_ref["encounterIndex"], state_id)
+                if key in seen:
+                    continue
+                seen.add(key)
+                representations.append({
+                    "layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                    "jsonPointer": (f"/encounters/{model_ref['encounterIndex']}/sourceModels/"
+                                    f"{model_ref['modelIndex']}/states/{state_index}/stateId"),
+                    "expectedValue": state_id,
+                })
+                fact_ids.append(state["factId"])
+    return representations, fact_ids
+
+
+def _primary_coordinates(refs: list[dict[str, Any]], suffix: str, *, expected: Any | None = None) -> list[dict[str, Any]]:
+    result = []
+    seen = set()
+    for ref in refs:
+        body = ref.get("body")
+        if not body:
+            continue
+        for player_index, player_row in enumerate(ref["encounter"]["primaryByPlayers"]):
+            for body_ordinal in body["primaryBodyOrdinals"]:
+                pointer = f"/encounters/{ref['encounterIndex']}/primaryByPlayers/{player_index}/bodies/{body_ordinal}{suffix}"
+                if pointer in seen:
+                    continue
+                seen.add(pointer)
+                row = {"layer": "primary-presentation", "path": PRIMARY_SEMANTIC_SURFACE,
+                       "jsonPointer": pointer, "players": player_row["players"]}
+                if expected is not None:
+                    row["expectedValue"] = expected
+                result.append(row)
+    return result
+
+
+def _wiki_coordinate(record: dict[str, Any], *, compared_lane: str | None = None) -> dict[str, Any]:
+    row = {"layer": "wiki-origin", "originId": record["id"], "claimId": record["claimId"],
+           "origin": record["origin"]}
+    if compared_lane:
+        row["comparedLane"] = compared_lane
+    return row
+
+
+def _p1b1_common(record: dict[str, Any], *, disposition: str, kind: str,
+                  semantic: dict[str, Any], representations: list[dict[str, Any]],
+                  closure: str, source_fact_refs: list[str], rationale: str,
+                  severity: str = "low") -> dict[str, Any]:
+    return {
+        "id": "final-map-p1b1-" + record["id"].removeprefix("wiki-origin-v1-"),
+        "originId": record["id"], "claimId": record["claimId"], "disposition": disposition,
+        "semanticMapping": {"kind": kind, "originFamily": record["family"], **semantic},
+        "authorityComparison": {
+            "closure": closure, "sourceFactRefs": sorted(set(source_fact_refs)),
+            "compactFactRefs": sorted(set(source_fact_refs)),
+            "resolution": "source-wins" if disposition == "conflict" else "represented-as-scoped",
+            "silentMerge": False,
+        },
+        "representation": representations,
+        "rationale": rationale,
+        "owner": "StS2 Companion P1b1 completeness review", "severity": severity,
+        "reviewedForVersion": TARGET_VERSION,
+    }
+
+
+def _validate_wiki_coordinates(mapping: dict[str, Any], record: dict[str, Any]) -> None:
+    for row in mapping["representation"]:
+        if row.get("layer") != "wiki-origin":
+            continue
+        if row.get("originId") != record["id"] or row.get("claimId") != record["claimId"] or row.get("origin") != record["origin"]:
+            raise AuditError(f"P1b1 mapping {mapping['id']} has stale wiki-origin coordinate")
+
+
+def _mapping_for_identity(record: dict[str, Any], refs: list[dict[str, Any]], indexes: dict[str, Any],
+                          p1_policy: dict[str, Any]) -> dict[str, Any]:
+    normalized = record["normalized"]
+    field, retained_value = normalized["field"], normalized["value"]
+    if not refs:
+        raise AuditError(f"P1b1 identity origin lacks exact provenance join: {record['id']}")
+    source_refs = _source_model_refs(refs)
+    source_fact_ids = [item["model"]["factId"] for item in source_refs]
+    state_representations, state_fact_ids = _state_coordinates(refs, source_refs)
+    source_fact_ids.extend(state_fact_ids)
+    retained_coord = _surface_pointer(refs[0], f"/{'displayName' if field in {'Name', 'title'} else 'type'}") if refs[0].get("body") else None
+    representations = [_wiki_coordinate(record), *state_representations]
+    if field in {"Name", "title"}:
+        if not source_refs or retained_coord is None:
+            raise AuditError(f"P1b1 name origin lacks source body: {record['id']}")
+        source_names = sorted(set(item["model"]["displayName"] for item in source_refs))
+        source_name = source_names[0] if len(source_names) == 1 else source_names
+        source_pointer = (f"/encounters/{source_refs[0]['encounterIndex']}/sourceModels/"
+                          f"{source_refs[0]['modelIndex']}/displayName")
+        if record["id"] in p1_policy["exceptions"]["eyeWithTeethConflictOriginIds"]:
+            representations = [
+                {"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                 "jsonPointer": source_pointer, "comparedLane": "source"},
+                {"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                 "jsonPointer": retained_coord, "comparedLane": "retained"},
+            ]
+            return _p1b1_common(
+                record, disposition="conflict", kind="actor-identity",
+                semantic={"actorModels": sorted(set(x["model"]["canonicalModel"] for x in source_refs)),
+                          "retainedValue": retained_value, "sourceValue": source_name,
+                          "identityScope": "exact retained body title"},
+                representations=representations, closure="closed", source_fact_refs=source_fact_ids,
+                rationale="The exact retained body title capitalizes With while shipped source localizes it as lower-case with; source hero copy wins and both lanes remain Technical.",
+                severity="medium")
+        representations.append({"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                                "jsonPointer": retained_coord, "expectedValue": retained_value})
+        representations.extend(_primary_coordinates(refs, "/displayName", expected=retained_value))
+        return _p1b1_common(
+            record, disposition="primary-present", kind="actor-state-identity",
+            semantic={"actorModels": sorted(set(x["model"]["canonicalModel"] for x in source_refs)),
+                      "stateIds": sorted(set(x["body"]["stateId"] for x in refs if x.get("body") and x["body"].get("stateId"))),
+                      "retainedValue": retained_value, "sourceDisplay": source_name,
+                      "identityScope": "exact retained body/state"},
+            representations=representations, closure="closed", source_fact_refs=source_fact_ids,
+            rationale="Exact generator provenance joins this body/state identity to checked source and to the compiled 1P/2P primary card; runtime-numbered state titles remain explicit.")
+    if field == "Type":
+        if retained_coord is None:
+            # The only body-less Type is reviewed aggregate Knight Gang.
+            retained_coord = _surface_pointer(refs[0], "/kind")
+        representations.append({"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                                "jsonPointer": retained_coord})
+        return _p1b1_common(
+            record, disposition="audit-present", kind="actor-classification",
+            semantic={"actorModels": sorted(set(x["model"]["canonicalModel"] for x in source_refs)),
+                      "retainedValue": retained_value, "scope": "retained actor class, not encounter room class"},
+            representations=representations, closure="unjoined", source_fact_refs=source_fact_ids,
+            rationale="The retained actor class is reachable in Technical audit through exact body/aggregate provenance; practical encounter kind is not silently treated as every actor's class.")
+    if field == "Debut":
+        encounter_refs = sorted({ref["encounterIndex"] for ref in refs})
+        representations.extend({"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                                "jsonPointer": f"/encounters/{index}/placement"} for index in encounter_refs)
+        if retained_value == "The Lantern Key":
+            disposition = "audit-present"
+            rationale = "The exact event provenance closes The Lantern Key linkage; primary identifies a Hive event fight but does not render the event navigation title."
+        else:
+            disposition = "primary-present"
+            for index in encounter_refs:
+                representations.extend([
+                    {"layer": "primary-presentation", "path": PRIMARY_SEMANTIC_SURFACE,
+                     "jsonPointer": f"/encounters/{index}/primaryByPlayers/{players}/header/placement"}
+                    for players in (0, 1)
+                ])
+            rationale = "Checked placement membership and exact generator ownership preserve the retained debut act on both compiled player-count primary surfaces."
+        return _p1b1_common(
+            record, disposition=disposition, kind="placement-membership",
+            semantic={"retainedValue": retained_value,
+                      "encounterIds": sorted(set(ref["encounter"]["canonicalId"] for ref in refs)),
+                      "placements": [indexes["encounters"][ref["encounter"]["canonicalId"]]["row"]["placement"] for ref in refs]},
+            representations=representations, closure="closed",
+            source_fact_refs=[ref["encounter"]["placement"]["factId"] for ref in refs], rationale=rationale)
+    if field in {"EncounterAliases", "Link"}:
+        if retained_coord:
+            representations.append({"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                                    "jsonPointer": _surface_pointer(refs[0], "/provenance")})
+        else:
+            representations.append({"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                                    "jsonPointer": _surface_pointer(refs[0])})
+        return _p1b1_common(
+            record, disposition="audit-present", kind="retained-navigation-alias",
+            semantic={"retainedValue": retained_value,
+                      "actorModels": sorted(set(x["model"]["canonicalModel"] for x in source_refs)),
+                      "scope": "retained navigation or encounter alias only"},
+            representations=representations, closure="notApplicable", source_fact_refs=source_fact_ids,
+            rationale="This exact retained link/alias is useful reconciliation metadata and resolves through generator provenance, but URL/navigation copy is not promoted as practical mechanics.")
+    raise AuditError(f"unsupported P1b1 identity field {field}")
+
+
+def _mapping_for_hp(record: dict[str, Any], refs: list[dict[str, Any]], compact: dict[str, Any]) -> dict[str, Any]:
+    if record["family"] == "patch-hp-fact":
+        return _p1b1_common(
+            record, disposition="missing/unparsed", kind="patch-hp-transition",
+            semantic={"retainedValue": record["normalized"]["value"],
+                      "scope": "historical before-to-after patch transition"},
+            representations=[_wiki_coordinate(record)], closure="unjoined", source_fact_refs=[],
+            rationale="The current endpoint is source-closed, but this atom asserts a historical before-to-after transition; a repeated current number is not proof and patch lifecycle projection remains P2.")
+    if not refs:
+        raise AuditError(f"P1b1 HP origin lacks exact provenance join: {record['id']}")
+    field = record["normalized"]["field"]
+    models = _source_model_refs(refs)
+    source_fact_ids = [row["model"]["factId"] for row in models]
+    state_representations, state_fact_ids = _state_coordinates(refs, models)
+    source_fact_ids.extend(state_fact_ids)
+    hp_numbers = [int(item.replace(",", "")) for item in re.findall(r"\d[\d,]*", record["normalized"]["value"])]
+    if field == "HP" and len(hp_numbers) == 4:
+        if record["normalized"].get("owner") != "Decimillipede":
+            raise AuditError(f"unreviewed dual-range P1b1 HP atom: {record['id']}")
+        normal = {"minimum": hp_numbers[0], "maximum": hp_numbers[1]}
+        ascended = {"minimum": hp_numbers[2], "maximum": hp_numbers[3]}
+        if not models or any(_below_a8_range(row["model"]["hp"]) != normal for row in models):
+            raise AuditError("Decimillipede normal HP does not match all exact segment models")
+        if any(ref["body"]["hpA8SinglePlayer"] != ascended for ref in refs):
+            raise AuditError("Decimillipede A8 HP does not match all exact segment bodies")
+        representations = [_wiki_coordinate(record), *state_representations]
+        for row in models:
+            representations.extend([
+                {"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                 "jsonPointer": f"/encounters/{row['encounterIndex']}/sourceModels/{row['modelIndex']}/hp/belowA8",
+                 "expectedValue": normal},
+                {"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                 "jsonPointer": f"/encounters/{row['encounterIndex']}/sourceModels/{row['modelIndex']}/hp/a8SinglePlayer",
+                 "expectedValue": ascended},
+            ])
+        representations.extend(_primary_coordinates(refs, "/hp/a8SinglePlayer", expected=ascended))
+        return _p1b1_common(
+            record, disposition="primary-present", kind="normal-and-a8-hp-ranges",
+            semantic={"actorModels": sorted(set(row["model"]["canonicalModel"] for row in models)),
+                      "normalValue": normal, "a8Value": ascended,
+                      "scope": "shared starting HP for the three exact Decimillipede segment models"},
+            representations=representations, closure="closed", source_fact_refs=source_fact_ids,
+            rationale="The invoke field structurally carries normal and A8 ranges; both values match all three exact source segment models and A8 reaches each corresponding primary card.")
+    retained = _range_claim(record["normalized"]["value"])
+    if field in {"AscHP"}:
+        state_ids = sorted(set(ref["body"]["stateId"] for ref in refs if ref["body"].get("stateId")))
+        ownership_fact_ids = sorted(set(source_fact_ids))
+        body_values = [ref["body"].get("hpA8SinglePlayer") for ref in refs]
+        if not body_values or any(value != body_values[0] for value in body_values):
+            raise AuditError(f"P1b1 A8 exact body values disagree for {record['id']}")
+        surface_value = body_values[0]
+        source_candidates = [{"ref": row, "value": row["model"]["hp"].get("a8SinglePlayer")} for row in models]
+        same_scope_source = [] if state_ids else [row for row in source_candidates if _is_typed_hp_range(row["value"])]
+        same_scope_values = {canonical_json_bytes(row["value"]) for row in same_scope_source}
+        if len(same_scope_values) > 1:
+            raise AuditError(f"P1b1 A8 exact source candidates disagree for {record['id']}")
+        source_value = same_scope_source[0]["value"] if same_scope_source else None
+        is_conflict = source_value is not None and source_value != retained
+        if surface_value != (source_value if is_conflict else retained):
+            raise AuditError(f"P1b1 A8 body/source value scope mismatch for {record['id']}")
+
+        representations = [_wiki_coordinate(record, compared_lane="retained" if is_conflict else None),
+                           *state_representations]
+        for ref in refs:
+            representations.append({
+                "layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                "jsonPointer": _surface_pointer(ref, "/hpA8SinglePlayer"),
+                "expectedValue": surface_value,
+                "evidenceRole": "same-scope-source-value" if is_conflict else "typed-a8-body-value",
+                **({"comparedLane": "source"} if is_conflict else {}),
+            })
+        primary_coordinates = _primary_coordinates(refs, "/hp/a8SinglePlayer", expected=surface_value)
+        for row in primary_coordinates:
+            row["evidenceRole"] = "primary-a8-single-player-value"
+            if is_conflict:
+                row["comparedLane"] = "source"
+        representations.extend(primary_coordinates)
+        for row in source_candidates:
+            ref, value = row["ref"], row["value"]
+            representations.append({
+                "layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                "jsonPointer": (f"/encounters/{ref['encounterIndex']}/sourceModels/"
+                                f"{ref['modelIndex']}/hp/a8SinglePlayer"),
+                "expectedValue": value,
+                "evidenceRole": "ownership-model-only" if state_ids else "same-scope-source-value",
+                **({"comparedLane": "source"} if is_conflict else {}),
+            })
+        authorities = sorted(set(
+            resolve_json_pointer({"row": ref["encounter"]},
+                f"/row/primaryByPlayers/0/bodies/{ordinal}/hp/authority")
+            for ref in refs for ordinal in ref["body"]["primaryBodyOrdinals"]
+        ))
+        value_source_fact_ids = [row["ref"]["model"]["factId"] for row in same_scope_source]
+        source_candidate_values = [
+            {"actorModel": row["ref"]["model"]["canonicalModel"], "a8SinglePlayer": row["value"],
+             "scopeRelation": "different-state-ownership-model" if state_ids else "same-a8-scope"}
+            for row in source_candidates
+        ]
+        authority_status = "source-conflict" if is_conflict else "source-closed" if source_value is not None else "retained-reference-only"
+        return _p1b1_common(
+            record, disposition="conflict" if is_conflict else "primary-present", kind="a8-hp-range",
+            semantic={"actorModels": sorted(set(row["model"]["canonicalModel"] for row in models)),
+                      "stateIds": state_ids, "retainedValue": retained,
+                      **({"sourceValue": source_value} if is_conflict else {}),
+                      "sourceOrFallbackValue": surface_value,
+                      "sourceCandidateValues": source_candidate_values,
+                      "ownershipFactRefs": ownership_fact_ids,
+                      "authorityStatus": authority_status,
+                      "primaryAuthority": authorities,
+                      "scope": "A8 single-player HP for the exact body/state before configured player scaling; another state is ownership-only"},
+            representations=representations, closure="closed" if source_value is not None else "knownUnknown",
+            source_fact_refs=value_source_fact_ids,
+            rationale=("The retained A8 value is stale against the exact same-body source/current value; source wins and the source model, compiled primary, and retained inventory lanes remain explicit."
+                       if is_conflict else
+                       "The exact A8 body/form value is typed on the primary semantic surface for both 1P/2P; source closure requires the same body scope, while state/form fallbacks remain labeled retained rather than source-closed."),
+            severity="medium" if is_conflict else "low")
+    # Normal/Base HP is intentionally Technical: primary is configured from A8.
+    # A retained body/state ID establishes ownership only.  The exact retained
+    # hpBelowA8 coordinate below is the value evidence; model HP is comparable
+    # only for an unscoped/base body, never for a different lifecycle state.
+    state_ids = sorted(set(ref["body"]["stateId"] for ref in refs if ref["body"].get("stateId")))
+    ownership_fact_ids = sorted(set(source_fact_ids))
+    retained_coordinates = []
+    for ref in refs:
+        body_value = ref["body"].get("hpBelowA8")
+        if body_value != retained:
+            raise AuditError(
+                f"P1b1 HP exact retained value evidence mismatch for {record['id']}: "
+                f"expected {retained}, found {body_value!r}"
+            )
+        if ref["body"].get("hpBelowA8Authority") != "retained-wiki-reference":
+            raise AuditError(f"P1b1 HP retained authority is missing for {record['id']}")
+        retained_coordinates.append({
+            "layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+            "jsonPointer": _surface_pointer(ref, "/hpBelowA8"),
+            "expectedValue": retained, "evidenceRole": "retained-normal-value",
+        })
+
+    source_candidates = []
+    for row in models:
+        value = _below_a8_range(row["model"]["hp"])
+        source_candidates.append({"ref": row, "value": value})
+    same_scope_source = [] if state_ids else [row for row in source_candidates if row["value"] is not None]
+    same_scope_values = {canonical_json_bytes(row["value"]) for row in same_scope_source}
+    if len(same_scope_values) > 1:
+        raise AuditError(f"P1b1 HP exact source candidates disagree for {record['id']}")
+    source_value = same_scope_source[0]["value"] if same_scope_source else None
+    is_conflict = source_value is not None and source_value != retained
+
+    representations = [_wiki_coordinate(record), *state_representations, *retained_coordinates]
+    for row in source_candidates:
+        ref, value = row["ref"], row["value"]
+        source_representation = {
+            "layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+            "jsonPointer": (f"/encounters/{ref['encounterIndex']}/sourceModels/"
+                            f"{ref['modelIndex']}/hp/belowA8"),
+            "expectedValue": value,
+            "evidenceRole": ("ownership-model-only" if state_ids else
+                             "same-scope-source-value" if value is not None else "same-scope-source-unknown"),
+        }
+        if is_conflict:
+            source_representation["comparedLane"] = "source"
+        representations.append(source_representation)
+    if is_conflict:
+        for row in retained_coordinates:
+            row["comparedLane"] = "retained"
+        # Wiki inventory remains provenance, not the retained value-bearing lane.
+        representations[0] = _wiki_coordinate(record)
+
+    runtime_starting_hp_effects = []
+    if record["normalized"].get("owner") == "Punch Construct":
+        for row in models:
+            for initial_index, fact in enumerate(row["model"]["initialState"]):
+                if fact["effect"].get("kind") in {"setState", "setCurrentHp"}:
+                    runtime_starting_hp_effects.append(fact)
+                    representations.append({
+                        "layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                        "jsonPointer": (f"/encounters/{row['encounterIndex']}/sourceModels/"
+                                        f"{row['modelIndex']}/initialState/{initial_index}"),
+                        "evidenceRole": "runtime-starting-adjustment-not-base-hp",
+                    })
+                    ownership_fact_ids.append(fact["factId"])
+    value_source_fact_ids = [row["ref"]["model"]["factId"] for row in same_scope_source]
+    source_candidate_values = [
+        {"actorModel": row["ref"]["model"]["canonicalModel"], "belowA8": row["value"],
+         "scopeRelation": "different-state-ownership-model" if state_ids else "same-base-scope"}
+        for row in source_candidates
+    ]
+    authority_status = "source-conflict" if is_conflict else "source-closed" if source_value is not None else "retained-reference-only"
+    return _p1b1_common(
+        record, disposition="conflict" if is_conflict else "audit-present", kind="normal-hp-range",
+        semantic={"actorModels": sorted(set(row["model"]["canonicalModel"] for row in models)),
+                  "stateIds": state_ids, "retainedValue": retained,
+                  "sourceValue": source_value,
+                  "sourceCandidateValues": source_candidate_values,
+                  "ownershipFactRefs": sorted(set(ownership_fact_ids)),
+                  "authorityStatus": authority_status,
+                  "retainedFallbackSuppliesAuditValue": source_value is None,
+                  "runtimeStartingHpEffects": runtime_starting_hp_effects,
+                  "scope": "normal/below-A8 HP for the exact retained body/state; distinct from A8, another state, maximum HP, runtime starting reduction, and configured player scaling"},
+        representations=representations, closure="closed" if source_value is not None else "knownUnknown",
+        source_fact_refs=value_source_fact_ids,
+        rationale=("Closed same-body source gives a different normal/base HP range; exact source and retained value coordinates remain separate and source wins."
+                   if is_conflict else
+                   "The exact retained normal/base HP value is typed in Technical audit; source closure is claimed only when the same unscoped body model has the identical below-A8 value, while state IDs and other-state model HP remain ownership evidence only."),
+        severity="medium" if is_conflict else "low")
+
+
+
+def _mapping_for_starting(record: dict[str, Any], refs: list[dict[str, Any]], compact: dict[str, Any],
+                          conflict_review: dict[str, Any] | None) -> dict[str, Any]:
+    if record["family"] == "patch-starting-power":
+        return _p1b1_common(
+            record, disposition="missing/unparsed", kind="patch-starting-power-transition",
+            semantic={"retainedValue": record["normalized"]["value"],
+                      "scope": "historical Galvanic A9 before-to-after transition"},
+            representations=[_wiki_coordinate(record)], closure="unjoined", source_fact_refs=[],
+            rationale="The current Galvanic endpoint is projected, but this exact historical 6-to-8 patch transition is not; patch lifecycle projection remains P2.")
+    if not refs:
+        raise AuditError(f"P1b1 starting-Power origin lacks exact provenance join: {record['id']}")
+    normalized = record["normalized"]
+    if normalized.get("parseStatus") != "typed" or not normalized.get("power"):
+        raise AuditError(f"P1b1 starting-Power atom is not typed: {record['id']}")
+    powers = compact["payload"]["sourceFacts"]["models"]["powers"]
+    power_matches = [(index, row) for index, row in enumerate(powers) if row["englishTitle"] == normalized["power"]]
+    if not power_matches:
+        raise AuditError(f"P1b1 Power identity is absent from canonical title inventory: {record['id']}")
+    model_refs = _source_model_refs(refs)
+    candidate_ids = {row["canonicalId"] for _, row in power_matches}
+    direct = []
+    for model_ref in model_refs:
+        for initial_index, fact in enumerate(model_ref["model"]["initialState"]):
+            effect = fact["effect"]
+            if effect.get("kind") == "applyPower" and effect.get("model") in candidate_ids:
+                direct.append((model_ref, initial_index, fact))
+    selected_ids = sorted(set(fact[2]["effect"]["model"] for fact in direct))
+    selected_matches = [(index, row) for index, row in power_matches if row["canonicalId"] in selected_ids]
+    if len(power_matches) > 1 and not selected_matches:
+        raise AuditError(f"P1b1 duplicate Power title lacks exact owner disambiguation: {record['id']}")
+    represented_matches = selected_matches or power_matches
+    state_ids = sorted(set(ref["body"]["stateId"] for ref in refs if ref.get("body") and ref["body"].get("stateId")))
+    state_representations, state_fact_ids = _state_coordinates(refs, model_refs)
+    representations = [_wiki_coordinate(record), *state_representations]
+    for power_index, power in represented_matches:
+        representations.append({"layer": "technical-audit", "path": "data/encounter-facts-v0.111.0.json",
+                                "jsonPointer": f"/payload/sourceFacts/models/powers/{power_index}/canonicalId",
+                                "expectedValue": power["canonicalId"]})
+    # Power definitions establish canonical identity, while state facts establish only
+    # ownership. Neither proves that the Power is part of the model's initial state;
+    # only a matching initialState applyPower fact can close that semantic claim.
+    source_fact_ids = [power["factId"] for _, power in represented_matches]
+    source_expressions = []
+    for model_ref, initial_index, fact in direct:
+        pointer = (f"/encounters/{model_ref['encounterIndex']}/sourceModels/{model_ref['modelIndex']}"
+                   f"/initialState/{initial_index}")
+        representations.append({"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                                "jsonPointer": pointer})
+        source_fact_ids.append(fact["factId"])
+        source_expressions.append(fact["baseValue"])
+
+    # Join the exact normalized title and optional A9 amount to typed body tokens.
+    # A title-only origin is a weaker compatible identity claim; an explicit amount
+    # must equal the current joined A9 token before practical presence is credited.
+    at_a9_matches = []
+    body_refs = [ref for ref in refs if ref.get("body")]
+    if not body_refs:
+        raise AuditError(f"P1b1 starting-Power origin lacks an exact retained body: {record['id']}")
+    for ref in body_refs:
+        tokens = ref["body"].get("startingPowerTokens", {}).get("atA9")
+        if not isinstance(tokens, list):
+            raise AuditError(f"P1b1 starting-Power A9 token surface is malformed: {record['id']}")
+        title_matches = [(index, token) for index, token in enumerate(tokens)
+                         if token.get("title") == normalized["power"]]
+        if len(title_matches) != 1:
+            raise AuditError(f"P1b1 starting-Power title has no unique exact body token: {record['id']}")
+        token_index, token = title_matches[0]
+        at_a9_matches.append((ref, token_index, token))
+    current_token_values = {json.dumps(token, sort_keys=True, separators=(",", ":"))
+                            for _, _, token in at_a9_matches}
+    if len(current_token_values) != 1:
+        raise AuditError(f"P1b1 starting-Power joined bodies disagree on the current token: {record['id']}")
+    current_token = at_a9_matches[0][2]
+    retained_token = {"title": normalized["power"]}
+    retained_amount = normalized.get("amountAtA9")
+    if retained_amount is not None:
+        retained_token["amount"] = retained_amount
+    is_conflict = retained_amount is not None and current_token.get("amount") != retained_amount
+    if is_conflict != (conflict_review is not None):
+        raise AuditError(f"P1b1 starting-Power conflict review drifted: {record['id']}")
+    configured_matches = []
+    for ref in body_refs:
+        configured_rows = ref["body"].get("startingPowerTokens", {}).get("configuredByPlayers")
+        if not isinstance(configured_rows, list) or len(configured_rows) != len(ref["encounter"]["primaryByPlayers"]):
+            raise AuditError(f"P1b1 starting-Power configured token surface is malformed: {record['id']}")
+        for player_index, configured in enumerate(configured_rows):
+            player_row = ref["encounter"]["primaryByPlayers"][player_index]
+            if configured.get("players") != player_row.get("players") or not isinstance(configured.get("tokens"), list):
+                raise AuditError(f"P1b1 starting-Power player token scope drifted: {record['id']}")
+            title_matches = [(index, token) for index, token in enumerate(configured["tokens"])
+                             if token.get("title") == normalized["power"]]
+            if len(title_matches) > 1:
+                raise AuditError(f"P1b1 starting-Power title has duplicate configured tokens: {record['id']}")
+            if not title_matches:
+                raise AuditError(f"P1b1 starting-Power title has no exact configured token: {record['id']}")
+            token_index, token = title_matches[0]
+            configured_matches.append((ref, player_index, token_index, token))
+
+    shown = []
+    shown_complete = True
+    for ref in body_refs:
+        for player_index, player in enumerate(ref["encounter"]["primaryByPlayers"]):
+            for body_ordinal in ref["body"]["primaryBodyOrdinals"]:
+                is_shown = player["bodies"][body_ordinal]["startingStateShown"] is True
+                shown_complete = shown_complete and is_shown
+                if is_shown:
+                    shown.append((ref, player_index, body_ordinal))
+    practical_present = bool(configured_matches) and shown_complete and bool(shown)
+
+    current_reference_fallback = bool(normalized.get("amountAtA9") is not None and direct and
+                                      any(_expression_integer(fact[2]["baseValue"].get("expression") or {}, 9) is None
+                                          for fact in direct))
+    closure = "knownUnknown" if current_reference_fallback else "closed" if direct else "knownUnknown"
+    fallback = current_reference_fallback and not is_conflict
+    configured_tokens = []
+    configured_seen = set()
+    for ref, player_index, _, token in configured_matches:
+        players = ref["encounter"]["primaryByPlayers"][player_index]["players"]
+        key = (players, json.dumps(token, sort_keys=True, separators=(",", ":")))
+        if key not in configured_seen:
+            configured_seen.add(key)
+            configured_tokens.append({"players": players, "token": token})
+    if conflict_review is not None:
+        required_review = {"originId", "claimId", "retainedAtA9Token", "currentAtA9Token",
+                           "currentConfiguredTokensByPlayers", "rationale"}
+        if (set(conflict_review) != required_review or conflict_review["originId"] != record["id"] or
+                conflict_review["claimId"] != record["claimId"] or len(conflict_review["rationale"]) < 20 or
+                conflict_review["retainedAtA9Token"] != retained_token or
+                conflict_review["currentAtA9Token"] != current_token or
+                conflict_review["currentConfiguredTokensByPlayers"] != configured_tokens):
+            raise AuditError(f"P1b1 starting-Power conflict value guard drifted: {record['id']}")
+
+    semantic = {"actorModels": sorted(set(row["model"]["canonicalModel"] for row in model_refs)),
+                "stateIds": state_ids, "powerIds": [power["canonicalId"] for _, power in represented_matches],
+                "powerTitle": normalized["power"],
+                "baseAmount": normalized.get("baseAmount"), "amountAtA9": normalized.get("amountAtA9"),
+                "ascensionAmounts": normalized.get("ascensionAmounts", []),
+                "currentAtA9Token": current_token, "configuredTokensByPlayers": configured_tokens,
+                "sourceValueExpressions": source_expressions,
+                "ownershipFactRefs": sorted(set(state_fact_ids)),
+                "currentReferenceFallbackSuppliesPrimaryAmount": current_reference_fallback,
+                "retainedFallbackSuppliesPrimaryAmount": fallback,
+                "scope": "one exact starting Power identity/stack on its retained body or state"}
+    if is_conflict:
+        semantic.update({"retainedValue": retained_token, "sourceValue": current_token,
+                         "sourceOrFallbackValue": current_token})
+        source_ref, token_index, _ = at_a9_matches[0]
+        representations = [
+            {"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+             "jsonPointer": _surface_pointer(source_ref, f"/startingPowerTokens/atA9/{token_index}"),
+             "expectedValue": current_token, "comparedLane": "source"},
+        ]
+        for ref, player_index, configured_index, token in configured_matches:
+            representations.append({
+                "layer": "primary-presentation", "path": PRIMARY_SEMANTIC_SURFACE,
+                "jsonPointer": _surface_pointer(
+                    ref, f"/startingPowerTokens/configuredByPlayers/{player_index}/tokens/{configured_index}"),
+                "expectedValue": token, "comparedLane": "source",
+                "players": ref["encounter"]["primaryByPlayers"][player_index]["players"],
+            })
+        representations.append(_wiki_coordinate(record, compared_lane="retained"))
+        disposition = "conflict"
+        rationale = ("The exact retained starting-Power amount conflicts with the current typed A9 body token; "
+                     "the current source/reference lane wins and both values remain explicit without crediting stale practical copy.")
+    else:
+        for ref, token_index, token in at_a9_matches:
+            representations.extend([
+                {"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                 "jsonPointer": _surface_pointer(ref, "/startsWithA9"),
+                 "expectedValue": ref["body"]["startsWithA9"]},
+                {"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                 "jsonPointer": _surface_pointer(ref, f"/startingPowerTokens/atA9/{token_index}"),
+                 "expectedValue": token},
+            ])
+        for ref, player_index, token_index, token in configured_matches:
+            representations.append({
+                "layer": "primary-presentation", "path": PRIMARY_SEMANTIC_SURFACE,
+                "jsonPointer": _surface_pointer(
+                    ref, f"/startingPowerTokens/configuredByPlayers/{player_index}/tokens/{token_index}"),
+                "expectedValue": token,
+                "players": ref["encounter"]["primaryByPlayers"][player_index]["players"],
+            })
+        for ref, player_index, body_ordinal in shown:
+            representations.append({"layer": "primary-presentation", "path": PRIMARY_SEMANTIC_SURFACE,
+                                    "jsonPointer": (f"/encounters/{ref['encounterIndex']}/primaryByPlayers/"
+                                                    f"{player_index}/bodies/{body_ordinal}/startingStateShown"),
+                                    "expectedValue": True,
+                                    "players": ref["encounter"]["primaryByPlayers"][player_index]["players"]})
+        disposition = "primary-present" if practical_present else "audit-present"
+        rationale = ("The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only."
+                     if practical_present else
+                     "The exact starting identity/amount remains Technical; the specialized primary lacks a complete typed starting-state coordinate, so this is not optimistically called primary-present. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.")
+    return _p1b1_common(
+        record, disposition=disposition, kind="starting-power-stack", semantic=semantic,
+        representations=representations, closure=closure, source_fact_refs=source_fact_ids,
+        rationale=rationale, severity="medium" if is_conflict else "low")
+
+
+def _mapping_for_prose(record: dict[str, Any], review: dict[str, Any], indexes: dict[str, Any]) -> dict[str, Any]:
+    encounter_refs = [indexes["encounters"].get(encounter_id) for encounter_id in review["encounterIds"]]
+    if any(row is None for row in encounter_refs):
+        raise AuditError(f"P1b1 prose review has unresolved encounter: {record['id']}")
+    source_rows = []
+    representations = [_wiki_coordinate(record)]
+    source_fact_ids = []
+    for item in encounter_refs:
+        index, encounter = item["index"], item["row"]
+        typed = {"encounterId": encounter["canonicalId"], "roster": encounter["roster"],
+                 "production": encounter["production"], "placement": encounter["placement"]}
+        source_rows.append(typed)
+        source_fact_ids.extend([encounter["factId"], encounter["placement"]["factId"]])
+        representations.append({"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+                                "jsonPointer": f"/encounters/{index}/roster"})
+        if review["claimKind"] != "placement-context":
+            representations.extend([
+                {"layer": "primary-presentation", "path": PRIMARY_SEMANTIC_SURFACE,
+                 "jsonPointer": f"/encounters/{index}/primaryByPlayers/{players}"}
+                for players in (0, 1)
+            ])
+    semantic = {
+        "retainedClaim": record["normalized"]["value"], "claimKind": review["claimKind"],
+        "relation": review["relation"], "scope": review["scope"], "sourceSemantics": source_rows,
+    }
+    if review["disposition"] == "conflict":
+        if len(source_rows) != 1:
+            raise AuditError(f"P1b1 roster conflict is not exactly scoped: {record['id']}")
+        semantic["retainedValue"] = {
+            "smallBranch": {"draws": "fixed distinct Leaf plus Twig", "duplicatesPossible": False},
+        }
+        semantic["sourceValue"] = source_rows[0]["roster"]["grammar"]
+        representations = [
+            {"layer": "technical-audit", "path": PRIMARY_SEMANTIC_SURFACE,
+             "jsonPointer": f"/encounters/{encounter_refs[0]['index']}/roster/grammar", "comparedLane": "source"},
+            _wiki_coordinate(record, compared_lane="retained"),
+        ]
+        rationale = "The retained Strangler small branch forces one Leaf plus one Twig, while closed source performs two independent uniform small-slime draws and permits duplicates; both lanes remain explicit."
+    elif review["claimKind"] == "produced-roster":
+        rationale = "This exact claim is mapped to typed production facts and produced primary roles, never to the initial roster; actor/count scope remains explicit."
+    else:
+        rationale = "This exact reviewed prose atom maps to the scoped source roster/placement semantics it actually asserts; omitted order, independence, or replacement constraints are not credited to the retained claim."
+    return _p1b1_common(
+        record, disposition=review["disposition"], kind="roster-or-lead-claim",
+        semantic=semantic, representations=representations,
+        closure="closed", source_fact_refs=source_fact_ids, rationale=rationale,
+        severity="high" if review["disposition"] == "conflict" else "low")
+
+
+def apply_p1b1_mappings(records: list[dict[str, Any]], p1_policy: dict[str, Any], *,
+                         compact: dict[str, Any], primary_surface: dict[str, Any]) -> dict[str, Any]:
+    required = {"schemaVersion", "phase", "reviewedForVersion", "reviewer", "targetCategories",
+                "expectedTargetCount", "expectedFamilyCounts", "expectedOrigins",
+                "aggregateOwnerAliases", "proseReviews", "exceptions", "reviewNotes"}
+    if set(p1_policy) != required or p1_policy["schemaVersion"] != 1 or p1_policy["phase"] != "P1b1":
+        raise AuditError("P1b1 reviewed policy schema drifted")
+    if p1_policy["reviewedForVersion"] != TARGET_VERSION or set(p1_policy["targetCategories"]) != P1B1_TARGET_CATEGORIES:
+        raise AuditError("P1b1 reviewed policy target/version drifted")
+    targets = [record for record in records
+               if record["category"] in P1B1_TARGET_CATEGORIES and record["reviewState"] == "captured-unreconciled"]
+    actual_guards = [{"originId": row["id"], "claimId": row["claimId"], "family": row["family"]}
+                     for row in sorted(targets, key=lambda item: item["id"])]
+    if actual_guards != p1_policy["expectedOrigins"]:
+        raise AuditError("P1b1 target origin/claim guards are stale or a future target origin is unreviewed")
+    if len(targets) != p1_policy["expectedTargetCount"]:
+        raise AuditError("P1b1 target family count drifted")
+    family_counts = _counter(targets, "family")
+    if family_counts != p1_policy["expectedFamilyCounts"]:
+        raise AuditError(f"P1b1 exact family counts drifted: {family_counts}")
+    indexes = _surface_indexes(primary_surface)
+    aliases: dict[tuple[Any, ...], str] = {}
+    for alias in p1_policy["aggregateOwnerAliases"]:
+        key = (alias["path"], alias["tableKey"], alias["recordOrdinal"])
+        if key in aliases or alias["encounterId"] not in indexes["encounters"] or len(alias["rationale"]) < 20:
+            raise AuditError("P1b1 aggregate owner alias is duplicate/unresolved/unreviewed")
+        aliases[key] = alias["encounterId"]
+    prose = {row["originId"]: row for row in p1_policy["proseReviews"]}
+    if len(prose) != len(p1_policy["proseReviews"]):
+        raise AuditError("duplicate P1b1 prose review")
+    for row in prose.values():
+        conflict_relation = str(row.get("relation", "")).startswith("conflict")
+        if conflict_relation != (row.get("disposition") == "conflict"):
+            raise AuditError("P1b1 prose conflict relation/disposition mismatch")
+    conflict_review_rows = p1_policy["exceptions"].get("startingPowerConflictReviews")
+    if not isinstance(conflict_review_rows, list):
+        raise AuditError("P1b1 starting-Power conflict reviews are missing")
+    starting_conflicts = {row.get("originId"): row for row in conflict_review_rows if isinstance(row, dict)}
+    if len(starting_conflicts) != len(conflict_review_rows) or None in starting_conflicts:
+        raise AuditError("P1b1 starting-Power conflict reviews are duplicate or malformed")
+    target_ids = {record["id"] for record in targets if record["category"] == "starting-power-status-stack"}
+    if not set(starting_conflicts).issubset(target_ids):
+        raise AuditError("P1b1 starting-Power conflict review has an unknown origin")
+    documents = _mapping_documents({}, compact, {}, primary_surface)
+    # Only compact/surface paths are used by P1b1 validation; empty placeholders
+    # ensure accidental raw/book pointers fail resolution rather than read stale data.
+    disposition_counts: dict[str, int] = {}
+    mapped_ids = []
+    for record in targets:
+        refs = _body_refs(record, indexes, aliases)
+        if record["family"] in {"article-identity-field", "module-identity-field"}:
+            mapping = _mapping_for_identity(record, refs, indexes, p1_policy)
+        elif record["category"] == "hp-ascension-scaling":
+            mapping = _mapping_for_hp(record, refs, compact)
+        elif record["category"] == "starting-power-status-stack":
+            mapping = _mapping_for_starting(record, refs, compact, starting_conflicts.get(record["id"]))
+        elif record["family"] in {"article-lead", "article-roster", "module-roster"}:
+            review = prose.get(record["id"])
+            if not review or review["claimId"] != record["claimId"]:
+                raise AuditError(f"missing/stale P1b1 prose review: {record['id']}")
+            mapping = _mapping_for_prose(record, review, indexes)
+        else:
+            raise AuditError(f"unsupported P1b1 target family {record['family']}")
+        _validate_wiki_coordinates(mapping, record)
+        # Validate resolvable non-wiki coordinates with existing strict pointer/value/lane checks.
+        non_wiki = [row for row in mapping["representation"] if row["layer"] != "wiki-origin"]
+        if non_wiki:
+            candidate = {**mapping, "representation": non_wiki}
+            _validate_representation(candidate, documents,
+                                     require_conflict_lanes=False)
+        if record["category"] == "hp-ascension-scaling":
+            _validate_hp_value_evidence(mapping, documents)
+        if mapping["disposition"] == "conflict":
+            lanes = {row["comparedLane"] for row in mapping["representation"] if "comparedLane" in row}
+            if lanes != {"source", "retained"}:
+                raise AuditError(f"P1b1 conflict {mapping['id']} lacks exact both-lane representation")
+        _attach_mapping(record, mapping)
+        mapped_ids.append(record["id"])
+        disposition_counts[mapping["disposition"]] = disposition_counts.get(mapping["disposition"], 0) + 1
+    if set(prose) != {row["id"] for row in targets if row["family"] in {"article-lead", "article-roster", "module-roster"}}:
+        raise AuditError("P1b1 prose policy has unused or missing exact origins")
+    return {"mappedOriginIds": sorted(mapped_ids), "dispositionCounts": dict(sorted(disposition_counts.items())),
+            "familyCounts": family_counts, "atomizationCorrection": {
+                "priorSnapshotOriginCount": 4433, "correctedOriginCount": 4438,
+                "addedStartingPowerOrigins": 5,
+                "reason": "Four comma-separated Test Subject Power atoms and Tough Egg Minion/Hatch were split into exact per-Power origins.",
+            }}
+
 def _validate_policy(policy: dict[str, Any]) -> None:
     required = {
         "schemaVersion", "targetVersion", "targetBranch", "review",
@@ -1706,9 +2846,11 @@ def _manifest_paths(root: Path) -> list[str]:
         "tools/.wiki/pages.json", "tools/.wiki/index.json",
         *[f"tools/.wiki/{stem}.lua" for stem in MODULE_STEMS],
         "data/encounters.json", "data/game-v0.111.0-source.json",
-        "data/encounter-facts-v0.111.0.json", DEFAULT_POLICY,
-        "tools/generate-book.py", "tools/retained_wiki.py", "tools/audit-retained-wiki.py",
-        "src/source-presentation.mjs", "package.json", "README.md",
+        "data/encounter-facts-v0.111.0.json", PRIMARY_SEMANTIC_SURFACE,
+        DEFAULT_POLICY, DEFAULT_P1B1_POLICY, "tools/primary-semantic-aliases-v0.111.0.json",
+        "tools/generate-book.py", "tools/generate-primary-semantic-surface.mjs",
+        "tools/retained_wiki.py", "tools/audit-retained-wiki.py", "tools/run-python-tests.py",
+        "src/book.mjs", "src/source-presentation.mjs", "package.json", "README.md",
     ]
     paths.extend(str(path.relative_to(root)) for path in sorted((root / "docs").glob("*.md")))
     return paths
@@ -1932,6 +3074,8 @@ def build_artifact(root: Path) -> dict[str, Any]:
     root = root.resolve()
     policy = load_json(root / DEFAULT_POLICY)
     _validate_policy(policy)
+    p1b1_policy = load_json(root / DEFAULT_P1B1_POLICY)
+    primary_surface = load_json(root / PRIMARY_SEMANTIC_SURFACE)
     pages_document = load_json(root / "tools/.wiki/pages.json")
     index = load_json(root / "tools/.wiki/index.json")
     book = load_json(root / "data/encounters.json")
@@ -1970,8 +3114,8 @@ def build_artifact(root: Path) -> dict[str, Any]:
     category_counts = _counter(records, "category")
     family_counts = _counter(records, "family")
     _validate_expected_counts(policy, category_counts, family_counts)
-    if len(records) != 4433:
-        raise AuditError(f"overall atom denominator drift: expected 4433, derived {len(records)}")
+    if len(records) != 4438:
+        raise AuditError(f"overall atom denominator drift: expected 4438, derived {len(records)}")
     expected_metrics = {
         "articleIdentityRecords": 105, "articleMoveRows": 293, "articlePatternRecords": 105,
         "intentsTransclusions": 2, "moduleRecords": 105, "moduleMoveRows": 301,
@@ -1981,16 +3125,19 @@ def build_artifact(root: Path) -> dict[str, Any]:
         raise AuditError(f"structural denominator drift: expected {expected_metrics}, derived {metrics}")
 
     pre_mapping_counts = _counter(records, "reviewState")
-    if pre_mapping_counts != {"captured-unreconciled": 3568, "policy-reviewed-exclusion": 865}:
+    if pre_mapping_counts != {"captured-unreconciled": 3573, "policy-reviewed-exclusion": 865}:
         raise AuditError(f"pre-mapping review-state denominator drift: {pre_mapping_counts}")
-    mapping_summary = apply_final_mappings(
+    p1b0_mapping_summary = apply_final_mappings(
         records, policy, book=book, compact=compact, raw_source=raw_source,
+    )
+    p1b1_mapping_summary = apply_p1b1_mappings(
+        records, p1b1_policy, compact=compact, primary_surface=primary_surface,
     )
     review_counts = _counter(records, "reviewState")
     if review_counts != {
-        "captured-unreconciled": 3519,
+        "captured-unreconciled": 2253,
         "policy-reviewed-exclusion": 865,
-        FINAL_REVIEW_STATE: 49,
+        FINAL_REVIEW_STATE: 1320,
     }:
         raise AuditError(f"review-state denominator drift: {review_counts}")
     for record in records:
@@ -2029,6 +3176,10 @@ def build_artifact(root: Path) -> dict[str, Any]:
             page_record_membership[record["membership"]] += 1
     if page_record_membership != {"current": 104, "deprecated": 1}:
         raise AuditError(f"article identity membership drift: {page_record_membership}")
+
+    final_disposition_counts = _counter([record for record in records if "disposition" in record], "disposition")
+    if sum(final_disposition_counts.values()) + review_counts.get("captured-unreconciled", 0) != len(records):
+        raise AuditError("P1b1 final disposition and captured counts do not reconcile to all origins")
 
     origin_lines = "".join(record["id"] + "\n" for record in records).encode("utf-8")
     claim_origin_lines = "".join(record["id"] + "\0" + record["claimId"] + "\n" for record in records).encode("utf-8")
@@ -2116,10 +3267,19 @@ def build_artifact(root: Path) -> dict[str, Any]:
         },
         "reviewCorrections": corrections,
         "finalMappings": {
-            "phase": "P1b0",
-            "mappedOriginCount": len(mapping_summary["mappedOriginIds"]),
-            "researchCountCorrections": mapping_summary["researchCountCorrections"],
-            "compactTitleConflicts": mapping_summary["compactTitleConflicts"],
+            "phase": "P1b1",
+            "mappedOriginCount": review_counts[FINAL_REVIEW_STATE],
+            "p1b0": {
+                "mappedOriginCount": len(p1b0_mapping_summary["mappedOriginIds"]),
+                "researchCountCorrections": p1b0_mapping_summary["researchCountCorrections"],
+                "compactTitleConflicts": p1b0_mapping_summary["compactTitleConflicts"],
+            },
+            "p1b1": {
+                "mappedOriginCount": len(p1b1_mapping_summary["mappedOriginIds"]),
+                "targetFamilyCounts": p1b1_mapping_summary["familyCounts"],
+                "dispositionCounts": p1b1_mapping_summary["dispositionCounts"],
+                "atomizationCorrection": p1b1_mapping_summary["atomizationCorrection"],
+            },
         },
         "researchBaseline": {
             "status": "corrected-historical-semantic-review-reference-not-applied-as-p1a-record-dispositions",
@@ -2129,7 +3289,7 @@ def build_artifact(root: Path) -> dict[str, Any]:
             },
             "objectiveNoteGaps": 79,
             "aggregateDispositionTotals": {
-                "primary-present": 2167,
+                "primary-present": 2172,
                 "audit-present": 1241,
                 "source-present-not-projected": 2,
                 "retained-book-only": 0,
@@ -2137,9 +3297,9 @@ def build_artifact(root: Path) -> dict[str, Any]:
                 "missing/unparsed": 103,
                 "intentionally-excluded": 865,
                 "stale/deprecated/version-ambiguous": 42,
-                "total": 4433,
+                "total": 4438,
             },
-            "warning": "These corrected P0 research totals are a review baseline only. P1a records use captured-unreconciled until P1b assigns final semantic dispositions and representation paths.",
+            "warning": "These corrected historical totals include the five-origin atomization adjustment only. Materialized P1b0/P1b1 records, not this baseline estimate, are authoritative for completed families.",
         },
         "exclusionPolicies": policy["exclusionPolicies"],
         "readiness": {
@@ -2154,16 +3314,16 @@ def build_artifact(root: Path) -> dict[str, Any]:
                 f"{review_counts['captured-unreconciled']} retained-origin atoms remain captured-unreconciled pending later P1b semantic review.",
                 "Unexpanded Power Infobox and Intents template bodies are not present in the retained snapshot.",
                 "Global source extraction readiness remains false even though its declared encounter-projection scope is ready.",
-                "P1b0 maps only reviewed conflicts and Doormaker stale membership; remaining mechanical atoms stay non-final.",
+                "P1b1 maps identity, roster, HP, and starting-state atoms; move, Pattern, Power-description, and objective Note families remain non-final.",
             ],
         },
         "summary": {
             "recordCount": len(records),
             "reviewStateCounts": review_counts,
             "membershipCounts": _counter(records, "membership"),
-            "finalDispositionCounts": mapping_summary["dispositionCounts"],
+            "finalDispositionCounts": final_disposition_counts,
             "remainingCapturedUnreconciled": review_counts.get("captured-unreconciled", 0),
-            "compactTitleConflictCount": len(mapping_summary["compactTitleConflicts"]),
+            "compactTitleConflictCount": len(p1b0_mapping_summary["compactTitleConflicts"]),
             "sortedOriginIdsSha256": sha256_bytes(origin_lines),
             "sortedClaimOriginIdsSha256": sha256_bytes(claim_origin_lines),
             "ordering": "records sorted by stable origin ID; no timestamp, filesystem order, inode, temporary path, or absolute path participates",
@@ -2175,7 +3335,7 @@ def build_artifact(root: Path) -> dict[str, Any]:
     if artifact["readiness"]["semanticReconciliationComplete"] and review_counts.get("captured-unreconciled", 0):
         raise AuditError("semantic readiness true while captured-unreconciled atoms remain")
     if artifact["readiness"]["overallReconciliationReady"]:
-        raise AuditError("P1b0 cannot report overall reconciliation readiness")
+        raise AuditError("P1b1 cannot report overall reconciliation readiness")
     return artifact
 
 

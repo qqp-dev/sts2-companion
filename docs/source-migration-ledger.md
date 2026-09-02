@@ -115,6 +115,41 @@ claims, while damage claims agree at 13.
 Build order is book → compact projection → wiki reconciliation. Ordinary/event
 primary counts remain 81+8. Wiki is never source authority.
 
+## P1b1 exact identity/roster/HP/starting-state reconciliation
+
+P1b1 adds exact generator provenance to retained bodies and a generated typed
+1P/2P primary semantic surface. A reviewed policy guards every target origin and
+claim; production joins use article body ordinals, module record ordinals,
+canonical models, and six explicit state/model aliases, never display-name
+folding or fuzzy matching.
+
+A required atomization repair splits four comma-separated Test Subject Power
+origins and Tough Egg's adjacent Minion/Hatch origin. The inventory is therefore
+4,438, P1b1 maps 1,271 rather than the preliminary 1,266, total final mappings
+are 1,320, and 2,253 unrelated records remain captured. P1b1 materializes 787
+primary, 470 audit, eleven conflict, and three missing dispositions. The eleven new
+conflicts include source-winning Eye capitalization, Strangler independent
+small draws, six normal/base HP disagreements, and stale module A8 values for
+Exoskeleton/Entomancer. Exact patch transitions remain missing rather than being
+credited from current endpoint numbers.
+
+P1b1 QA preserves a distinct retained/wiki `hpBelowA8` range per body/form
+through book → compact legacy lane → primary semantic surface. This is audit
+evidence only and does not alter source-winning A8 or player-count presentation.
+The HP mapper and a family-wide invariant require exact normalized value, actor,
+state, Ascension, and player scope at every value-bearing pointer. State IDs are
+ownership only: Hatchling base `19–22` does not reuse Tough Egg base `14–18` or
+Hatchling A8 `20–23`, and Test Subject phase bases `100/200/300` do not reuse the
+source Phase 1 value or A8 `111/212/313`. Retained-only state forms and Axebot's
+symbolic source base remain `knownUnknown`; only an exact same-scope source HP
+coordinate and fact ref can close source authority.
+
+All 81 ordinary and eight event primaries remain non-null. Mysterious Knight is
+still source-only primary plus retained audit reference; Doormaker stays
+archive-only. Fabricator's initial source roster remains Fabricator alone, with
+four separately typed production possibilities. Snapshot, semantic, and overall
+readiness remain false; P1b2/P1c/P2 are not claimed complete.
+
 ## Three-wave source-first model (development only)
 
 Source-first migration is split into independently reviewable waves:

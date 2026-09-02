@@ -448,7 +448,7 @@ test("named random roster and production regressions retain exact structure", ()
 });
 
 test("source artifact is not consumed and runtime wiki book remains byte-identical", () => {
-  assert.equal(sha256(oldBookBytes), "91161c59e780329371c930a01d3ae8916becc3c6dfa4574e9692c8a21c398df3");
+  assert.equal(sha256(oldBookBytes), "de0b81e84636bdd6dfa6618e6a55c928993e252dc5567e53fb9fd801b5d781d0");
   assert.equal(encounterIds.length, 81);
   assert.equal(encounterFor("DOORMAKER_BOSS"), null);
   assert.ok(archivedEncounterFor("DOORMAKER_BOSS"));

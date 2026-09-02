@@ -20,16 +20,20 @@
     "README.md"
   ],
   "scripts": {
-    "test": "node --test && python3 -m unittest discover -s test -p 'test_*.py' && python3 tools/audit-retained-wiki.py --check",
+    "test": "node --test && python3 tools/run-python-tests.py && python3 tools/check-retained-book.py && node tools/generate-primary-semantic-surface.mjs --check && python3 tools/audit-retained-wiki.py --check",
+    "build:retained-book": "python3 tools/generate-book.py",
+    "check:retained-book": "python3 tools/check-retained-book.py",
     "build:encounter-facts": "python3 tools/generate-encounter-facts.py",
     "check:encounter-facts": "python3 tools/generate-encounter-facts.py --check",
+    "build:primary-semantic-surface": "node tools/generate-primary-semantic-surface.mjs",
+    "check:primary-semantic-surface": "node tools/generate-primary-semantic-surface.mjs --check",
     "check:phone-snapshot": "node tools/reproduce-ceremonial-guide.mjs --check",
     "check:consequence-naming": "node tools/check-consequence-first-guide.mjs",
     "check:p0a-guides": "node tools/reproduce-p0a-guides.mjs --check",
     "check:event-primary-guides": "node tools/reproduce-event-primary-guides.mjs --check",
     "check:roster-guides": "node tools/reproduce-roster-guides.mjs --check",
-    "build:wiki-reconciliation": "python3 tools/audit-retained-wiki.py",
-    "check:wiki-reconciliation": "python3 tools/audit-retained-wiki.py --check"
+    "build:wiki-reconciliation": "python3 tools/generate-book.py && python3 tools/generate-encounter-facts.py && node tools/generate-primary-semantic-surface.mjs && python3 tools/audit-retained-wiki.py",
+    "check:wiki-reconciliation": "python3 tools/check-retained-book.py && python3 tools/generate-encounter-facts.py --check && node tools/generate-primary-semantic-surface.mjs --check && python3 tools/audit-retained-wiki.py --check"
   },
   "dsh": {
     "bundle": {

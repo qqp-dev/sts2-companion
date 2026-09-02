@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE_PATH = ROOT / "data/game-v0.111.0-source.json"
 LEGACY_PATH = ROOT / "data/encounters.json"
 PROJECTION_PATH = ROOT / "data/encounter-facts-v0.111.0.json"
-LEGACY_SHA256 = "91161c59e780329371c930a01d3ae8916becc3c6dfa4574e9692c8a21c398df3"
+LEGACY_SHA256 = "de0b81e84636bdd6dfa6618e6a55c928993e252dc5567e53fb9fd801b5d781d0"
 
 
 class EncounterProjectionTests(unittest.TestCase):
@@ -124,6 +124,27 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual(states["MONSTER.TOUGH_EGG#HATCHED"]["displayName"]["text"], "Hatchling")
         self.assertEqual(len([key for key in states if key.startswith("MONSTER.TEST_SUBJECT#PHASE_")]), 3)
         self.assertNotIn("MONSTER.HATCHLING", {row["canonicalModel"] for row in source["monsters"]})
+
+        legacy = {row["legacyEncounterId"]: row for row in self.artifact["payload"]["legacyAnnotations"]["current"]}
+        ovicopter = {body["annotations"]["displayName"]: body["annotations"]
+                     for body in legacy["OVICOPTER_NORMAL"]["presentationBodies"]}
+        self.assertEqual((ovicopter["Tough Egg"]["hpBelowA8"], ovicopter["Tough Egg"]["hpA8"]),
+                         ([14, 18], [15, 19]))
+        self.assertEqual((ovicopter["Hatchling"]["hpBelowA8"], ovicopter["Hatchling"]["hpA8"]),
+                         ([19, 22], [20, 23]))
+        subject = {body["annotations"]["displayName"]: body["annotations"]
+                   for body in legacy["TEST_SUBJECT_BOSS"]["presentationBodies"]}
+        self.assertEqual([(subject[name]["hpBelowA8"], subject[name]["hpA8"]) for name in (
+            "Test Subject", "Test Subject (Phase 2)", "Test Subject (Phase 3)",
+        )], [([100], [111]), ([200], [212]), ([300], [313])])
+
+        source_monsters = {row["canonicalModel"]: row for row in source["monsters"]}
+        def source_below_a8(model):
+            hp = source_monsters[model]["initialHp"]["expression"]
+            return [hp["minimum"]["below"]["value"], hp["maximum"]["below"]["value"]]
+        self.assertEqual(source_below_a8("MONSTER.TOUGH_EGG"), [14, 18])
+        self.assertEqual(source_below_a8("MONSTER.TEST_SUBJECT"), [100, 100])
+        self.assertNotIn("hpBelowA8", source_monsters["MONSTER.TEST_SUBJECT"]["initialHp"])
 
     def test_decimillipede_titles_conflicts_and_unknowns(self):
         payload = self.artifact["payload"]

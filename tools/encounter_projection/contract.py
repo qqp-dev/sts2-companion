@@ -16,7 +16,7 @@ SOURCE_ARTIFACT = {
 }
 LEGACY_ARTIFACT = {
     "id": "INPUT.LEGACY", "path": "data/encounters.json",
-    "sha256": "91161c59e780329371c930a01d3ae8916becc3c6dfa4574e9692c8a21c398df3", "size": 177972,
+    "sha256": "de0b81e84636bdd6dfa6618e6a55c928993e252dc5567e53fb9fd801b5d781d0", "size": 268416,
 }
 PROJECTION_INPUTS = [SOURCE_ARTIFACT, LEGACY_ARTIFACT]
 GAME = {"branch": "v0.111.0", "commit": "41cef1ea", "mainAssemblyHash": 1579942752, "version": "v0.111.0"}

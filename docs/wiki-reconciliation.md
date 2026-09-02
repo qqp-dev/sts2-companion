@@ -8,17 +8,19 @@ only**. It is not imported by a runtime route, it does not refresh the network,
 and it cannot override closed reverse-engineered facts in
 `data/game-v0.111.0-source.json` or their checked compact projection.
 
-P1a captured origins. P1b0 adds a reviewed final-mapping control plane for
-membership and already-known typed conflicts only. Every mechanical origin
-without a reviewed mapping still has review state `captured-unreconciled`. That
-phrase means only “the structural origin cannot silently disappear.” It is not a
-final audit disposition, a source-closure claim, or evidence that primary/audit
-presentation contains the claim.
+P1a captured origins and P1b0 added the membership/typed-conflict control
+plane. P1b1 now final-maps identity/placement/lead/roster, HP/scaling, and exact
+starting-Power identity/stack origins. Move/intent/effect, Pattern,
+Power-description/Power-Infobox, and objective Note records remain outside this
+slice unless P1b0 already mapped them. An unmapped record's
+`captured-unreconciled` state means only that its structural origin cannot
+silently disappear; it is not a final disposition or a presentation claim.
 
 The artifact targets `v0.111.0` on `public-beta`. Its manifest hashes
 `pages.json`, `index.json`, all six retained Lua files, the retained book, raw
-source, compact projection, the reviewed policy, parser/generator tools, and
-current repository documentation/contracts. Paths are repository-relative. No
+source, compact projection, both reviewed policies, the explicit state/model
+alias ledger, the generated primary semantic surface, parser/generator tools,
+and current repository documentation/contracts. Paths are repository-relative. No
 generation timestamp, absolute path, file-order observation, inode, or temporary
 path participates in output.
 
@@ -28,7 +30,8 @@ These terms must not be collapsed:
 
 1. **Inventory completeness** asks whether every unit in the declared retained
    snapshot/atomization contract has a stable origin record and exactly one
-   review state. P1a sets this true for 4,433 units.
+   review state. This is true for 4,438 units after the reviewed P1b1
+   atomization correction described below.
 2. **Snapshot completeness** asks whether all content promised by the snapshot
    index is retained and expandable. This is false: `index.json` lists
    `Module:Enemies/StS2 data/Events`, but `tools/.wiki/Events.lua` is absent.
@@ -41,8 +44,9 @@ These terms must not be collapsed:
    reports the bounded encounter-projection scope as complete.
 4. **Semantic reconciliation completeness** asks whether every mechanical atom
    has a reviewed final disposition and exact representation/provenance path.
-   This remains false because 3,519 records are still `captured-unreconciled`
-   after P1b0. Overall reconciliation readiness is consequently false.
+   This remains false because 2,253 out-of-slice records are still
+   `captured-unreconciled` after P1b1. Overall reconciliation readiness is
+   consequently false.
 
 The checked Events waiver and 69 shorthand `Power Infobox` plus two `Intents`
 invocations are first-class snapshot limitations. Their template bodies are not
@@ -104,9 +108,14 @@ Follower's bad `Type=Boss` origin is `tools/.wiki/Bosses.lua`; Fabricator's
 retained book has Fabricator initial and Guardbot/Noisebot/Stabbot/Zapbot marked
 summoned; Waterfall Giant's terminal `999999999` HP is present in retained rules,
 compact lifecycle, and primary lifecycle rendering; objective Note gaps are 79;
-and aggregate historical totals are 2,167 `primary-present` and 103
-`missing/unparsed` over the unchanged 4,433 denominator. P1a does not copy those
-historical final labels onto records.
+and aggregate historical totals were 2,167 `primary-present` and 103
+`missing/unparsed` over the prior 4,433 denominator. P1b1 found a real
+atomization defect: four comma-separated Test Subject article/module Power
+claims and Tough Egg's adjacent Minion/Hatch claim needed five additional exact
+Power origins. The corrected inventory denominator is therefore 4,438 (the
+historical primary estimate becomes 2,172 solely for denominator accounting).
+The artifact's materialized P1b1 dispositions, not that historical estimate,
+are authoritative for completed families.
 
 ## Offline build and strict check
 
@@ -115,14 +124,17 @@ From the repository root:
 ```sh
 npm run build:wiki-reconciliation
 npm run check:wiki-reconciliation
-# equivalent direct commands
-python3 tools/audit-retained-wiki.py
+# individual stages
+npm run check:retained-book
+npm run check:encounter-facts
+npm run check:primary-semantic-surface
 python3 tools/audit-retained-wiki.py --check
 ```
 
-Both modes first run `tools/generate-book.py` in an isolated temporary tree and
-require its `data/encounters.json` output to be byte-identical to the checked
-book. They do not access the network, game files, or runtime routes. Write mode
+The reconciliation builder first runs `tools/generate-book.py` in an isolated
+temporary tree and requires its `data/encounters.json` output to be
+byte-identical to the checked book. The npm build/check chains also enforce the
+acyclic book → compact → primary semantic surface → reconciliation order. They do not access the network, game files, or runtime routes. Write mode
 uses atomic replacement. Check mode never writes and requires exact artifact
 bytes.
 
@@ -155,17 +167,85 @@ Closed source wins primary/presentation. Wiki/retained values stay auditable.
 `sourceFlags` strings are not the sole machine-readable conflict
 representation; book `typedConflicts` and reconciliation mappings are.
 
+## P1b1 identity, roster, HP, and starting-state mappings
+
+`tools/wiki-reconciliation-p1b1-policy-v0.111.0.json` guards every one of the
+**1,271** P1b1 origins by exact origin ID, claim ID, and family. This is five
+higher than the work-order's 1,266 because per-Power atomization is now correct:
+article and module Test Subject phases 1/2 split comma-separated Powers (+4), and
+Tough Egg splits adjacent `Minion` and `Hatch 2` (+1). The unrelated remainder
+is still exactly **2,253**.
+
+Canonical ownership comes from generated `retainedProvenance` on each book body:
+article page/revision/template/body ordinal and module path/table key/record
+ordinal are retained independently. The only model/state aliases live in
+`tools/primary-semantic-aliases-v0.111.0.json`: three Decimillipede segment
+shortcuts, Hatchling as `TOUGH_EGG#HATCHED`, and Test Subject phases 2/3 as
+states of `MONSTER.TEST_SUBJECT`. `Knight Gang` is one explicit aggregate
+encounter owner. New origins and aliases never auto-promote.
+
+`data/primary-semantic-surface-v0.111.0.json` is generated by the checked adapter
+and actual primary compiler at both 1P and 2P. It exposes typed roster grammar,
+initial/possible/produced roles, source/body/state identities, normal/A8 and
+configured HP, starting-Power tokens, and exact primary card ordinals. Mapping
+classification never searches rendered copy. `primary-present` requires a
+resolving typed surface coordinate; `audit-present` points to retained/compact
+Technical data. Symbolic source expressions retain an explicitly labeled
+fallback lane.
+
+Normal/base HP is now preserved separately as `hpBelowA8` on every retained book
+body, in the compact legacy/wiki lane, and on each semantic-surface
+`retainedBody`. Its explicit authority is `retained-wiki-reference`; it never
+feeds primary HP or overwrites the source model. A mapping may be
+`audit-present` from this exact typed retained coordinate, but source closure is
+`closed` only when the same unscoped body model has the identical normalized
+below-A8 range and its exact source fact ref. State/form IDs prove ownership
+only. Thus Hatchling `19–22` remains distinct from Tough Egg `14–18` and A8
+`20–23`, while Test Subject phases retain base `100/200/300` separately from A8
+`111/212/313`; phases 2/3 are retained-reference-only with `knownUnknown` source
+closure.
+
+The reconciliation builder enforces this as a programmatic HP-family invariant:
+every value-bearing pointer is dereferenced, typed ranges must match exactly,
+retained body/model/state and base-vs-A8 scope must agree, A8 primary evidence
+must cover both 1P and 2P, and source fact refs are accepted only for the exact
+same-scope source coordinate. Ownership-only model candidates remain visible but
+cannot close authority. Mutation tests remove/change values while preserving
+state IDs and reject cross-state and base/A8 substitution.
+
+P1b1 dispositions are 787 `primary-present`, 470 `audit-present`, eleven
+`conflict`, and three `missing/unparsed`. The missing records are the two exact
+HP patch transitions and Galvanic's exact starting-Power patch transition;
+current endpoints alone do not prove historical before→after claims. New
+source-winning conflicts are Eye With Teeth capitalization, Strangler's forced
+Leaf+Twig small branch versus two independent draws, six article/module base-HP
+disagreements for Scroll of Biting, Owl Magistrate, and Slimed Berserker, and
+stale module A8 values for Exoskeleton and Entomancer, and Globe Head's stale
+module Galvanic 6 versus the current typed A9/1P/2P value 8. These augment—not
+replace—P1b0's 13 conflict origins and 26 compact title cross-links.
+
+Roster mappings preserve fixed order, uniform alternatives, independent draws,
+without-replacement constraints, and initial-versus-produced roles. In
+particular, Fabricator alone is initial while four bots remain production
+possibilities; a possible alternative card is never credited as always present.
+Starting-state mappings uniquely segment exact canonical Power titles before assigning a
+trailing amount, so Tough Egg is typed as `Minion` plus `Hatch 2` rather than a
+synthetic `Minion Hatch 2` identity. They preserve one Power per atom, owner/state, base/A9
+amount, 1P/2P scaling, and canonical Power IDs. Full Power descriptions remain
+P1c scope.
+
 ### Build order
 
 Avoid digest cycles:
 
-1. `python3 tools/generate-book.py` — current + archive + retained references;
-2. `npm run build:encounter-facts` — compact projection from source + the new book;
-3. `npm run build:wiki-reconciliation` — final census last.
+1. `npm run build:retained-book` — current + archive + retained references and exact provenance;
+2. `npm run build:encounter-facts` — compact projection from source + book;
+3. `npm run build:primary-semantic-surface` — actual 1P/2P compiler semantics;
+4. `python3 tools/audit-retained-wiki.py` — reconciliation census last.
 
-Runtime never imports the wiki artifact. Compact typed conflicts are generated
-from the retained book/source inputs.
-
-Later slices: P1b1 identity/HP/Power atoms; P1b2 move/pattern atoms; P1c
-Power/intent localization; P2 the 79 objective Note gaps; optional P3 tactics.
+`npm run build:wiki-reconciliation` runs those stages in that order; the check
+command verifies each stage without rewriting. Runtime never imports either
+reconciliation artifact. Later slices are P1b2 move/pattern atoms, P1c
+Power/intent localization, P2 the 79 objective Note gaps, and optional P3
+tactics. Semantic and overall readiness remain false.
 
