@@ -43,9 +43,9 @@
     },
     "generator": {
       "name": "sts2-encounter-facts",
-      "version": "11.0.0"
+      "version": "11.1.0"
     },
-    "payloadSha256": "a930e691593b007996183392c09cd93f649a87a83b095f45763c4eb7ce82c18b",
+    "payloadSha256": "1ac7add5547d8e3a3ef4ec3d05bff56d3779eb8c8d8d62d48a7effa9e684fd7c",
     "projectionInputs": [
       {
         "id": "INPUT.SOURCE",
@@ -56,8 +56,8 @@
       {
         "id": "INPUT.LEGACY",
         "path": "data/encounters.json",
-        "sha256": "0c01dd0b851c501acea59fb41b10a828030ad2c3e63f9fc624f98b6e403e0103",
-        "size": 170154
+        "sha256": "91161c59e780329371c930a01d3ae8916becc3c6dfa4574e9692c8a21c398df3",
+        "size": 177972
       }
     ],
     "requiredCoverage": [
@@ -1562,7 +1562,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/AXEBOTS_NORMAL/lineup/0",
-            "valueSha256": "99b958baaa70150469eb6037baf8af3e0aa2731fd2a9137a617fad861591b3af"
+            "valueSha256": "463e5889260f083f87fd4cf0bfda700a0ded024621f6816606c82aeb3f8c70b3"
           }
         ]
       },
@@ -1825,7 +1825,7 @@
         "lane": "legacy",
         "pointers": [
           {
-            "jsonPointer": "/encounters/DOORMAKER_BOSS/lineup/0",
+            "jsonPointer": "/archive/encounters/DOORMAKER_BOSS/lineup/0",
             "valueSha256": "a49c6f2497689eb850af9dfec429626ae281b7cc9d958727c797819303f44eed"
           }
         ]
@@ -2068,7 +2068,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/INFESTED_PRISMS_ELITE/lineup/0",
-            "valueSha256": "9c036aef90a1757c34e24cf69dd102b369175a01020afa0690a190444d8d7f7c"
+            "valueSha256": "98d446a7166a28650f1783e75697792d59bc762959d2e349973d7051353f9dfb"
           }
         ]
       },
@@ -2332,7 +2332,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/OWL_MAGISTRATE_NORMAL/lineup/0",
-            "valueSha256": "5cc32f3c56a73e65c5d3603dc38efa47ec3238c0eb08200022a9bc6a007b5851"
+            "valueSha256": "e33239fd4b91d1b8eb35fa86125cfccbc3fc8f9f60d46e702caa24cad70d84ec"
           }
         ]
       },
@@ -2464,7 +2464,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/SCROLLS_OF_BITING_NORMAL/lineup/0",
-            "valueSha256": "f444f71c23eedae21e9676dc2417288e821874f1adf00ad8caa8b84dd1104a64"
+            "valueSha256": "e315406772fdf68e65d499f783c74bc5f6ccd317a2ca4ccd228cb342e6c391e1"
           }
         ]
       },
@@ -2475,7 +2475,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/SCROLLS_OF_BITING_WEAK/lineup/0",
-            "valueSha256": "9f6a700691d989a386ba9e3e070e4beb9a0434f5f8e864a266618f2dc9070c04"
+            "valueSha256": "cde34f77323f4854cb7e7cd6fcbcd5b94a32bf70ce30eaf7a0be74fdc313cf0a"
           }
         ]
       },
@@ -2552,7 +2552,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/SLIMED_BERSERKER_NORMAL/lineup/0",
-            "valueSha256": "1537a13068eb807f4d8e35c9399ba9b729dbe74f7148b61af016b644ebc9e3e0"
+            "valueSha256": "1189ce7b3cd0a628609af5f1c9bd0d6d4ffadeef9ac744e92a81bf8293c2cb91"
           }
         ]
       },
@@ -2761,7 +2761,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/TERROR_EEL_ELITE/lineup/0",
-            "valueSha256": "9b83f234cac998f0498412f80d20f7370a212d5e770ff5cd715b436dbe48c771"
+            "valueSha256": "dc980e7c72719767d5a78ab7c2a750db9876d3cdd538eb90ce7cecf781497310"
           }
         ]
       },
@@ -2827,7 +2827,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/THE_KIN_BOSS/lineup/1",
-            "valueSha256": "099a18144b1a83f10ca7513ee35047de7fb1e3c06b06f9f619d59919719b957a"
+            "valueSha256": "ea0082a72c878e4d19abc2d5fbad773a60b1dbd22aed1317782a3860d1bbb5d9"
           }
         ]
       },
@@ -2838,7 +2838,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/THE_KIN_BOSS/lineup/2",
-            "valueSha256": "e83b0ff63ba6c96c3098eb3346c995a2116593d0d29bd346c203fb67c9cae072"
+            "valueSha256": "509ec138f8f16ed228b444a30231380c366762e95a48041694173d0c2c1f25e8"
           }
         ]
       },
@@ -3033,7 +3033,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/AXEBOTS_NORMAL",
-            "valueSha256": "4172460e1afe5d2cd6ef73175096ff017cfe622be62f63169123706eaa44f44e"
+            "valueSha256": "17a9482d198786ff6c1f5e8a203f656c4d484c52a649d22acb5738a7dca0f66f"
           },
           {
             "jsonPointer": "/meta/targetBranch",
@@ -3298,8 +3298,8 @@
         "lane": "legacy",
         "pointers": [
           {
-            "jsonPointer": "/encounters/DOORMAKER_BOSS",
-            "valueSha256": "43ab6193d763c6c0337f378c1a63870da0eaa371c993876a7dc5e9e4df442ba4"
+            "jsonPointer": "/archive/encounters/DOORMAKER_BOSS",
+            "valueSha256": "0989350a7f4382f653c6b4f6eb2cb0e7a2370362697486410fd22c3950c2230a"
           },
           {
             "jsonPointer": "/meta/targetBranch",
@@ -3565,7 +3565,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/INFESTED_PRISMS_ELITE",
-            "valueSha256": "8603eda7a238abf520cb3e0a7707c45b3706b17160a48ca46fbd64a6b55e583f"
+            "valueSha256": "10f72efd42b0194e11836214f0d7ab902feebb8916f9d1cd16da946b223c0fbc"
           },
           {
             "jsonPointer": "/meta/targetBranch",
@@ -3850,7 +3850,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/OWL_MAGISTRATE_NORMAL",
-            "valueSha256": "6ff4a3aec45cd005b7319b48bfec6c3dc31ec52eba9011a366840c825ba192e9"
+            "valueSha256": "5c8811d3d86fcd252c7dc7e8ec4a88049b3646ea76a862eeea59ff43c694c4c4"
           },
           {
             "jsonPointer": "/meta/targetBranch",
@@ -3964,7 +3964,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/SCROLLS_OF_BITING_NORMAL",
-            "valueSha256": "0a9cc7e8482a58a1cd719278b7573085e3e1bb739856cbed0b6ed177418e8286"
+            "valueSha256": "7060e9c963cb74da7b02083f9d18d62b99100441100d5f2a4afb1940ab45baba"
           },
           {
             "jsonPointer": "/meta/targetBranch",
@@ -3983,7 +3983,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/SCROLLS_OF_BITING_WEAK",
-            "valueSha256": "ae16750fa021de72b3f2df2f63f6ac2ac465b7541a6d1b456f4adb2c87fe7f0e"
+            "valueSha256": "16cf79fb3406dbba55ab6c034be77018c6a0b0cc377e875365659bfe4504450c"
           },
           {
             "jsonPointer": "/meta/targetBranch",
@@ -4097,7 +4097,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/SLIMED_BERSERKER_NORMAL",
-            "valueSha256": "2e3e4b85ce1dd689976ed8f78d0a1fb22c9519504a9892157162d9a467472e22"
+            "valueSha256": "c036aa674f77abb67f2a86b9b53aea53488ef8dd5bc96561a0881a3b8145c4f4"
           },
           {
             "jsonPointer": "/meta/targetBranch",
@@ -4287,7 +4287,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/TERROR_EEL_ELITE",
-            "valueSha256": "d0dab6af899d623bb4a76f1181e5e2e248f7779378ac4558ebd3851438f75ac4"
+            "valueSha256": "20968dd7b0e2cadf5c7710cb95aaa750a50770ed54a7c3f207ddf3d84612566f"
           },
           {
             "jsonPointer": "/meta/targetBranch",
@@ -4344,7 +4344,7 @@
         "pointers": [
           {
             "jsonPointer": "/encounters/THE_KIN_BOSS",
-            "valueSha256": "7be73480e764091457ffa4ac79a57c9e46d7557ea6fb2f62a2a6807e539ae40e"
+            "valueSha256": "b654e724061e70d03179d1e4d8a4f458d92496f30d4844dadc5680e14ffa6946"
           },
           {
             "jsonPointer": "/meta/targetBranch",
@@ -53317,7 +53317,26 @@
                 ],
                 "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Axebot",
                 "startsWithA9": "Stock 2",
-                "type": "Normal"
+                "type": "Normal",
+                "typedConflicts": [
+                  {
+                    "actor": "Axebot",
+                    "authority": "closed-source",
+                    "field": "hpA8",
+                    "id": "RETAINED.CONFLICT.AXEBOT.A8_HP",
+                    "kind": "a8-hp-range",
+                    "resolution": "source-wins",
+                    "retainedValue": [
+                      78,
+                      86
+                    ],
+                    "sourceFactId": "SOURCE.MONSTER.AXEBOT",
+                    "sourceValue": [
+                      76,
+                      86
+                    ]
+                  }
+                ]
               },
               "factId": "LEGACY.BODY.AXEBOTS_NORMAL.0",
               "provenanceStatus": {
@@ -55753,7 +55772,27 @@
                 ],
                 "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Infested_Prism",
                 "startsWithA9": "Vital Spark 3",
-                "type": "Elite"
+                "type": "Elite",
+                "typedConflicts": [
+                  {
+                    "actor": "Infested Prism",
+                    "authority": "closed-source",
+                    "field": "damage-and-block",
+                    "id": "RETAINED.CONFLICT.INFESTED_PRISM.RADIATE",
+                    "kind": "move-effect",
+                    "move": "Radiate",
+                    "resolution": "source-wins",
+                    "retainedValue": {
+                      "block": 18,
+                      "damage": 13
+                    },
+                    "sourceFactId": "SOURCE.MOVE.MONSTER.INFESTED_PRISM.RADIATE_MOVE",
+                    "sourceValue": {
+                      "block": 13,
+                      "damage": 13
+                    }
+                  }
+                ]
               },
               "factId": "LEGACY.BODY.INFESTED_PRISMS_ELITE.0",
               "provenanceStatus": {
@@ -57132,7 +57171,24 @@
                   "GAME OVERRIDE: hpA8 article=[243] game=[247]"
                 ],
                 "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Owl_Magistrate",
-                "type": "Normal"
+                "type": "Normal",
+                "typedConflicts": [
+                  {
+                    "actor": "Owl Magistrate",
+                    "authority": "closed-source",
+                    "field": "hpA8",
+                    "id": "RETAINED.CONFLICT.OWL_MAGISTRATE.A8_HP",
+                    "kind": "a8-hp-range",
+                    "resolution": "source-wins",
+                    "retainedValue": [
+                      243
+                    ],
+                    "sourceFactId": "SOURCE.MONSTER.OWL_MAGISTRATE",
+                    "sourceValue": [
+                      247
+                    ]
+                  }
+                ]
               },
               "factId": "LEGACY.BODY.OWL_MAGISTRATE_NORMAL.0",
               "provenanceStatus": {
@@ -57781,7 +57837,26 @@
                 ],
                 "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Scroll_of_Biting",
                 "startsWithA9": "Paper Cuts 2",
-                "type": "Normal"
+                "type": "Normal",
+                "typedConflicts": [
+                  {
+                    "actor": "Scroll of Biting",
+                    "authority": "closed-source",
+                    "field": "hpA8",
+                    "id": "RETAINED.CONFLICT.SCROLL_OF_BITING.A8_HP",
+                    "kind": "a8-hp-range",
+                    "resolution": "source-wins",
+                    "retainedValue": [
+                      32,
+                      39
+                    ],
+                    "sourceFactId": "SOURCE.MONSTER.SCROLL_OF_BITING",
+                    "sourceValue": [
+                      33,
+                      39
+                    ]
+                  }
+                ]
               },
               "factId": "LEGACY.BODY.SCROLLS_OF_BITING_NORMAL.0",
               "provenanceStatus": {
@@ -57852,7 +57927,26 @@
                 ],
                 "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Scroll_of_Biting",
                 "startsWithA9": "Paper Cuts 2",
-                "type": "Normal"
+                "type": "Normal",
+                "typedConflicts": [
+                  {
+                    "actor": "Scroll of Biting",
+                    "authority": "closed-source",
+                    "field": "hpA8",
+                    "id": "RETAINED.CONFLICT.SCROLL_OF_BITING.A8_HP",
+                    "kind": "a8-hp-range",
+                    "resolution": "source-wins",
+                    "retainedValue": [
+                      32,
+                      39
+                    ],
+                    "sourceFactId": "SOURCE.MONSTER.SCROLL_OF_BITING",
+                    "sourceValue": [
+                      33,
+                      39
+                    ]
+                  }
+                ]
               },
               "factId": "LEGACY.BODY.SCROLLS_OF_BITING_WEAK.0",
               "provenanceStatus": {
@@ -58279,7 +58373,24 @@
                   "GAME OVERRIDE: hpA8 article=[276] game=[281]"
                 ],
                 "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimed_Berserker",
-                "type": "Normal"
+                "type": "Normal",
+                "typedConflicts": [
+                  {
+                    "actor": "Slimed Berserker",
+                    "authority": "closed-source",
+                    "field": "hpA8",
+                    "id": "RETAINED.CONFLICT.SLIMED_BERSERKER.A8_HP",
+                    "kind": "a8-hp-range",
+                    "resolution": "source-wins",
+                    "retainedValue": [
+                      276
+                    ],
+                    "sourceFactId": "SOURCE.MONSTER.SLIMED_BERSERKER",
+                    "sourceValue": [
+                      281
+                    ]
+                  }
+                ]
               },
               "factId": "LEGACY.BODY.SLIMED_BERSERKER_NORMAL.0",
               "provenanceStatus": {
@@ -59234,7 +59345,27 @@
                 },
                 "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Terror_Eel",
                 "startsWithA9": "Shriek 75",
-                "type": "Elite"
+                "type": "Elite",
+                "typedConflicts": [
+                  {
+                    "actor": "Terror Eel",
+                    "authority": "closed-source",
+                    "field": "title",
+                    "id": "RETAINED.CONFLICT.TERROR_EEL.MOVE_TITLE.TERROR",
+                    "independentKnownUnknown": {
+                      "move": "Stun",
+                      "note": "Stun localization remains independently missing; it is never inferred from Terror/Terrorize.",
+                      "reasonCode": "SOURCE_MOVE_TITLE_MISSING_OR_INTERNAL",
+                      "unknownId": "UNKNOWN.MOVE_TITLE.MONSTER.TERROR_EEL.STUN_MOVE"
+                    },
+                    "kind": "move-title",
+                    "move": "Terror",
+                    "resolution": "source-wins",
+                    "retainedValue": "Terror",
+                    "sourceFactId": "SOURCE.MOVE.MONSTER.TERROR_EEL.TERROR_MOVE",
+                    "sourceValue": "Terrorize"
+                  }
+                ]
               },
               "factId": "LEGACY.BODY.TERROR_EEL_ELITE.0",
               "provenanceStatus": {
@@ -59558,7 +59689,23 @@
                 "role": "Quick Slash opener slot",
                 "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Kin",
                 "startsWithA9": "Minion",
-                "type": "Minion"
+                "type": "Minion",
+                "typedConflicts": [
+                  {
+                    "actor": "Kin Follower",
+                    "articleValue": "Minion",
+                    "authority": "closed-source",
+                    "field": "Type",
+                    "id": "RETAINED.CONFLICT.KIN_FOLLOWER.TYPE",
+                    "kind": "identity-type",
+                    "resolution": "source-wins",
+                    "retainedOriginPath": "tools/.wiki/Bosses.lua",
+                    "retainedValue": "Boss",
+                    "sourceFactId": "SOURCE.MONSTER.KIN_FOLLOWER",
+                    "sourceInitialFactId": "INITIAL.MONSTER.KIN_FOLLOWER.AFTERADDEDTOROOM.000.APPLYPOWER",
+                    "sourceValue": "Minion"
+                  }
+                ]
               },
               "factId": "LEGACY.BODY.THE_KIN_BOSS.1",
               "provenanceStatus": {
@@ -59599,7 +59746,23 @@
                 "role": "Power Dance opener slot",
                 "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Kin",
                 "startsWithA9": "Minion",
-                "type": "Minion"
+                "type": "Minion",
+                "typedConflicts": [
+                  {
+                    "actor": "Kin Follower",
+                    "articleValue": "Minion",
+                    "authority": "closed-source",
+                    "field": "Type",
+                    "id": "RETAINED.CONFLICT.KIN_FOLLOWER.TYPE",
+                    "kind": "identity-type",
+                    "resolution": "source-wins",
+                    "retainedOriginPath": "tools/.wiki/Bosses.lua",
+                    "retainedValue": "Boss",
+                    "sourceFactId": "SOURCE.MONSTER.KIN_FOLLOWER",
+                    "sourceInitialFactId": "INITIAL.MONSTER.KIN_FOLLOWER.AFTERADDEDTOROOM.000.APPLYPOWER",
+                    "sourceValue": "Minion"
+                  }
+                ]
               },
               "factId": "LEGACY.BODY.THE_KIN_BOSS.2",
               "provenanceStatus": {

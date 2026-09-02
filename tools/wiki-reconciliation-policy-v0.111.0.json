@@ -288,12 +288,12 @@
     }
   ],
   "review": {
-    "id": "retained-wiki-p1a-policy-review-v1",
-    "phase": "P1a inventory foundation",
-    "reviewer": "StS2 Companion P1a completeness review",
-    "statement": "Structural atomization and non-guide exclusions only; no P1b semantic representation or final mechanical disposition review is encoded."
+    "id": "retained-wiki-p1b0-policy-review-v1",
+    "phase": "P1b0 final-mapping control plane",
+    "reviewer": "StS2 Companion P1b0 completeness review",
+    "statement": "Adds reviewed final-reconciliation mappings for current/archive membership, the 13 known wiki/source conflict origins, and Doormaker mechanical stale records. Non-conflict mechanical atoms remain captured-unreconciled. Compact title conflicts are cross-linked, not retyped."
   },
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "snapshotGapWaivers": [
     {
       "expectedPath": "tools/.wiki/Events.lua",
@@ -307,5 +307,1410 @@
   ],
   "targetBranch": "public-beta",
   "targetVersion": "v0.111.0",
-  "tombstones": []
+  "tombstones": [],
+  "finalMappings": {
+    "schemaVersion": 1,
+    "allowedDispositions": [
+      "primary-present",
+      "audit-present",
+      "source-present-not-projected",
+      "retained-book-only",
+      "conflict",
+      "missing/unparsed",
+      "intentionally-excluded",
+      "stale/deprecated/version-ambiguous"
+    ],
+    "allowedSemanticKinds": [
+      "a8-hp-range",
+      "move-effect-block",
+      "move-title",
+      "identity-type",
+      "stale-deprecated-mechanic"
+    ],
+    "allowedLayers": [
+      "raw-source",
+      "compact-projection",
+      "retained-book",
+      "retained-archive",
+      "retained-reference",
+      "primary-presentation",
+      "technical-audit",
+      "wiki-origin"
+    ],
+    "allowedClosures": [
+      "closed",
+      "knownUnknown",
+      "unjoined",
+      "notApplicable"
+    ],
+    "expectedFinalMappedCount": 49,
+    "expectedConflictOriginCount": 13,
+    "expectedStaleOriginCount": 36,
+    "expectedCompactTitleConflictCount": 26,
+    "researchCountCorrections": [
+      {
+        "id": "research-correction-conflict-origin-count-v1",
+        "researchExpected": 13,
+        "productionCount": 13,
+        "note": "Research counted Infested Prism Radiate as two combined article/module move-row atoms. The P1a atomizer splits each row into damage and Block claims. Only the two Block claims are the A9 value conflict (18 vs 13); the two damage claims agree at 13 and remain captured-unreconciled until P1b2."
+      },
+      {
+        "id": "research-correction-doormaker-stale-count-v1",
+        "researchExpected": 42,
+        "productionCount": 36,
+        "note": "Research expected 42 stale Doormaker mechanical atoms. The P1a atomizer yields 36 captured-unreconciled mechanical origins; the remaining 31 Doormaker origins are already policy-reviewed exclusions and must not be double-dispositioned."
+      }
+    ],
+    "records": [
+      {
+        "id": "final-map-axebot-article-a8-hp-v1",
+        "originId": "wiki-origin-v1-c2fe5339c31e3132dabac68dc5aaca0f8da6738b8be5e230af67ac8de77fa548",
+        "claimId": "wiki-claim-v1-b35dcb9fcfc4038f5a48a1b02a8f6bc8182eaf395663b77ed2c9b10c25cf8755",
+        "disposition": "conflict",
+        "semanticMapping": {
+          "kind": "a8-hp-range",
+          "actor": "Axebot",
+          "field": "AscHP",
+          "retainedValue": [
+            78,
+            86
+          ],
+          "sourceValue": [
+            76,
+            86
+          ],
+          "encounter": "AXEBOTS_NORMAL",
+          "semanticGroup": "axebot-a8-hp"
+        },
+        "authorityComparison": {
+          "closure": "closed",
+          "sourceFactRefs": [
+            "SOURCE.MONSTER.AXEBOT"
+          ],
+          "compactFactRefs": [
+            "SOURCE.MONSTER.AXEBOT"
+          ],
+          "resolution": "source-wins",
+          "silentMerge": false
+        },
+        "representation": [
+          {
+            "layer": "raw-source",
+            "path": "data/game-v0.111.0-source.json",
+            "jsonPointer": "/monsters/3/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/sourceFacts/monsters/3/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/AXEBOTS_NORMAL/lineup/0/hpA8",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/AXEBOTS_NORMAL/lineup/0/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/AXEBOTS_NORMAL/lineup/0/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/AXEBOTS_NORMAL/lineup/0/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/1/presentationBodies/0/annotations/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/1/presentationBodies/0/annotations/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/1/presentationBodies/0/annotations/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          }
+        ],
+        "rationale": "Axebot retained A8 HP [78, 86] disagrees with closed source [76, 86]. Primary/presentation keeps the source-winning value; the retained wiki origin remains auditable. sourceFlags text is not the sole machine-readable conflict record.",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "high",
+        "reviewedForVersion": "v0.111.0"
+      },
+      {
+        "id": "final-map-axebot-module-a8-hp-v1",
+        "originId": "wiki-origin-v1-d067136fc0606bdc26a2e9931f79780a919c84279da7edf342b0e5ed213ac6d5",
+        "claimId": "wiki-claim-v1-2fed136fb25dc5c59f3c9e6299957f11066a375dca4ed9288f3aa8d490ef2c3f",
+        "disposition": "conflict",
+        "semanticMapping": {
+          "kind": "a8-hp-range",
+          "actor": "Axebot",
+          "field": "AscHP",
+          "retainedValue": [
+            78,
+            86
+          ],
+          "sourceValue": [
+            76,
+            86
+          ],
+          "encounter": "AXEBOTS_NORMAL",
+          "semanticGroup": "axebot-a8-hp"
+        },
+        "authorityComparison": {
+          "closure": "closed",
+          "sourceFactRefs": [
+            "SOURCE.MONSTER.AXEBOT"
+          ],
+          "compactFactRefs": [
+            "SOURCE.MONSTER.AXEBOT"
+          ],
+          "resolution": "source-wins",
+          "silentMerge": false
+        },
+        "representation": [
+          {
+            "layer": "raw-source",
+            "path": "data/game-v0.111.0-source.json",
+            "jsonPointer": "/monsters/3/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/sourceFacts/monsters/3/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/AXEBOTS_NORMAL/lineup/0/hpA8",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/AXEBOTS_NORMAL/lineup/0/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/AXEBOTS_NORMAL/lineup/0/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/AXEBOTS_NORMAL/lineup/0/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/1/presentationBodies/0/annotations/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/1/presentationBodies/0/annotations/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/1/presentationBodies/0/annotations/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          }
+        ],
+        "rationale": "Axebot retained A8 HP [78, 86] disagrees with closed source [76, 86]. Primary/presentation keeps the source-winning value; the retained wiki origin remains auditable. sourceFlags text is not the sole machine-readable conflict record.",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "high",
+        "reviewedForVersion": "v0.111.0"
+      },
+      {
+        "id": "final-map-owl-magistrate-article-a8-hp-v1",
+        "originId": "wiki-origin-v1-6b7e95f3aff6ea0a8b3dafb69712daef5443b662e8e089cefab43dab9a657147",
+        "claimId": "wiki-claim-v1-cbc3a7b9e430757d3495fa12820d249dd7dd193cab1da133c0825ede363f17d8",
+        "disposition": "conflict",
+        "semanticMapping": {
+          "kind": "a8-hp-range",
+          "actor": "Owl Magistrate",
+          "field": "AscHP",
+          "retainedValue": [
+            243
+          ],
+          "sourceValue": [
+            247
+          ],
+          "encounter": "OWL_MAGISTRATE_NORMAL",
+          "semanticGroup": "owl-magistrate-a8-hp"
+        },
+        "authorityComparison": {
+          "closure": "closed",
+          "sourceFactRefs": [
+            "SOURCE.MONSTER.OWL_MAGISTRATE"
+          ],
+          "compactFactRefs": [
+            "SOURCE.MONSTER.OWL_MAGISTRATE"
+          ],
+          "resolution": "source-wins",
+          "silentMerge": false
+        },
+        "representation": [
+          {
+            "layer": "raw-source",
+            "path": "data/game-v0.111.0-source.json",
+            "jsonPointer": "/monsters/70/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/sourceFacts/monsters/64/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/OWL_MAGISTRATE_NORMAL/lineup/0/hpA8",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/OWL_MAGISTRATE_NORMAL/lineup/0/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/OWL_MAGISTRATE_NORMAL/lineup/0/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/OWL_MAGISTRATE_NORMAL/lineup/0/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/43/presentationBodies/0/annotations/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/43/presentationBodies/0/annotations/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/43/presentationBodies/0/annotations/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          }
+        ],
+        "rationale": "Owl Magistrate retained A8 HP [243] disagrees with closed source [247]. Primary/presentation keeps the source-winning value; the retained wiki origin remains auditable. sourceFlags text is not the sole machine-readable conflict record.",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "high",
+        "reviewedForVersion": "v0.111.0"
+      },
+      {
+        "id": "final-map-owl-magistrate-module-a8-hp-v1",
+        "originId": "wiki-origin-v1-8e1fa49e406b522ae9d352b3b5d2bae705f9e5b0662e945cb950290cafb5571c",
+        "claimId": "wiki-claim-v1-a0d9cd48a94abbc0a3b799b7f93c725c6f866931cd7b26a223c95c5bc7115412",
+        "disposition": "conflict",
+        "semanticMapping": {
+          "kind": "a8-hp-range",
+          "actor": "Owl Magistrate",
+          "field": "AscHP",
+          "retainedValue": [
+            243
+          ],
+          "sourceValue": [
+            247
+          ],
+          "encounter": "OWL_MAGISTRATE_NORMAL",
+          "semanticGroup": "owl-magistrate-a8-hp"
+        },
+        "authorityComparison": {
+          "closure": "closed",
+          "sourceFactRefs": [
+            "SOURCE.MONSTER.OWL_MAGISTRATE"
+          ],
+          "compactFactRefs": [
+            "SOURCE.MONSTER.OWL_MAGISTRATE"
+          ],
+          "resolution": "source-wins",
+          "silentMerge": false
+        },
+        "representation": [
+          {
+            "layer": "raw-source",
+            "path": "data/game-v0.111.0-source.json",
+            "jsonPointer": "/monsters/70/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/sourceFacts/monsters/64/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/OWL_MAGISTRATE_NORMAL/lineup/0/hpA8",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/OWL_MAGISTRATE_NORMAL/lineup/0/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/OWL_MAGISTRATE_NORMAL/lineup/0/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/OWL_MAGISTRATE_NORMAL/lineup/0/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/43/presentationBodies/0/annotations/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/43/presentationBodies/0/annotations/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/43/presentationBodies/0/annotations/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          }
+        ],
+        "rationale": "Owl Magistrate retained A8 HP [243] disagrees with closed source [247]. Primary/presentation keeps the source-winning value; the retained wiki origin remains auditable. sourceFlags text is not the sole machine-readable conflict record.",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "high",
+        "reviewedForVersion": "v0.111.0"
+      },
+      {
+        "id": "final-map-scroll-of-biting-article-a8-hp-v1",
+        "originId": "wiki-origin-v1-e8acbdf0aaecb7622d5f692068ec2c7779447296dec19916293a1f3e083de5ad",
+        "claimId": "wiki-claim-v1-c0b43e8ffcf22bfb1e0a6b4869065eb6ea87d7303671ee61a3f468d9c3ba5fb8",
+        "disposition": "conflict",
+        "semanticMapping": {
+          "kind": "a8-hp-range",
+          "actor": "Scroll of Biting",
+          "field": "AscHP",
+          "retainedValue": [
+            32,
+            39
+          ],
+          "sourceValue": [
+            33,
+            39
+          ],
+          "encounter": "SCROLLS_OF_BITING_NORMAL",
+          "semanticGroup": "scroll-of-biting-a8-hp"
+        },
+        "authorityComparison": {
+          "closure": "closed",
+          "sourceFactRefs": [
+            "SOURCE.MONSTER.SCROLL_OF_BITING"
+          ],
+          "compactFactRefs": [
+            "SOURCE.MONSTER.SCROLL_OF_BITING"
+          ],
+          "resolution": "source-wins",
+          "silentMerge": false
+        },
+        "representation": [
+          {
+            "layer": "raw-source",
+            "path": "data/game-v0.111.0-source.json",
+            "jsonPointer": "/monsters/78/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/sourceFacts/monsters/71/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_NORMAL/lineup/0/hpA8",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_NORMAL/lineup/0/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_NORMAL/lineup/0/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_NORMAL/lineup/0/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/49/presentationBodies/0/annotations/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/49/presentationBodies/0/annotations/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/49/presentationBodies/0/annotations/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_WEAK/lineup/0/hpA8",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_WEAK/lineup/0/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_WEAK/lineup/0/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_WEAK/lineup/0/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          }
+        ],
+        "rationale": "Scroll of Biting retained A8 HP [32, 39] disagrees with closed source [33, 39]. Primary/presentation keeps the source-winning value; the retained wiki origin remains auditable. sourceFlags text is not the sole machine-readable conflict record.",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "high",
+        "reviewedForVersion": "v0.111.0"
+      },
+      {
+        "id": "final-map-scroll-of-biting-module-a8-hp-v1",
+        "originId": "wiki-origin-v1-9000ea91bc965d532ff95c0a90738a28d8c436edcd8058901b5cf14c016603ea",
+        "claimId": "wiki-claim-v1-cc8a61fd834bac726e479291362208e7eb2d767006092568e5cae632be224a94",
+        "disposition": "conflict",
+        "semanticMapping": {
+          "kind": "a8-hp-range",
+          "actor": "Scroll of Biting",
+          "field": "AscHP",
+          "retainedValue": [
+            32,
+            39
+          ],
+          "sourceValue": [
+            33,
+            39
+          ],
+          "encounter": "SCROLLS_OF_BITING_NORMAL",
+          "semanticGroup": "scroll-of-biting-a8-hp"
+        },
+        "authorityComparison": {
+          "closure": "closed",
+          "sourceFactRefs": [
+            "SOURCE.MONSTER.SCROLL_OF_BITING"
+          ],
+          "compactFactRefs": [
+            "SOURCE.MONSTER.SCROLL_OF_BITING"
+          ],
+          "resolution": "source-wins",
+          "silentMerge": false
+        },
+        "representation": [
+          {
+            "layer": "raw-source",
+            "path": "data/game-v0.111.0-source.json",
+            "jsonPointer": "/monsters/78/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/sourceFacts/monsters/71/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_NORMAL/lineup/0/hpA8",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_NORMAL/lineup/0/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_NORMAL/lineup/0/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_NORMAL/lineup/0/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/49/presentationBodies/0/annotations/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/49/presentationBodies/0/annotations/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/49/presentationBodies/0/annotations/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_WEAK/lineup/0/hpA8",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_WEAK/lineup/0/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_WEAK/lineup/0/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SCROLLS_OF_BITING_WEAK/lineup/0/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          }
+        ],
+        "rationale": "Scroll of Biting retained A8 HP [32, 39] disagrees with closed source [33, 39]. Primary/presentation keeps the source-winning value; the retained wiki origin remains auditable. sourceFlags text is not the sole machine-readable conflict record.",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "high",
+        "reviewedForVersion": "v0.111.0"
+      },
+      {
+        "id": "final-map-slimed-berserker-article-a8-hp-v1",
+        "originId": "wiki-origin-v1-f3b5a5ec091664df4044c4db06f70c776cc9190cf1d7345173de8b683481329c",
+        "claimId": "wiki-claim-v1-34f42ba0d4593fea6af30a39198c78bb5da7455cffa482e7fe2920d746ddec22",
+        "disposition": "conflict",
+        "semanticMapping": {
+          "kind": "a8-hp-range",
+          "actor": "Slimed Berserker",
+          "field": "AscHP",
+          "retainedValue": [
+            276
+          ],
+          "sourceValue": [
+            281
+          ],
+          "encounter": "SLIMED_BERSERKER_NORMAL",
+          "semanticGroup": "slimed-berserker-a8-hp"
+        },
+        "authorityComparison": {
+          "closure": "closed",
+          "sourceFactRefs": [
+            "SOURCE.MONSTER.SLIMED_BERSERKER"
+          ],
+          "compactFactRefs": [
+            "SOURCE.MONSTER.SLIMED_BERSERKER"
+          ],
+          "resolution": "source-wins",
+          "silentMerge": false
+        },
+        "representation": [
+          {
+            "layer": "raw-source",
+            "path": "data/game-v0.111.0-source.json",
+            "jsonPointer": "/monsters/84/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/sourceFacts/monsters/76/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SLIMED_BERSERKER_NORMAL/lineup/0/hpA8",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SLIMED_BERSERKER_NORMAL/lineup/0/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SLIMED_BERSERKER_NORMAL/lineup/0/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SLIMED_BERSERKER_NORMAL/lineup/0/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/56/presentationBodies/0/annotations/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/56/presentationBodies/0/annotations/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/56/presentationBodies/0/annotations/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          }
+        ],
+        "rationale": "Slimed Berserker retained A8 HP [276] disagrees with closed source [281]. Primary/presentation keeps the source-winning value; the retained wiki origin remains auditable. sourceFlags text is not the sole machine-readable conflict record.",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "high",
+        "reviewedForVersion": "v0.111.0"
+      },
+      {
+        "id": "final-map-slimed-berserker-module-a8-hp-v1",
+        "originId": "wiki-origin-v1-dbc87c3c6c3be795c915de64270443c1e20fdb947f1e27c530ef1233cccfcff6",
+        "claimId": "wiki-claim-v1-27966e25a159d72ce51505873ba53af2999cd7afb4a466c1578dfe41e99a32f6",
+        "disposition": "conflict",
+        "semanticMapping": {
+          "kind": "a8-hp-range",
+          "actor": "Slimed Berserker",
+          "field": "AscHP",
+          "retainedValue": [
+            276
+          ],
+          "sourceValue": [
+            281
+          ],
+          "encounter": "SLIMED_BERSERKER_NORMAL",
+          "semanticGroup": "slimed-berserker-a8-hp"
+        },
+        "authorityComparison": {
+          "closure": "closed",
+          "sourceFactRefs": [
+            "SOURCE.MONSTER.SLIMED_BERSERKER"
+          ],
+          "compactFactRefs": [
+            "SOURCE.MONSTER.SLIMED_BERSERKER"
+          ],
+          "resolution": "source-wins",
+          "silentMerge": false
+        },
+        "representation": [
+          {
+            "layer": "raw-source",
+            "path": "data/game-v0.111.0-source.json",
+            "jsonPointer": "/monsters/84/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/sourceFacts/monsters/76/initialHp/a8SinglePlayer",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SLIMED_BERSERKER_NORMAL/lineup/0/hpA8",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SLIMED_BERSERKER_NORMAL/lineup/0/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SLIMED_BERSERKER_NORMAL/lineup/0/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/SLIMED_BERSERKER_NORMAL/lineup/0/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/56/presentationBodies/0/annotations/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/56/presentationBodies/0/annotations/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/56/presentationBodies/0/annotations/typedConflicts/0/resolution",
+            "expectedValue": "source-wins"
+          }
+        ],
+        "rationale": "Slimed Berserker retained A8 HP [276] disagrees with closed source [281]. Primary/presentation keeps the source-winning value; the retained wiki origin remains auditable. sourceFlags text is not the sole machine-readable conflict record.",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "high",
+        "reviewedForVersion": "v0.111.0"
+      },
+      {
+        "id": "final-map-infested-prism-article-radiate-block-v1",
+        "originId": "wiki-origin-v1-26fccc346b6283a030f89839941d79a173399941b1e76a2df5490e461a2a9ec4",
+        "claimId": "wiki-claim-v1-fff883c3287a299927578bbf5104d4461678d0a2f253f5fa63264490515ce8fc",
+        "disposition": "conflict",
+        "semanticMapping": {
+          "kind": "move-effect-block",
+          "actor": "Infested Prism",
+          "field": "Radiate.block",
+          "retainedValue": 18,
+          "sourceValue": 13,
+          "encounter": "INFESTED_PRISMS_ELITE",
+          "move": "Radiate",
+          "semanticGroup": "infested-prism-radiate",
+          "pairedSourceDamage": 13,
+          "pairedRetainedDamage": 13
+        },
+        "authorityComparison": {
+          "closure": "closed",
+          "sourceFactRefs": [
+            "SOURCE.MOVE.MONSTER.INFESTED_PRISM.RADIATE_MOVE"
+          ],
+          "compactFactRefs": [
+            "SOURCE.MOVE.MONSTER.INFESTED_PRISM.RADIATE_MOVE"
+          ],
+          "resolution": "source-wins",
+          "silentMerge": false
+        },
+        "representation": [
+          {
+            "layer": "raw-source",
+            "path": "data/game-v0.111.0-source.json",
+            "jsonPointer": "/behavior/registrations/114/operations/1"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/sourceFacts/moves/114/operations/1"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/INFESTED_PRISMS_ELITE/lineup/0/moves/1/textA9",
+            "expectedValue": "Deals 13 damage. Gains 13 Block."
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/INFESTED_PRISMS_ELITE/lineup/0/typedConflicts/0/retainedValue/block",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/INFESTED_PRISMS_ELITE/lineup/0/typedConflicts/0/sourceValue/block",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/28/presentationBodies/0/annotations/typedConflicts/0/retainedValue/block",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/28/presentationBodies/0/annotations/typedConflicts/0/sourceValue/block",
+            "comparedLane": "source"
+          }
+        ],
+        "rationale": "Infested Prism Radiate retained A9 Block is 18 while closed source presentation/CIL audit is 13 Block (damage 13 agrees). The atomizer splits the move-effect row into damage and Block claims; only the Block article/module atoms are this value conflict. Source-winning text remains 'Deals 13 damage. Gains 13 Block.'",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "high",
+        "reviewedForVersion": "v0.111.0"
+      },
+      {
+        "id": "final-map-infested-prism-module-radiate-block-v1",
+        "originId": "wiki-origin-v1-26ad96a5135d268334abd7d6f313159f7ee501d3151efca528adfae13bba32fd",
+        "claimId": "wiki-claim-v1-414d7247bc055a2524e61ac9ef8375f5fe3e37f1a404ef58917b0f7df85d4e2b",
+        "disposition": "conflict",
+        "semanticMapping": {
+          "kind": "move-effect-block",
+          "actor": "Infested Prism",
+          "field": "Radiate.block",
+          "retainedValue": 18,
+          "sourceValue": 13,
+          "encounter": "INFESTED_PRISMS_ELITE",
+          "move": "Radiate",
+          "semanticGroup": "infested-prism-radiate",
+          "pairedSourceDamage": 13,
+          "pairedRetainedDamage": 13
+        },
+        "authorityComparison": {
+          "closure": "closed",
+          "sourceFactRefs": [
+            "SOURCE.MOVE.MONSTER.INFESTED_PRISM.RADIATE_MOVE"
+          ],
+          "compactFactRefs": [
+            "SOURCE.MOVE.MONSTER.INFESTED_PRISM.RADIATE_MOVE"
+          ],
+          "resolution": "source-wins",
+          "silentMerge": false
+        },
+        "representation": [
+          {
+            "layer": "raw-source",
+            "path": "data/game-v0.111.0-source.json",
+            "jsonPointer": "/behavior/registrations/114/operations/1"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/sourceFacts/moves/114/operations/1"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/INFESTED_PRISMS_ELITE/lineup/0/moves/1/textA9",
+            "expectedValue": "Deals 13 damage. Gains 13 Block."
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/INFESTED_PRISMS_ELITE/lineup/0/typedConflicts/0/retainedValue/block",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/INFESTED_PRISMS_ELITE/lineup/0/typedConflicts/0/sourceValue/block",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/28/presentationBodies/0/annotations/typedConflicts/0/retainedValue/block",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/28/presentationBodies/0/annotations/typedConflicts/0/sourceValue/block",
+            "comparedLane": "source"
+          }
+        ],
+        "rationale": "Infested Prism Radiate retained A9 Block is 18 while closed source presentation/CIL audit is 13 Block (damage 13 agrees). The atomizer splits the move-effect row into damage and Block claims; only the Block article/module atoms are this value conflict. Source-winning text remains 'Deals 13 damage. Gains 13 Block.'",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "high",
+        "reviewedForVersion": "v0.111.0"
+      },
+      {
+        "id": "final-map-terror-eel-article-terrorize-title-v1",
+        "originId": "wiki-origin-v1-e32b27a1ffa9f3f033e77b620c1fbcde23e14191ce58bbfb3b761472e70af290",
+        "claimId": "wiki-claim-v1-a77012e68080cf7cf413d17c78e019569655d318bd52f924a5cbb8b986de4b18",
+        "disposition": "conflict",
+        "semanticMapping": {
+          "kind": "move-title",
+          "actor": "Terror Eel",
+          "field": "title",
+          "retainedValue": "Terror",
+          "sourceValue": "Terrorize",
+          "encounter": "TERROR_EEL_ELITE",
+          "move": "Terror",
+          "semanticGroup": "terror-eel-terrorize",
+          "independentKnownUnknown": "UNKNOWN.MOVE_TITLE.MONSTER.TERROR_EEL.STUN_MOVE"
+        },
+        "authorityComparison": {
+          "closure": "closed",
+          "sourceFactRefs": [
+            "SOURCE.MOVE.MONSTER.TERROR_EEL.TERROR_MOVE"
+          ],
+          "compactFactRefs": [
+            "SOURCE.MOVE.MONSTER.TERROR_EEL.TERROR_MOVE"
+          ],
+          "resolution": "source-wins",
+          "silentMerge": false,
+          "independentKnownUnknownRefs": [
+            "UNKNOWN.MOVE_TITLE.MONSTER.TERROR_EEL.STUN_MOVE"
+          ]
+        },
+        "representation": [
+          {
+            "layer": "raw-source",
+            "path": "data/game-v0.111.0-source.json",
+            "jsonPointer": "/behavior/registrations/244/title/english",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/sourceFacts/moves/244/title/english",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/TERROR_EEL_ELITE/lineup/0/moves/3/name",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/TERROR_EEL_ELITE/lineup/0/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/TERROR_EEL_ELITE/lineup/0/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/66/presentationBodies/0/annotations/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/66/presentationBodies/0/annotations/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/knownUnknowns/17/unknownId",
+            "expectedValue": "UNKNOWN.MOVE_TITLE.MONSTER.TERROR_EEL.STUN_MOVE"
+          }
+        ],
+        "rationale": "Terror Eel retained/wiki move title is Terror; shipped source localization is Terrorize. Source title remains authoritative for hero/audit copy. Stun's missing localization is an independent known-unknown and is never inferred from this title pair.",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "medium",
+        "reviewedForVersion": "v0.111.0"
+      },
+      {
+        "id": "final-map-terror-eel-module-terrorize-title-v1",
+        "originId": "wiki-origin-v1-b4981eee8af2358457fb4918e40133fceb06bcf9bdac2634ffb853bfe1f0fe6b",
+        "claimId": "wiki-claim-v1-29ba8cefa31d3af7970a6bed6686d575ef804ed17c540d1e3762b8725dacf1fc",
+        "disposition": "conflict",
+        "semanticMapping": {
+          "kind": "move-title",
+          "actor": "Terror Eel",
+          "field": "title",
+          "retainedValue": "Terror",
+          "sourceValue": "Terrorize",
+          "encounter": "TERROR_EEL_ELITE",
+          "move": "Terror",
+          "semanticGroup": "terror-eel-terrorize",
+          "independentKnownUnknown": "UNKNOWN.MOVE_TITLE.MONSTER.TERROR_EEL.STUN_MOVE"
+        },
+        "authorityComparison": {
+          "closure": "closed",
+          "sourceFactRefs": [
+            "SOURCE.MOVE.MONSTER.TERROR_EEL.TERROR_MOVE"
+          ],
+          "compactFactRefs": [
+            "SOURCE.MOVE.MONSTER.TERROR_EEL.TERROR_MOVE"
+          ],
+          "resolution": "source-wins",
+          "silentMerge": false,
+          "independentKnownUnknownRefs": [
+            "UNKNOWN.MOVE_TITLE.MONSTER.TERROR_EEL.STUN_MOVE"
+          ]
+        },
+        "representation": [
+          {
+            "layer": "raw-source",
+            "path": "data/game-v0.111.0-source.json",
+            "jsonPointer": "/behavior/registrations/244/title/english",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/sourceFacts/moves/244/title/english",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/TERROR_EEL_ELITE/lineup/0/moves/3/name",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/TERROR_EEL_ELITE/lineup/0/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/TERROR_EEL_ELITE/lineup/0/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/66/presentationBodies/0/annotations/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/66/presentationBodies/0/annotations/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "technical-audit",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/knownUnknowns/17/unknownId",
+            "expectedValue": "UNKNOWN.MOVE_TITLE.MONSTER.TERROR_EEL.STUN_MOVE"
+          }
+        ],
+        "rationale": "Terror Eel retained/wiki move title is Terror; shipped source localization is Terrorize. Source title remains authoritative for hero/audit copy. Stun's missing localization is an independent known-unknown and is never inferred from this title pair.",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "medium",
+        "reviewedForVersion": "v0.111.0"
+      },
+      {
+        "id": "final-map-kin-follower-module-type-v1",
+        "originId": "wiki-origin-v1-8b4784b84678283cd0754dc4a322b9f43e8bc2fa82a0a6d3e1f6ec1e314af4e7",
+        "claimId": "wiki-claim-v1-e17a8039a9eadf3a51674c112b4fba7eed388d154d1a19f8ba15c1a7d0632fef",
+        "disposition": "conflict",
+        "semanticMapping": {
+          "kind": "identity-type",
+          "actor": "Kin Follower",
+          "field": "Type",
+          "retainedValue": "Boss",
+          "sourceValue": "Minion",
+          "encounter": "THE_KIN_BOSS",
+          "semanticGroup": "kin-follower-type",
+          "retainedOriginPath": "tools/.wiki/Bosses.lua",
+          "articleValue": "Minion"
+        },
+        "authorityComparison": {
+          "closure": "closed",
+          "sourceFactRefs": [
+            "SOURCE.MONSTER.KIN_FOLLOWER",
+            "INITIAL.MONSTER.KIN_FOLLOWER.AFTERADDEDTOROOM.000.APPLYPOWER"
+          ],
+          "compactFactRefs": [
+            "SOURCE.MONSTER.KIN_FOLLOWER"
+          ],
+          "resolution": "source-wins",
+          "silentMerge": false
+        },
+        "representation": [
+          {
+            "layer": "raw-source",
+            "path": "data/game-v0.111.0-source.json",
+            "jsonPointer": "/initialState/initialStateFacts/44/effect/model",
+            "expectedValue": "POWER.MINION_POWER"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/69/presentationBodies/1/annotations/type",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/69/presentationBodies/1/annotations/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/current/69/presentationBodies/1/annotations/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/THE_KIN_BOSS/lineup/1/type",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/THE_KIN_BOSS/lineup/1/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/THE_KIN_BOSS/lineup/1/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/THE_KIN_BOSS/lineup/2/type",
+            "comparedLane": "source"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/THE_KIN_BOSS/lineup/2/typedConflicts/0/retainedValue",
+            "comparedLane": "retained"
+          },
+          {
+            "layer": "retained-book",
+            "path": "data/encounters.json",
+            "jsonPointer": "/encounters/THE_KIN_BOSS/lineup/2/typedConflicts/0/sourceValue",
+            "comparedLane": "source"
+          }
+        ],
+        "rationale": "Kin Follower module Type=Boss is incorrect. The article and closed source identity are Minion (Minion power on add). The bad origin path is tools/.wiki/Bosses.lua, not Hive.lua. Current retained book presentation already uses Minion.",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "high",
+        "reviewedForVersion": "v0.111.0"
+      }
+    ],
+    "structuralRules": [
+      {
+        "id": "doormaker-mechanical-stale-v1",
+        "disposition": "stale/deprecated/version-ambiguous",
+        "match": {
+          "membership": "deprecated",
+          "reviewState": "captured-unreconciled"
+        },
+        "expectedCount": 36,
+        "expectedOriginIds": [
+          "wiki-origin-v1-02858dbf2a51e7d5f72487de467fdce80ffefb13cc93e0d7ff584b1649c60c00",
+          "wiki-origin-v1-0378e0d018e5fff401e0113ae3d581abdf8c753649bd5e346f7f004f03239653",
+          "wiki-origin-v1-09dff627bebabf575dc07120ab96a474303a3d99e67f46a7c4543a3e897ca083",
+          "wiki-origin-v1-0e05daa1654f98e7dcab6945c76830ad235b54295de819c448c4795b85bd0f35",
+          "wiki-origin-v1-15698174f75e9b672a9fbae44ab799fb7fb38b3621f4ebd34dc6488ab89fe2cc",
+          "wiki-origin-v1-195cfdca40885c0f2b099a35e13235e6c3c5492ccc24458cce0f4d5d1e6dc641",
+          "wiki-origin-v1-25a30b358bf61e303482e10a0f6cc3838a21973d76844c7ac9e4fd2cb03e00eb",
+          "wiki-origin-v1-2f72b43150ef5a9cb8e1075601391c3ad26917787671d97156ef931a2bc37cf3",
+          "wiki-origin-v1-31be6b27f4c54b16fa53b3be79918ac30dca1b457724f5e84942dcea40841a7c",
+          "wiki-origin-v1-331055154604e723b199dfc567204acdb0473c0fcad4ae75f96e06584a8dc8f1",
+          "wiki-origin-v1-37b7970312006afe0db68c7134813f0eeaf47abed6aaaa19b42e84933c349d43",
+          "wiki-origin-v1-3aee05ab3c1a38edc8782f2ef9dae296d1b10f802615430ff2c64913cfa009b3",
+          "wiki-origin-v1-41d0fc7aaa69ff48476dd8efebe88dd5646c37c03a410d9fa95b91477d9f953c",
+          "wiki-origin-v1-55df00247d12f88e27ee6dfd156c8612d09598ff9d1f55efb9f13bb271aaf59d",
+          "wiki-origin-v1-5cbbbb034b94e059661b35ee249c49f6b47755729ddc5774106a3ac6c542bfd5",
+          "wiki-origin-v1-6f4303e6e1cbc557f34d56caf45ed4c03cd8b94d2a63f14d36ed9477518c3ab6",
+          "wiki-origin-v1-6ffba4503a45753a21f1992b5817f900df8aa4b86a7a56ec6e875ae339a7b0c6",
+          "wiki-origin-v1-728791fc998bba723b8d63a45637355b6b399a53c2b2dc6cda8fc5ce342ebf12",
+          "wiki-origin-v1-77e5e3ef8f6b0a2d645ba55f0cd086ea9eac1787e9854d2adf4b83a6621c653b",
+          "wiki-origin-v1-7a16be3ac7122bb1c2508dfb2abd6711f03b804930a89542ebd74f31feebfe99",
+          "wiki-origin-v1-8700a19a28568a0d1d08548d1bf50311c52c7df52b7ba214297f08f473524dad",
+          "wiki-origin-v1-8d84eea9228ae828711290c52edfd506a56a3b8242b9bb7557f146ef118e3382",
+          "wiki-origin-v1-9f2982c7a6f62dacdbba81177f4f55c2f38a642791abc377deae1c864af53f7c",
+          "wiki-origin-v1-a4fa5b8b34e577132ce948108baae0e30e05aacae7434bb1d77d840950980d41",
+          "wiki-origin-v1-a82e65bbf675bbb470dac0a0b58b0e89b75a95159b504fa0ece90ed679b0c39a",
+          "wiki-origin-v1-b1acfd8863a0ebfa327a9085209edb6baacc1036440d09c8bb603d2cc1bc5c1f",
+          "wiki-origin-v1-b2bc83626e9dedae42d1a9b09045a6ffa62edb5fe33f16c3cd7cf88e046ab621",
+          "wiki-origin-v1-bec82558526b9a3ce3d9c4aab6a965b88dc0d72f83a4af88f864e3e52ab7ee47",
+          "wiki-origin-v1-bf9d92f0675793942534714540d103b5094feab7ad214cf6237008a1daea8403",
+          "wiki-origin-v1-c887cb13ef440df6779a569873788f7a12b91e887a6870304681c4d78e443a72",
+          "wiki-origin-v1-ce6dd935ff85603a79c09b1abe6063d3ba38d825ccdda8bb50236fb9ca85ac46",
+          "wiki-origin-v1-d340523120ec84b4946b301be67a149d1cfc0fa3b43c5cbaec886d5042560f19",
+          "wiki-origin-v1-dcdea09bbb01d08fda44b1858ead94bc724461391b16157ea04f114f54b60e50",
+          "wiki-origin-v1-e4b251aa45c8be10e87ce6f662c63207ae9f5b45224a6ccf7d085a111b1adbc9",
+          "wiki-origin-v1-ea95a3c529a69d7ddf5fb63fb496e86b798f10061afce9f1db2ef08848ac0fb0",
+          "wiki-origin-v1-efd62a02cac324a2caf51e7378bfddc5d7ee5c7337b0892a8e35a726fec62b8e"
+        ],
+        "semanticMapping": {
+          "kind": "stale-deprecated-mechanic",
+          "actor": "Doormaker",
+          "field": "deprecated-encounter-mechanics",
+          "retainedValue": "archived-doormaker-mechanic",
+          "sourceValue": null
+        },
+        "authorityComparison": {
+          "closure": "notApplicable",
+          "sourceFactRefs": [],
+          "compactFactRefs": [
+            "LEGACY.ENCOUNTER.DOORMAKER_BOSS"
+          ],
+          "resolution": "archive-only-not-current",
+          "silentMerge": false
+        },
+        "representation": [
+          {
+            "layer": "retained-archive",
+            "path": "data/encounters.json",
+            "jsonPointer": "/archive/encounters/DOORMAKER_BOSS"
+          },
+          {
+            "layer": "compact-projection",
+            "path": "data/encounter-facts-v0.111.0.json",
+            "jsonPointer": "/payload/legacyAnnotations/archive/0"
+          }
+        ],
+        "rationale": "Doormaker is the sole deprecated retained encounter. These mechanical origins remain archived for audit and are not current selectors, primaries, fallbacks, or coverage denominators. Closed current source has no Doormaker encounter.",
+        "owner": "StS2 Companion P1b0 completeness review",
+        "severity": "high",
+        "reviewedForVersion": "v0.111.0",
+        "expectedClaimIds": [
+          "wiki-claim-v1-b56ca5b4a23060055d3df30f53fc3652fb7481f3318077dd423120444ea9307b",
+          "wiki-claim-v1-e99e74000476431ea7b4dab1bdce6db9091ab38b112a005f9e7a4bbf51c086af",
+          "wiki-claim-v1-a9916a181abbd9dbbd8bcd77697ce394df0766b71ee6bfc0a147ddd8241cdb5c",
+          "wiki-claim-v1-763918184e91b7eff3f7b49506d9b66d5f92dd5643abe2ef03b525230c8b1928",
+          "wiki-claim-v1-6bddf90887aeb8724bee1fc00e6a588bf2548e6af97388d28632015d720483ce",
+          "wiki-claim-v1-2f9faeb47dd4b215d7bf26a6d8fe0c7fb9cd1c5af968080bc2086c9456fb5cd0",
+          "wiki-claim-v1-0845833d2f19f7ec574a5322abadcbc51afcb05224e210c4eda5c98a081367a8",
+          "wiki-claim-v1-7c662f6369ffd60f509f0eab8744feeecc91deec73832b7183db1c75522fd9b9",
+          "wiki-claim-v1-6abc499db38607eac336a1554f0e66f0e219d7f1bdc0289e1ff8edb556822340",
+          "wiki-claim-v1-a431a3bd038328f6cbc7230507bd3bd897b28a3529232804b9ca1960e6b363ff",
+          "wiki-claim-v1-0cbef6615f9f37e687b14b67ff15017567a85e7649aeaaac7690c11b9eb0c6ef",
+          "wiki-claim-v1-b18b7567163827bf349ef57a7d1f572cf058ec1fc336257bdcf6500031e39d1a",
+          "wiki-claim-v1-09d88cf504b68a1018f38cf82f47aa716cc48c28bbf1b127d690c3d15530981f",
+          "wiki-claim-v1-fa25e359217b381139f4f45abaad8030a880a6b126e4a796aa383efe80bdc436",
+          "wiki-claim-v1-85032571f04df3f609c37051de0be9227992a864608403fe47564f644920bd76",
+          "wiki-claim-v1-82e6474f35baa0ca0eb4db3b6c60930df37d2fd62d731b12730eca55079d7c1e",
+          "wiki-claim-v1-e5896d2041196733a8ef10a06b20624caf89d2dd2e7c753080d2418fc389700e",
+          "wiki-claim-v1-12f449e4e21352c2f1e37a364037a83beac84eeb3b4c65e9fbd7f998ba0bc8e0",
+          "wiki-claim-v1-23d751f14a6551db17f5f484e12c04293f948f0cee9f1ba4275e5939b720f608",
+          "wiki-claim-v1-db645d9d203756d4de4f38166b74c0bdf048efe4d1c631d3b273c1519ffa96ec",
+          "wiki-claim-v1-10ace6a7d2a4dd2b5b5966fc31f6db8e11cfa9a2edd2074a7683f3ea6ddca1b0",
+          "wiki-claim-v1-9f603639096fb1585da000485be83888ed424a079fc6426b337d036d8a5b532b",
+          "wiki-claim-v1-f89a54cd31242ea7261ffa8acd595e0d965076f65fc956fb3dfd097266a00d3c",
+          "wiki-claim-v1-b2aeaf119bfaf10270ccbd39c0314c3f1c0d41684c20722dce608a1ce3b117fc",
+          "wiki-claim-v1-8b349228b961faf3fb3ba21e1408b43ae4ad97015494fa326f8ded07d74c4dc0",
+          "wiki-claim-v1-6aee38790f2c846325bb4489789720f03744959531a8775fd518ba6c172961c3",
+          "wiki-claim-v1-061fd4dda2ae541512f485b3567a6c67f5fa6be04f9bd01bb0caa85c3ab5d15f",
+          "wiki-claim-v1-8a580f305d28e45453cefe5a67832d9a1036746b811334f7cea63c493c78202c",
+          "wiki-claim-v1-8ef6e3b8af7582dff6096c9fb950b467671641e54157ab5b68c8abd3c8d4fe60",
+          "wiki-claim-v1-2bbae7754c648b3bdada384fef6f1de1282f0ff4b411b60f923c811260bd5a11",
+          "wiki-claim-v1-2c70be6b0d5d131430be508d77b2b2ac14cac499128455629d806fb5bf0963a5",
+          "wiki-claim-v1-ba27766c63d68bf176d563b8e4caa65e57ea63e9cd890841dea01142be1e06e8",
+          "wiki-claim-v1-db5d42258b23971e8d8207fa62efb3ead1736cafbb547122a7b7bd58a0a3a0eb",
+          "wiki-claim-v1-461b697ff16b38a242e3af6f1efe9947c45da8b7f6168315e55c5185fbe8eef5",
+          "wiki-claim-v1-8d6d819d6c3e116337ada3e13338071a3196db6a407c5412c65a841383d7b0be",
+          "wiki-claim-v1-09f7c6ddb7a1cbe9d6088c60199a42dc79b2a7ff0ed283dd8e21e9f8e520ea37"
+        ]
+      }
+    ],
+    "compactTitleConflictCrossLinks": {
+      "id": "compact-title-conflicts-crosslink-v1",
+      "expectedCount": 26,
+      "sourcePointer": "/payload/conflicts",
+      "expectedConflictIds": [
+        "CONFLICT.ENCOUNTER_TITLE.AXEBOTS_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.BOWLBUGS_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.CHOMPERS_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.CORPSE_SLUGS_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.DECIMILLIPEDE_ELITE",
+        "CONFLICT.ENCOUNTER_TITLE.EXOSKELETONS_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.FLYCONID_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.GLOBE_HEAD_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.GREMLIN_MERC_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.INFESTED_PRISMS_ELITE",
+        "CONFLICT.ENCOUNTER_TITLE.KNIGHTS_ELITE",
+        "CONFLICT.ENCOUNTER_TITLE.MYTES_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.NIBBITS_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.NIBBITS_WEAK",
+        "CONFLICT.ENCOUNTER_TITLE.SCROLLS_OF_BITING_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.SCROLLS_OF_BITING_WEAK",
+        "CONFLICT.ENCOUNTER_TITLE.SEAPUNK_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.SLIMES_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.SLIMES_WEAK",
+        "CONFLICT.ENCOUNTER_TITLE.SLITHERING_STRANGLER_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.SLUMBERING_BEETLE_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.SNAPPING_JAXFRUIT_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.THE_LOST_AND_FORGOTTEN_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.TUNNELER_NORMAL",
+        "CONFLICT.ENCOUNTER_TITLE.TWO_TAILED_RATS_NORMAL",
+        "CONFLICT.MONSTER_TITLE.FOGMOG_NORMAL.1"
+      ],
+      "presentationResolution": "source-wins",
+      "compactLaneResolution": "unresolved",
+      "heroCopyAuthority": "source",
+      "rationale": "Preserve the compact projection's 26 direct title conflicts (25 retained encounter titles versus shipped source titles plus Eye With Teeth capitalization). Source titles drive hero copy; both lanes remain Technical. Cross-link table-driven from payload.conflicts; do not retype.",
+      "owner": "StS2 Companion P1b0 completeness review",
+      "reviewedForVersion": "v0.111.0"
+    }
+  }
 }

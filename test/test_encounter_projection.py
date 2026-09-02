@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE_PATH = ROOT / "data/game-v0.111.0-source.json"
 LEGACY_PATH = ROOT / "data/encounters.json"
 PROJECTION_PATH = ROOT / "data/encounter-facts-v0.111.0.json"
-LEGACY_SHA256 = "0c01dd0b851c501acea59fb41b10a828030ad2c3e63f9fc624f98b6e403e0103"
+LEGACY_SHA256 = "91161c59e780329371c930a01d3ae8916becc3c6dfa4574e9692c8a21c398df3"
 
 
 class EncounterProjectionTests(unittest.TestCase):
@@ -76,6 +76,25 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual([row["legacyEncounterId"] for row in legacy["archive"]], ["DOORMAKER_BOSS"])
         self.assertNotIn("DOORMAKER_BOSS", {row["canonicalId"] for row in source["encounters"]["ordinary"]})
         self.assertNotIn("DOORMAKER_BOSS", {row["legacyEncounterId"] for row in legacy["current"]})
+        self.assertNotIn("MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER", {row["legacyEncounterId"] for row in legacy["current"]})
+        typed = {
+            row["id"]
+            for encounter in legacy["current"]
+            for body in encounter["presentationBodies"]
+            for row in (body["annotations"].get("typedConflicts") or [])
+        }
+        self.assertEqual(typed, {
+            "RETAINED.CONFLICT.AXEBOT.A8_HP",
+            "RETAINED.CONFLICT.OWL_MAGISTRATE.A8_HP",
+            "RETAINED.CONFLICT.SCROLL_OF_BITING.A8_HP",
+            "RETAINED.CONFLICT.SLIMED_BERSERKER.A8_HP",
+            "RETAINED.CONFLICT.INFESTED_PRISM.RADIATE",
+            "RETAINED.CONFLICT.TERROR_EEL.MOVE_TITLE.TERROR",
+            "RETAINED.CONFLICT.KIN_FOLLOWER.TYPE",
+        })
+        self.assertEqual(self.legacy["meta"]["membership"]["currentEncounters"], 81)
+        self.assertEqual(self.legacy["meta"]["membership"]["archivedEncounters"], 1)
+        self.assertEqual(set(self.legacy["retainedReferences"]), {"MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"})
         readiness = payload["readiness"]
         self.assertEqual(readiness["root"]["ready"], False)
         self.assertEqual(readiness["global"]["status"], "incomplete")

@@ -75,12 +75,6 @@
         "revisionTimestamp": "2026-08-28T18:30:32Z"
       },
       {
-        "title": "Slay the Spire 2:Doormaker",
-        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Doormaker",
-        "revisionId": 49947,
-        "revisionTimestamp": "2026-08-27T17:40:54Z"
-      },
-      {
         "title": "Slay the Spire 2:Entomancer",
         "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Entomancer",
         "revisionId": 50193,
@@ -211,6 +205,12 @@
         "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Mecha_Knight",
         "revisionId": 50225,
         "revisionTimestamp": "2026-08-27T18:27:46Z"
+      },
+      {
+        "title": "Slay the Spire 2:Mysterious Knight",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Mysterious_Knight",
+        "revisionId": 51002,
+        "revisionTimestamp": "2026-08-28T18:56:04Z"
       },
       {
         "title": "Slay the Spire 2:Myte",
@@ -441,6 +441,14 @@
         "revisionTimestamp": "2026-08-28T19:45:24Z"
       }
     ],
+    "archivedWikiPages": [
+      {
+        "title": "Slay the Spire 2:Doormaker",
+        "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Doormaker",
+        "revisionId": 49947,
+        "revisionTimestamp": "2026-08-27T17:40:54Z"
+      }
+    ],
     "patchPage": {
       "title": "Slay the Spire 2:V0.111.0 - Beta Patch",
       "url": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:V0.111.0_-_Beta_Patch",
@@ -451,7 +459,17 @@
     "targetVersion": "v0.111.0",
     "targetBranch": "public-beta",
     "ascension": "A8 HP; A9 move/block/buff values",
-    "players": 2
+    "players": 2,
+    "membership": {
+      "currentEncounters": 81,
+      "archivedEncounters": 1,
+      "currentRetainedReferences": 1,
+      "currentWikiPages": 73,
+      "archivedWikiPages": 1,
+      "currentBodyIds": 105,
+      "archivedBodyIds": 1,
+      "currentReferenceBodyIds": 1
+    }
   },
   "encounters": {
     "AEONGLASS_BOSS": {
@@ -526,6 +544,25 @@
           "patchChecked": "v0.111.0 Enemies",
           "sourceFlags": [
             "GAME OVERRIDE: hpA8 article=[78, 86] game=[76, 86]"
+          ],
+          "typedConflicts": [
+            {
+              "id": "RETAINED.CONFLICT.AXEBOT.A8_HP",
+              "kind": "a8-hp-range",
+              "actor": "Axebot",
+              "field": "hpA8",
+              "retainedValue": [
+                78,
+                86
+              ],
+              "sourceValue": [
+                76,
+                86
+              ],
+              "resolution": "source-wins",
+              "authority": "closed-source",
+              "sourceFactId": "SOURCE.MONSTER.AXEBOT"
+            }
           ],
           "monsterId": "AXEBOT",
           "count": 1,
@@ -1328,50 +1365,6 @@
       "rules": [],
       "timing": []
     },
-    "DOORMAKER_BOSS": {
-      "act": "Glory",
-      "kind": "boss",
-      "lineup": [
-        {
-          "displayName": "Doormaker",
-          "type": "Boss",
-          "hpA8": [
-            512
-          ],
-          "moves": [
-            {
-              "name": "Dramatic Open",
-              "textA9": "Transforms into the Doormaker. Sets current buff to Hunger."
-            },
-            {
-              "name": "Hunger",
-              "textA9": "Deals 35 damage. Swaps current buff to Scrutiny."
-            },
-            {
-              "name": "Scrutiny",
-              "textA9": "Deals 26 damage. Swaps current buff to Grasp."
-            },
-            {
-              "name": "Grasp",
-              "textA9": "Deals 11×2 damage. Gains 3 Strength. Swaps current buff to Hunger."
-            }
-          ],
-          "pattern": {
-            "type": "cycle",
-            "text": "The Doormaker uses Dramatic Open on its first turn, then follows a repeating cycle: • Hunger • Scrutiny • Grasp"
-          },
-          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Doormaker",
-          "monsterId": "DOORMAKER",
-          "count": 1
-        }
-      ],
-      "name": "Doormaker",
-      "rules": [
-        "Even though the HP bar in the first phase shows as \"infinity\", it is actually set to the finite number of 999,999,999 HP. As such, it is theoretically possible to kill the Doormaker in its first phase.",
-        "Door spawns first; Doormaker transforms from it on the first turn (deprecated after v0.107.1)."
-      ],
-      "timing": []
-    },
     "ENTOMANCER_ELITE": {
       "act": "Hive",
       "kind": "elite",
@@ -2111,6 +2104,26 @@
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Infested_Prism",
           "sourceFlags": [
             "GAME OVERRIDE: Radiate article='Deals 13 damage. Gains 18 Block.' game='Deals 13 damage. Gains 13 Block.'"
+          ],
+          "typedConflicts": [
+            {
+              "id": "RETAINED.CONFLICT.INFESTED_PRISM.RADIATE",
+              "kind": "move-effect",
+              "actor": "Infested Prism",
+              "move": "Radiate",
+              "field": "damage-and-block",
+              "retainedValue": {
+                "damage": 13,
+                "block": 18
+              },
+              "sourceValue": {
+                "damage": 13,
+                "block": 13
+              },
+              "resolution": "source-wins",
+              "authority": "closed-source",
+              "sourceFactId": "SOURCE.MOVE.MONSTER.INFESTED_PRISM.RADIATE_MOVE"
+            }
           ],
           "monsterId": "INFESTED_PRISM",
           "count": 1
@@ -2996,6 +3009,23 @@
           "sourceFlags": [
             "GAME OVERRIDE: hpA8 article=[243] game=[247]"
           ],
+          "typedConflicts": [
+            {
+              "id": "RETAINED.CONFLICT.OWL_MAGISTRATE.A8_HP",
+              "kind": "a8-hp-range",
+              "actor": "Owl Magistrate",
+              "field": "hpA8",
+              "retainedValue": [
+                243
+              ],
+              "sourceValue": [
+                247
+              ],
+              "resolution": "source-wins",
+              "authority": "closed-source",
+              "sourceFactId": "SOURCE.MONSTER.OWL_MAGISTRATE"
+            }
+          ],
           "monsterId": "OWL_MAGISTRATE",
           "count": 1
         }
@@ -3421,6 +3451,25 @@
           "sourceFlags": [
             "GAME OVERRIDE: hpA8 article=[32, 39] game=[33, 39]"
           ],
+          "typedConflicts": [
+            {
+              "id": "RETAINED.CONFLICT.SCROLL_OF_BITING.A8_HP",
+              "kind": "a8-hp-range",
+              "actor": "Scroll of Biting",
+              "field": "hpA8",
+              "retainedValue": [
+                32,
+                39
+              ],
+              "sourceValue": [
+                33,
+                39
+              ],
+              "resolution": "source-wins",
+              "authority": "closed-source",
+              "sourceFactId": "SOURCE.MONSTER.SCROLL_OF_BITING"
+            }
+          ],
           "monsterId": "SCROLL_OF_BITING",
           "count": 4
         }
@@ -3464,6 +3513,25 @@
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Scroll_of_Biting",
           "sourceFlags": [
             "GAME OVERRIDE: hpA8 article=[32, 39] game=[33, 39]"
+          ],
+          "typedConflicts": [
+            {
+              "id": "RETAINED.CONFLICT.SCROLL_OF_BITING.A8_HP",
+              "kind": "a8-hp-range",
+              "actor": "Scroll of Biting",
+              "field": "hpA8",
+              "retainedValue": [
+                32,
+                39
+              ],
+              "sourceValue": [
+                33,
+                39
+              ],
+              "resolution": "source-wins",
+              "authority": "closed-source",
+              "sourceFactId": "SOURCE.MONSTER.SCROLL_OF_BITING"
+            }
           ],
           "monsterId": "SCROLL_OF_BITING",
           "count": 3
@@ -3721,6 +3789,23 @@
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Slimed_Berserker",
           "sourceFlags": [
             "GAME OVERRIDE: hpA8 article=[276] game=[281]"
+          ],
+          "typedConflicts": [
+            {
+              "id": "RETAINED.CONFLICT.SLIMED_BERSERKER.A8_HP",
+              "kind": "a8-hp-range",
+              "actor": "Slimed Berserker",
+              "field": "hpA8",
+              "retainedValue": [
+                276
+              ],
+              "sourceValue": [
+                281
+              ],
+              "resolution": "source-wins",
+              "authority": "closed-source",
+              "sourceFactId": "SOURCE.MONSTER.SLIMED_BERSERKER"
+            }
           ],
           "monsterId": "SLIMED_BERSERKER",
           "count": 1
@@ -4317,6 +4402,26 @@
             "text": "The Terror Eel alternates between Crash and Thrash, starting with Crash. When its HP drops to its Shriek threshold (75), it becomes Stunned and then uses Terror before resuming the Crash/Thrash cycle. • Terror applies 99 Vulnerable, which effectively makes the player take 50% more damage from attacks for the rest of the fight."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Terror_Eel",
+          "typedConflicts": [
+            {
+              "id": "RETAINED.CONFLICT.TERROR_EEL.MOVE_TITLE.TERROR",
+              "kind": "move-title",
+              "actor": "Terror Eel",
+              "move": "Terror",
+              "field": "title",
+              "retainedValue": "Terror",
+              "sourceValue": "Terrorize",
+              "resolution": "source-wins",
+              "authority": "closed-source",
+              "sourceFactId": "SOURCE.MOVE.MONSTER.TERROR_EEL.TERROR_MOVE",
+              "independentKnownUnknown": {
+                "unknownId": "UNKNOWN.MOVE_TITLE.MONSTER.TERROR_EEL.STUN_MOVE",
+                "move": "Stun",
+                "reasonCode": "SOURCE_MOVE_TITLE_MISSING_OR_INTERNAL",
+                "note": "Stun localization remains independently missing; it is never inferred from Terror/Terrorize."
+              }
+            }
+          ],
           "monsterId": "TERROR_EEL",
           "count": 1
         }
@@ -4529,6 +4634,22 @@
             "text": "Opener (turn 1): Quick Slash. Then continue the cycle: Boomerang → Power Dance → Quick Slash → repeat."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Kin",
+          "typedConflicts": [
+            {
+              "id": "RETAINED.CONFLICT.KIN_FOLLOWER.TYPE",
+              "kind": "identity-type",
+              "actor": "Kin Follower",
+              "field": "Type",
+              "retainedValue": "Boss",
+              "sourceValue": "Minion",
+              "articleValue": "Minion",
+              "resolution": "source-wins",
+              "authority": "closed-source",
+              "retainedOriginPath": "tools/.wiki/Bosses.lua",
+              "sourceFactId": "SOURCE.MONSTER.KIN_FOLLOWER",
+              "sourceInitialFactId": "INITIAL.MONSTER.KIN_FOLLOWER.AFTERADDEDTOROOM.000.APPLYPOWER"
+            }
+          ],
           "monsterId": "KIN_FOLLOWER",
           "count": 1,
           "role": "Quick Slash opener slot"
@@ -4560,6 +4681,22 @@
             "text": "Opener (turn 1): Power Dance. Then continue the cycle: Quick Slash → Boomerang → Power Dance → repeat."
           },
           "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:The_Kin",
+          "typedConflicts": [
+            {
+              "id": "RETAINED.CONFLICT.KIN_FOLLOWER.TYPE",
+              "kind": "identity-type",
+              "actor": "Kin Follower",
+              "field": "Type",
+              "retainedValue": "Boss",
+              "sourceValue": "Minion",
+              "articleValue": "Minion",
+              "resolution": "source-wins",
+              "authority": "closed-source",
+              "retainedOriginPath": "tools/.wiki/Bosses.lua",
+              "sourceFactId": "SOURCE.MONSTER.KIN_FOLLOWER",
+              "sourceInitialFactId": "INITIAL.MONSTER.KIN_FOLLOWER.AFTERADDEDTOROOM.000.APPLYPOWER"
+            }
+          ],
           "monsterId": "KIN_FOLLOWER",
           "count": 1,
           "role": "Power Dance opener slot"
@@ -5154,6 +5291,101 @@
       "timing": [
         "Almost every move also adds 3 Steam Eruption. When the Waterfall Giant is killed while it has Steam Eruption, it becomes invulnerable and uses About To Blow, cleansing all its buffs and debuffs. Next turn it will use Explode, dealing damage equal to its accumulated Steam Eruption before dying."
       ]
+    }
+  },
+  "archive": {
+    "reason": "absentFromCurrentSourceEncounterCensus",
+    "encounters": {
+      "DOORMAKER_BOSS": {
+        "act": "Glory",
+        "kind": "boss",
+        "lineup": [
+          {
+            "displayName": "Doormaker",
+            "type": "Boss",
+            "hpA8": [
+              512
+            ],
+            "moves": [
+              {
+                "name": "Dramatic Open",
+                "textA9": "Transforms into the Doormaker. Sets current buff to Hunger."
+              },
+              {
+                "name": "Hunger",
+                "textA9": "Deals 35 damage. Swaps current buff to Scrutiny."
+              },
+              {
+                "name": "Scrutiny",
+                "textA9": "Deals 26 damage. Swaps current buff to Grasp."
+              },
+              {
+                "name": "Grasp",
+                "textA9": "Deals 11×2 damage. Gains 3 Strength. Swaps current buff to Hunger."
+              }
+            ],
+            "pattern": {
+              "type": "cycle",
+              "text": "The Doormaker uses Dramatic Open on its first turn, then follows a repeating cycle: • Hunger • Scrutiny • Grasp"
+            },
+            "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Doormaker",
+            "monsterId": "DOORMAKER",
+            "count": 1
+          }
+        ],
+        "membership": "archived",
+        "name": "Doormaker",
+        "rules": [
+          "Even though the HP bar in the first phase shows as \"infinity\", it is actually set to the finite number of 999,999,999 HP. As such, it is theoretically possible to kill the Doormaker in its first phase.",
+          "Door spawns first; Doormaker transforms from it on the first turn (deprecated after v0.107.1)."
+        ],
+        "timing": []
+      }
+    }
+  },
+  "retainedReferences": {
+    "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER": {
+      "act": "Hive",
+      "kind": "event",
+      "lineup": [
+        {
+          "displayName": "Mysterious Knight",
+          "type": "Normal",
+          "hpA8": [
+            108
+          ],
+          "startsWithA9": "Strength 6; Plating 6",
+          "moves": [
+            {
+              "name": "Breaker",
+              "textA9": "Gains 3 Strength."
+            },
+            {
+              "name": "Flail",
+              "textA9": "Deals 10×2 damage."
+            },
+            {
+              "name": "Ram",
+              "textA9": "Deals 17 damage."
+            }
+          ],
+          "pattern": {
+            "type": "random-with-constraint",
+            "text": "Opens with Ram, then randomly picks Breaker (equal chance), Flail (double chance), or Ram (double chance). Cannot use the same move twice in a row."
+          },
+          "sourcePage": "https://slaythespire.wiki.gg/wiki/Slay_the_Spire_2:Mysterious_Knight",
+          "monsterId": "MYSTERIOUS_KNIGHT",
+          "count": 1
+        }
+      ],
+      "name": "Mysterious Knight",
+      "rules": [],
+      "timing": [],
+      "membership": "current",
+      "canonicalEncounter": "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+      "notACurrentSelector": true,
+      "authority": "retained-wiki-audit-only",
+      "sourcePrimary": "checked-source-only"
     }
   }
 }

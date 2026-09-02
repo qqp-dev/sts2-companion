@@ -1889,6 +1889,7 @@ def _validate_source_facts(source_facts: Any, source: dict[str, Any]) -> dict[st
 _LEGACY_BODY_FIELDS = {
     "count", "displayName", "hpA8", "monsterId", "moves", "pack", "patchChecked",
     "pattern", "role", "sourceFlags", "sourcePage", "startsWithA9", "type",
+    "typedConflicts",
 }
 
 
@@ -1973,8 +1974,39 @@ def _validate_legacy_annotations(value: Any, source_sets: dict[str, set[str]]) -
                     if "intent" in mo:
                         _string(mo["intent"], mp + ".intent")
                 _validate_provenance_status(bo["provenanceStatus"], bp + ".provenanceStatus", encounter=False)
+                if "typedConflicts" in body_annotations:
+                    for conflict_index, conflict in enumerate(_list(body_annotations["typedConflicts"], bp + ".annotations.typedConflicts")):
+                        cp = f"{bp}.annotations.typedConflicts[{conflict_index}]"
+                        obj = _object(conflict, cp, {
+                            "actor", "articleValue", "authority", "field", "id", "independentKnownUnknown",
+                            "kind", "move", "resolution", "retainedOriginPath", "retainedValue",
+                            "sourceFactId", "sourceInitialFactId", "sourceValue",
+                        }, {"id", "kind", "retainedValue", "sourceValue", "resolution", "authority"})
+                        if obj["resolution"] != "source-wins" or obj["authority"] != "closed-source":
+                            _fail(cp, "typed retained/source conflict must be source-winning and closed")
+                        if obj["retainedValue"] == obj["sourceValue"]:
+                            _fail(cp, "typed conflict values must disagree")
+                        _string(obj["id"], cp + ".id", prefix="RETAINED.CONFLICT.")
     if "DOORMAKER_BOSS" in current_ids:
         _fail("payload.legacyAnnotations.current", "Doormaker must not be current")
+    typed_ids = {
+        row["id"]
+        for family in ("current", "archive")
+        for encounter in legacy[family]
+        for body in encounter["presentationBodies"]
+        for row in (body["annotations"].get("typedConflicts") or [])
+    }
+    expected_typed = {
+        "RETAINED.CONFLICT.AXEBOT.A8_HP",
+        "RETAINED.CONFLICT.OWL_MAGISTRATE.A8_HP",
+        "RETAINED.CONFLICT.SCROLL_OF_BITING.A8_HP",
+        "RETAINED.CONFLICT.SLIMED_BERSERKER.A8_HP",
+        "RETAINED.CONFLICT.INFESTED_PRISM.RADIATE",
+        "RETAINED.CONFLICT.TERROR_EEL.MOVE_TITLE.TERROR",
+        "RETAINED.CONFLICT.KIN_FOLLOWER.TYPE",
+    }
+    if typed_ids != expected_typed:
+        _fail("payload.legacyAnnotations", f"typed retained/source conflicts drifted: {sorted(typed_ids)}")
 
     candidates = _list(legacy["moveTitleFallbackCandidates"], "payload.legacyAnnotations.moveTitleFallbackCandidates")
     if len(candidates) != 18:
@@ -2269,12 +2301,25 @@ def _validate_comparisons_conflicts_unknowns(payload: dict[str, Any], all_facts:
 def validate_artifact(artifact: Any, *, source: dict[str, Any], legacy: dict[str, Any]) -> None:
     """Validate the closed projection and every claim against its two inputs."""
     _validate_source_document(source)
-    if not isinstance(legacy, dict) or set(legacy) != {"encounters", "meta"}:
+    if not isinstance(legacy, dict):
+        _fail("legacy", "malformed legacy input root")
+    allowed_root = {"archive", "encounters", "meta", "retainedReferences"}
+    unknown = set(legacy) - allowed_root
+    missing = {"encounters", "meta"} - set(legacy)
+    if unknown or missing:
         _fail("legacy", "malformed legacy input root")
     if legacy.get("meta", {}).get("targetVersion") != "v0.111.0" or legacy.get("meta", {}).get("targetBranch") != "public-beta":
         _fail("legacy.meta", "wrong legacy game version/branch")
-    if len(legacy.get("encounters", {})) != 82:
-        _fail("legacy.encounters", "expected exactly 82 legacy records")
+    if len(legacy.get("encounters", {})) != 81:
+        _fail("legacy.encounters", "expected exactly 81 current retained encounters")
+    if "DOORMAKER_BOSS" in legacy.get("encounters", {}) or "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER" in legacy.get("encounters", {}):
+        _fail("legacy.encounters", "archive/reference records must not occupy current encounters")
+    archive = legacy.get("archive") or {}
+    if set((archive.get("encounters") or {})) != {"DOORMAKER_BOSS"}:
+        _fail("legacy.archive", "expected exactly archived DOORMAKER_BOSS")
+    references = legacy.get("retainedReferences") or {}
+    if set(references) != {"MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"}:
+        _fail("legacy.retainedReferences", "expected exactly Mysterious Knight current reference")
 
     root = _object(artifact, "$", ROOT_KEYS)
     if root["schemaVersion"] != SCHEMA_VERSION:

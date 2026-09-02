@@ -1,8 +1,9 @@
 """Pure retained-wiki inventory parser and deterministic artifact builder.
 
 The wiki snapshot is reconciliation input, never runtime or source authority.
-This module deliberately captures structural claims without inferring whether a
-substring is represented by source, compact, or primary presentation data.
+This module captures structural claims and, when the reviewed P1b0 policy names
+an exact origin, materializes a typed final mapping. Wiki remains coverage and
+reconciliation evidence, never source authority.
 """
 from __future__ import annotations
 
@@ -18,7 +19,7 @@ import sys
 import tempfile
 from typing import Any, Iterable
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 TARGET_VERSION = "v0.111.0"
 TARGET_BRANCH = "public-beta"
 DEFAULT_ARTIFACT = "data/wiki-reconciliation-v0.111.0.json"
@@ -1305,12 +1306,317 @@ def _add_patch_atoms(
         )
 
 
+
+FINAL_DISPOSITIONS = {
+    "primary-present", "audit-present", "source-present-not-projected", "retained-book-only",
+    "conflict", "missing/unparsed", "intentionally-excluded", "stale/deprecated/version-ambiguous",
+}
+FINAL_REVIEW_STATE = "final-mapped"
+ALLOWED_MAPPING_LAYERS = {
+    "raw-source", "compact-projection", "retained-book", "retained-archive", "retained-reference",
+    "primary-presentation", "technical-audit", "wiki-origin",
+}
+ALLOWED_CLOSURES = {"closed", "knownUnknown", "unjoined", "notApplicable"}
+DOCUMENTS = {
+    "raw-source": "data/game-v0.111.0-source.json",
+    "compact-projection": "data/encounter-facts-v0.111.0.json",
+    "retained-book": "data/encounters.json",
+    "retained-archive": "data/encounters.json",
+    "retained-reference": "data/encounters.json",
+    "technical-audit": "data/encounter-facts-v0.111.0.json",
+}
+
+
+def resolve_json_pointer(document: Any, pointer: str) -> Any:
+    if pointer == "":
+        return document
+    if not isinstance(pointer, str) or not pointer.startswith("/"):
+        raise AuditError(f"unresolved JSON pointer: {pointer!r}")
+    current: Any = document
+    for raw in pointer.split("/")[1:]:
+        token = raw.replace("~1", "/").replace("~0", "~")
+        if isinstance(current, list):
+            if not token.isdigit():
+                raise AuditError(f"unresolved JSON pointer {pointer}")
+            index = int(token)
+            if index >= len(current):
+                raise AuditError(f"unresolved JSON pointer {pointer}")
+            current = current[index]
+        elif isinstance(current, dict):
+            if token not in current:
+                raise AuditError(f"unresolved JSON pointer {pointer}")
+            current = current[token]
+        else:
+            raise AuditError(f"unresolved JSON pointer {pointer}")
+    return current
+
+
+def values_equivalent(left: Any, right: Any) -> bool:
+    if left == right:
+        return True
+
+    def hp_pair(value: Any) -> tuple[int, int] | None:
+        if isinstance(value, list) and value and all(type(item) is int for item in value):
+            return (value[0], value[-1])
+        if isinstance(value, dict) and type(value.get("minimum")) is int and type(value.get("maximum")) is int:
+            return (value["minimum"], value["maximum"])
+        return None
+
+    left_hp, right_hp = hp_pair(left), hp_pair(right)
+    return left_hp is not None and left_hp == right_hp
+
+
+def _mapping_documents(book: dict[str, Any], compact: dict[str, Any], raw_source: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "data/game-v0.111.0-source.json": raw_source,
+        "data/encounter-facts-v0.111.0.json": compact,
+        "data/encounters.json": book,
+    }
+
+
+def _validate_representation(mapping: dict[str, Any], documents: dict[str, Any], *, require_conflict_lanes: bool) -> None:
+    layers_ok = False
+    seen_source = False
+    seen_retained = False
+    representations = mapping.get("representation") or []
+    if not representations:
+        raise AuditError(f"mapping {mapping.get('id')} lacks representation coordinates")
+    for index, row in enumerate(representations):
+        path = f"{mapping.get('id')}.representation[{index}]"
+        if not isinstance(row, dict):
+            raise AuditError(f"{path} is not an object")
+        layer = row.get("layer")
+        if layer not in ALLOWED_MAPPING_LAYERS:
+            raise AuditError(f"{path} has unsupported layer {layer!r}")
+        document_path = row.get("path")
+        pointer = row.get("jsonPointer")
+        if layer == "wiki-origin":
+            continue
+        if document_path not in documents:
+            raise AuditError(f"{path} path {document_path} is not a checked mapping document")
+        try:
+            value = resolve_json_pointer(documents[document_path], pointer)
+        except AuditError as exc:
+            raise AuditError(f"{path} {exc}") from exc
+        expected = row.get("expectedValue")
+        if "expectedValue" in row and not values_equivalent(expected, value):
+            raise AuditError(f"{path} expectedValue mismatch")
+        lane = row.get("comparedLane")
+        semantic = mapping["semanticMapping"]
+        if lane == "source":
+            seen_source = True
+            if not values_equivalent(semantic["sourceValue"], value):
+                raise AuditError(f"{path} source value mismatch")
+        elif lane == "retained":
+            seen_retained = True
+            if not values_equivalent(semantic["retainedValue"], value):
+                raise AuditError(f"{path} retained value mismatch")
+        elif lane not in {None, "source", "retained"}:
+            raise AuditError(f"{path} has unsupported comparedLane {lane!r}")
+        layers_ok = True
+    if not layers_ok:
+        raise AuditError(f"mapping {mapping.get('id')} has no resolvable representation")
+    authority = mapping["authorityComparison"]
+    if authority.get("silentMerge") is not False:
+        raise AuditError(f"mapping {mapping.get('id')} must set silentMerge false")
+    if authority.get("closure") not in ALLOWED_CLOSURES:
+        raise AuditError(f"mapping {mapping.get('id')} has unsupported closure")
+    if require_conflict_lanes:
+        if mapping["disposition"] != "conflict":
+            raise AuditError(f"mapping {mapping.get('id')} is not a conflict")
+        if not seen_source or not seen_retained:
+            raise AuditError(f"conflict {mapping.get('id')} lacks both lanes")
+        if authority.get("resolution") != "source-wins":
+            raise AuditError(f"conflict {mapping.get('id')} lacks source-wins resolution")
+        if not authority.get("sourceFactRefs") or not authority.get("compactFactRefs"):
+            raise AuditError(f"conflict {mapping.get('id')} lacks source/compact fact refs")
+
+
+def _attach_mapping(record: dict[str, Any], mapping: dict[str, Any]) -> None:
+    if record.get("reviewState") == "policy-reviewed-exclusion":
+        raise AuditError(f"cannot double-disposition excluded origin {record['id']}")
+    if record.get("reviewState") == FINAL_REVIEW_STATE:
+        raise AuditError(f"duplicate final mapping for {record['id']}")
+    if record["id"] != mapping["originId"]:
+        raise AuditError(f"mapping {mapping.get('id')} origin mismatch")
+    if record["claimId"] != mapping["claimId"]:
+        raise AuditError(f"stale claim guard for {record['id']}")
+    if mapping["disposition"] not in FINAL_DISPOSITIONS:
+        raise AuditError(f"unsupported disposition {mapping['disposition']}")
+    if mapping["disposition"] == "intentionally-excluded":
+        raise AuditError(f"final mapping {mapping.get('id')} must not reuse exclusion disposition")
+    if not mapping.get("rationale") or len(str(mapping["rationale"]).strip()) < 20:
+        raise AuditError(f"mapping {mapping.get('id')} lacks concrete rationale")
+    if mapping.get("reviewedForVersion") != TARGET_VERSION:
+        raise AuditError(f"mapping {mapping.get('id')} has wrong reviewed version")
+    if not mapping.get("semanticMapping") or not mapping["semanticMapping"].get("kind"):
+        raise AuditError(f"mapping {mapping.get('id')} lacks typed semantic mapping")
+    record.update({
+        "reviewState": FINAL_REVIEW_STATE,
+        "disposition": mapping["disposition"],
+        "finalMappingId": mapping["id"],
+        "semanticMapping": mapping["semanticMapping"],
+        "authorityComparison": mapping["authorityComparison"],
+        "representation": mapping["representation"],
+        "rationale": mapping["rationale"],
+        "owner": mapping["owner"],
+        "severity": mapping["severity"],
+        "reviewedForVersion": mapping["reviewedForVersion"],
+    })
+
+
+def _materialize_structural_mapping(record: dict[str, Any], rule: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "id": f"{rule['id']}::{record['id']}",
+        "originId": record["id"],
+        "claimId": record["claimId"],
+        "disposition": rule["disposition"],
+        "semanticMapping": {**rule["semanticMapping"], "originFamily": record["family"]},
+        "authorityComparison": rule["authorityComparison"],
+        "representation": rule["representation"],
+        "rationale": rule["rationale"],
+        "owner": rule["owner"],
+        "severity": rule["severity"],
+        "reviewedForVersion": rule["reviewedForVersion"],
+    }
+
+
+def _match_structural_rule(record: dict[str, Any], match: dict[str, Any]) -> bool:
+    if match.get("membership") and record.get("membership") != match["membership"]:
+        return False
+    if match.get("reviewState") and record.get("reviewState") != match["reviewState"]:
+        return False
+    if match.get("families") and record.get("family") not in match["families"]:
+        return False
+    return True
+
+
+def apply_final_mappings(
+    records: list[dict[str, Any]],
+    policy: dict[str, Any],
+    *,
+    book: dict[str, Any],
+    compact: dict[str, Any],
+    raw_source: dict[str, Any],
+) -> dict[str, Any]:
+    mappings_policy = policy["finalMappings"]
+    documents = _mapping_documents(book, compact, raw_source)
+    by_id = {record["id"]: record for record in records}
+    used: set[str] = set()
+
+    expected_kinds = set(mappings_policy["allowedSemanticKinds"])
+    expected_layers = set(mappings_policy["allowedLayers"])
+    if expected_kinds != {
+        "a8-hp-range", "move-effect-block", "move-title", "identity-type", "stale-deprecated-mechanic",
+    }:
+        raise AuditError("final-mapping allowed kinds drifted")
+    if expected_layers != ALLOWED_MAPPING_LAYERS:
+        raise AuditError("final-mapping allowed layers drifted")
+
+    explicit_ids = [item["originId"] for item in mappings_policy["records"]]
+    if len(explicit_ids) != len(set(explicit_ids)):
+        raise AuditError("duplicate explicit final-mapping origin IDs")
+    if len(mappings_policy["records"]) != mappings_policy["expectedConflictOriginCount"]:
+        raise AuditError("explicit conflict mapping count drifted")
+
+    for mapping in mappings_policy["records"]:
+        if mapping["originId"] not in by_id:
+            raise AuditError(f"unknown final-mapping origin {mapping['originId']}")
+        if mapping["semanticMapping"]["kind"] not in expected_kinds:
+            raise AuditError(f"unsupported semantic kind {mapping['semanticMapping']['kind']}")
+        require_conflict = mapping["disposition"] == "conflict"
+        _validate_representation(mapping, documents, require_conflict_lanes=require_conflict)
+        _attach_mapping(by_id[mapping["originId"]], mapping)
+        used.add(mapping["originId"])
+
+    stale_ids: list[str] = []
+    for rule in mappings_policy["structuralRules"]:
+        if "expectedOriginIds" not in rule or "expectedCount" not in rule:
+            raise AuditError(f"structural rule {rule.get('id')} lacks exact expected ID set/count")
+        matched = [record for record in records if _match_structural_rule(record, rule.get("match") or {})]
+        matched_ids = [record["id"] for record in matched]
+        if matched_ids != rule["expectedOriginIds"] or len(matched) != rule["expectedCount"]:
+            raise AuditError(
+                f"structural rule {rule['id']} matched-ID set/count drifted: "
+                f"expected {rule['expectedCount']}, derived {len(matched)}"
+            )
+        claim_ids = [record["claimId"] for record in matched]
+        if rule.get("expectedClaimIds") != claim_ids:
+            raise AuditError(f"structural rule {rule['id']} claim guards are stale")
+        if mapping_overlap := set(matched_ids) & used:
+            raise AuditError(f"structural rule {rule['id']} duplicates mapped origins: {sorted(mapping_overlap)[:3]}")
+        for record in matched:
+            materialized = _materialize_structural_mapping(record, rule)
+            if materialized["semanticMapping"]["kind"] not in expected_kinds:
+                raise AuditError(f"unsupported semantic kind {materialized['semanticMapping']['kind']}")
+            _validate_representation(
+                materialized, documents,
+                require_conflict_lanes=materialized["disposition"] == "conflict",
+            )
+            _attach_mapping(record, materialized)
+            used.add(record["id"])
+            if rule["disposition"] == "stale/deprecated/version-ambiguous":
+                stale_ids.append(record["id"])
+
+    if len(used) != mappings_policy["expectedFinalMappedCount"]:
+        raise AuditError(
+            f"final-mapped count drifted: expected {mappings_policy['expectedFinalMappedCount']}, derived {len(used)}"
+        )
+    if len(stale_ids) != mappings_policy["expectedStaleOriginCount"]:
+        raise AuditError("stale origin count drifted")
+
+    title_spec = mappings_policy["compactTitleConflictCrossLinks"]
+    compact_conflicts = resolve_json_pointer(compact, title_spec["sourcePointer"])
+    if not isinstance(compact_conflicts, list):
+        raise AuditError("compact title conflict source pointer did not resolve to a list")
+    conflict_ids = [row.get("conflictId") for row in compact_conflicts]
+    if conflict_ids != title_spec["expectedConflictIds"] or len(conflict_ids) != title_spec["expectedCount"]:
+        raise AuditError("compact title conflict cross-link set/count drifted")
+    if title_spec["expectedCount"] != mappings_policy["expectedCompactTitleConflictCount"]:
+        raise AuditError("compact title conflict expected count mismatch")
+    if any(row.get("family") not in {"encounterTitle", "monsterTitle"} for row in compact_conflicts):
+        raise AuditError("compact title conflict family drifted")
+    if any(row.get("resolution") != title_spec["compactLaneResolution"] for row in compact_conflicts):
+        raise AuditError("compact title conflicts lost unresolved dual-lane representation")
+    cross_links = []
+    for index, row in enumerate(compact_conflicts):
+        pointer = f"{title_spec['sourcePointer']}/{index}"
+        resolved = resolve_json_pointer(compact, pointer)
+        if resolved["conflictId"] != row["conflictId"]:
+            raise AuditError(f"compact title conflict pointer {pointer} mismatch")
+        if row["left"]["lane"] != "source" or row["right"]["lane"] != "legacy":
+            raise AuditError(f"{row['conflictId']} lane assignment drifted")
+        cross_links.append({
+            "conflictId": row["conflictId"],
+            "family": row["family"],
+            "sourceValue": row["left"]["value"],
+            "retainedValue": row["right"]["value"],
+            "sourceFactId": row["left"]["factId"],
+            "retainedFactId": row["right"]["factId"],
+            "compactPointer": pointer,
+            "compactLaneResolution": title_spec["compactLaneResolution"],
+            "presentationResolution": title_spec["presentationResolution"],
+            "heroCopyAuthority": title_spec["heroCopyAuthority"],
+        })
+
+    disposition_counts: dict[str, int] = {}
+    for record in records:
+        if "disposition" in record:
+            disposition_counts[record["disposition"]] = disposition_counts.get(record["disposition"], 0) + 1
+    return {
+        "mappedOriginIds": sorted(used),
+        "dispositionCounts": dict(sorted(disposition_counts.items())),
+        "compactTitleConflicts": cross_links,
+        "researchCountCorrections": mappings_policy["researchCountCorrections"],
+    }
+
+
 def _validate_policy(policy: dict[str, Any]) -> None:
     required = {
         "schemaVersion", "targetVersion", "targetBranch", "review",
         "expectedCategoryCounts", "expectedFamilyCounts", "exclusionPolicies",
         "snapshotGapWaivers", "patchEnemyFactClassifications", "tombstones",
-        "approvedOriginReclassifications",
+        "approvedOriginReclassifications", "finalMappings",
     }
     if not required.issubset(policy):
         raise AuditError(f"policy lacks keys: {sorted(required - set(policy))}")
@@ -1338,6 +1644,61 @@ def _validate_policy(policy: dict[str, Any]) -> None:
             ledger_ids.add(item["id"])
             if item["reviewedForVersion"] != TARGET_VERSION or len(item["rationale"].strip()) < 20:
                 raise AuditError(f"{ledger_name} entry {item['id']} lacks version-scoped concrete review")
+    mappings = policy["finalMappings"]
+    mapping_required = {
+        "schemaVersion", "allowedDispositions", "allowedSemanticKinds", "allowedLayers",
+        "allowedClosures", "expectedFinalMappedCount", "expectedConflictOriginCount",
+        "expectedStaleOriginCount", "expectedCompactTitleConflictCount",
+        "researchCountCorrections", "records", "structuralRules", "compactTitleConflictCrossLinks",
+    }
+    if not mapping_required.issubset(mappings):
+        raise AuditError(f"finalMappings lacks keys: {sorted(mapping_required - set(mappings))}")
+    if set(mappings["allowedDispositions"]) != FINAL_DISPOSITIONS:
+        raise AuditError("finalMappings allowed dispositions drifted")
+    mapping_ids = []
+    origin_ids = []
+    for item in mappings["records"]:
+        item_required = {
+            "id", "originId", "claimId", "disposition", "semanticMapping", "authorityComparison",
+            "representation", "rationale", "owner", "severity", "reviewedForVersion",
+        }
+        if not item_required.issubset(item):
+            raise AuditError(f"final mapping {item.get('id')} lacks {sorted(item_required - set(item))}")
+        mapping_ids.append(item["id"])
+        origin_ids.append(item["originId"])
+        if item["reviewedForVersion"] != TARGET_VERSION or len(item["rationale"].strip()) < 20:
+            raise AuditError(f"final mapping {item['id']} lacks version-scoped concrete review")
+        if item["disposition"] not in FINAL_DISPOSITIONS:
+            raise AuditError(f"final mapping {item['id']} has unsupported disposition")
+        if item["semanticMapping"].get("kind") not in mappings["allowedSemanticKinds"]:
+            raise AuditError(f"final mapping {item['id']} has unsupported kind")
+        for coord in item["representation"]:
+            if coord.get("layer") not in mappings["allowedLayers"]:
+                raise AuditError(f"final mapping {item['id']} has unsupported layer")
+    for rule in mappings["structuralRules"]:
+        rule_required = {
+            "id", "disposition", "match", "expectedCount", "expectedOriginIds", "semanticMapping",
+            "authorityComparison", "representation", "rationale", "owner", "severity", "reviewedForVersion",
+        }
+        if not rule_required.issubset(rule):
+            raise AuditError(f"structural rule {rule.get('id')} lacks {sorted(rule_required - set(rule))}")
+        mapping_ids.append(rule["id"])
+        if len(rule["expectedOriginIds"]) != rule["expectedCount"]:
+            raise AuditError(f"structural rule {rule['id']} expected count does not match ID set")
+        if rule["expectedOriginIds"] != sorted(rule["expectedOriginIds"]):
+            raise AuditError(f"structural rule {rule['id']} expectedOriginIds must be sorted")
+        if len(set(rule["expectedOriginIds"])) != len(rule["expectedOriginIds"]):
+            raise AuditError(f"structural rule {rule['id']} has duplicate expected IDs")
+        origin_ids.extend(rule["expectedOriginIds"])
+    if len(mapping_ids) != len(set(mapping_ids)):
+        raise AuditError("duplicate final-mapping IDs")
+    if len(origin_ids) != len(set(origin_ids)):
+        raise AuditError("duplicate final-mapping origin IDs")
+    title_spec = mappings["compactTitleConflictCrossLinks"]
+    if title_spec.get("expectedCount") != mappings["expectedCompactTitleConflictCount"]:
+        raise AuditError("compact title conflict expected count mismatch")
+    if len(title_spec.get("expectedConflictIds") or []) != title_spec["expectedCount"]:
+        raise AuditError("compact title conflict ID set/count mismatch")
 
 
 def _manifest_paths(root: Path) -> list[str]:
@@ -1438,15 +1799,39 @@ def _source_layer_denominators(raw: dict[str, Any], compact: dict[str, Any], boo
         projection_ready = compact["payload"]["readiness"]["runtimeScopes"]["encounterProjection"]["ready"]
         global_ready = compact["payload"]["readiness"]["global"]["ready"]
         encounters = book["encounters"]
+        archive_encounters = book["archive"]["encounters"]
+        references = book["retainedReferences"]
+        membership = book["meta"]["membership"]
+        wiki_pages = book["meta"]["wikiPages"]
+        archived_pages = book["meta"]["archivedWikiPages"]
     except (KeyError, TypeError) as exc:
         raise AuditError("source/compact/book denominator path is malformed") from exc
-    body_ids = {
+    if "DOORMAKER_BOSS" in encounters or "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER" in encounters:
+        raise AuditError("archive/reference records leaked into current retained encounters")
+    if set(archive_encounters) != {"DOORMAKER_BOSS"}:
+        raise AuditError("retained archive must contain exactly DOORMAKER_BOSS")
+    if set(references) != {"MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"}:
+        raise AuditError("retained references must contain exactly Mysterious Knight")
+    if references["MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER"].get("notACurrentSelector") is not True:
+        raise AuditError("Mysterious Knight retained reference must not be a current selector")
+    current_body_ids = {
         body["monsterId"]
         for encounter in encounters.values()
         for body in encounter.get("lineup", [])
         if body.get("monsterId")
     }
-    wiki_pages = book.get("meta", {}).get("wikiPages", [])
+    archive_body_ids = {
+        body["monsterId"]
+        for encounter in archive_encounters.values()
+        for body in encounter.get("lineup", [])
+        if body.get("monsterId")
+    }
+    current_page_titles = {item["title"].removeprefix("Slay the Spire 2:") for item in wiki_pages}
+    archive_page_titles = {item["title"].removeprefix("Slay the Spire 2:") for item in archived_pages}
+    if "Mysterious Knight" not in current_page_titles or "Doormaker" in current_page_titles:
+        raise AuditError("current retained wiki pages still invert Mysterious Knight/Doormaker membership")
+    if archive_page_titles != {"Doormaker"}:
+        raise AuditError("archived retained wiki pages are not exclusively Doormaker")
     result = {
         "currentSourceEncounters": encounter_counts["currentTotal"],
         "currentSourceOrdinaryEncounters": encounter_counts["currentOrdinary"],
@@ -1454,11 +1839,16 @@ def _source_layer_denominators(raw: dict[str, Any], compact: dict[str, Any], boo
         "currentReachableSourceModels": model_counts["totalReachable"],
         "compactMoves": len(source_facts["moves"]),
         "compactStates": len(source_facts["states"]),
-        "retainedGeneratedEncounters": len(encounters),
-        "retainedGeneratedBodyIdsIncludingDoormaker": len(body_ids),
-        "retainedGeneratedWikiPages": len(wiki_pages),
+        "retainedCurrentEncounters": len(encounters),
+        "retainedArchivedEncounters": len(archive_encounters),
+        "retainedCurrentReferences": len(references),
+        "retainedCurrentBodyIds": len(current_body_ids),
+        "retainedArchivedBodyIds": len(archive_body_ids),
+        "retainedCurrentWikiPages": len(wiki_pages),
+        "retainedArchivedWikiPages": len(archived_pages),
         "declaredEncounterProjectionScopeReady": bool(projection_ready),
         "globalSourceExtractionReady": bool(global_ready),
+        "bookMembership": membership,
     }
     expected = {
         "currentSourceEncounters": 89,
@@ -1467,11 +1857,25 @@ def _source_layer_denominators(raw: dict[str, Any], compact: dict[str, Any], boo
         "currentReachableSourceModels": 108,
         "compactMoves": 315,
         "compactStates": 8,
-        "retainedGeneratedEncounters": 82,
-        "retainedGeneratedBodyIdsIncludingDoormaker": 106,
-        "retainedGeneratedWikiPages": 73,
+        "retainedCurrentEncounters": 81,
+        "retainedArchivedEncounters": 1,
+        "retainedCurrentReferences": 1,
+        "retainedCurrentBodyIds": 105,
+        "retainedArchivedBodyIds": 1,
+        "retainedCurrentWikiPages": 73,
+        "retainedArchivedWikiPages": 1,
         "declaredEncounterProjectionScopeReady": True,
         "globalSourceExtractionReady": False,
+        "bookMembership": {
+            "currentEncounters": 81,
+            "archivedEncounters": 1,
+            "currentRetainedReferences": 1,
+            "currentWikiPages": 73,
+            "archivedWikiPages": 1,
+            "currentBodyIds": 105,
+            "archivedBodyIds": 1,
+            "currentReferenceBodyIds": 1,
+        },
     }
     if result != expected:
         raise AuditError(f"source-layer denominator drift: expected {expected}, derived {result}")
@@ -1501,19 +1905,19 @@ def _validate_review_corrections(root: Path, records: list[dict[str, Any]], book
     return [
         {
             "id": "review-correction-kin-follower-type-origin-v1",
-            "status": "captured-for-p1b-not-semantically-disposed",
+            "status": "p1b0-conflict-mapped-bosses-lua",
             "correction": "The erroneous retained Type=Boss field for Kin Follower originates in tools/.wiki/Bosses.lua, not Hive.lua.",
             "originId": kin[0]["id"],
         },
         {
             "id": "review-correction-fabricator-membership-v1",
-            "status": "captured-for-p1b-not-semantically-disposed",
+            "status": "p1b0-conflict-mapped-bosses-lua",
             "correction": "The retained book has Fabricator as the sole initial body and Guardbot, Noisebot, Stabbot, and Zapbot as summoned bodies; compact source production pools remain a separate lane.",
             "coordinates": ["data/encounters.json#/encounters/FABRICATOR_NORMAL/lineup"],
         },
         {
             "id": "review-correction-waterfall-terminal-hp-v1",
-            "status": "captured-for-p1b-not-semantically-disposed",
+            "status": "p1b0-conflict-mapped-bosses-lua",
             "correction": "Waterfall Giant terminal 999999999 HP is retained in book rules, compact lifecycle, and primary lifecycle rendering.",
             "coordinates": [
                 "data/encounters.json#/encounters/WATERFALL_GIANT_BOSS/rules",
@@ -1576,18 +1980,36 @@ def build_artifact(root: Path) -> dict[str, Any]:
     if metrics != expected_metrics:
         raise AuditError(f"structural denominator drift: expected {expected_metrics}, derived {metrics}")
 
+    pre_mapping_counts = _counter(records, "reviewState")
+    if pre_mapping_counts != {"captured-unreconciled": 3568, "policy-reviewed-exclusion": 865}:
+        raise AuditError(f"pre-mapping review-state denominator drift: {pre_mapping_counts}")
+    mapping_summary = apply_final_mappings(
+        records, policy, book=book, compact=compact, raw_source=raw_source,
+    )
     review_counts = _counter(records, "reviewState")
-    if review_counts != {"captured-unreconciled": 3568, "policy-reviewed-exclusion": 865}:
+    if review_counts != {
+        "captured-unreconciled": 3519,
+        "policy-reviewed-exclusion": 865,
+        FINAL_REVIEW_STATE: 49,
+    }:
         raise AuditError(f"review-state denominator drift: {review_counts}")
     for record in records:
         if record["reviewState"] == "captured-unreconciled" and "disposition" in record:
             raise AuditError(f"non-final captured record has a final disposition: {record['id']}")
         if record["reviewState"] == "policy-reviewed-exclusion" and record.get("disposition") != "intentionally-excluded":
             raise AuditError(f"excluded record lacks final intentionally-excluded disposition: {record['id']}")
+        if record["reviewState"] == FINAL_REVIEW_STATE:
+            if record.get("disposition") not in FINAL_DISPOSITIONS - {"intentionally-excluded"}:
+                raise AuditError(f"final-mapped record has invalid disposition: {record['id']}")
+            if not record.get("semanticMapping") or not record.get("rationale") or not record.get("representation"):
+                raise AuditError(f"final disposition lacks typed mapping/rationale: {record['id']}")
     doormaker = [record for record in records
                  if record["origin"].get("pageKey") == "Doormaker" or record["origin"].get("tableKey") == "Doormaker"]
     if not doormaker or any(record["membership"] != "deprecated" for record in doormaker):
         raise AuditError("Doormaker origin is absent or marked current")
+    door_mechanical = [record for record in doormaker if record["reviewState"] != "policy-reviewed-exclusion"]
+    if len(door_mechanical) != 36 or any(record.get("disposition") != "stale/deprecated/version-ambiguous" for record in door_mechanical):
+        raise AuditError("Doormaker mechanical origins were not mapped archive-only stale")
     mysterious = [record for record in records
                   if record["origin"].get("pageKey") == "Mysterious Knight" or record["origin"].get("tableKey") == "Mysterious Knight"]
     if not mysterious or any(record["membership"] != "current" for record in mysterious):
@@ -1677,16 +2099,28 @@ def build_artifact(root: Path) -> dict[str, Any]:
             },
             "retainedBookMembership": {
                 "mysteriousKnight": {
-                    "articleMembership": "current", "listedInRetainedBookWikiPages": "Mysterious Knight" in generated_page_titles,
-                    "status": "current-membership-reconciliation-gap-deferred-to-p1b",
+                    "articleMembership": "current",
+                    "listedInCurrentRetainedBookWikiPages": "Mysterious Knight" in generated_page_titles,
+                    "listedInCurrentEncounters": "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER" in book["encounters"],
+                    "listedInRetainedReferences": "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER" in book.get("retainedReferences", {}),
+                    "status": "current-event-reconciliation-reference",
                 },
                 "doormaker": {
-                    "articleMembership": "deprecated", "listedInRetainedBookWikiPages": "Doormaker" in generated_page_titles,
-                    "status": "archived-not-current",
+                    "articleMembership": "deprecated",
+                    "listedInCurrentRetainedBookWikiPages": "Doormaker" in generated_page_titles,
+                    "listedInCurrentEncounters": "DOORMAKER_BOSS" in book["encounters"],
+                    "listedInArchive": "DOORMAKER_BOSS" in book.get("archive", {}).get("encounters", {}),
+                    "status": "archive-only-not-current",
                 },
             },
         },
         "reviewCorrections": corrections,
+        "finalMappings": {
+            "phase": "P1b0",
+            "mappedOriginCount": len(mapping_summary["mappedOriginIds"]),
+            "researchCountCorrections": mapping_summary["researchCountCorrections"],
+            "compactTitleConflicts": mapping_summary["compactTitleConflicts"],
+        },
         "researchBaseline": {
             "status": "corrected-historical-semantic-review-reference-not-applied-as-p1a-record-dispositions",
             "researchArtifact": {
@@ -1717,15 +2151,19 @@ def build_artifact(root: Path) -> dict[str, Any]:
             "overallReconciliationReady": False,
             "reasons": [
                 "Events.lua is index-listed but absent under an approved version-scoped snapshot-gap waiver.",
-                f"{review_counts['captured-unreconciled']} retained-origin atoms remain captured-unreconciled pending P1b.",
+                f"{review_counts['captured-unreconciled']} retained-origin atoms remain captured-unreconciled pending later P1b semantic review.",
                 "Unexpanded Power Infobox and Intents template bodies are not present in the retained snapshot.",
                 "Global source extraction readiness remains false even though its declared encounter-projection scope is ready.",
+                "P1b0 maps only reviewed conflicts and Doormaker stale membership; remaining mechanical atoms stay non-final.",
             ],
         },
         "summary": {
             "recordCount": len(records),
             "reviewStateCounts": review_counts,
             "membershipCounts": _counter(records, "membership"),
+            "finalDispositionCounts": mapping_summary["dispositionCounts"],
+            "remainingCapturedUnreconciled": review_counts.get("captured-unreconciled", 0),
+            "compactTitleConflictCount": len(mapping_summary["compactTitleConflicts"]),
             "sortedOriginIdsSha256": sha256_bytes(origin_lines),
             "sortedClaimOriginIdsSha256": sha256_bytes(claim_origin_lines),
             "ordering": "records sorted by stable origin ID; no timestamp, filesystem order, inode, temporary path, or absolute path participates",
@@ -1737,7 +2175,7 @@ def build_artifact(root: Path) -> dict[str, Any]:
     if artifact["readiness"]["semanticReconciliationComplete"] and review_counts.get("captured-unreconciled", 0):
         raise AuditError("semantic readiness true while captured-unreconciled atoms remain")
     if artifact["readiness"]["overallReconciliationReady"]:
-        raise AuditError("P1a cannot report overall reconciliation readiness")
+        raise AuditError("P1b0 cannot report overall reconciliation readiness")
     return artifact
 
 

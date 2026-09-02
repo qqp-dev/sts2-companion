@@ -157,16 +157,17 @@ Projection and retained-wiki inventory generation are deterministic and offline
 from checked inputs:
 
 ```sh
+python3 tools/generate-book.py
 npm run build:encounter-facts
 npm run check:encounter-facts
 npm run build:wiki-reconciliation
 npm run check:wiki-reconciliation
 ```
 
-The [retained-wiki contract](docs/wiki-reconciliation.md) defines this
-non-runtime, non-authoritative census: all 4,433 origins are inventoried, while
-the missing `Events.lua` and non-final `captured-unreconciled` atoms keep snapshot
-and semantic completeness false.
+Use that book → compact → wiki-census order. Runtime never imports the wiki
+artifact. The [retained-wiki contract](docs/wiki-reconciliation.md) inventories
+4,433 origins; 49 are typed P1b0 mappings and 3,519 remain
+`captured-unreconciled`, so snapshot/semantic readiness stay false.
 
 Raw-source regeneration is a development operation requiring the exact local
 game files and isolated Python dependencies; it is not a runtime requirement:
