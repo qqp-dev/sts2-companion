@@ -236,6 +236,21 @@ def parse_hp(raw):
     return values[:2] if len(values) > 1 else values[:1]
 
 
+def hp_below_a8_from_fields(fields):
+    """Parse the retained normal/base HP lane without selecting Ascension markup."""
+    raw = fields.get("BaseHP") or fields.get("HP")
+    if not raw:
+        return None
+    text = str(raw)
+    while True:
+        matches = list(iter_templates(text, "Asc2")) + list(iter_templates(text, "Asc"))
+        if not matches:
+            break
+        opening, end, _ = min(matches, key=lambda item: item[0])
+        text = text[:opening] + text[end:]
+    return parse_hp(text)
+
+
 def hp_from_fields(fields):
     if fields.get("AscHP"):
         return parse_hp(fields["AscHP"])
@@ -253,11 +268,13 @@ def hp_from_fields(fields):
 def module_entries(path):
     text = path.read_text()
     result = {}
+    record_ordinal = 0
     for match in re.finditer(r'^\s*\["([^"]+)"\]\s*=\s*\{', text, re.M):
         name = match.group(1)
         block = lua_balanced(text, text.find("{", match.start()))
         if not lua_field(block, "Type"):
             continue
+        record_ordinal += 1
         intents = []
         intent_match = re.search(r"\bIntents\s*=\s*\{", block)
         if intent_match:
@@ -277,12 +294,20 @@ def module_entries(path):
         body = {
             "displayName": name,
             "type": lua_field(block, "Type"),
+            "hpBelowA8": parse_hp(lua_field(block, "BaseHP")),
             "hpA8": parse_hp(lua_field(block, "AscHP") or lua_field(block, "BaseHP")),
             "startsWithA9": plain(lua_field(block, "StartsWith")),
             "moves": intents,
             "partyNote": plain(lua_field(block, "InPartyWith")),
             "articleTitle": title.replace("_", " "),
             "articleSection": section or name,
+            "retainedProvenance": {
+                "module": {
+                    "path": str(path.relative_to(ROOT)),
+                    "tableKey": name,
+                    "recordOrdinal": record_ordinal,
+                },
+            },
         }
         result[name] = {key: value for key, value in body.items() if value not in (None, [], "")}
     return result
@@ -374,7 +399,7 @@ def extract_page_notes(text):
 def article_records(page):
     text = page["wikitext"]
     records = {}
-    for opening, _, template in iter_templates(text, "Enemy Infobox"):
+    for template_ordinal, (opening, _, template) in enumerate(iter_templates(text, "Enemy Infobox"), 1):
         _, _, fields = parse_template(template)
         name = plain(fields.get("Name"))
         if not name:
@@ -382,11 +407,21 @@ def article_records(page):
         records.setdefault(name, {}).update({
             "displayName": name,
             "type": plain(fields.get("Type")),
+            "hpBelowA8": hp_below_a8_from_fields(fields),
             "hpA8": hp_from_fields(fields),
             "startsWithA9": plain(fields.get("Powers")),
             "_position": opening,
+            "retainedProvenance": {
+                "article": {
+                    "pageKey": page["title"].removeprefix("Slay the Spire 2:"),
+                    "revisionId": page["revisionId"],
+                    "template": "Enemy Infobox",
+                    "templateOrdinal": template_ordinal,
+                    "owner": name,
+                },
+            },
         })
-    for opening, _, template in iter_templates(text, "#invoke:Infobox"):
+    for source_ordinal, (opening, _, template) in enumerate(iter_templates(text, "#invoke:Infobox"), 1):
         _, positional, fields = parse_template(template)
         if not positional or positional[0].lower() != "main":
             continue
@@ -395,9 +430,19 @@ def article_records(page):
             continue
         records.setdefault(name, {}).update({
             "displayName": name,
+            "hpBelowA8": hp_below_a8_from_fields(fields),
             "hpA8": hp_from_fields(fields),
             "startsWithA9": plain(fields.get("Powers")),
             "_position": opening,
+            "retainedProvenance": {
+                "article": {
+                    "pageKey": page["title"].removeprefix("Slay the Spire 2:"),
+                    "revisionId": page["revisionId"],
+                    "template": "#invoke:Infobox",
+                    "templateOrdinal": source_ordinal,
+                    "owner": name,
+                },
+            },
         })
     for opening, start_end, template in iter_templates(text, "Intents Table/start"):
         _, positional, _ = parse_template(template)
@@ -451,9 +496,10 @@ for module_path in MODULE_SOURCES.values():
 # this documented fallback supplies its locator and the same module magnitudes
 # so merged_body can resolve that article section without inventing a snapshot.
 MODULE_BODIES["Hatchling"] = {
-    "displayName": "Hatchling", "type": "Minion", "hpA8": [20, 23],
+    "displayName": "Hatchling", "type": "Minion", "hpBelowA8": [19, 22], "hpA8": [20, 23],
     "startsWithA9": "Minion", "moves": [{"name": "Nibble", "textA9": "Deals 5 damage."}],
     "articleTitle": "Ovicopter", "articleSection": "Hatchling",
+    "retainedProvenance": {"module": {"synthetic": True, "reason": "nested Tough Egg fallback; not a retained module origin"}},
 }
 
 ARTICLE_BODIES = {}
@@ -681,10 +727,18 @@ def merged_body(name):
         candidates = article_records(page)
         article = candidates.get(fallback.get("articleSection")) or candidates.get(fallback["articleTitle"])
     merged = deepcopy({key: value for key, value in fallback.items() if key not in {"articleTitle", "articleSection", "partyNote"}})
+    provenance = deepcopy(fallback.get("retainedProvenance", {}))
+    provenance["bodyKey"] = name
+    provenance["articleLocator"] = {
+        "pageKey": fallback["articleTitle"],
+        "sectionOwner": fallback.get("articleSection", fallback["articleTitle"]),
+    }
     if article:
-        for key in ("displayName", "type", "hpA8", "startsWithA9", "moves", "pattern", "sourcePage", "rules", "timing"):
+        for key in ("displayName", "type", "hpBelowA8", "hpA8", "startsWithA9", "moves", "pattern", "sourcePage", "rules", "timing"):
             if key in article:
                 merged[key] = deepcopy(article[key])
+        provenance.update(deepcopy(article.get("retainedProvenance", {})))
+    merged["retainedProvenance"] = provenance
     # Alternate infoboxes occasionally render powers as `25 Reattach`; keep
     # the established power-first book notation used by runtime scaling.
     if re.match(r"^\d", merged.get("startsWithA9", "")) and fallback.get("startsWithA9"):

@@ -479,6 +479,9 @@
         {
           "displayName": "Aeonglass",
           "type": "Boss",
+          "hpBelowA8": [
+            512
+          ],
           "hpA8": [
             535
           ],
@@ -497,6 +500,25 @@
               "textA9": "Shuffles 2 Wither+X into your discard pile. Gains 3 + X Strength. Upgrade all Withers. Withering Presence effect now creates Withers + X."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Aeonglass",
+              "recordOrdinal": 18
+            },
+            "bodyKey": "Aeonglass",
+            "articleLocator": {
+              "pageKey": "Aeonglass",
+              "sectionOwner": "Aeonglass"
+            },
+            "article": {
+              "pageKey": "Aeonglass",
+              "revisionId": 50145,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Aeonglass"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Aeonglass follows a repeating cycle: • Ebb • Eye Lasers • Increasing Intensity X equals the amount of times Increasing Intensity has been used."
@@ -517,6 +539,10 @@
         {
           "displayName": "Axebot",
           "type": "Normal",
+          "hpBelowA8": [
+            70,
+            78
+          ],
           "hpA8": [
             76,
             86
@@ -536,6 +562,25 @@
               "textA9": "Deals 18 damage. Applies 2 Weak and 2 Frail."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Axebot",
+              "recordOrdinal": 3
+            },
+            "bodyKey": "Axebot",
+            "articleLocator": {
+              "pageKey": "Axebot",
+              "sectionOwner": "Axebot"
+            },
+            "article": {
+              "pageKey": "Axebot",
+              "revisionId": 50911,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Axebot"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opener (turn 1): Hammer Uppercut. Then continue the cycle: The One-Two → Hammer Uppercut → repeat. Stock respawn opener: Boot Up (the second respawn uses its improved value), then enter the cycle at Hammer Uppercut."
@@ -593,6 +638,10 @@
         {
           "displayName": "Bowlbug (Rock)",
           "type": "Normal",
+          "hpBelowA8": [
+            45,
+            48
+          ],
           "hpA8": [
             46,
             49
@@ -608,6 +657,25 @@
               "textA9": "Stunned. Does nothing."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Bowlbug (Rock)",
+              "recordOrdinal": 1
+            },
+            "bodyKey": "Bowlbug (Rock)",
+            "articleLocator": {
+              "pageKey": "Bowlbugs",
+              "sectionOwner": "Bowlbug (Rock)"
+            },
+            "article": {
+              "pageKey": "Bowlbugs",
+              "revisionId": 51089,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Bowlbug (Rock)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Headbutt every turn. However, if Headbutt's damage is fully prevented by a player, the Bowlbug (Rock) becomes Stunned and uses Dizzy on its next turn, then resumes Headbutt."
@@ -620,6 +688,10 @@
         {
           "displayName": "Bowlbug (Egg)",
           "type": "Normal",
+          "hpBelowA8": [
+            21,
+            22
+          ],
           "hpA8": [
             23,
             24
@@ -630,6 +702,25 @@
               "textA9": "Deals 8 damage. Gains 8 Block."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Bowlbug (Egg)",
+              "recordOrdinal": 2
+            },
+            "bodyKey": "Bowlbug (Egg)",
+            "articleLocator": {
+              "pageKey": "Bowlbugs",
+              "sectionOwner": "Bowlbug (Egg)"
+            },
+            "article": {
+              "pageKey": "Bowlbugs",
+              "revisionId": 51089,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Bowlbug (Egg)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Bite every turn."
@@ -642,6 +733,10 @@
         {
           "displayName": "Bowlbug (Silk)",
           "type": "Normal",
+          "hpBelowA8": [
+            40,
+            43
+          ],
           "hpA8": [
             41,
             44
@@ -656,6 +751,25 @@
               "textA9": "Applies 1 Weak."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Bowlbug (Silk)",
+              "recordOrdinal": 3
+            },
+            "bodyKey": "Bowlbug (Silk)",
+            "articleLocator": {
+              "pageKey": "Bowlbugs",
+              "sectionOwner": "Bowlbug (Silk)"
+            },
+            "article": {
+              "pageKey": "Bowlbugs",
+              "revisionId": 51089,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 3,
+              "owner": "Bowlbug (Silk)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Alternates between Spin Web and Thrash."
@@ -668,6 +782,10 @@
         {
           "displayName": "Bowlbug (Nectar)",
           "type": "Normal",
+          "hpBelowA8": [
+            35,
+            38
+          ],
           "hpA8": [
             36,
             39
@@ -682,6 +800,25 @@
               "textA9": "Gains 16 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Bowlbug (Nectar)",
+              "recordOrdinal": 4
+            },
+            "bodyKey": "Bowlbug (Nectar)",
+            "articleLocator": {
+              "pageKey": "Bowlbugs",
+              "sectionOwner": "Bowlbug (Nectar)"
+            },
+            "article": {
+              "pageKey": "Bowlbugs",
+              "revisionId": 51089,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 4,
+              "owner": "Bowlbug (Nectar)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opens with Thrash, then uses Buff once, then uses Thrash every turn after."
@@ -703,6 +840,10 @@
         {
           "displayName": "Bowlbug (Rock)",
           "type": "Normal",
+          "hpBelowA8": [
+            45,
+            48
+          ],
           "hpA8": [
             46,
             49
@@ -718,6 +859,25 @@
               "textA9": "Stunned. Does nothing."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Bowlbug (Rock)",
+              "recordOrdinal": 1
+            },
+            "bodyKey": "Bowlbug (Rock)",
+            "articleLocator": {
+              "pageKey": "Bowlbugs",
+              "sectionOwner": "Bowlbug (Rock)"
+            },
+            "article": {
+              "pageKey": "Bowlbugs",
+              "revisionId": 51089,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Bowlbug (Rock)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Headbutt every turn. However, if Headbutt's damage is fully prevented by a player, the Bowlbug (Rock) becomes Stunned and uses Dizzy on its next turn, then resumes Headbutt."
@@ -730,6 +890,10 @@
         {
           "displayName": "Bowlbug (Egg)",
           "type": "Normal",
+          "hpBelowA8": [
+            21,
+            22
+          ],
           "hpA8": [
             23,
             24
@@ -740,6 +904,25 @@
               "textA9": "Deals 8 damage. Gains 8 Block."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Bowlbug (Egg)",
+              "recordOrdinal": 2
+            },
+            "bodyKey": "Bowlbug (Egg)",
+            "articleLocator": {
+              "pageKey": "Bowlbugs",
+              "sectionOwner": "Bowlbug (Egg)"
+            },
+            "article": {
+              "pageKey": "Bowlbugs",
+              "revisionId": 51089,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Bowlbug (Egg)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Bite every turn."
@@ -752,6 +935,10 @@
         {
           "displayName": "Bowlbug (Nectar)",
           "type": "Normal",
+          "hpBelowA8": [
+            35,
+            38
+          ],
           "hpA8": [
             36,
             39
@@ -766,6 +953,25 @@
               "textA9": "Gains 16 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Bowlbug (Nectar)",
+              "recordOrdinal": 4
+            },
+            "bodyKey": "Bowlbug (Nectar)",
+            "articleLocator": {
+              "pageKey": "Bowlbugs",
+              "sectionOwner": "Bowlbug (Nectar)"
+            },
+            "article": {
+              "pageKey": "Bowlbugs",
+              "revisionId": 51089,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 4,
+              "owner": "Bowlbug (Nectar)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opens with Thrash, then uses Buff once, then uses Thrash every turn after."
@@ -787,6 +993,9 @@
         {
           "displayName": "Bygone Effigy",
           "type": "Elite",
+          "hpBelowA8": [
+            127
+          ],
           "hpA8": [
             132
           ],
@@ -805,6 +1014,25 @@
               "textA9": "Deals 15 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Bygone Effigy",
+              "recordOrdinal": 1
+            },
+            "bodyKey": "Bygone Effigy",
+            "articleLocator": {
+              "pageKey": "Bygone Effigy",
+              "sectionOwner": "Bygone Effigy"
+            },
+            "article": {
+              "pageKey": "Bygone Effigy",
+              "revisionId": 50161,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Bygone Effigy"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Bygone Effigy starts asleep and follows this sequence: • Sleep — does nothing on its first turn. • Wake — wakes up and gains 10 Strength. • Slashes every turn after."
@@ -825,6 +1053,10 @@
         {
           "displayName": "Byrdonis",
           "type": "Elite",
+          "hpBelowA8": [
+            81,
+            84
+          ],
           "hpA8": [
             90
           ],
@@ -839,6 +1071,25 @@
               "textA9": "Deals 4×3 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Byrdonis",
+              "recordOrdinal": 2
+            },
+            "bodyKey": "Byrdonis",
+            "articleLocator": {
+              "pageKey": "Byrdonis",
+              "sectionOwner": "Byrdonis"
+            },
+            "article": {
+              "pageKey": "Byrdonis",
+              "revisionId": 50176,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Byrdonis"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Byrdonis alternates between its two moves in a fixed pattern: • Swoop. • Peck. • Back to Swoop, and so on."
@@ -859,6 +1110,9 @@
         {
           "displayName": "Ceremonial Beast",
           "type": "Boss",
+          "hpBelowA8": [
+            252
+          ],
           "hpA8": [
             262
           ],
@@ -888,6 +1142,25 @@
               "textA9": "Deals 19 damage. Gains 4 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Ceremonial Beast",
+              "recordOrdinal": 1
+            },
+            "bodyKey": "Ceremonial Beast",
+            "articleLocator": {
+              "pageKey": "Ceremonial Beast",
+              "sectionOwner": "Ceremonial Beast"
+            },
+            "article": {
+              "pageKey": "Ceremonial Beast",
+              "revisionId": 50182,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Ceremonial Beast"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Ceremonial Beast has two distinct phases. Phase 1: • Uses Stamp on the first turn, gaining Plow. • Then uses Plow every turn. When its HP drops to the Plow threshold (160), it immediately becomes Stunned and loses all Strength. Phase 2: After being stunned, repeats this three-move cycle: • Beast Cry • Stomp • Crush"
@@ -908,6 +1181,10 @@
         {
           "displayName": "Chomper",
           "type": "Normal",
+          "hpBelowA8": [
+            60,
+            64
+          ],
           "hpA8": [
             63,
             67
@@ -923,6 +1200,25 @@
               "textA9": "Shuffles 3 Dazed into your discard pile."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Chomper",
+              "recordOrdinal": 5
+            },
+            "bodyKey": "Chomper",
+            "articleLocator": {
+              "pageKey": "Chomper",
+              "sectionOwner": "Chomper"
+            },
+            "article": {
+              "pageKey": "Chomper",
+              "revisionId": 51004,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Chomper"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opener (turn 1): Clamp. Then continue the cycle: Screech → Clamp → repeat."
@@ -935,6 +1231,10 @@
         {
           "displayName": "Chomper",
           "type": "Normal",
+          "hpBelowA8": [
+            60,
+            64
+          ],
           "hpA8": [
             63,
             67
@@ -950,6 +1250,25 @@
               "textA9": "Shuffles 3 Dazed into your discard pile."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Chomper",
+              "recordOrdinal": 5
+            },
+            "bodyKey": "Chomper",
+            "articleLocator": {
+              "pageKey": "Chomper",
+              "sectionOwner": "Chomper"
+            },
+            "article": {
+              "pageKey": "Chomper",
+              "revisionId": 51004,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Chomper"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opener (turn 1): Screech. Then continue the cycle: Clamp → Screech → repeat."
@@ -971,6 +1290,9 @@
         {
           "displayName": "Punch Construct",
           "type": "Normal",
+          "hpBelowA8": [
+            55
+          ],
           "hpA8": [
             60
           ],
@@ -989,6 +1311,25 @@
               "textA9": "Deals 16 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Punch Construct",
+              "recordOrdinal": 11
+            },
+            "bodyKey": "Punch Construct",
+            "articleLocator": {
+              "pageKey": "Punch Construct",
+              "sectionOwner": "Punch Construct"
+            },
+            "article": {
+              "pageKey": "Punch Construct",
+              "revisionId": 51069,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Punch Construct"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Cycles through its moves in a fixed order: • READY • Fast Punch • Strong Punch"
@@ -1000,6 +1341,9 @@
         {
           "displayName": "Cubex Construct",
           "type": "Normal",
+          "hpBelowA8": [
+            65
+          ],
           "hpA8": [
             70
           ],
@@ -1018,6 +1362,25 @@
               "textA9": "Deals 6×2 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Cubex Construct",
+              "recordOrdinal": 5
+            },
+            "bodyKey": "Cubex Construct",
+            "articleLocator": {
+              "pageKey": "Cubex Construct",
+              "sectionOwner": "Cubex Construct"
+            },
+            "article": {
+              "pageKey": "Cubex Construct",
+              "revisionId": 51061,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Cubex Construct"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "After it Charges Up it repeats this pattern for the remainder of fight: • Repeater Blast • Repeater Blast • Expel Blast"
@@ -1038,6 +1401,10 @@
         {
           "displayName": "Corpse Slug",
           "type": "Normal",
+          "hpBelowA8": [
+            25,
+            27
+          ],
           "hpA8": [
             27,
             29
@@ -1057,6 +1424,25 @@
               "textA9": "Applies 2 Frail."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Corpse Slug",
+              "recordOrdinal": 2
+            },
+            "bodyKey": "Corpse Slug",
+            "articleLocator": {
+              "pageKey": "Corpse Slug",
+              "sectionOwner": "Corpse Slug"
+            },
+            "article": {
+              "pageKey": "Corpse Slug",
+              "revisionId": 51066,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Corpse Slug"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Start offsets (turn 1): the three Corpse Slugs begin on different cycle steps. Cycle: Whip Slap → Glomp → Goop → repeat."
@@ -1077,6 +1463,10 @@
         {
           "displayName": "Corpse Slug",
           "type": "Normal",
+          "hpBelowA8": [
+            25,
+            27
+          ],
           "hpA8": [
             27,
             29
@@ -1096,6 +1486,25 @@
               "textA9": "Applies 2 Frail."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Corpse Slug",
+              "recordOrdinal": 2
+            },
+            "bodyKey": "Corpse Slug",
+            "articleLocator": {
+              "pageKey": "Corpse Slug",
+              "sectionOwner": "Corpse Slug"
+            },
+            "article": {
+              "pageKey": "Corpse Slug",
+              "revisionId": 51066,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Corpse Slug"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Start offsets (turn 1): the two Corpse Slugs begin on different cycle steps. Cycle: Whip Slap → Glomp → Goop → repeat."
@@ -1116,6 +1525,9 @@
         {
           "displayName": "Cubex Construct",
           "type": "Normal",
+          "hpBelowA8": [
+            65
+          ],
           "hpA8": [
             70
           ],
@@ -1134,6 +1546,25 @@
               "textA9": "Deals 6×2 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Cubex Construct",
+              "recordOrdinal": 5
+            },
+            "bodyKey": "Cubex Construct",
+            "articleLocator": {
+              "pageKey": "Cubex Construct",
+              "sectionOwner": "Cubex Construct"
+            },
+            "article": {
+              "pageKey": "Cubex Construct",
+              "revisionId": 51061,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Cubex Construct"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "After it Charges Up it repeats this pattern for the remainder of fight: • Repeater Blast • Repeater Blast • Expel Blast"
@@ -1154,6 +1585,10 @@
         {
           "displayName": "Calcified Cultist",
           "type": "Normal",
+          "hpBelowA8": [
+            38,
+            41
+          ],
           "hpA8": [
             39,
             42
@@ -1168,6 +1603,25 @@
               "textA9": "Deals 11 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Calcified Cultist",
+              "recordOrdinal": 1
+            },
+            "bodyKey": "Calcified Cultist",
+            "articleLocator": {
+              "pageKey": "Cultists",
+              "sectionOwner": "Calcified Cultist"
+            },
+            "article": {
+              "pageKey": "Cultists",
+              "revisionId": 51065,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Calcified Cultist"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Always uses Incantation first, then Dark Strike every turn after."
@@ -1179,6 +1633,10 @@
         {
           "displayName": "Damp Cultist",
           "type": "Normal",
+          "hpBelowA8": [
+            51,
+            53
+          ],
           "hpA8": [
             52,
             54
@@ -1193,6 +1651,25 @@
               "textA9": "Deals 3 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Damp Cultist",
+              "recordOrdinal": 3
+            },
+            "bodyKey": "Damp Cultist",
+            "articleLocator": {
+              "pageKey": "Cultists",
+              "sectionOwner": "Damp Cultist"
+            },
+            "article": {
+              "pageKey": "Cultists",
+              "revisionId": 51065,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Damp Cultist"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Always uses Incantation first, then Dark Strike every turn after."
@@ -1213,6 +1690,10 @@
         {
           "displayName": "Decimillipede",
           "type": "Elite",
+          "hpBelowA8": [
+            40,
+            46
+          ],
           "hpA8": [
             46,
             52
@@ -1236,6 +1717,25 @@
               "textA9": "Revives with 25 HP (if other segments are alive)."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Decimillipede",
+              "recordOrdinal": 7
+            },
+            "bodyKey": "Decimillipede",
+            "articleLocator": {
+              "pageKey": "Decimillipede",
+              "sectionOwner": "Decimillipede"
+            },
+            "article": {
+              "pageKey": "Decimillipede",
+              "revisionId": 49939,
+              "template": "#invoke:Infobox",
+              "templateOrdinal": 1,
+              "owner": "Decimillipede"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Start offset (turn 1): each segment begins on a different step. Cycle: Bulk → Writhe → Outgas → repeat. After Reattach, segments revive with 25 HP and resume at random; sync may break."
@@ -1247,6 +1747,10 @@
         {
           "displayName": "Decimillipede",
           "type": "Elite",
+          "hpBelowA8": [
+            40,
+            46
+          ],
           "hpA8": [
             46,
             52
@@ -1270,6 +1774,25 @@
               "textA9": "Revives with 25 HP (if other segments are alive)."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Decimillipede",
+              "recordOrdinal": 7
+            },
+            "bodyKey": "Decimillipede",
+            "articleLocator": {
+              "pageKey": "Decimillipede",
+              "sectionOwner": "Decimillipede"
+            },
+            "article": {
+              "pageKey": "Decimillipede",
+              "revisionId": 49939,
+              "template": "#invoke:Infobox",
+              "templateOrdinal": 1,
+              "owner": "Decimillipede"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Start offset (turn 1): each segment begins on a different step. Cycle: Bulk → Writhe → Outgas → repeat. After Reattach, segments revive with 25 HP and resume at random; sync may break."
@@ -1281,6 +1804,10 @@
         {
           "displayName": "Decimillipede",
           "type": "Elite",
+          "hpBelowA8": [
+            40,
+            46
+          ],
           "hpA8": [
             46,
             52
@@ -1304,6 +1831,25 @@
               "textA9": "Revives with 25 HP (if other segments are alive)."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Decimillipede",
+              "recordOrdinal": 7
+            },
+            "bodyKey": "Decimillipede",
+            "articleLocator": {
+              "pageKey": "Decimillipede",
+              "sectionOwner": "Decimillipede"
+            },
+            "article": {
+              "pageKey": "Decimillipede",
+              "revisionId": 49939,
+              "template": "#invoke:Infobox",
+              "templateOrdinal": 1,
+              "owner": "Decimillipede"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Start offset (turn 1): each segment begins on a different step. Cycle: Bulk → Writhe → Outgas → repeat. After Reattach, segments revive with 25 HP and resume at random; sync may break."
@@ -1339,6 +1885,9 @@
         {
           "displayName": "Devoted Sculptor",
           "type": "Normal",
+          "hpBelowA8": [
+            162
+          ],
           "hpA8": [
             172
           ],
@@ -1352,6 +1901,25 @@
               "textA9": "Deals 15 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Devoted Sculptor",
+              "recordOrdinal": 1
+            },
+            "bodyKey": "Devoted Sculptor",
+            "articleLocator": {
+              "pageKey": "Devoted Sculptor",
+              "sectionOwner": "Devoted Sculptor"
+            },
+            "article": {
+              "pageKey": "Devoted Sculptor",
+              "revisionId": 50912,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Devoted Sculptor"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Always opens with Forbidden Incantation, then uses Savage every turn afterward."
@@ -1372,6 +1940,9 @@
         {
           "displayName": "Entomancer",
           "type": "Elite",
+          "hpBelowA8": [
+            145
+          ],
           "hpA8": [
             165
           ],
@@ -1390,6 +1961,25 @@
               "textA9": "Gains 1 Personal Hive and 1 Strength. If Personal Hive is already at 3, gains 2 Strength instead."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Entomancer",
+              "recordOrdinal": 8
+            },
+            "bodyKey": "Entomancer",
+            "articleLocator": {
+              "pageKey": "Entomancer",
+              "sectionOwner": "Entomancer"
+            },
+            "article": {
+              "pageKey": "Entomancer",
+              "revisionId": 50193,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Entomancer"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Entomancer repeats a fixed three-move cycle: Beeeees!, then Spear!, then Pheromone Spit, and back to the start."
@@ -1411,6 +2001,10 @@
         {
           "displayName": "Exoskeleton",
           "type": "Normal",
+          "hpBelowA8": [
+            24,
+            28
+          ],
           "hpA8": [
             26,
             30
@@ -1430,6 +2024,25 @@
               "textA9": "Gains 2 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Exoskeleton",
+              "recordOrdinal": 6
+            },
+            "bodyKey": "Exoskeleton",
+            "articleLocator": {
+              "pageKey": "Exoskeleton",
+              "sectionOwner": "Exoskeleton"
+            },
+            "article": {
+              "pageKey": "Exoskeleton",
+              "revisionId": 50998,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Exoskeleton"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Openers by position (turn 1): first — Skitter; second — Mandibles; third — Enrage; fourth — randomly Skitter or Mandibles. Then cycle rules: after Skitter, randomly use Skitter or Mandibles without repeating; after Mandibles, use Enrage; after Enrage, randomly use Skitter or Mandibles."
@@ -1451,6 +2064,10 @@
         {
           "displayName": "Exoskeleton",
           "type": "Normal",
+          "hpBelowA8": [
+            24,
+            28
+          ],
           "hpA8": [
             26,
             30
@@ -1470,6 +2087,25 @@
               "textA9": "Gains 2 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Exoskeleton",
+              "recordOrdinal": 6
+            },
+            "bodyKey": "Exoskeleton",
+            "articleLocator": {
+              "pageKey": "Exoskeleton",
+              "sectionOwner": "Exoskeleton"
+            },
+            "article": {
+              "pageKey": "Exoskeleton",
+              "revisionId": 50998,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Exoskeleton"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Openers by position (turn 1): first — Skitter; second — Mandibles; third — Enrage. Then cycle rules: after Skitter, randomly use Skitter or Mandibles without repeating; after Mandibles, use Enrage; after Enrage, randomly use Skitter or Mandibles."
@@ -1491,6 +2127,9 @@
         {
           "displayName": "Fabricator",
           "type": "Normal",
+          "hpBelowA8": [
+            150
+          ],
           "hpA8": [
             155
           ],
@@ -1508,6 +2147,25 @@
               "textA9": "Deals 13 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Fabricator",
+              "recordOrdinal": 4
+            },
+            "bodyKey": "Fabricator",
+            "articleLocator": {
+              "pageKey": "Fabricator",
+              "sectionOwner": "Fabricator"
+            },
+            "article": {
+              "pageKey": "Fabricator",
+              "revisionId": 51091,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Fabricator"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Each turn, the Fabricator checks if it has fewer than 4 living allies. If so, it randomly uses either Fabricate or Fabricating Strike (equal weight). If it already has 4 or more allies, it uses Disintegrate instead. The Fabricator avoids summoning the same bot consecutively."
@@ -1519,6 +2177,10 @@
         {
           "displayName": "Guardbot",
           "type": "Minion",
+          "hpBelowA8": [
+            16,
+            20
+          ],
           "hpA8": [
             17,
             21
@@ -1529,6 +2191,25 @@
               "textA9": "Gives the Fabricator 15 Block."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Guardbot",
+              "recordOrdinal": 7
+            },
+            "bodyKey": "Guardbot",
+            "articleLocator": {
+              "pageKey": "Fabricator",
+              "sectionOwner": "Guardbot"
+            },
+            "article": {
+              "pageKey": "Fabricator",
+              "revisionId": 51091,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 4,
+              "owner": "Guardbot"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Guard every turn."
@@ -1541,6 +2222,10 @@
         {
           "displayName": "Zapbot",
           "type": "Minion",
+          "hpBelowA8": [
+            18,
+            23
+          ],
           "hpA8": [
             19,
             24
@@ -1552,6 +2237,25 @@
               "textA9": "Deals 15 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Zapbot",
+              "recordOrdinal": 5
+            },
+            "bodyKey": "Zapbot",
+            "articleLocator": {
+              "pageKey": "Fabricator",
+              "sectionOwner": "Zapbot"
+            },
+            "article": {
+              "pageKey": "Fabricator",
+              "revisionId": 51091,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Zapbot"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Zap every turn."
@@ -1564,6 +2268,10 @@
         {
           "displayName": "Stabbot",
           "type": "Minion",
+          "hpBelowA8": [
+            18,
+            23
+          ],
           "hpA8": [
             19,
             24
@@ -1574,6 +2282,25 @@
               "textA9": "Deals 12 damage. Applies 1 Frail."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Stabbot",
+              "recordOrdinal": 6
+            },
+            "bodyKey": "Stabbot",
+            "articleLocator": {
+              "pageKey": "Fabricator",
+              "sectionOwner": "Stabbot"
+            },
+            "article": {
+              "pageKey": "Fabricator",
+              "revisionId": 51091,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 3,
+              "owner": "Stabbot"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Stab every turn."
@@ -1586,6 +2313,10 @@
         {
           "displayName": "Noisebot",
           "type": "Minion",
+          "hpBelowA8": [
+            18,
+            23
+          ],
           "hpA8": [
             19,
             24
@@ -1596,6 +2327,25 @@
               "textA9": "Shuffles 2 Dazed into the player's draw and discard piles."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Noisebot",
+              "recordOrdinal": 8
+            },
+            "bodyKey": "Noisebot",
+            "articleLocator": {
+              "pageKey": "Fabricator",
+              "sectionOwner": "Noisebot"
+            },
+            "article": {
+              "pageKey": "Fabricator",
+              "revisionId": 51091,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 5,
+              "owner": "Noisebot"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Noise every turn."
@@ -1620,6 +2370,10 @@
         {
           "displayName": "Flyconid",
           "type": "Normal",
+          "hpBelowA8": [
+            47,
+            49
+          ],
           "hpA8": [
             51,
             53
@@ -1638,6 +2392,25 @@
               "textA9": "Deals 12 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Flyconid",
+              "recordOrdinal": 7
+            },
+            "bodyKey": "Flyconid",
+            "articleLocator": {
+              "pageKey": "Flyconid",
+              "sectionOwner": "Flyconid"
+            },
+            "article": {
+              "pageKey": "Flyconid",
+              "revisionId": 51060,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Flyconid"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "On its first turn, it randomly picks Frail Spores (2/3 chance) or Smash (1/3 chance). After that, each turn it randomly picks one of three moves: Weakening Spores (3/6 chance), Frail Spores (2/6 chance), or Smash (1/6 chance). It cannot use the same move twice in a row."
@@ -1649,6 +2422,10 @@
         {
           "displayName": "Leaf Slime (M)",
           "type": "Normal",
+          "hpBelowA8": [
+            32,
+            35
+          ],
           "hpA8": [
             33,
             36
@@ -1663,6 +2440,25 @@
               "textA9": "Shuffles 2 Slimed into your discard pile."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Leaf Slime (M)",
+              "recordOrdinal": 11
+            },
+            "bodyKey": "Leaf Slime (M)",
+            "articleLocator": {
+              "pageKey": "Slimes",
+              "sectionOwner": "Leaf Slime (M)"
+            },
+            "article": {
+              "pageKey": "Slimes",
+              "revisionId": 51086,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Leaf Slime (M)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Always starts with Sticky Shot, then alternates between Clump Shot and Sticky Shot."
@@ -1683,6 +2479,9 @@
         {
           "displayName": "Fogmog",
           "type": "Normal",
+          "hpBelowA8": [
+            74
+          ],
           "hpA8": [
             78
           ],
@@ -1700,6 +2499,25 @@
               "textA9": "Deals 16 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Fogmog",
+              "recordOrdinal": 8
+            },
+            "bodyKey": "Fogmog",
+            "articleLocator": {
+              "pageKey": "Fogmog",
+              "sectionOwner": "Fogmog"
+            },
+            "article": {
+              "pageKey": "Fogmog",
+              "revisionId": 51059,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Fogmog"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Fogmog always opens with Illusory Spores to summon an Eye With Teeth, then uses Thwack. After that, it randomly picks Thwack (40%) or Headbutt (60%), and cannot pick the same one twice in a row. After a random Thwack, it always follows up with Headbutt. After Headbutt, it always follows up with Thwack, then returns to the random pick."
@@ -1711,6 +2529,9 @@
         {
           "displayName": "Eye With Teeth",
           "type": "Minion",
+          "hpBelowA8": [
+            6
+          ],
           "hpA8": [
             6
           ],
@@ -1721,6 +2542,25 @@
               "textA9": "Shuffles 3 Dazed into your discard pile."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Eye With Teeth",
+              "recordOrdinal": 6
+            },
+            "bodyKey": "Eye With Teeth",
+            "articleLocator": {
+              "pageKey": "Fogmog",
+              "sectionOwner": "Eye With Teeth"
+            },
+            "article": {
+              "pageKey": "Fogmog",
+              "revisionId": 51059,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Eye With Teeth"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Distract every turn."
@@ -1747,6 +2587,10 @@
         {
           "displayName": "Fossil Stalker",
           "type": "Normal",
+          "hpBelowA8": [
+            51,
+            53
+          ],
           "hpA8": [
             54,
             56
@@ -1766,6 +2610,25 @@
               "textA9": "Deals 4×2 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Fossil Stalker",
+              "recordOrdinal": 4
+            },
+            "bodyKey": "Fossil Stalker",
+            "articleLocator": {
+              "pageKey": "Fossil Stalker",
+              "sectionOwner": "Fossil Stalker"
+            },
+            "article": {
+              "pageKey": "Fossil Stalker",
+              "revisionId": 51074,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Fossil Stalker"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Always starts with Latch. After any move, the next move is chosen randomly with equal probability: • 33% chance of Latch • 33% chance of Tackle • 33% chance of Lash No restriction on repeating the same move consecutively."
@@ -1786,6 +2649,9 @@
         {
           "displayName": "Frog Knight",
           "type": "Normal",
+          "hpBelowA8": [
+            191
+          ],
           "hpA8": [
             199
           ],
@@ -1808,6 +2674,25 @@
               "textA9": "Deals 40 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Frog Knight",
+              "recordOrdinal": 9
+            },
+            "bodyKey": "Frog Knight",
+            "articleLocator": {
+              "pageKey": "Frog Knight",
+              "sectionOwner": "Frog Knight"
+            },
+            "article": {
+              "pageKey": "Frog Knight",
+              "revisionId": 50979,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Frog Knight"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opens with Tongue Lash, then follows a repeating cycle: Strike Down Evil, For the Queen, then a conditional check. If the Frog Knight's HP is below half and it has not yet used Beetle Charge, it uses Beetle Charge once, then continues with Tongue Lash. Otherwise, it uses Tongue Lash and continues the cycle."
@@ -1828,6 +2713,10 @@
         {
           "displayName": "Fuzzy Wurm Crawler",
           "type": "Normal",
+          "hpBelowA8": [
+            55,
+            57
+          ],
           "hpA8": [
             58,
             59
@@ -1842,6 +2731,25 @@
               "textA9": "Gains 7 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Fuzzy Wurm Crawler",
+              "recordOrdinal": 9
+            },
+            "bodyKey": "Fuzzy Wurm Crawler",
+            "articleLocator": {
+              "pageKey": "Fuzzy Wurm Crawler",
+              "sectionOwner": "Fuzzy Wurm Crawler"
+            },
+            "article": {
+              "pageKey": "Fuzzy Wurm Crawler",
+              "revisionId": 51049,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Fuzzy Wurm Crawler"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Repeats a fixed three-turn cycle: • Acid Goop • Inhale • Acid Goop Then the cycle starts over."
@@ -1862,6 +2770,9 @@
         {
           "displayName": "Globe Head",
           "type": "Normal",
+          "hpBelowA8": [
+            148
+          ],
           "hpA8": [
             158
           ],
@@ -1880,6 +2791,25 @@
               "textA9": "Deals 17 damage. Gains 2 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Globe Head",
+              "recordOrdinal": 10
+            },
+            "bodyKey": "Globe Head",
+            "articleLocator": {
+              "pageKey": "Globe Head",
+              "sectionOwner": "Globe Head"
+            },
+            "article": {
+              "pageKey": "Globe Head",
+              "revisionId": 50948,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Globe Head"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Follows a fixed cycle: Shocking Slap, Thunder Strike, Galvanic Burst, then repeats."
@@ -1901,6 +2831,10 @@
         {
           "displayName": "Gremlin Merc",
           "type": "Normal",
+          "hpBelowA8": [
+            47,
+            49
+          ],
           "hpA8": [
             51,
             53
@@ -1920,6 +2854,25 @@
               "textA9": "Deals 9 damage. Gains 2 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Gremlin Merc",
+              "recordOrdinal": 5
+            },
+            "bodyKey": "Gremlin Merc",
+            "articleLocator": {
+              "pageKey": "Gremlin Merc",
+              "sectionOwner": "Gremlin Merc"
+            },
+            "article": {
+              "pageKey": "Gremlin Merc",
+              "revisionId": 51076,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Gremlin Merc"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Cycles through its moves in a fixed order: • Gimme • Double Smash • Hehe • Back to Gimme When the Gremlin Merc dies, its Surprise power triggers, summoning a Fat Gremlin and a Sneaky Gremlin. The Fat Gremlin inherits the stolen gold via Heist."
@@ -1931,6 +2884,10 @@
         {
           "displayName": "Fat Gremlin",
           "type": "Minion",
+          "hpBelowA8": [
+            13,
+            17
+          ],
           "hpA8": [
             14,
             18
@@ -1945,6 +2902,25 @@
               "textA9": "Flees from combat with any stolen gold."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Fat Gremlin",
+              "recordOrdinal": 6
+            },
+            "bodyKey": "Fat Gremlin",
+            "articleLocator": {
+              "pageKey": "Gremlin Merc",
+              "sectionOwner": "Fat Gremlin"
+            },
+            "article": {
+              "pageKey": "Gremlin Merc",
+              "revisionId": 51076,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 3,
+              "owner": "Fat Gremlin"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Spawned on its first turn (does nothing), then uses Flee every turn after, escaping with the stolen gold."
@@ -1957,6 +2933,10 @@
         {
           "displayName": "Sneaky Gremlin",
           "type": "Minion",
+          "hpBelowA8": [
+            10,
+            14
+          ],
           "hpA8": [
             11,
             15
@@ -1971,6 +2951,25 @@
               "textA9": "Deals 10 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Sneaky Gremlin",
+              "recordOrdinal": 7
+            },
+            "bodyKey": "Sneaky Gremlin",
+            "articleLocator": {
+              "pageKey": "Gremlin Merc",
+              "sectionOwner": "Sneaky Gremlin"
+            },
+            "article": {
+              "pageKey": "Gremlin Merc",
+              "revisionId": 51076,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Sneaky Gremlin"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Spawned on its first turn (does nothing), then uses Tackle every turn after."
@@ -2001,6 +3000,9 @@
         {
           "displayName": "Haunted Ship",
           "type": "Normal",
+          "hpBelowA8": [
+            63
+          ],
           "hpA8": [
             67
           ],
@@ -2018,6 +3020,25 @@
               "textA9": "Deals 5×3 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Haunted Ship",
+              "recordOrdinal": 8
+            },
+            "bodyKey": "Haunted Ship",
+            "articleLocator": {
+              "pageKey": "Haunted Ship",
+              "sectionOwner": "Haunted Ship"
+            },
+            "article": {
+              "pageKey": "Haunted Ship",
+              "revisionId": 51068,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Haunted Ship"
+            }
+          },
           "pattern": {
             "type": "opener",
             "text": "Always uses Haunt first. From the second turn onward, alternates between Swipe and Stomp, always starting with Swipe."
@@ -2038,6 +3059,9 @@
         {
           "displayName": "Hunter Killer",
           "type": "Normal",
+          "hpBelowA8": [
+            121
+          ],
           "hpA8": [
             126
           ],
@@ -2055,6 +3079,25 @@
               "textA9": "Deals 8×3 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Hunter Killer",
+              "recordOrdinal": 7
+            },
+            "bodyKey": "Hunter Killer",
+            "articleLocator": {
+              "pageKey": "Hunter Killer",
+              "sectionOwner": "Hunter Killer"
+            },
+            "article": {
+              "pageKey": "Hunter Killer",
+              "revisionId": 51005,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Hunter Killer"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Always opens with Tenderizing Goop. After that, randomly uses Bite or Puncture, with Puncture being twice as likely. Bite cannot be used twice in a row."
@@ -2075,6 +3118,9 @@
         {
           "displayName": "Infested Prism",
           "type": "Elite",
+          "hpBelowA8": [
+            161
+          ],
           "hpA8": [
             171
           ],
@@ -2097,6 +3143,25 @@
               "textA9": "Deal 10 damage. Gains 22 Block and Vital Spark 3."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Infested Prism",
+              "recordOrdinal": 9
+            },
+            "bodyKey": "Infested Prism",
+            "articleLocator": {
+              "pageKey": "Infested Prism",
+              "sectionOwner": "Infested Prism"
+            },
+            "article": {
+              "pageKey": "Infested Prism",
+              "revisionId": 50221,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Infested Prism"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Infested Prism repeats a fixed four-move cycle: • Jab • Radiate • Whirlwind • Pulsate"
@@ -2140,6 +3205,10 @@
         {
           "displayName": "Inklet",
           "type": "Normal",
+          "hpBelowA8": [
+            11,
+            17
+          ],
           "hpA8": [
             12,
             18
@@ -2159,6 +3228,25 @@
               "textA9": "Deals 11 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Inklet",
+              "recordOrdinal": 10
+            },
+            "bodyKey": "Inklet",
+            "articleLocator": {
+              "pageKey": "Inklet",
+              "sectionOwner": "Inklet"
+            },
+            "article": {
+              "pageKey": "Inklet",
+              "revisionId": 51058,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Inklet"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Openers by position (turn 1): each outer Inklet uses Jab (most likely) or Windup Punch; the middle uses Windup Punch. Then cycle rules: after Jab, randomly use Piercing Gaze or Windup Punch; after either of those, use Jab."
@@ -2181,6 +3269,9 @@
         {
           "displayName": "Crusher",
           "type": "Boss",
+          "hpBelowA8": [
+            209
+          ],
           "hpA8": [
             219
           ],
@@ -2207,6 +3298,25 @@
               "textA9": "Deals 14 damage. Gains 18 Block."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Crusher",
+              "recordOrdinal": 10
+            },
+            "bodyKey": "Crusher",
+            "articleLocator": {
+              "pageKey": "Kaiser Crab",
+              "sectionOwner": "Crusher"
+            },
+            "article": {
+              "pageKey": "Kaiser Crab",
+              "revisionId": 50008,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Crusher"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Crusher repeats a fixed five-move cycle: • Thrash • Enlarging Strike • Bug Sting • Adapt • Guarded Strike"
@@ -2218,6 +3328,9 @@
         {
           "displayName": "Rocket",
           "type": "Boss",
+          "hpBelowA8": [
+            199
+          ],
           "hpA8": [
             209
           ],
@@ -2244,6 +3357,25 @@
               "textA9": "Does nothing."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Rocket",
+              "recordOrdinal": 11
+            },
+            "bodyKey": "Rocket",
+            "articleLocator": {
+              "pageKey": "Kaiser Crab",
+              "sectionOwner": "Rocket"
+            },
+            "article": {
+              "pageKey": "Kaiser Crab",
+              "revisionId": 50008,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Rocket"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Rocket repeats a fixed five-move cycle: • Targeting Reticle • Precision Beam • Charge Up • Laser • Recharge"
@@ -2266,6 +3398,9 @@
         {
           "displayName": "Flail Knight",
           "type": "Elite",
+          "hpBelowA8": [
+            101
+          ],
           "hpA8": [
             108
           ],
@@ -2283,6 +3418,25 @@
               "textA9": "Deals 17 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Flail Knight",
+              "recordOrdinal": 11
+            },
+            "bodyKey": "Flail Knight",
+            "articleLocator": {
+              "pageKey": "Knight Gang",
+              "sectionOwner": "Flail Knight"
+            },
+            "article": {
+              "pageKey": "Knight Gang",
+              "revisionId": 50251,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Flail Knight"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Opens with Ram, then randomly uses Breaker, Flail, or Ram each turn. Breaker cannot be used two turns in a row."
@@ -2294,6 +3448,9 @@
         {
           "displayName": "Spectral Knight",
           "type": "Elite",
+          "hpBelowA8": [
+            93
+          ],
           "hpA8": [
             97
           ],
@@ -2311,6 +3468,25 @@
               "textA9": "Deals 4×3 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Spectral Knight",
+              "recordOrdinal": 12
+            },
+            "bodyKey": "Spectral Knight",
+            "articleLocator": {
+              "pageKey": "Knight Gang",
+              "sectionOwner": "Spectral Knight"
+            },
+            "article": {
+              "pageKey": "Knight Gang",
+              "revisionId": 50251,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Spectral Knight"
+            }
+          },
           "pattern": {
             "type": "opener",
             "text": "Opens with Hex. After that, alternates between Soul Slash and Soul Flame."
@@ -2322,6 +3498,9 @@
         {
           "displayName": "Magi Knight",
           "type": "Elite",
+          "hpBelowA8": [
+            82
+          ],
           "hpA8": [
             89
           ],
@@ -2347,6 +3526,25 @@
               "textA9": "Deals 40 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Magi Knight",
+              "recordOrdinal": 13
+            },
+            "bodyKey": "Magi Knight",
+            "articleLocator": {
+              "pageKey": "Knight Gang",
+              "sectionOwner": "Magi Knight"
+            },
+            "article": {
+              "pageKey": "Knight Gang",
+              "revisionId": 50251,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 3,
+              "owner": "Magi Knight"
+            }
+          },
           "pattern": {
             "type": "opener",
             "text": "Starts with Power Shield, followed by Dampen. Then repeatedly uses Ram, Prep, and Magic Bomb in that order."
@@ -2369,6 +3567,9 @@
         {
           "displayName": "Knowledge Demon",
           "type": "Boss",
+          "hpBelowA8": [
+            379
+          ],
           "hpA8": [
             399
           ],
@@ -2390,6 +3591,25 @@
               "textA9": "Deals 13 damage. Heals 30 HP per player. Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Knowledge Demon",
+              "recordOrdinal": 9
+            },
+            "bodyKey": "Knowledge Demon",
+            "articleLocator": {
+              "pageKey": "Knowledge Demon",
+              "sectionOwner": "Knowledge Demon"
+            },
+            "article": {
+              "pageKey": "Knowledge Demon",
+              "revisionId": 49847,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Knowledge Demon"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Knowledge Demon repeats a fixed four-move cycle: • Curse of Knowledge • Slap • Knowledge Overwhelming • Ponder After the third Curse of Knowledge (once all three status sets have been offered), the cycle changes: Curse of Knowledge is skipped, and the remaining three moves repeat in order."
@@ -2410,6 +3630,9 @@
         {
           "displayName": "Lagavulin Matriarch",
           "type": "Boss",
+          "hpBelowA8": [
+            222
+          ],
           "hpA8": [
             233
           ],
@@ -2436,6 +3659,25 @@
               "textA9": "Removes 2 Strength and 2 Dexterity from the player. Gains 2 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Lagavulin Matriarch",
+              "recordOrdinal": 5
+            },
+            "bodyKey": "Lagavulin Matriarch",
+            "articleLocator": {
+              "pageKey": "Lagavulin Matriarch",
+              "sectionOwner": "Lagavulin Matriarch"
+            },
+            "article": {
+              "pageKey": "Lagavulin Matriarch",
+              "revisionId": 49844,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Lagavulin Matriarch"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Lagavulin Matriarch starts Asleep with 12 Plating. It sleeps for 3 turns or until it takes unblocked damage, whichever comes first. When it wakes up, it loses its Plating. After waking, it repeats this four-move cycle: • Slash • Disembowel • Slash2 • Soul Siphon"
@@ -2456,6 +3698,9 @@
         {
           "displayName": "Living Fog",
           "type": "Normal",
+          "hpBelowA8": [
+            80
+          ],
           "hpA8": [
             82
           ],
@@ -2473,6 +3718,25 @@
               "textA9": "Deals 9 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Living Fog",
+              "recordOrdinal": 9
+            },
+            "bodyKey": "Living Fog",
+            "articleLocator": {
+              "pageKey": "Living Fog",
+              "sectionOwner": "Living Fog"
+            },
+            "article": {
+              "pageKey": "Living Fog",
+              "revisionId": 51073,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Living Fog"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Always uses Advanced Gas first, then alternates between Bloat and Super Gas Blast."
@@ -2484,6 +3748,9 @@
         {
           "displayName": "Gas Bomb",
           "type": "Minion",
+          "hpBelowA8": [
+            7
+          ],
           "hpA8": [
             8
           ],
@@ -2495,6 +3762,25 @@
               "intent": "Death Blow"
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Gas Bomb",
+              "recordOrdinal": 10
+            },
+            "bodyKey": "Gas Bomb",
+            "articleLocator": {
+              "pageKey": "Living Fog",
+              "sectionOwner": "Gas Bomb"
+            },
+            "article": {
+              "pageKey": "Living Fog",
+              "revisionId": 51073,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Gas Bomb"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Explode every turn, dealing damage and killing itself."
@@ -2522,6 +3808,10 @@
         {
           "displayName": "Louse Progenitor",
           "type": "Normal",
+          "hpBelowA8": [
+            134,
+            136
+          ],
           "hpA8": [
             138,
             141
@@ -2541,6 +3831,25 @@
               "textA9": "Deals 16 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Louse Progenitor",
+              "recordOrdinal": 8
+            },
+            "bodyKey": "Louse Progenitor",
+            "articleLocator": {
+              "pageKey": "Louse Progenitor",
+              "sectionOwner": "Louse Progenitor"
+            },
+            "article": {
+              "pageKey": "Louse Progenitor",
+              "revisionId": 51013,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Louse Progenitor"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Louse Progenitor repeats a fixed three-move cycle: Web Cannon, then Curl and Grow, then Pounce, and back to the start."
@@ -2562,6 +3871,9 @@
         {
           "displayName": "Mawler",
           "type": "Normal",
+          "hpBelowA8": [
+            72
+          ],
           "hpA8": [
             76
           ],
@@ -2579,6 +3891,25 @@
               "textA9": "Deals 5×2 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Mawler",
+              "recordOrdinal": 13
+            },
+            "bodyKey": "Mawler",
+            "articleLocator": {
+              "pageKey": "Mawler",
+              "sectionOwner": "Mawler"
+            },
+            "article": {
+              "pageKey": "Mawler",
+              "revisionId": 51057,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Mawler"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Always opens with Claw. After that, each turn it randomly picks one of three moves with equal chance: Rip and Tear, Roar, or Claw. It cannot use the same move twice in a row, and Roar can only be used once per fight."
@@ -2599,6 +3930,9 @@
         {
           "displayName": "Mecha Knight",
           "type": "Elite",
+          "hpBelowA8": [
+            300
+          ],
           "hpA8": [
             320
           ],
@@ -2621,6 +3955,25 @@
               "textA9": "Deals 40 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Mecha Knight",
+              "recordOrdinal": 14
+            },
+            "bodyKey": "Mecha Knight",
+            "articleLocator": {
+              "pageKey": "Mecha Knight",
+              "sectionOwner": "Mecha Knight"
+            },
+            "article": {
+              "pageKey": "Mecha Knight",
+              "revisionId": 50225,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Mecha Knight"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Starts with Charge and then repeats this cycle for the rest of combat: • Flamethrower • Windup • Heavy Cleave"
@@ -2642,6 +3995,10 @@
         {
           "displayName": "Myte",
           "type": "Normal",
+          "hpBelowA8": [
+            61,
+            67
+          ],
           "hpA8": [
             64,
             69
@@ -2660,6 +4017,25 @@
               "textA9": "Deals 6 damage. Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Myte",
+              "recordOrdinal": 10
+            },
+            "bodyKey": "Myte",
+            "articleLocator": {
+              "pageKey": "Myte",
+              "sectionOwner": "Myte"
+            },
+            "article": {
+              "pageKey": "Myte",
+              "revisionId": 51014,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Myte"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opener (turn 1): Toxic Cornucopia. Then cycle: Toxic Cornucopia → Bite → Suck → repeat."
@@ -2672,6 +4048,10 @@
         {
           "displayName": "Myte",
           "type": "Normal",
+          "hpBelowA8": [
+            61,
+            67
+          ],
           "hpA8": [
             64,
             69
@@ -2690,6 +4070,25 @@
               "textA9": "Deals 6 damage. Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Myte",
+              "recordOrdinal": 10
+            },
+            "bodyKey": "Myte",
+            "articleLocator": {
+              "pageKey": "Myte",
+              "sectionOwner": "Myte"
+            },
+            "article": {
+              "pageKey": "Myte",
+              "revisionId": 51014,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Myte"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opener (turn 1): Suck. Then cycle: Toxic Cornucopia → Bite → Suck → repeat."
@@ -2711,6 +4110,10 @@
         {
           "displayName": "Nibbit",
           "type": "Normal",
+          "hpBelowA8": [
+            42,
+            46
+          ],
           "hpA8": [
             44,
             48
@@ -2729,6 +4132,25 @@
               "textA9": "Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Nibbit",
+              "recordOrdinal": 14
+            },
+            "bodyKey": "Nibbit",
+            "articleLocator": {
+              "pageKey": "Nibbit",
+              "sectionOwner": "Nibbit"
+            },
+            "article": {
+              "pageKey": "Nibbit",
+              "revisionId": 51045,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Nibbit"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opener (turn 1): Hesitant Slice. Then cycle: Butt → Hesitant Slice → Hiss → repeat."
@@ -2741,6 +4163,10 @@
         {
           "displayName": "Nibbit",
           "type": "Normal",
+          "hpBelowA8": [
+            42,
+            46
+          ],
           "hpA8": [
             44,
             48
@@ -2759,6 +4185,25 @@
               "textA9": "Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Nibbit",
+              "recordOrdinal": 14
+            },
+            "bodyKey": "Nibbit",
+            "articleLocator": {
+              "pageKey": "Nibbit",
+              "sectionOwner": "Nibbit"
+            },
+            "article": {
+              "pageKey": "Nibbit",
+              "revisionId": 51045,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Nibbit"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opener (turn 1): Hiss. Then cycle: Butt → Hesitant Slice → Hiss → repeat."
@@ -2780,6 +4225,10 @@
         {
           "displayName": "Nibbit",
           "type": "Normal",
+          "hpBelowA8": [
+            42,
+            46
+          ],
           "hpA8": [
             44,
             48
@@ -2798,6 +4247,25 @@
               "textA9": "Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Nibbit",
+              "recordOrdinal": 14
+            },
+            "bodyKey": "Nibbit",
+            "articleLocator": {
+              "pageKey": "Nibbit",
+              "sectionOwner": "Nibbit"
+            },
+            "article": {
+              "pageKey": "Nibbit",
+              "revisionId": 51045,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Nibbit"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opener (turn 1): Butt. Then cycle: repeat the fixed three-move sequence shown in the move table, beginning with Butt."
@@ -2818,6 +4286,10 @@
         {
           "displayName": "Fuzzy Wurm Crawler",
           "type": "Normal",
+          "hpBelowA8": [
+            55,
+            57
+          ],
           "hpA8": [
             58,
             59
@@ -2832,6 +4304,25 @@
               "textA9": "Gains 7 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Fuzzy Wurm Crawler",
+              "recordOrdinal": 9
+            },
+            "bodyKey": "Fuzzy Wurm Crawler",
+            "articleLocator": {
+              "pageKey": "Fuzzy Wurm Crawler",
+              "sectionOwner": "Fuzzy Wurm Crawler"
+            },
+            "article": {
+              "pageKey": "Fuzzy Wurm Crawler",
+              "revisionId": 51049,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Fuzzy Wurm Crawler"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Repeats a fixed three-turn cycle: • Acid Goop • Inhale • Acid Goop Then the cycle starts over."
@@ -2843,6 +4334,10 @@
         {
           "displayName": "Shrinker Beetle",
           "type": "Normal",
+          "hpBelowA8": [
+            38,
+            40
+          ],
           "hpA8": [
             40,
             42
@@ -2861,6 +4356,25 @@
               "textA9": "Deals 14 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Shrinker Beetle",
+              "recordOrdinal": 15
+            },
+            "bodyKey": "Shrinker Beetle",
+            "articleLocator": {
+              "pageKey": "Shrinker Beetle",
+              "sectionOwner": "Shrinker Beetle"
+            },
+            "article": {
+              "pageKey": "Shrinker Beetle",
+              "revisionId": 51048,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Shrinker Beetle"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Always opens with Shrinker, then alternates between Chomp and Stomp."
@@ -2881,6 +4395,10 @@
         {
           "displayName": "Ovicopter",
           "type": "Normal",
+          "hpBelowA8": [
+            124,
+            130
+          ],
           "hpA8": [
             126,
             132
@@ -2903,6 +4421,25 @@
               "textA9": "Gains 4 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Ovicopter",
+              "recordOrdinal": 11
+            },
+            "bodyKey": "Ovicopter",
+            "articleLocator": {
+              "pageKey": "Ovicopter",
+              "sectionOwner": "Ovicopter"
+            },
+            "article": {
+              "pageKey": "Ovicopter",
+              "revisionId": 51090,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Ovicopter"
+            }
+          },
           "pattern": {
             "type": "opener",
             "text": "Always opens with Lay Eggs to summon 3 Tough Eggs, then uses Smash, then Tenderizer. After Tenderizer, it checks how many allies it has. If it has 3 or fewer living allies, it uses Lay Eggs again. If it has more than 3, it uses Nutritional Paste instead. Then the cycle continues with Smash and Tenderizer."
@@ -2914,6 +4451,10 @@
         {
           "displayName": "Tough Egg",
           "type": "Minion",
+          "hpBelowA8": [
+            14,
+            18
+          ],
           "hpA8": [
             15,
             19
@@ -2925,6 +4466,25 @@
               "textA9": "Hatches into a Hatchling with 20-23 HP. Removes all powers except Minion."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Tough Egg",
+              "recordOrdinal": 12
+            },
+            "bodyKey": "Tough Egg",
+            "articleLocator": {
+              "pageKey": "Ovicopter",
+              "sectionOwner": "Tough Egg"
+            },
+            "article": {
+              "pageKey": "Ovicopter",
+              "revisionId": 51090,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Tough Egg"
+            }
+          },
           "pattern": {
             "type": "unknown",
             "text": "The Tough Egg waits while its Hatch timer counts down. When the timer expires, it uses Hatch to transform into a Hatchling with new HP."
@@ -2938,6 +4498,10 @@
         {
           "displayName": "Hatchling",
           "type": "Minion",
+          "hpBelowA8": [
+            19,
+            22
+          ],
           "hpA8": [
             20,
             23
@@ -2949,6 +4513,24 @@
               "textA9": "Deals 5 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "synthetic": true,
+              "reason": "nested Tough Egg fallback; not a retained module origin"
+            },
+            "bodyKey": "Hatchling",
+            "articleLocator": {
+              "pageKey": "Ovicopter",
+              "sectionOwner": "Hatchling"
+            },
+            "article": {
+              "pageKey": "Ovicopter",
+              "revisionId": 51090,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 3,
+              "owner": "Hatchling"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Nibble every turn."
@@ -2980,6 +4562,9 @@
         {
           "displayName": "Owl Magistrate",
           "type": "Normal",
+          "hpBelowA8": [
+            234
+          ],
           "hpA8": [
             247
           ],
@@ -3001,6 +4586,25 @@
               "textA9": "Deals 36 damage. Applies 4 Vulnerable. Removes Soar."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Owl Magistrate",
+              "recordOrdinal": 11
+            },
+            "bodyKey": "Owl Magistrate",
+            "articleLocator": {
+              "pageKey": "Owl Magistrate",
+              "sectionOwner": "Owl Magistrate"
+            },
+            "article": {
+              "pageKey": "Owl Magistrate",
+              "revisionId": 50963,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Owl Magistrate"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Follows a fixed 4-move cycle: Magistrate Scrutiny, Peck Assault, Judicial Flight, Verdict, then repeats."
@@ -3041,6 +4645,10 @@
         {
           "displayName": "Phantasmal Gardener",
           "type": "Elite",
+          "hpBelowA8": [
+            26,
+            31
+          ],
           "hpA8": [
             27,
             32
@@ -3064,6 +4672,25 @@
               "textA9": "Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Phantasmal Gardener",
+              "recordOrdinal": 4
+            },
+            "bodyKey": "Phantasmal Gardener",
+            "articleLocator": {
+              "pageKey": "Phantasmal Gardener",
+              "sectionOwner": "Phantasmal Gardener"
+            },
+            "article": {
+              "pageKey": "Phantasmal Gardener",
+              "revisionId": 50242,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Phantasmal Gardener"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Start offsets (turn 1): each of the four Gardeners begins on a different step. Cycle: Bite → Lash → Flail → Enlarge → repeat."
@@ -3084,6 +4711,10 @@
         {
           "displayName": "Phrog Parasite",
           "type": "Elite",
+          "hpBelowA8": [
+            61,
+            64
+          ],
           "hpA8": [
             66,
             68
@@ -3099,6 +4730,25 @@
               "textA9": "Deals 5×4 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Phrog Parasite",
+              "recordOrdinal": 3
+            },
+            "bodyKey": "Phrog Parasite",
+            "articleLocator": {
+              "pageKey": "Phrog Parasite",
+              "sectionOwner": "Phrog Parasite"
+            },
+            "article": {
+              "pageKey": "Phrog Parasite",
+              "revisionId": 50164,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Phrog Parasite"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Phrog Parasite alternates between its two moves: • Infect • Lash • Back to Infect, and so on. When Phrog Parasite dies, Infested triggers and 4 Wrigglers are summoned. They will be Stunned and do nothing on their first turn. The fight continues until all Wrigglers are defeated."
@@ -3110,6 +4760,10 @@
         {
           "displayName": "Wriggler",
           "type": "Normal",
+          "hpBelowA8": [
+            17,
+            21
+          ],
           "hpA8": [
             18,
             22
@@ -3124,6 +4778,25 @@
               "textA9": "Shuffles 1 Infection into your discard pile. Gains 2 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Wriggler",
+              "recordOrdinal": 22
+            },
+            "bodyKey": "Wriggler",
+            "articleLocator": {
+              "pageKey": "Wriggler",
+              "sectionOwner": "Wriggler"
+            },
+            "article": {
+              "pageKey": "Wriggler",
+              "revisionId": 51053,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Wriggler"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Summon delay: Stunned for the first turn. Start offsets: odd-numbered Wrigglers open with Nasty Bite; even-numbered Wrigglers open with Wriggle. Then cycle: alternate Nasty Bite and Wriggle."
@@ -3160,6 +4833,9 @@
         {
           "displayName": "Punch Construct",
           "type": "Normal",
+          "hpBelowA8": [
+            55
+          ],
           "hpA8": [
             60
           ],
@@ -3178,6 +4854,25 @@
               "textA9": "Deals 16 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Punch Construct",
+              "recordOrdinal": 11
+            },
+            "bodyKey": "Punch Construct",
+            "articleLocator": {
+              "pageKey": "Punch Construct",
+              "sectionOwner": "Punch Construct"
+            },
+            "article": {
+              "pageKey": "Punch Construct",
+              "revisionId": 51069,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Punch Construct"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Cycles through its moves in a fixed order: • READY • Fast Punch • Strong Punch"
@@ -3198,6 +4893,9 @@
         {
           "displayName": "Queen",
           "type": "Boss",
+          "hpBelowA8": [
+            400
+          ],
           "hpA8": [
             419
           ],
@@ -3227,6 +4925,25 @@
               "textA9": "Gains 2 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Queen",
+              "recordOrdinal": 13
+            },
+            "bodyKey": "Queen",
+            "articleLocator": {
+              "pageKey": "Queen",
+              "sectionOwner": "Queen"
+            },
+            "article": {
+              "pageKey": "Queen",
+              "revisionId": 49848,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Queen"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Queen's pattern depends on whether the Torch Head Amalgam is alive: Opening (always): • Puppet Strings • You're Mine While the Amalgam is alive: : Repeats Burn Bright for Me. After the Amalgam dies: : If the Queen is currently using Burn Bright for Me, she immediately switches to Enrage, then enters the enraged loop: • Off with Your Head • Execution • Enrage • Back to Off with Your Head • Keep in mind that Queen will have gained 2 Strength and that the player will likely be permanently Vulnerable from You're Mine, making these the actual damage amounts: • Off with Your Head: 9×5 • Execution: 30"
@@ -3238,6 +4955,9 @@
         {
           "displayName": "Torch Head Amalgam",
           "type": "Minion",
+          "hpBelowA8": [
+            199
+          ],
           "hpA8": [
             211
           ],
@@ -3260,6 +4980,25 @@
               "textA9": "Deals 16 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Torch Head Amalgam",
+              "recordOrdinal": 14
+            },
+            "bodyKey": "Torch Head Amalgam",
+            "articleLocator": {
+              "pageKey": "Queen",
+              "sectionOwner": "Torch Head Amalgam"
+            },
+            "article": {
+              "pageKey": "Queen",
+              "revisionId": 49848,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Torch Head Amalgam"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Torch Head Amalgam follows a fixed sequence: • Strong Tackle • Tackle • Beam • Weak Tackle • Weak Tackle • Back to Beam (repeats steps 3-5)"
@@ -3288,6 +5027,10 @@
         {
           "displayName": "Assassin Raider",
           "type": "Normal",
+          "hpBelowA8": [
+            18,
+            23
+          ],
           "hpA8": [
             19,
             24
@@ -3298,6 +5041,25 @@
               "textA9": "Deals 11 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Assassin Raider",
+              "recordOrdinal": 1
+            },
+            "bodyKey": "Assassin Raider",
+            "articleLocator": {
+              "pageKey": "Ruby Raiders",
+              "sectionOwner": "Assassin Raider"
+            },
+            "article": {
+              "pageKey": "Ruby Raiders",
+              "revisionId": 51087,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Assassin Raider"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Killshot every turn."
@@ -3311,6 +5073,10 @@
         {
           "displayName": "Axe Raider",
           "type": "Normal",
+          "hpBelowA8": [
+            20,
+            22
+          ],
           "hpA8": [
             21,
             23
@@ -3325,6 +5091,25 @@
               "textA9": "Deals 13 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Axe Raider",
+              "recordOrdinal": 2
+            },
+            "bodyKey": "Axe Raider",
+            "articleLocator": {
+              "pageKey": "Ruby Raiders",
+              "sectionOwner": "Axe Raider"
+            },
+            "article": {
+              "pageKey": "Ruby Raiders",
+              "revisionId": 51087,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Axe Raider"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Repeats a fixed cycle: • Swing • Swing • Big Swing"
@@ -3337,6 +5122,10 @@
         {
           "displayName": "Brute Raider",
           "type": "Normal",
+          "hpBelowA8": [
+            30,
+            33
+          ],
           "hpA8": [
             31,
             34
@@ -3351,6 +5140,25 @@
               "textA9": "Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Brute Raider",
+              "recordOrdinal": 3
+            },
+            "bodyKey": "Brute Raider",
+            "articleLocator": {
+              "pageKey": "Ruby Raiders",
+              "sectionOwner": "Brute Raider"
+            },
+            "article": {
+              "pageKey": "Ruby Raiders",
+              "revisionId": 51087,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 3,
+              "owner": "Brute Raider"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Alternates between Beat and Clap, starting with Beat."
@@ -3363,6 +5171,10 @@
         {
           "displayName": "Crossbow Raider",
           "type": "Normal",
+          "hpBelowA8": [
+            18,
+            21
+          ],
           "hpA8": [
             19,
             22
@@ -3377,6 +5189,25 @@
               "textA9": "Deals 16 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Crossbow Raider",
+              "recordOrdinal": 4
+            },
+            "bodyKey": "Crossbow Raider",
+            "articleLocator": {
+              "pageKey": "Ruby Raiders",
+              "sectionOwner": "Crossbow Raider"
+            },
+            "article": {
+              "pageKey": "Ruby Raiders",
+              "revisionId": 51087,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 4,
+              "owner": "Crossbow Raider"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Alternates between Reload and Fire!, starting with Reload."
@@ -3389,6 +5220,10 @@
         {
           "displayName": "Tracker Raider",
           "type": "Normal",
+          "hpBelowA8": [
+            21,
+            25
+          ],
           "hpA8": [
             22,
             26
@@ -3403,6 +5238,25 @@
               "textA9": "Deals 1×9 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Tracker Raider",
+              "recordOrdinal": 18
+            },
+            "bodyKey": "Tracker Raider",
+            "articleLocator": {
+              "pageKey": "Ruby Raiders",
+              "sectionOwner": "Tracker Raider"
+            },
+            "article": {
+              "pageKey": "Ruby Raiders",
+              "revisionId": 51087,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 5,
+              "owner": "Tracker Raider"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opens with Track, then uses Unleash the Hounds every turn after."
@@ -3424,6 +5278,10 @@
         {
           "displayName": "Scroll of Biting",
           "type": "Normal",
+          "hpBelowA8": [
+            31,
+            38
+          ],
           "hpA8": [
             33,
             39
@@ -3443,6 +5301,25 @@
               "textA9": "Deals 6×2 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Scroll of Biting",
+              "recordOrdinal": 2
+            },
+            "bodyKey": "Scroll of Biting",
+            "articleLocator": {
+              "pageKey": "Scroll of Biting",
+              "sectionOwner": "Scroll of Biting"
+            },
+            "article": {
+              "pageKey": "Scroll of Biting",
+              "revisionId": 50967,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Scroll of Biting"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Start offsets (turn 1): the four-Scroll pack begins with staggered cycle steps. Cycle: Chomp → More Teeth → Chew. After Chew, randomly restart at Chomp (cannot repeat) or Chew (weight 2), then continue the cycle."
@@ -3487,6 +5364,10 @@
         {
           "displayName": "Scroll of Biting",
           "type": "Normal",
+          "hpBelowA8": [
+            31,
+            38
+          ],
           "hpA8": [
             33,
             39
@@ -3506,6 +5387,25 @@
               "textA9": "Deals 6×2 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Scroll of Biting",
+              "recordOrdinal": 2
+            },
+            "bodyKey": "Scroll of Biting",
+            "articleLocator": {
+              "pageKey": "Scroll of Biting",
+              "sectionOwner": "Scroll of Biting"
+            },
+            "article": {
+              "pageKey": "Scroll of Biting",
+              "revisionId": 50967,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Scroll of Biting"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Start offsets (turn 1): the three Scrolls each begin on a different cycle step. Cycle: Chomp → More Teeth → Chew. After Chew, randomly restart at Chomp (cannot repeat) or Chew (weight 2), then continue the cycle."
@@ -3550,6 +5450,10 @@
         {
           "displayName": "Seapunk",
           "type": "Normal",
+          "hpBelowA8": [
+            44,
+            46
+          ],
           "hpA8": [
             47,
             49
@@ -3568,6 +5472,25 @@
               "textA9": "Gains 8 Block and 2 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Seapunk",
+              "recordOrdinal": 12
+            },
+            "bodyKey": "Seapunk",
+            "articleLocator": {
+              "pageKey": "Seapunk",
+              "sectionOwner": "Seapunk"
+            },
+            "article": {
+              "pageKey": "Seapunk",
+              "revisionId": 51067,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Seapunk"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Cycles through its moves in a fixed order: • Sea Kick • Spinning Kick • Bubble Burp • Back to Sea Kick"
@@ -3579,6 +5502,10 @@
         {
           "displayName": "Calcified Cultist",
           "type": "Normal",
+          "hpBelowA8": [
+            38,
+            41
+          ],
           "hpA8": [
             39,
             42
@@ -3593,6 +5520,25 @@
               "textA9": "Deals 11 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Calcified Cultist",
+              "recordOrdinal": 1
+            },
+            "bodyKey": "Calcified Cultist",
+            "articleLocator": {
+              "pageKey": "Cultists",
+              "sectionOwner": "Calcified Cultist"
+            },
+            "article": {
+              "pageKey": "Cultists",
+              "revisionId": 51065,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Calcified Cultist"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Always uses Incantation first, then Dark Strike every turn after."
@@ -3613,6 +5559,10 @@
         {
           "displayName": "Seapunk",
           "type": "Normal",
+          "hpBelowA8": [
+            44,
+            46
+          ],
           "hpA8": [
             47,
             49
@@ -3631,6 +5581,25 @@
               "textA9": "Gains 8 Block and 2 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Seapunk",
+              "recordOrdinal": 12
+            },
+            "bodyKey": "Seapunk",
+            "articleLocator": {
+              "pageKey": "Seapunk",
+              "sectionOwner": "Seapunk"
+            },
+            "article": {
+              "pageKey": "Seapunk",
+              "revisionId": 51067,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Seapunk"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Cycles through its moves in a fixed order: • Sea Kick • Spinning Kick • Bubble Burp • Back to Sea Kick"
@@ -3651,6 +5620,9 @@
         {
           "displayName": "Sewer Clam",
           "type": "Normal",
+          "hpBelowA8": [
+            56
+          ],
           "hpA8": [
             58
           ],
@@ -3665,6 +5637,25 @@
               "textA9": "Gains 4 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Sewer Clam",
+              "recordOrdinal": 13
+            },
+            "bodyKey": "Sewer Clam",
+            "articleLocator": {
+              "pageKey": "Sewer Clam",
+              "sectionOwner": "Sewer Clam"
+            },
+            "article": {
+              "pageKey": "Sewer Clam",
+              "revisionId": 51070,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Sewer Clam"
+            }
+          },
           "pattern": {
             "type": "opener",
             "text": "Always uses Jet first. Then alternates between Pressurize and Jet every turn."
@@ -3685,6 +5676,10 @@
         {
           "displayName": "Shrinker Beetle",
           "type": "Normal",
+          "hpBelowA8": [
+            38,
+            40
+          ],
           "hpA8": [
             40,
             42
@@ -3703,6 +5698,25 @@
               "textA9": "Deals 14 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Shrinker Beetle",
+              "recordOrdinal": 15
+            },
+            "bodyKey": "Shrinker Beetle",
+            "articleLocator": {
+              "pageKey": "Shrinker Beetle",
+              "sectionOwner": "Shrinker Beetle"
+            },
+            "article": {
+              "pageKey": "Shrinker Beetle",
+              "revisionId": 51048,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Shrinker Beetle"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Always opens with Shrinker, then alternates between Chomp and Stomp."
@@ -3723,6 +5737,9 @@
         {
           "displayName": "Skulking Colony",
           "type": "Elite",
+          "hpBelowA8": [
+            75
+          ],
           "hpA8": [
             80
           ],
@@ -3741,6 +5758,25 @@
               "textA9": "Deals 8×2 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Skulking Colony",
+              "recordOrdinal": 5
+            },
+            "bodyKey": "Skulking Colony",
+            "articleLocator": {
+              "pageKey": "Skulking Colony",
+              "sectionOwner": "Skulking Colony"
+            },
+            "article": {
+              "pageKey": "Skulking Colony",
+              "revisionId": 50258,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Skulking Colony"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Skulking Colony repeats the same four moves in order: • Zoom • Zoom • Inertia • Piercing Stabs"
@@ -3761,6 +5797,9 @@
         {
           "displayName": "Slimed Berserker",
           "type": "Normal",
+          "hpBelowA8": [
+            266
+          ],
           "hpA8": [
             281
           ],
@@ -3782,6 +5821,25 @@
               "textA9": "Deals 33 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Slimed Berserker",
+              "recordOrdinal": 12
+            },
+            "bodyKey": "Slimed Berserker",
+            "articleLocator": {
+              "pageKey": "Slimed Berserker",
+              "sectionOwner": "Slimed Berserker"
+            },
+            "article": {
+              "pageKey": "Slimed Berserker",
+              "revisionId": 50973,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Slimed Berserker"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Follows a fixed 4-move cycle: • Vomit Ichor • Furious Pummeling • Leeching Hug • Smother"
@@ -3822,6 +5880,10 @@
         {
           "displayName": "Twig Slime (M)",
           "type": "Normal",
+          "hpBelowA8": [
+            26,
+            28
+          ],
           "hpA8": [
             27,
             29
@@ -3836,6 +5898,25 @@
               "textA9": "Shuffles 1 Slimed into your discard pile."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Twig Slime (M)",
+              "recordOrdinal": 19
+            },
+            "bodyKey": "Twig Slime (M)",
+            "articleLocator": {
+              "pageKey": "Slimes",
+              "sectionOwner": "Twig Slime (M)"
+            },
+            "article": {
+              "pageKey": "Slimes",
+              "revisionId": 51086,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 4,
+              "owner": "Twig Slime (M)"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Always starts with Sticky Shot. After that, each turn it randomly picks Chomp (67%) or Sticky Shot (33%). Cannot use Sticky Shot twice in a row."
@@ -3847,6 +5928,10 @@
         {
           "displayName": "Leaf Slime (M)",
           "type": "Normal",
+          "hpBelowA8": [
+            32,
+            35
+          ],
           "hpA8": [
             33,
             36
@@ -3861,6 +5946,25 @@
               "textA9": "Shuffles 2 Slimed into your discard pile."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Leaf Slime (M)",
+              "recordOrdinal": 11
+            },
+            "bodyKey": "Leaf Slime (M)",
+            "articleLocator": {
+              "pageKey": "Slimes",
+              "sectionOwner": "Leaf Slime (M)"
+            },
+            "article": {
+              "pageKey": "Slimes",
+              "revisionId": 51086,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Leaf Slime (M)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Always starts with Sticky Shot, then alternates between Clump Shot and Sticky Shot."
@@ -3872,6 +5976,10 @@
         {
           "displayName": "Twig Slime (S)",
           "type": "Normal",
+          "hpBelowA8": [
+            7,
+            11
+          ],
           "hpA8": [
             8,
             12
@@ -3882,6 +5990,25 @@
               "textA9": "Deals 5 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Twig Slime (S)",
+              "recordOrdinal": 20
+            },
+            "bodyKey": "Twig Slime (S)",
+            "articleLocator": {
+              "pageKey": "Slimes",
+              "sectionOwner": "Twig Slime (S)"
+            },
+            "article": {
+              "pageKey": "Slimes",
+              "revisionId": 51086,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 3,
+              "owner": "Twig Slime (S)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Tackle every turn."
@@ -3893,6 +6020,10 @@
         {
           "displayName": "Leaf Slime (S)",
           "type": "Normal",
+          "hpBelowA8": [
+            11,
+            15
+          ],
           "hpA8": [
             12,
             16
@@ -3907,6 +6038,25 @@
               "textA9": "Shuffles 1 Slimed into your discard pile."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Leaf Slime (S)",
+              "recordOrdinal": 12
+            },
+            "bodyKey": "Leaf Slime (S)",
+            "articleLocator": {
+              "pageKey": "Slimes",
+              "sectionOwner": "Leaf Slime (S)"
+            },
+            "article": {
+              "pageKey": "Slimes",
+              "revisionId": 51086,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Leaf Slime (S)"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Randomly picks Tackle or Goop each turn. Cannot use the same move twice in a row."
@@ -3927,6 +6077,10 @@
         {
           "displayName": "Twig Slime (M)",
           "type": "Normal",
+          "hpBelowA8": [
+            26,
+            28
+          ],
           "hpA8": [
             27,
             29
@@ -3941,6 +6095,25 @@
               "textA9": "Shuffles 1 Slimed into your discard pile."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Twig Slime (M)",
+              "recordOrdinal": 19
+            },
+            "bodyKey": "Twig Slime (M)",
+            "articleLocator": {
+              "pageKey": "Slimes",
+              "sectionOwner": "Twig Slime (M)"
+            },
+            "article": {
+              "pageKey": "Slimes",
+              "revisionId": 51086,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 4,
+              "owner": "Twig Slime (M)"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Always starts with Sticky Shot. After that, each turn it randomly picks Chomp (67%) or Sticky Shot (33%). Cannot use Sticky Shot twice in a row."
@@ -3952,6 +6125,10 @@
         {
           "displayName": "Twig Slime (S)",
           "type": "Normal",
+          "hpBelowA8": [
+            7,
+            11
+          ],
           "hpA8": [
             8,
             12
@@ -3962,6 +6139,25 @@
               "textA9": "Deals 5 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Twig Slime (S)",
+              "recordOrdinal": 20
+            },
+            "bodyKey": "Twig Slime (S)",
+            "articleLocator": {
+              "pageKey": "Slimes",
+              "sectionOwner": "Twig Slime (S)"
+            },
+            "article": {
+              "pageKey": "Slimes",
+              "revisionId": 51086,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 3,
+              "owner": "Twig Slime (S)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Tackle every turn."
@@ -3973,6 +6169,10 @@
         {
           "displayName": "Leaf Slime (S)",
           "type": "Normal",
+          "hpBelowA8": [
+            11,
+            15
+          ],
           "hpA8": [
             12,
             16
@@ -3987,6 +6187,25 @@
               "textA9": "Shuffles 1 Slimed into your discard pile."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Leaf Slime (S)",
+              "recordOrdinal": 12
+            },
+            "bodyKey": "Leaf Slime (S)",
+            "articleLocator": {
+              "pageKey": "Slimes",
+              "sectionOwner": "Leaf Slime (S)"
+            },
+            "article": {
+              "pageKey": "Slimes",
+              "revisionId": 51086,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Leaf Slime (S)"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Randomly picks Tackle or Goop each turn. Cannot use the same move twice in a row."
@@ -4007,6 +6226,10 @@
         {
           "displayName": "Slithering Strangler",
           "type": "Normal",
+          "hpBelowA8": [
+            53,
+            55
+          ],
           "hpA8": [
             54,
             56
@@ -4025,6 +6248,25 @@
               "textA9": "Deals 13 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Slithering Strangler",
+              "recordOrdinal": 16
+            },
+            "bodyKey": "Slithering Strangler",
+            "articleLocator": {
+              "pageKey": "Slithering Strangler",
+              "sectionOwner": "Slithering Strangler"
+            },
+            "article": {
+              "pageKey": "Slithering Strangler",
+              "revisionId": 51056,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Slithering Strangler"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Always opens with Constrict. After that, it randomly picks Thwack or Lash (equal chance, can repeat). After either attack, it always uses Constrict again, then returns to the random pick. The pattern is: • Constrict • 50/50 chance to use Lash or Thwack • Constrict • 50/50 chance to use Lash or Thwack"
@@ -4036,6 +6278,10 @@
         {
           "displayName": "Leaf Slime (S)",
           "type": "Normal",
+          "hpBelowA8": [
+            11,
+            15
+          ],
           "hpA8": [
             12,
             16
@@ -4050,6 +6296,25 @@
               "textA9": "Shuffles 1 Slimed into your discard pile."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Leaf Slime (S)",
+              "recordOrdinal": 12
+            },
+            "bodyKey": "Leaf Slime (S)",
+            "articleLocator": {
+              "pageKey": "Slimes",
+              "sectionOwner": "Leaf Slime (S)"
+            },
+            "article": {
+              "pageKey": "Slimes",
+              "revisionId": 51086,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Leaf Slime (S)"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Randomly picks Tackle or Goop each turn. Cannot use the same move twice in a row."
@@ -4070,6 +6335,10 @@
         {
           "displayName": "Sludge Spinner",
           "type": "Normal",
+          "hpBelowA8": [
+            37,
+            39
+          ],
           "hpA8": [
             41,
             42
@@ -4088,6 +6357,25 @@
               "textA9": "Deals 7 damage. Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Sludge Spinner",
+              "recordOrdinal": 14
+            },
+            "bodyKey": "Sludge Spinner",
+            "articleLocator": {
+              "pageKey": "Sludge Spinner",
+              "sectionOwner": "Sludge Spinner"
+            },
+            "article": {
+              "pageKey": "Sludge Spinner",
+              "revisionId": 51071,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Sludge Spinner"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Always uses Oil Spray first. After that, randomly uses one of its three moves each turn. Cannot use the same move twice in a row."
@@ -4108,6 +6396,9 @@
         {
           "displayName": "Slumbering Beetle",
           "type": "Normal",
+          "hpBelowA8": [
+            86
+          ],
           "hpA8": [
             89
           ],
@@ -4122,6 +6413,25 @@
               "textA9": "Deals 18 damage. Gains 2 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Slumbering Beetle",
+              "recordOrdinal": 13
+            },
+            "bodyKey": "Slumbering Beetle",
+            "articleLocator": {
+              "pageKey": "Slumbering Beetle",
+              "sectionOwner": "Slumbering Beetle"
+            },
+            "article": {
+              "pageKey": "Slumbering Beetle",
+              "revisionId": 51018,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Slumbering Beetle"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Slumbering Beetle starts asleep and uses Snore each turn while it has Slumber. Once Slumber wears off (after taking turns or losing HP 3 times), it wakes up, loses its Plating, and uses Roll Out every turn."
@@ -4133,6 +6443,10 @@
         {
           "displayName": "Bowlbug (Rock)",
           "type": "Normal",
+          "hpBelowA8": [
+            45,
+            48
+          ],
           "hpA8": [
             46,
             49
@@ -4148,6 +6462,25 @@
               "textA9": "Stunned. Does nothing."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Bowlbug (Rock)",
+              "recordOrdinal": 1
+            },
+            "bodyKey": "Bowlbug (Rock)",
+            "articleLocator": {
+              "pageKey": "Bowlbugs",
+              "sectionOwner": "Bowlbug (Rock)"
+            },
+            "article": {
+              "pageKey": "Bowlbugs",
+              "revisionId": 51089,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Bowlbug (Rock)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Headbutt every turn. However, if Headbutt's damage is fully prevented by a player, the Bowlbug (Rock) becomes Stunned and uses Dizzy on its next turn, then resumes Headbutt."
@@ -4159,6 +6492,10 @@
         {
           "displayName": "Bowlbug (Silk)",
           "type": "Normal",
+          "hpBelowA8": [
+            40,
+            43
+          ],
           "hpA8": [
             41,
             44
@@ -4173,6 +6510,25 @@
               "textA9": "Applies 1 Weak."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Bowlbug (Silk)",
+              "recordOrdinal": 3
+            },
+            "bodyKey": "Bowlbug (Silk)",
+            "articleLocator": {
+              "pageKey": "Bowlbugs",
+              "sectionOwner": "Bowlbug (Silk)"
+            },
+            "article": {
+              "pageKey": "Bowlbugs",
+              "revisionId": 51089,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 3,
+              "owner": "Bowlbug (Silk)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Alternates between Spin Web and Thrash."
@@ -4193,6 +6549,10 @@
         {
           "displayName": "Snapping Jaxfruit",
           "type": "Normal",
+          "hpBelowA8": [
+            31,
+            33
+          ],
           "hpA8": [
             34,
             36
@@ -4203,6 +6563,25 @@
               "textA9": "Deals 4 damage. Gains 2 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Snapping Jaxfruit",
+              "recordOrdinal": 17
+            },
+            "bodyKey": "Snapping Jaxfruit",
+            "articleLocator": {
+              "pageKey": "Snapping Jaxfruit",
+              "sectionOwner": "Snapping Jaxfruit"
+            },
+            "article": {
+              "pageKey": "Snapping Jaxfruit",
+              "revisionId": 51055,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Snapping Jaxfruit"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Energy Orb every turn."
@@ -4214,6 +6593,10 @@
         {
           "displayName": "Flyconid",
           "type": "Normal",
+          "hpBelowA8": [
+            47,
+            49
+          ],
           "hpA8": [
             51,
             53
@@ -4232,6 +6615,25 @@
               "textA9": "Deals 12 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Flyconid",
+              "recordOrdinal": 7
+            },
+            "bodyKey": "Flyconid",
+            "articleLocator": {
+              "pageKey": "Flyconid",
+              "sectionOwner": "Flyconid"
+            },
+            "article": {
+              "pageKey": "Flyconid",
+              "revisionId": 51060,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Flyconid"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "On its first turn, it randomly picks Frail Spores (2/3 chance) or Smash (1/3 chance). After that, each turn it randomly picks one of three moves: Weakening Spores (3/6 chance), Frail Spores (2/6 chance), or Smash (1/6 chance). It cannot use the same move twice in a row."
@@ -4252,6 +6654,9 @@
         {
           "displayName": "Soul Fysh",
           "type": "Boss",
+          "hpBelowA8": [
+            211
+          ],
           "hpA8": [
             221
           ],
@@ -4277,6 +6682,25 @@
               "textA9": "Deals 15 damage. Applies 3 Vulnerable."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Soul Fysh",
+              "recordOrdinal": 6
+            },
+            "bodyKey": "Soul Fysh",
+            "articleLocator": {
+              "pageKey": "Soul Fysh",
+              "sectionOwner": "Soul Fysh"
+            },
+            "article": {
+              "pageKey": "Soul Fysh",
+              "revisionId": 49845,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Soul Fysh"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Soul Fysh repeats the same five moves in order: • Beckon • De-Gas • Gaze • Fade • Scream"
@@ -4300,6 +6724,9 @@
         {
           "displayName": "Soul Nexus",
           "type": "Elite",
+          "hpBelowA8": [
+            234
+          ],
           "hpA8": [
             254
           ],
@@ -4317,6 +6744,25 @@
               "textA9": "Deals 19 damage. Applies 2 Vulnerable and 2 Weak."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Soul Nexus",
+              "recordOrdinal": 15
+            },
+            "bodyKey": "Soul Nexus",
+            "articleLocator": {
+              "pageKey": "Soul Nexus",
+              "sectionOwner": "Soul Nexus"
+            },
+            "article": {
+              "pageKey": "Soul Nexus",
+              "revisionId": 50245,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Soul Nexus"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Opens with Soul Burn, then randomly uses Soul Burn, Maelstrom, or Drain Life each turn. No move can be used two turns in a row. All three moves are equally weighted."
@@ -4337,6 +6783,10 @@
         {
           "displayName": "Spiny Toad",
           "type": "Normal",
+          "hpBelowA8": [
+            116,
+            119
+          ],
           "hpA8": [
             121,
             124
@@ -4355,6 +6805,25 @@
               "textA9": "Deals 19 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Spiny Toad",
+              "recordOrdinal": 14
+            },
+            "bodyKey": "Spiny Toad",
+            "articleLocator": {
+              "pageKey": "Spiny Toad",
+              "sectionOwner": "Spiny Toad"
+            },
+            "article": {
+              "pageKey": "Spiny Toad",
+              "revisionId": 51021,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Spiny Toad"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Cycles through Protruding Spikes, Spike Explosion, Tongue Lash in order, repeating."
@@ -4375,6 +6844,9 @@
         {
           "displayName": "Terror Eel",
           "type": "Elite",
+          "hpBelowA8": [
+            140
+          ],
           "hpA8": [
             150
           ],
@@ -4397,6 +6869,25 @@
               "textA9": "Applies 99 Vulnerable."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Elites.lua",
+              "tableKey": "Terror Eel",
+              "recordOrdinal": 6
+            },
+            "bodyKey": "Terror Eel",
+            "articleLocator": {
+              "pageKey": "Terror Eel",
+              "sectionOwner": "Terror Eel"
+            },
+            "article": {
+              "pageKey": "Terror Eel",
+              "revisionId": 50276,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Terror Eel"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Terror Eel alternates between Crash and Thrash, starting with Crash. When its HP drops to its Shriek threshold (75), it becomes Stunned and then uses Terror before resuming the Crash/Thrash cycle. • Terror applies 99 Vulnerable, which effectively makes the player take 50% more damage from attacks for the rest of the fight."
@@ -4437,6 +6928,9 @@
         {
           "displayName": "Test Subject",
           "type": "Boss",
+          "hpBelowA8": [
+            100
+          ],
           "hpA8": [
             111
           ],
@@ -4451,6 +6945,25 @@
               "textA9": "Deals 16 damage. Applies 1 Vulnerable."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Test Subject",
+              "recordOrdinal": 15
+            },
+            "bodyKey": "Test Subject",
+            "articleLocator": {
+              "pageKey": "Test Subject",
+              "sectionOwner": "Phase 1"
+            },
+            "article": {
+              "pageKey": "Test Subject",
+              "revisionId": 50126,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Test Subject"
+            }
+          },
           "pattern": {
             "type": "opener",
             "text": "Starts with Adaptable and Enrage 3. Alternates between Bite and Skull Bash. When reduced to 0 HP, Adaptable prevents death and it revives into Phase 2."
@@ -4463,6 +6976,9 @@
         {
           "displayName": "Test Subject (Phase 2)",
           "type": "Boss",
+          "hpBelowA8": [
+            200
+          ],
           "hpA8": [
             212
           ],
@@ -4473,6 +6989,25 @@
               "textA9": "Deals 11×3 damage (increases by 1 hit each use)."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Test Subject (Phase 2)",
+              "recordOrdinal": 16
+            },
+            "bodyKey": "Test Subject (Phase 2)",
+            "articleLocator": {
+              "pageKey": "Test Subject",
+              "sectionOwner": "Phase 2"
+            },
+            "article": {
+              "pageKey": "Test Subject",
+              "revisionId": 50126,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Test Subject (Phase 2)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Revives with 212 HP, gains Painful Stabs and loses Enrage. Uses Multi-Claw every turn. Multi-Claw starts at 3 hits and gains +1 hit each use. When reduced to 0 HP again, it revives into Phase 3."
@@ -4485,6 +7020,9 @@
         {
           "displayName": "Test Subject (Phase 3)",
           "type": "Boss",
+          "hpBelowA8": [
+            300
+          ],
           "hpA8": [
             313
           ],
@@ -4503,6 +7041,25 @@
               "textA9": "Shuffles 5 Burn into discard pile. Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Test Subject (Phase 3)",
+              "recordOrdinal": 17
+            },
+            "bodyKey": "Test Subject (Phase 3)",
+            "articleLocator": {
+              "pageKey": "Test Subject",
+              "sectionOwner": "Phase 3"
+            },
+            "article": {
+              "pageKey": "Test Subject",
+              "revisionId": 50126,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 3,
+              "owner": "Test Subject (Phase 3)"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Revives with 313 HP, gains Nemesis, and loses Adaptable and Painful Stabs. Cycles through: • Lacerate • Big Pounce • Burning Growl • Back to Lacerate"
@@ -4535,6 +7092,9 @@
         {
           "displayName": "The Insatiable",
           "type": "Boss",
+          "hpBelowA8": [
+            321
+          ],
           "hpA8": [
             341
           ],
@@ -4556,6 +7116,25 @@
               "textA9": "Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "The Insatiable",
+              "recordOrdinal": 8
+            },
+            "bodyKey": "The Insatiable",
+            "articleLocator": {
+              "pageKey": "The Insatiable",
+              "sectionOwner": "The Insatiable"
+            },
+            "article": {
+              "pageKey": "The Insatiable",
+              "revisionId": 49846,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "The Insatiable"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Insatiable always opens with Liquify Ground, then repeats the following cycle: • Thrash • Lunging Bite • Salivate • Thrash • Back to the first Thrash"
@@ -4578,6 +7157,9 @@
         {
           "displayName": "Kin Priest",
           "type": "Boss",
+          "hpBelowA8": [
+            190
+          ],
           "hpA8": [
             199
           ],
@@ -4599,6 +7181,25 @@
               "textA9": "Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Kin Priest",
+              "recordOrdinal": 3
+            },
+            "bodyKey": "Kin Priest",
+            "articleLocator": {
+              "pageKey": "The Kin",
+              "sectionOwner": "Kin Priest"
+            },
+            "article": {
+              "pageKey": "The Kin",
+              "revisionId": 49858,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Kin Priest"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Kin Priest cycles through four moves in a fixed order: • Orb of Frailty • Orb of Weakness • Soul Beam • Dark Ritual"
@@ -4610,6 +7211,10 @@
         {
           "displayName": "Kin Follower",
           "type": "Minion",
+          "hpBelowA8": [
+            58,
+            59
+          ],
           "hpA8": [
             62,
             63
@@ -4629,6 +7234,25 @@
               "textA9": "Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Kin Follower",
+              "recordOrdinal": 2
+            },
+            "bodyKey": "Kin Follower",
+            "articleLocator": {
+              "pageKey": "The Kin",
+              "sectionOwner": "Kin Follower"
+            },
+            "article": {
+              "pageKey": "The Kin",
+              "revisionId": 49858,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Kin Follower"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opener (turn 1): Quick Slash. Then continue the cycle: Boomerang → Power Dance → Quick Slash → repeat."
@@ -4657,6 +7281,10 @@
         {
           "displayName": "Kin Follower",
           "type": "Minion",
+          "hpBelowA8": [
+            58,
+            59
+          ],
           "hpA8": [
             62,
             63
@@ -4676,6 +7304,25 @@
               "textA9": "Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Kin Follower",
+              "recordOrdinal": 2
+            },
+            "bodyKey": "Kin Follower",
+            "articleLocator": {
+              "pageKey": "The Kin",
+              "sectionOwner": "Kin Follower"
+            },
+            "article": {
+              "pageKey": "The Kin",
+              "revisionId": 49858,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Kin Follower"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opener (turn 1): Power Dance. Then continue the cycle: Quick Slash → Boomerang → Power Dance → repeat."
@@ -4713,6 +7360,9 @@
         {
           "displayName": "The Lost",
           "type": "Normal",
+          "hpBelowA8": [
+            93
+          ],
           "hpA8": [
             99
           ],
@@ -4727,6 +7377,25 @@
               "textA9": "Deals 5×2 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "The Lost",
+              "recordOrdinal": 15
+            },
+            "bodyKey": "The Lost",
+            "articleLocator": {
+              "pageKey": "The Lost and Forgotten",
+              "sectionOwner": "The Lost"
+            },
+            "article": {
+              "pageKey": "The Lost and Forgotten",
+              "revisionId": 50977,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "The Lost"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Alternates between Debilitating Smog and Eye Lasers, starting with Debilitating Smog."
@@ -4738,6 +7407,9 @@
         {
           "displayName": "The Forgotten",
           "type": "Normal",
+          "hpBelowA8": [
+            106
+          ],
           "hpA8": [
             111
           ],
@@ -4752,6 +7424,25 @@
               "textA9": "Deals 15 damage plus the amount of Dexterity the Forgotten has."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "The Forgotten",
+              "recordOrdinal": 16
+            },
+            "bodyKey": "The Forgotten",
+            "articleLocator": {
+              "pageKey": "The Lost and Forgotten",
+              "sectionOwner": "The Forgotten"
+            },
+            "article": {
+              "pageKey": "The Lost and Forgotten",
+              "revisionId": 50977,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "The Forgotten"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Alternates between Miasma and Dread, starting with Miasma."
@@ -4772,6 +7463,9 @@
         {
           "displayName": "The Obscura",
           "type": "Normal",
+          "hpBelowA8": [
+            123
+          ],
           "hpA8": [
             129
           ],
@@ -4793,6 +7487,25 @@
               "textA9": "Deals 7 damage. Gains 7 Block."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "The Obscura",
+              "recordOrdinal": 15
+            },
+            "bodyKey": "The Obscura",
+            "articleLocator": {
+              "pageKey": "The Obscura",
+              "sectionOwner": "The Obscura"
+            },
+            "article": {
+              "pageKey": "The Obscura",
+              "revisionId": 51031,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "The Obscura"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "The Obscura always opens with Illusion to summon a Parafright. After that, it randomly picks one of three moves — Piercing Gaze, Wail, or Hardening Strike — and cannot use the same move twice in a row."
@@ -4804,6 +7517,9 @@
         {
           "displayName": "Parafright",
           "type": "Minion",
+          "hpBelowA8": [
+            21
+          ],
           "hpA8": [
             21
           ],
@@ -4814,6 +7530,25 @@
               "textA9": "Deals 17 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Parafright",
+              "recordOrdinal": 16
+            },
+            "bodyKey": "Parafright",
+            "articleLocator": {
+              "pageKey": "The Obscura",
+              "sectionOwner": "Parafright"
+            },
+            "article": {
+              "pageKey": "The Obscura",
+              "revisionId": 51031,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Parafright"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Slam every turn."
@@ -4841,6 +7576,9 @@
         {
           "displayName": "Thieving Hopper",
           "type": "Normal",
+          "hpBelowA8": [
+            79
+          ],
           "hpA8": [
             84
           ],
@@ -4867,6 +7605,25 @@
               "textA9": "Flees the combat, taking any stolen cards with it."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Thieving Hopper",
+              "recordOrdinal": 17
+            },
+            "bodyKey": "Thieving Hopper",
+            "articleLocator": {
+              "pageKey": "Thieving Hopper",
+              "sectionOwner": "Thieving Hopper"
+            },
+            "article": {
+              "pageKey": "Thieving Hopper",
+              "revisionId": 51030,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Thieving Hopper"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Thieving Hopper follows a fixed sequence: • Thievery (stealing a card and dealing damage) • Flutter (gaining damage reduction) • Hat Trick • Nab • Escape (fleeing the fight permanently) If it escapes, any cards it stole are lost for the rest of the run. Killing it before it escapes returns the stolen cards."
@@ -4892,6 +7649,10 @@
         {
           "displayName": "Toadpole",
           "type": "Normal",
+          "hpBelowA8": [
+            21,
+            25
+          ],
           "hpA8": [
             22,
             26
@@ -4910,6 +7671,25 @@
               "textA9": "Gains 2 Thorns."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Toadpole",
+              "recordOrdinal": 15
+            },
+            "bodyKey": "Toadpole",
+            "articleLocator": {
+              "pageKey": "Toadpole",
+              "sectionOwner": "Toadpole"
+            },
+            "article": {
+              "pageKey": "Toadpole",
+              "revisionId": 51072,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Toadpole"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opener (turn 1): Spiken. Then continue the cycle: Spike Spit → Whirl → Spiken → repeat."
@@ -4922,6 +7702,10 @@
         {
           "displayName": "Toadpole",
           "type": "Normal",
+          "hpBelowA8": [
+            21,
+            25
+          ],
           "hpA8": [
             22,
             26
@@ -4940,6 +7724,25 @@
               "textA9": "Gains 2 Thorns."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Toadpole",
+              "recordOrdinal": 15
+            },
+            "bodyKey": "Toadpole",
+            "articleLocator": {
+              "pageKey": "Toadpole",
+              "sectionOwner": "Toadpole"
+            },
+            "article": {
+              "pageKey": "Toadpole",
+              "revisionId": 51072,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Toadpole"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Opener (turn 1): Whirl. Then continue the cycle: Spiken → Spike Spit → Whirl → repeat."
@@ -4961,6 +7764,9 @@
         {
           "displayName": "Tunneler",
           "type": "Normal",
+          "hpBelowA8": [
+            87
+          ],
           "hpA8": [
             92
           ],
@@ -4982,6 +7788,25 @@
               "textA9": "Stunned. Does nothing this turn."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Tunneler",
+              "recordOrdinal": 18
+            },
+            "bodyKey": "Tunneler",
+            "articleLocator": {
+              "pageKey": "Tunneler",
+              "sectionOwner": "Tunneler"
+            },
+            "article": {
+              "pageKey": "Tunneler",
+              "revisionId": 51036,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Tunneler"
+            }
+          },
           "pattern": {
             "type": "opener",
             "text": "Opens with Bite, then uses Burrow. While burrowed, uses Attack from Below every turn. If its Block is fully broken while burrowed, it uses Emerging Strike, then starts the cycle over with Bite."
@@ -5002,6 +7827,9 @@
         {
           "displayName": "Tunneler",
           "type": "Normal",
+          "hpBelowA8": [
+            87
+          ],
           "hpA8": [
             92
           ],
@@ -5023,6 +7851,25 @@
               "textA9": "Stunned. Does nothing this turn."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Tunneler",
+              "recordOrdinal": 18
+            },
+            "bodyKey": "Tunneler",
+            "articleLocator": {
+              "pageKey": "Tunneler",
+              "sectionOwner": "Tunneler"
+            },
+            "article": {
+              "pageKey": "Tunneler",
+              "revisionId": 51036,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Tunneler"
+            }
+          },
           "pattern": {
             "type": "opener",
             "text": "Opens with Bite, then uses Burrow. While burrowed, uses Attack from Below every turn. If its Block is fully broken while burrowed, it uses Emerging Strike, then starts the cycle over with Bite."
@@ -5043,6 +7890,9 @@
         {
           "displayName": "Living Shield",
           "type": "Normal",
+          "hpBelowA8": [
+            55
+          ],
           "hpA8": [
             65
           ],
@@ -5057,6 +7907,25 @@
               "textA9": "Deals 18 damage. Gains 3 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Living Shield",
+              "recordOrdinal": 13
+            },
+            "bodyKey": "Living Shield",
+            "articleLocator": {
+              "pageKey": "Turret Operator",
+              "sectionOwner": "Living Shield"
+            },
+            "article": {
+              "pageKey": "Turret Operator",
+              "revisionId": 50954,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 2,
+              "owner": "Living Shield"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Uses Shield Slam every turn while the Turret Operator is alive. • Once the Turret Operator is killed, switches to Smash every turn."
@@ -5068,6 +7937,9 @@
         {
           "displayName": "Turret Operator",
           "type": "Normal",
+          "hpBelowA8": [
+            41
+          ],
           "hpA8": [
             51
           ],
@@ -5081,6 +7953,25 @@
               "textA9": "Gains 1 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Glory.lua",
+              "tableKey": "Turret Operator",
+              "recordOrdinal": 14
+            },
+            "bodyKey": "Turret Operator",
+            "articleLocator": {
+              "pageKey": "Turret Operator",
+              "sectionOwner": "Turret Operator"
+            },
+            "article": {
+              "pageKey": "Turret Operator",
+              "revisionId": 50954,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Turret Operator"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Follows a fixed 3-move cycle: • Unload! • Unload! • Loading"
@@ -5105,6 +7996,10 @@
         {
           "displayName": "Two-Tailed Rat",
           "type": "Normal",
+          "hpBelowA8": [
+            17,
+            21
+          ],
           "hpA8": [
             18,
             22
@@ -5127,6 +8022,25 @@
               "textA9": "Summons a new Two-Tailed Rat."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Underdocks.lua",
+              "tableKey": "Two-Tailed Rat",
+              "recordOrdinal": 16
+            },
+            "bodyKey": "Two-Tailed Rat",
+            "articleLocator": {
+              "pageKey": "Two-Tailed Rat",
+              "sectionOwner": "Two-Tailed Rat"
+            },
+            "article": {
+              "pageKey": "Two-Tailed Rat",
+              "revisionId": 51064,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Two-Tailed Rat"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Openers (turn 1, 3 initial rats): Scratch, Disease Bite, and Screech, one each. Then each live rat randomly uses Scratch, Disease Bite, or Screech without repeating its previous move. After at least two turns, Call for Backup may summon a new rat."
@@ -5154,6 +8068,9 @@
         {
           "displayName": "Vantom",
           "type": "Boss",
+          "hpBelowA8": [
+            173
+          ],
           "hpA8": [
             183
           ],
@@ -5176,6 +8093,25 @@
               "textA9": "Gains 2 Strength."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Vantom",
+              "recordOrdinal": 4
+            },
+            "bodyKey": "Vantom",
+            "articleLocator": {
+              "pageKey": "Vantom",
+              "sectionOwner": "Vantom"
+            },
+            "article": {
+              "pageKey": "Vantom",
+              "revisionId": 49840,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Vantom"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Vantom cycles through its four moves in a fixed order, repeating forever: • Ink Blot • Inky Lance • Dismember • Prepare"
@@ -5196,6 +8132,9 @@
         {
           "displayName": "Vine Shambler",
           "type": "Normal",
+          "hpBelowA8": [
+            61
+          ],
           "hpA8": [
             64
           ],
@@ -5213,6 +8152,25 @@
               "textA9": "Deals 18 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Overgrowth.lua",
+              "tableKey": "Vine Shambler",
+              "recordOrdinal": 21
+            },
+            "bodyKey": "Vine Shambler",
+            "articleLocator": {
+              "pageKey": "Vine Shambler",
+              "sectionOwner": "Vine Shambler"
+            },
+            "article": {
+              "pageKey": "Vine Shambler",
+              "revisionId": 51054,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Vine Shambler"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "Follows a fixed repeating cycle: • Swipe • Grasping Vines • Chomp • Back to Swipe"
@@ -5233,6 +8191,9 @@
         {
           "displayName": "Waterfall Giant",
           "type": "Boss",
+          "hpBelowA8": [
+            240
+          ],
           "hpA8": [
             250
           ],
@@ -5271,6 +8232,25 @@
               "intent": "Death Blow"
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Bosses.lua",
+              "tableKey": "Waterfall Giant",
+              "recordOrdinal": 7
+            },
+            "bodyKey": "Waterfall Giant",
+            "articleLocator": {
+              "pageKey": "Waterfall Giant",
+              "sectionOwner": "Waterfall Giant"
+            },
+            "article": {
+              "pageKey": "Waterfall Giant",
+              "revisionId": 49842,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Waterfall Giant"
+            }
+          },
           "pattern": {
             "type": "cycle",
             "text": "The Waterfall Giant uses Pressurize on its first turn, then follows a repeating cycle: • Stomp • Ram • Siphon • Pressure Gun • Pressure Up • Back to Stomp Almost every move also adds 3 Steam Eruption. When the Waterfall Giant is killed while it has Steam Eruption, it becomes invulnerable and uses About To Blow, cleansing all its buffs and debuffs. Next turn it will use Explode, dealing damage equal to its accumulated Steam Eruption before dying. • If the Waterfall Giant is killed when it has no Steam Eruption (e.g. via Doom), it dies normally without triggering the explosion sequence."
@@ -5303,6 +8283,9 @@
           {
             "displayName": "Doormaker",
             "type": "Boss",
+            "hpBelowA8": [
+              489
+            ],
             "hpA8": [
               512
             ],
@@ -5324,6 +8307,25 @@
                 "textA9": "Deals 11×2 damage. Gains 3 Strength. Swaps current buff to Hunger."
               }
             ],
+            "retainedProvenance": {
+              "module": {
+                "path": "tools/.wiki/Bosses.lua",
+                "tableKey": "Doormaker",
+                "recordOrdinal": 12
+              },
+              "bodyKey": "Doormaker",
+              "articleLocator": {
+                "pageKey": "Doormaker",
+                "sectionOwner": "Doormaker"
+              },
+              "article": {
+                "pageKey": "Doormaker",
+                "revisionId": 49947,
+                "template": "#invoke:Infobox",
+                "templateOrdinal": 1,
+                "owner": "Doormaker"
+              }
+            },
             "pattern": {
               "type": "cycle",
               "text": "The Doormaker uses Dramatic Open on its first turn, then follows a repeating cycle: • Hunger • Scrutiny • Grasp"
@@ -5351,6 +8353,9 @@
         {
           "displayName": "Mysterious Knight",
           "type": "Normal",
+          "hpBelowA8": [
+            101
+          ],
           "hpA8": [
             108
           ],
@@ -5369,6 +8374,25 @@
               "textA9": "Deals 17 damage."
             }
           ],
+          "retainedProvenance": {
+            "module": {
+              "path": "tools/.wiki/Hive.lua",
+              "tableKey": "Mysterious Knight",
+              "recordOrdinal": 9
+            },
+            "bodyKey": "Mysterious Knight",
+            "articleLocator": {
+              "pageKey": "Mysterious Knight",
+              "sectionOwner": "Mysterious Knight"
+            },
+            "article": {
+              "pageKey": "Mysterious Knight",
+              "revisionId": 51002,
+              "template": "Enemy Infobox",
+              "templateOrdinal": 1,
+              "owner": "Mysterious Knight"
+            }
+          },
           "pattern": {
             "type": "random-with-constraint",
             "text": "Opens with Ram, then randomly picks Breaker (equal chance), Flail (double chance), or Ram (double chance). Cannot use the same move twice in a row."

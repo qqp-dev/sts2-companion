@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "reviewedForVersion": "v0.111.0",
+  "reviewer": "StS2 Companion P1b1 completeness review",
+  "aliases": [
+    {
+      "encounterId": "DECIMILLIPEDE_ELITE",
+      "retainedMonsterId": "DECIMILLIPEDE_FRONT",
+      "retainedDisplayName": "Decimillipede",
+      "canonicalModel": "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT",
+      "rationale": "The retained shortcut names the exact front segment; source observation IDs include SEGMENT and do not accept the shortcut."
+    },
+    {
+      "encounterId": "DECIMILLIPEDE_ELITE",
+      "retainedMonsterId": "DECIMILLIPEDE_MIDDLE",
+      "retainedDisplayName": "Decimillipede",
+      "canonicalModel": "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE",
+      "rationale": "The retained shortcut names the exact middle segment; source observation IDs include SEGMENT and do not accept the shortcut."
+    },
+    {
+      "encounterId": "DECIMILLIPEDE_ELITE",
+      "retainedMonsterId": "DECIMILLIPEDE_BACK",
+      "retainedDisplayName": "Decimillipede",
+      "canonicalModel": "MONSTER.DECIMILLIPEDE_SEGMENT_BACK",
+      "rationale": "The retained shortcut names the exact back segment; source observation IDs include SEGMENT and do not accept the shortcut."
+    },
+    {
+      "encounterId": "OVICOPTER_NORMAL",
+      "retainedMonsterId": "HATCHLING",
+      "retainedDisplayName": "Hatchling",
+      "canonicalModel": "MONSTER.TOUGH_EGG",
+      "stateId": "MONSTER.TOUGH_EGG#HATCHED",
+      "rationale": "Hatchling is the checked hatched presentation state of the same Tough Egg runtime model, not an independently produced initial model."
+    },
+    {
+      "encounterId": "TEST_SUBJECT_BOSS",
+      "retainedMonsterId": "TEST_SUBJECT_PHASE_2",
+      "retainedDisplayName": "Test Subject (Phase 2)",
+      "canonicalModel": "MONSTER.TEST_SUBJECT",
+      "stateId": "MONSTER.TEST_SUBJECT#PHASE_2",
+      "rationale": "Phase 2 is a checked state of the one runtime-numbered Test Subject model, not a second simultaneous body."
+    },
+    {
+      "encounterId": "TEST_SUBJECT_BOSS",
+      "retainedMonsterId": "TEST_SUBJECT_PHASE_3",
+      "retainedDisplayName": "Test Subject (Phase 3)",
+      "canonicalModel": "MONSTER.TEST_SUBJECT",
+      "stateId": "MONSTER.TEST_SUBJECT#PHASE_3",
+      "rationale": "Phase 3 is a checked state of the one runtime-numbered Test Subject model, not a third simultaneous body."
+    }
+  ]
+}

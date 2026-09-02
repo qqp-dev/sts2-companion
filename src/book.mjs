@@ -168,6 +168,8 @@ export function scaledEncounter(encounter, options = {}) {
     lineup: encounter.lineup.map((body) => ({
       monsterId: body.monsterId,
       displayName: body.displayName,
+      type: body.type ?? null,
+      retainedProvenance: body.retainedProvenance ?? null,
       count: body.count,
       role: body.role ?? null,
       pack: body.pack ?? null,

@@ -157,17 +157,16 @@ Projection and retained-wiki inventory generation are deterministic and offline
 from checked inputs:
 
 ```sh
-python3 tools/generate-book.py
+npm run build:retained-book
 npm run build:encounter-facts
-npm run check:encounter-facts
+npm run build:primary-semantic-surface
 npm run build:wiki-reconciliation
 npm run check:wiki-reconciliation
 ```
 
-Use that book → compact → wiki-census order. Runtime never imports the wiki
-artifact. The [retained-wiki contract](docs/wiki-reconciliation.md) inventories
-4,433 origins; 49 are typed P1b0 mappings and 3,519 remain
-`captured-unreconciled`, so snapshot/semantic readiness stay false.
+Use book → compact → primary surface → census order. Not runtime input.
+The [audit contract](docs/wiki-reconciliation.md) has 4,438 origins: 1,320
+final-mapped and 2,253 captured, so readiness remains false.
 
 Raw-source regeneration is a development operation requiring the exact local
 game files and isolated Python dependencies; it is not a runtime requirement:
@@ -187,7 +186,9 @@ Ceremonial Beast snapshot, with:
 npm test
 npm run check:phone-snapshot
 npm run check:consequence-naming
+npm run check:retained-book
 npm run check:encounter-facts
+npm run check:primary-semantic-surface
 npm run check:wiki-reconciliation
 npm run check:event-primary-guides
 npm run check:roster-guides
