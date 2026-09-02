@@ -1,0 +1,311 @@
+{
+  "approvedOriginReclassifications": [],
+  "exclusionPolicies": [
+    {
+      "id": "exclude-visual-units-v1",
+      "match": {
+        "families": [
+          "visual-unit"
+        ]
+      },
+      "rationale": "Visual assets and icons carry presentation identity but no text-guide mechanical claim; origins remain inventoried so removal cannot be silent.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "Infobox image/icon fields, gallery entries, and standalone File/Image links on all retained pages."
+    },
+    {
+      "id": "exclude-navigation-v1",
+      "match": {
+        "families": [
+          "navigation-template"
+        ]
+      },
+      "rationale": "Navigation templates are page chrome rather than encounter-guide mechanics; each invocation remains a retained origin record.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "Enemy2Nav on enemy articles and PatchNav on the patch article."
+    },
+    {
+      "id": "exclude-category-links-v1",
+      "match": {
+        "families": [
+          "category-link"
+        ]
+      },
+      "rationale": "Category links classify wiki navigation and are not current encounter mechanics; each exact link remains inventoried.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "All structurally parsed Category links on retained pages."
+    },
+    {
+      "id": "exclude-update-history-v1",
+      "match": {
+        "families": [
+          "update-history-row"
+        ]
+      },
+      "rationale": "Historical update rows are version-classification evidence, not current-version mechanics; they remain individually retained for future stale/version review.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "Every Update History Table/row template on retained enemy pages."
+    },
+    {
+      "id": "exclude-beta-boilerplate-v1",
+      "match": {
+        "families": [
+          "beta-badge"
+        ]
+      },
+      "rationale": "Beta badges are version boilerplate and do not state an encounter mechanic; exact invocations remain inventoried.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "Every Beta content badge invocation on retained pages."
+    },
+    {
+      "id": "exclude-dialogue-blocks-v1",
+      "match": {
+        "families": [
+          "dialogue-block"
+        ]
+      },
+      "rationale": "Dialogue is narrative/event presentation outside the encounter mechanics guide; whole structural blocks remain inventoried.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "The two structurally headed Dialogue blocks in retained articles."
+    },
+    {
+      "id": "exclude-source-blocks-v1",
+      "match": {
+        "families": [
+          "source-block"
+        ]
+      },
+      "rationale": "The Sources block is citation material rather than a current encounter claim; its exact retained block remains inventoried.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "The structurally headed Sources block in the retained snapshot."
+    },
+    {
+      "id": "exclude-trivia-v1",
+      "match": {
+        "families": [
+          "trivia-unit"
+        ]
+      },
+      "rationale": "Trivia location alone never establishes current mechanics, even when wording resembles a mechanic; each unit requires re-establishment from source/current mechanics in a later phase.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "Every list/prose unit structurally owned by a Trivia section."
+    },
+    {
+      "id": "exclude-html-comments-v1",
+      "match": {
+        "families": [
+          "html-comment-fragment"
+        ]
+      },
+      "rationale": "HTML comments are editor-only material and must never be parsed as mechanics; delimiter and content fragments remain explicit records.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "Every literal non-empty fragment of a retained HTML comment."
+    },
+    {
+      "id": "exclude-other-patch-bullets-v1",
+      "match": {
+        "families": [
+          "patch-other-bullet"
+        ]
+      },
+      "rationale": "These patch bullets concern cards, relics, UI, art, bug fixes, performance, or other non-encounter scope; structural section ownership, not keyword scanning, applies this exclusion.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "Every patch list bullet outside CONTENT & BALANCE / Enemies."
+    },
+    {
+      "id": "exclude-reviewed-tactics-useful-v1",
+      "match": {
+        "families": [
+          "article-tactic-useful"
+        ]
+      },
+      "rationale": "Useful Cards claims are reviewed subjective tactics and are deferred from the mechanical guide inventory; exact claims remain available for optional P3 editorial work.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "Every claim directly owned by a Useful Cards section."
+    },
+    {
+      "id": "exclude-reviewed-tactics-synergy-v1",
+      "match": {
+        "families": [
+          "article-tactic-synergy"
+        ]
+      },
+      "rationale": "Synergy claims are reviewed subjective tactics and are deferred from mechanical reconciliation; exact claims remain available for optional P3 editorial work.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "Every claim directly owned by a Synergies subsection."
+    },
+    {
+      "id": "exclude-reviewed-tactics-anti-v1",
+      "match": {
+        "families": [
+          "article-tactic-anti-synergy"
+        ]
+      },
+      "rationale": "Anti-Synergy claims are reviewed subjective tactics and are deferred from mechanical reconciliation; exact claims remain available for optional P3 editorial work.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "Every claim directly owned by an Anti-Synergies subsection."
+    },
+    {
+      "id": "exclude-reviewed-noncombat-notes-v1",
+      "match": {
+        "families": [
+          "article-note-claim"
+        ],
+        "pageKeys": [
+          "Mysterious Knight",
+          "Two-Tailed Rat"
+        ]
+      },
+      "rationale": "The exact scoped Notes are one event-loot statement and two visual/lore statements, not encounter mechanics; structural page scope prevents broad Note exclusion.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review",
+      "scope": "Only Notes units on Mysterious Knight and Two-Tailed Rat pages."
+    }
+  ],
+  "expectedCategoryCounts": {
+    "hp-ascension-scaling": 414,
+    "identity-placement-roster-lead": 764,
+    "move-name-intent-effect": 1742,
+    "non-guide": 786,
+    "objective-note-patch-lifecycle": 107,
+    "pattern-sequence": 355,
+    "power-passive": 77,
+    "starting-power-status-stack": 112,
+    "tactic": 76
+  },
+  "expectedFamilyCounts": {
+    "article-hp-field": 206,
+    "article-identity-field": 329,
+    "article-lead": 106,
+    "article-move-effect": 381,
+    "article-move-intent": 367,
+    "article-move-name": 293,
+    "article-note-claim": 106,
+    "article-pattern-clause": 355,
+    "article-power-inline-field": 6,
+    "article-power-invocation": 71,
+    "article-roster": 11,
+    "article-starting-power": 58,
+    "article-tactic-anti-synergy": 8,
+    "article-tactic-synergy": 5,
+    "article-tactic-useful": 63,
+    "beta-badge": 8,
+    "category-link": 168,
+    "dialogue-block": 2,
+    "html-comment-fragment": 3,
+    "module-hp-field": 206,
+    "module-identity-field": 250,
+    "module-move-effect": 395,
+    "module-move-name": 301,
+    "module-roster": 68,
+    "module-starting-power": 53,
+    "navigation-template": 74,
+    "patch-hp-fact": 2,
+    "patch-lifecycle-fact": 1,
+    "patch-move-fact": 5,
+    "patch-other-bullet": 60,
+    "patch-starting-power": 1,
+    "source-block": 1,
+    "trivia-unit": 52,
+    "update-history-row": 248,
+    "visual-unit": 170
+  },
+  "patchEnemyFactClassifications": [
+    {
+      "category": "move-name-intent-effect",
+      "enemyBulletOrdinal": 2,
+      "excerptSha256": "c259d04052da730d1e41dbf15703ec9b48f1e21796443bdcac01311f69373fd6",
+      "family": "patch-move-fact",
+      "id": "patch-enemy-fact-02-hammer-uppercut"
+    },
+    {
+      "category": "objective-note-patch-lifecycle",
+      "enemyBulletOrdinal": 3,
+      "excerptSha256": "a4eb18d652c56bafa1c7275c3c6443be92bf009d3269a7ddce45a3c363ac121d",
+      "family": "patch-lifecycle-fact",
+      "id": "patch-enemy-fact-03-stock-lifecycle"
+    },
+    {
+      "category": "move-name-intent-effect",
+      "enemyBulletOrdinal": 4,
+      "excerptSha256": "976809a27dbe22fccbb423042d9434745a6abf2535723e1f39ce6083ae676693",
+      "family": "patch-move-fact",
+      "id": "patch-enemy-fact-04-one-two"
+    },
+    {
+      "category": "move-name-intent-effect",
+      "enemyBulletOrdinal": 5,
+      "excerptSha256": "cd526a0716ad9eef325cf826a06ab0db5e6b8dfee6e149baf75247c958fb2345",
+      "family": "patch-move-fact",
+      "id": "patch-enemy-fact-05-flamethrower"
+    },
+    {
+      "category": "hp-ascension-scaling",
+      "enemyBulletOrdinal": 6,
+      "excerptSha256": "45a97ac44adbf2ee2efc23fd3e0374ad8d444895c5767b500849a231e95a0d89",
+      "family": "patch-hp-fact",
+      "id": "patch-enemy-fact-06-exoskeleton-hp"
+    },
+    {
+      "category": "starting-power-status-stack",
+      "enemyBulletOrdinal": 7,
+      "excerptSha256": "e4fd820f21a625984290f2601b15ca079c1a0e6ecd73587f318908b8966275cd",
+      "family": "patch-starting-power",
+      "id": "patch-enemy-fact-07-galvanic"
+    },
+    {
+      "category": "move-name-intent-effect",
+      "enemyBulletOrdinal": 8,
+      "excerptSha256": "aa01f7cf73c97af5ca8365bab9e79b9aac35e474a50e1dce2789484e613ffe9a",
+      "family": "patch-move-fact",
+      "id": "patch-enemy-fact-08-curl-grow"
+    },
+    {
+      "category": "move-name-intent-effect",
+      "enemyBulletOrdinal": 9,
+      "excerptSha256": "4da8c4b5d8de8f2ddfbc34620e01d854330259d0af558b98d3e5febf74381c7e",
+      "family": "patch-move-fact",
+      "id": "patch-enemy-fact-09-de-gas"
+    },
+    {
+      "category": "hp-ascension-scaling",
+      "enemyBulletOrdinal": 10,
+      "excerptSha256": "a10b0465a140da0ff8f601fa27de945372ccfed76771a672f7a045fcb21aa331",
+      "family": "patch-hp-fact",
+      "id": "patch-enemy-fact-10-entomancer-hp"
+    }
+  ],
+  "review": {
+    "id": "retained-wiki-p1a-policy-review-v1",
+    "phase": "P1a inventory foundation",
+    "reviewer": "StS2 Companion P1a completeness review",
+    "statement": "Structural atomization and non-guide exclusions only; no P1b semantic representation or final mechanical disposition review is encoded."
+  },
+  "schemaVersion": 1,
+  "snapshotGapWaivers": [
+    {
+      "expectedPath": "tools/.wiki/Events.lua",
+      "id": "snapshot-gap-events-module-v0.111.0-v1",
+      "moduleTitle": "Module:Enemies/StS2 data/Events",
+      "pageId": 9970,
+      "rationale": "index.json lists Events but this checked v0.111.0 snapshot does not retain Events.lua. P1a may inventory the available snapshot, but snapshotComplete and reconciliation readiness must remain false; no empty module is fabricated.",
+      "reviewedForVersion": "v0.111.0",
+      "reviewer": "StS2 Companion P1a completeness review"
+    }
+  ],
+  "targetBranch": "public-beta",
+  "targetVersion": "v0.111.0",
+  "tombstones": []
+}

@@ -20,14 +20,16 @@
     "README.md"
   ],
   "scripts": {
-    "test": "node --test && python3 -m unittest discover -s test -p 'test_*.py'",
+    "test": "node --test && python3 -m unittest discover -s test -p 'test_*.py' && python3 tools/audit-retained-wiki.py --check",
     "build:encounter-facts": "python3 tools/generate-encounter-facts.py",
     "check:encounter-facts": "python3 tools/generate-encounter-facts.py --check",
     "check:phone-snapshot": "node tools/reproduce-ceremonial-guide.mjs --check",
     "check:consequence-naming": "node tools/check-consequence-first-guide.mjs",
     "check:p0a-guides": "node tools/reproduce-p0a-guides.mjs --check",
     "check:event-primary-guides": "node tools/reproduce-event-primary-guides.mjs --check",
-    "check:roster-guides": "node tools/reproduce-roster-guides.mjs --check"
+    "check:roster-guides": "node tools/reproduce-roster-guides.mjs --check",
+    "build:wiki-reconciliation": "python3 tools/audit-retained-wiki.py",
+    "check:wiki-reconciliation": "python3 tools/audit-retained-wiki.py --check"
   },
   "dsh": {
     "bundle": {

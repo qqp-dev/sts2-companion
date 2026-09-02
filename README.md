@@ -153,12 +153,20 @@ runtime dependency.
 
 ## Generate and check
 
-Projection generation is deterministic and offline from checked inputs:
+Projection and retained-wiki inventory generation are deterministic and offline
+from checked inputs:
 
 ```sh
 npm run build:encounter-facts
 npm run check:encounter-facts
+npm run build:wiki-reconciliation
+npm run check:wiki-reconciliation
 ```
+
+The [retained-wiki contract](docs/wiki-reconciliation.md) defines this
+non-runtime, non-authoritative census: all 4,433 origins are inventoried, while
+the missing `Events.lua` and non-final `captured-unreconciled` atoms keep snapshot
+and semantic completeness false.
 
 Raw-source regeneration is a development operation requiring the exact local
 game files and isolated Python dependencies; it is not a runtime requirement:
@@ -177,6 +185,9 @@ Ceremonial Beast snapshot, with:
 ```sh
 npm test
 npm run check:phone-snapshot
+npm run check:consequence-naming
+npm run check:encounter-facts
+npm run check:wiki-reconciliation
 npm run check:event-primary-guides
 npm run check:roster-guides
 ```
