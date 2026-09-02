@@ -1548,7 +1548,7 @@
         "tableKey": "Axebot"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-d4fc7379c69c8c5648e16a4cd9ffa2be7e9b9266dfc24df37118725f4fe10fb1",
@@ -1657,6 +1657,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.STOCK_POWER"
         ],
@@ -7182,7 +7183,7 @@
         "tableKey": "Mecha Knight"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-deb8f260df1dfe2483d32ab03ac60463b308d394b0a5a58f155adea3d3b34476",
@@ -7291,6 +7292,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ARTIFACT_POWER"
         ],
@@ -7861,7 +7863,7 @@
         "tableKey": "Kin Follower"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-66f15ab103b9e7d2d28709a13c7bf9ad7c993800fb6c21f4e04ab375c219e8f1",
@@ -8010,6 +8012,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.MINION_POWER"
         ],
@@ -9179,7 +9182,7 @@
         "tableKey": "Exoskeleton"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-d4c4c39f365f44075362b4f9304fe37f5d8da8232d3824a2621d2d4db5e813ea",
@@ -9342,6 +9345,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.HARD_TO_KILL_POWER"
         ],
@@ -11700,7 +11704,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-1829b94648ee8c9b030bf45313f5e74157baaf3c997611c55467d6461a78df6e",
@@ -11813,6 +11817,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ARTIFACT_POWER"
         ],
@@ -15933,7 +15938,7 @@
         "tableKey": "Byrdonis"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-4ad82add48eecb49fd18ef5877bafb1c756805a7e52d00ac0ddf3825ad98e5e3",
@@ -16042,6 +16047,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.TERRITORIAL_POWER"
         ],
@@ -18012,16 +18018,14 @@
     },
     {
       "authorityComparison": {
-        "closure": "closed",
+        "closure": "knownUnknown",
         "compactFactRefs": [
-          "SOURCE.POWER.PAINFUL_STABS_POWER",
-          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"
+          "SOURCE.POWER.PAINFUL_STABS_POWER"
         ],
         "resolution": "represented-as-scoped",
         "silentMerge": false,
         "sourceFactRefs": [
-          "SOURCE.POWER.PAINFUL_STABS_POWER",
-          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"
+          "SOURCE.POWER.PAINFUL_STABS_POWER"
         ]
       },
       "category": "starting-power-status-stack",
@@ -18051,7 +18055,7 @@
         "tableKey": "Test Subject (Phase 2)"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-0d2ead1f481badc80341373057ffb74f8a993813d1a1260e7b18f850ebf6b39f",
@@ -18155,6 +18159,9 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [
+          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"
+        ],
         "powerIds": [
           "POWER.PAINFUL_STABS_POWER"
         ],
@@ -24982,7 +24989,7 @@
         "tableKey": "Mysterious Knight"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-a809789891081532e7401269d92e4e66d864d3ee2e04349d5a14d43d1f336d29",
@@ -25091,6 +25098,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PLATING_POWER"
         ],
@@ -25275,7 +25283,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-fd6af0d3e462bb20b692e83e8c693a9d42e53c3b74114c2fcc36a2a91d9b95db",
@@ -25393,6 +25401,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ENRAGE_POWER"
         ],
@@ -26014,7 +26023,7 @@
         "tableKey": "Phrog Parasite"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-9eaaa2852071528759ace2e0648529ed1759b9ca842780f5acba716eefd1f1ff",
@@ -26117,6 +26126,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.INFESTED_POWER"
         ],
@@ -26561,7 +26571,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-1ac24b75c1614af187f00906f9a9f1c6ba567a9a49af8c531d3bb3f0b5eebccc",
@@ -26673,6 +26683,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.BACK_ATTACK_RIGHT_POWER"
         ],
@@ -29827,7 +29838,7 @@
         "tableKey": "Bowlbug (Rock)"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-dc5228e2eb9598a149ba9b0f7a032b6b56d2afb07f7cc236bd81bc58e5a8ba0e",
@@ -30032,6 +30043,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.IMBALANCED_POWER"
         ],
@@ -31083,7 +31095,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-4fb3cab5e5cc7fa9b1e82a603c92a4f5df0bb70cefe9378d7b697a98efaabc28",
@@ -31201,6 +31213,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.HIGH_VOLTAGE_POWER"
         ],
@@ -32302,7 +32315,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-72b718eb4d3eff8a3f2edcbafb5100d701901f473bf32df2fb16d832b84108b3",
@@ -32460,6 +32473,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.MINION_POWER"
         ],
@@ -33359,7 +33373,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-438c5a10bf3c17996b021e8b073bb00fa20927e15cf7f46b7aa528382cc24400",
@@ -33466,6 +33480,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SLOW_POWER"
         ],
@@ -33784,7 +33799,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-510d6a074cb388c1f091d9ba5aedf0c4a461bccccf24e202dfafccbaff629e9f",
@@ -33902,6 +33917,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PLATING_POWER"
         ],
@@ -35155,7 +35171,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-1cb206c0b95810d2fd65b2bbb711c739922516c672870cbf324a564bc96d8a7f",
@@ -35268,6 +35284,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ARTIFACT_POWER"
         ],
@@ -35781,7 +35798,7 @@
         "tableKey": "Bygone Effigy"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-9c67fe59436f9b1df61a9668d3a30eba67a51ec8f59d4568a1b0bae861cc8b81",
@@ -35884,6 +35901,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SLOW_POWER"
         ],
@@ -36225,7 +36243,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-7a55fefa8be1d17fd69dd7c5081e0417973033c2d96742a4c4b9082d0bd85642",
@@ -36392,6 +36410,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ARTIFACT_POWER"
         ],
@@ -36662,7 +36681,7 @@
         "tableKey": "Torch Head Amalgam"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-60d81117e64375287bcc801908b20be24c7d69e7272857abeca4b8d6cf7d81fd",
@@ -36765,6 +36784,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.MINION_POWER"
         ],
@@ -37403,15 +37423,13 @@
         "closure": "closed",
         "compactFactRefs": [
           "SOURCE.INITIAL.MONSTER.TEST_SUBJECT.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.POWER.ADAPTABLE_POWER",
-          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"
+          "SOURCE.POWER.ADAPTABLE_POWER"
         ],
         "resolution": "represented-as-scoped",
         "silentMerge": false,
         "sourceFactRefs": [
           "SOURCE.INITIAL.MONSTER.TEST_SUBJECT.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.POWER.ADAPTABLE_POWER",
-          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"
+          "SOURCE.POWER.ADAPTABLE_POWER"
         ]
       },
       "category": "starting-power-status-stack",
@@ -37441,7 +37459,7 @@
         "tableKey": "Test Subject (Phase 2)"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-2a65f12819b71aeb73a8f4d688933195b7e0c92f498888c3e0daa2dd18ebf5be",
@@ -37550,6 +37568,9 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [
+          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"
+        ],
         "powerIds": [
           "POWER.ADAPTABLE_POWER"
         ],
@@ -38232,7 +38253,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-4d420b4636217e2eb4341c66678d5707e4d79deec9a9dce5d446c32335c2f999",
@@ -38345,6 +38366,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.TERRITORIAL_POWER"
         ],
@@ -39074,7 +39096,7 @@
         "tableKey": "Gremlin Merc"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-27feefa506c4f740142259f61338e7f551d155ed277b5cea34ead052167225aa",
@@ -39183,6 +39205,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.THIEVERY_POWER"
         ],
@@ -44039,7 +44062,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-c8d93df2796bb79a1857fb462f2c0b3eb0e718706298dd27b2c9ab23922fe1c4",
@@ -44146,6 +44169,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ADAPTABLE_POWER"
         ],
@@ -44307,16 +44331,14 @@
     },
     {
       "authorityComparison": {
-        "closure": "closed",
+        "closure": "knownUnknown",
         "compactFactRefs": [
-          "SOURCE.POWER.MINION_POWER",
-          "SOURCE.STATE.MONSTER.TOUGH_EGG.HATCHED"
+          "SOURCE.POWER.MINION_POWER"
         ],
         "resolution": "represented-as-scoped",
         "silentMerge": false,
         "sourceFactRefs": [
-          "SOURCE.POWER.MINION_POWER",
-          "SOURCE.STATE.MONSTER.TOUGH_EGG.HATCHED"
+          "SOURCE.POWER.MINION_POWER"
         ]
       },
       "category": "starting-power-status-stack",
@@ -44354,7 +44376,7 @@
         "templateOrdinal": 3
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-5ae089b21940373c11d75a5aef1945dd19cbf21fcdfaf2070673d7964f7619cd",
@@ -44467,6 +44489,9 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [
+          "SOURCE.STATE.MONSTER.TOUGH_EGG.HATCHED"
+        ],
         "powerIds": [
           "POWER.MINION_POWER"
         ],
@@ -45190,7 +45215,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-6ed631f59ffb78e023f7baa1d2ca390729eb7ca190f166905d443939a080876b",
@@ -45303,6 +45328,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PLATING_POWER"
         ],
@@ -50595,7 +50621,7 @@
         "tableKey": "Crusher"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-589b8735012f51772d4d69fef2c1fc4d29b2daaca7983f121d55f3cca13a5b31",
@@ -50698,6 +50724,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.CRAB_RAGE_POWER"
         ],
@@ -51595,7 +51622,7 @@
         "tableKey": "Eye With Teeth"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-50d2f2658ce92045daf1b3e91ba961a5c7ff6d0553329100007d299b14877ade",
@@ -51698,6 +51725,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ILLUSION_POWER"
         ],
@@ -57698,7 +57726,7 @@
         "tableKey": "The Forgotten"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-22c91ffedc567c3863d9c14f992a1ce068226fdb1b3f92d442229eae7713d63d",
@@ -57801,6 +57829,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.POSSESS_SPEED_POWER"
         ],
@@ -59546,7 +59575,7 @@
         "tableKey": "Entomancer"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-c2436675ffbb804e5fbaa07f8ec8d3db6d4a1ec8343ab4739d0d910bd25d8452",
@@ -59655,6 +59684,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PERSONAL_HIVE_POWER"
         ],
@@ -61191,7 +61221,7 @@
         "tableKey": "Aeonglass"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-d42f7d52e58c8cee7169ca2bf2bbb70d035acaf8d36b5a3d842fb0733f53c543",
@@ -61300,6 +61330,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ARTIFACT_POWER"
         ],
@@ -62526,16 +62557,14 @@
     },
     {
       "authorityComparison": {
-        "closure": "closed",
+        "closure": "knownUnknown",
         "compactFactRefs": [
-          "SOURCE.POWER.NEMESIS_POWER",
-          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_3"
+          "SOURCE.POWER.NEMESIS_POWER"
         ],
         "resolution": "represented-as-scoped",
         "silentMerge": false,
         "sourceFactRefs": [
-          "SOURCE.POWER.NEMESIS_POWER",
-          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_3"
+          "SOURCE.POWER.NEMESIS_POWER"
         ]
       },
       "category": "starting-power-status-stack",
@@ -62565,7 +62594,7 @@
         "tableKey": "Test Subject (Phase 3)"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-f3885baef78a255e4e908c882e3d85d6590e0bede5e85a8ff64045f3570d0597",
@@ -62669,6 +62698,9 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [
+          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_3"
+        ],
         "powerIds": [
           "POWER.NEMESIS_POWER"
         ],
@@ -63659,7 +63691,7 @@
         "tableKey": "Terror Eel"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact starting identity/amount and direct source fact remain Technical; the specialized primary lacks a complete typed starting-state coordinate, so this is not optimistically called primary-present.",
+      "rationale": "The exact starting identity/amount remains Technical; the specialized primary lacks a complete typed starting-state coordinate, so this is not optimistically called primary-present. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-d0e10f02fefe1bf981c429cedb0d351b601b20ea4bd191271ade35904962e5c3",
@@ -63759,6 +63791,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SHRIEK_POWER"
         ],
@@ -64873,7 +64906,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-7cf7d4a909fe15cc0b6e7a4e3de89a539147d01a5c97e20118787f6703fbaa06",
@@ -64991,6 +65024,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PLATING_POWER"
         ],
@@ -67958,7 +67992,7 @@
         "tableKey": "Lagavulin Matriarch"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-cb0fede6968a14296fae29c7b91c3f0f4a99df59dc1772e54bc22d5b5240a6f9",
@@ -68067,6 +68101,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PLATING_POWER"
         ],
@@ -69554,7 +69589,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-07598b6cdbfe338005ca7a7ed9a18fd37e4832563ebd83c22266915ec927566a",
@@ -69721,6 +69756,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PAPER_CUTS_POWER"
         ],
@@ -69846,7 +69882,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-3c47986ca9bf165225226bf1dc1e50300aa60c13ad0594e862a17a2a260fdc29",
@@ -69959,6 +69995,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ESCAPE_ARTIST_POWER"
         ],
@@ -73793,7 +73830,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-9e041d79e46e528c13a34b81086cf569c4bfd8e4eb1d1d3646e7193a7f0a0cb5",
@@ -73906,6 +73943,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.STOCK_POWER"
         ],
@@ -74183,7 +74221,7 @@
         "tableKey": "Lagavulin Matriarch"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-bb5beb4c21055029078a04fa85e929053e338198fd661ee2adcbb46923a4cf69",
@@ -74292,6 +74330,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ASLEEP_POWER"
         ],
@@ -76594,7 +76633,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-38f8b71eacfb09bd6d4f518c4273c9f5f050ac949b0e1dffeff03e80b6da7633",
@@ -76707,6 +76746,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PLATING_POWER"
         ],
@@ -90776,7 +90816,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-9497bc32b6da437cea9c6717e1d6752f4a49fd9584b26e24de82a02ae5d3ea0b",
@@ -90883,6 +90923,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.WITHERING_PRESENCE_POWER"
         ],
@@ -93261,7 +93302,7 @@
         "tableKey": "Test Subject"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-6a24137542ff480522e11676b70711b89ab0a5301374bcf7ffdd903adb060aa2",
@@ -93375,6 +93416,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ENRAGE_POWER"
         ],
@@ -95730,7 +95772,7 @@
         "tableKey": "Vantom"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-1de47d4aeebe40187440f13bea77040fd1578d2ed160f78671d7a6ac4ecd2f87",
@@ -95839,6 +95881,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SLIPPERY_POWER"
         ],
@@ -98196,6 +98239,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.GALVANIC_POWER"
         ],
@@ -105070,7 +105114,7 @@
         "tableKey": "Louse Progenitor"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-33530f2c58b4a799747940b3b842c3bf5f385d4747d773f05dce3e64b07c8fb3",
@@ -105184,6 +105228,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.CURL_UP_POWER"
         ],
@@ -105293,7 +105338,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-b36553f0472d91511b558c52976c66c4c802220fec1a0f9a397d0249f9be2a2f",
@@ -105406,6 +105451,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SLUMBER_POWER"
         ],
@@ -110876,7 +110922,7 @@
         "tableKey": "Chomper"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-e391d3a79ad49e09955ad2a7eb1ef94113046a6c54e8b8c51dea981af93221d0",
@@ -111034,6 +111080,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ARTIFACT_POWER"
         ],
@@ -111890,7 +111937,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-45ccb4c0c094c022efc74b033a1ee56c21e99cc9d5cab0cdb6ad634eb820bcc4",
@@ -112003,6 +112050,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SLIPPERY_POWER"
         ],
@@ -114940,7 +114988,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-e4af169d5c9567b3e02a24c9455431c354367eea811367366674a6e83f836a75",
@@ -115112,6 +115160,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.RAVENOUS_POWER"
         ],
@@ -116171,7 +116220,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-67c3f58817a082895cbc529499e469ae523fa8cbaffe19e052797191a4fb3954",
@@ -116278,6 +116327,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.INFESTED_POWER"
         ],
@@ -116564,7 +116614,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-f9a791d01e3facfcb53b46e8ef9dcba7f904dcd2eabcd9eb282d4ca55da04c18",
@@ -116676,6 +116726,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.POSSESS_STRENGTH_POWER"
         ],
@@ -123295,7 +123346,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-f9414c18b7eb7327ba147ce331124659d9c2e413e4f827708cbcb26d2e4face0",
@@ -123413,6 +123464,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PLATING_POWER"
         ],
@@ -124027,7 +124079,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-68ede0ecbc003c09e5bb953af5ab12aa6aeecd405453f4887a9ecc055b35b9ce",
@@ -124139,6 +124191,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.MINION_POWER"
         ],
@@ -126251,7 +126304,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-c214151b93a4b35daf49814d6105ac530cd6967054cec0282a6abc49caf15b54",
@@ -126465,6 +126518,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.IMBALANCED_POWER"
         ],
@@ -129129,16 +129183,14 @@
     },
     {
       "authorityComparison": {
-        "closure": "closed",
+        "closure": "knownUnknown",
         "compactFactRefs": [
-          "SOURCE.POWER.PAINFUL_STABS_POWER",
-          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"
+          "SOURCE.POWER.PAINFUL_STABS_POWER"
         ],
         "resolution": "represented-as-scoped",
         "silentMerge": false,
         "sourceFactRefs": [
-          "SOURCE.POWER.PAINFUL_STABS_POWER",
-          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"
+          "SOURCE.POWER.PAINFUL_STABS_POWER"
         ]
       },
       "category": "starting-power-status-stack",
@@ -129176,7 +129228,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-3709c298e9a61c154705a83d0ad563fee6c892102b1b67ad698d778e9f9536af",
@@ -129289,6 +129341,9 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [
+          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"
+        ],
         "powerIds": [
           "POWER.PAINFUL_STABS_POWER"
         ],
@@ -133812,7 +133867,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-8db21dd424c5dd725abaf60a6bd5151952a4c95e205b8fd2a4d42de09c95b429",
@@ -133924,6 +133979,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.MINION_POWER"
         ],
@@ -135260,7 +135316,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-5530c2ec7bd370a6ad7a8a22ff2d9d4ba8df45a30eb96d7748904cc87a50a351",
@@ -135372,6 +135428,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.POSSESS_SPEED_POWER"
         ],
@@ -138578,7 +138635,7 @@
         "tableKey": "Parafright"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-ee815f2c50fd4a281f3b27cfcb6ae74f3a4a6fae0183c9474aaa015180523b12",
@@ -138681,6 +138738,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ILLUSION_POWER"
         ],
@@ -139283,7 +139341,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-c371f7f3cb60a7e96c0c2d28f7e39649e9f75c63c38c450440a37eda8c6fdf0a",
@@ -139395,6 +139453,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.CRAB_RAGE_POWER"
         ],
@@ -139705,7 +139764,7 @@
         "tableKey": "Frog Knight"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-dc23b00ff464fc531ae74c4a3d3890c124cb88282ac91ebbd395035f72e1e0ac",
@@ -139819,6 +139878,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PLATING_POWER"
         ],
@@ -140566,7 +140626,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-4ebb913c8d5afe93356bea6a029451f6b6d55f0803f86b7661679dbf5cb9dd4c",
@@ -140679,6 +140739,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.STRENGTH_POWER"
         ],
@@ -141126,7 +141187,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact starting identity/amount and direct source fact remain Technical; the specialized primary lacks a complete typed starting-state coordinate, so this is not optimistically called primary-present.",
+      "rationale": "The exact starting identity/amount remains Technical; the specialized primary lacks a complete typed starting-state coordinate, so this is not optimistically called primary-present. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-29818401bcfcddb59495c812bb613bd72aa08d26d15d079fc9a1423b7b776166",
@@ -141230,6 +141291,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SHRIEK_POWER"
         ],
@@ -152837,7 +152899,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-fd040b74081500ce0d5b6237603f35adfcb5d9dbfa5bf6a8ef36a5b3b034c33d",
@@ -152949,6 +153011,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ILLUSION_POWER"
         ],
@@ -153702,7 +153765,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-4b3f642c67e161849efcaf13cec63aff681953dd38c65bf514d24548c9552e53",
@@ -153820,6 +153883,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.CURL_UP_POWER"
         ],
@@ -154356,7 +154420,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-a01b003c9966822bec6e09f5b4c961001360725a0c3d6aed9eff98966d0c5a28",
@@ -154518,6 +154582,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ARTIFACT_POWER"
         ],
@@ -154930,7 +154995,7 @@
         "tableKey": "Rocket"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-0d40e841c980f8f0d04be02b731b1e7e345c6c4b66f7b9ad01be3b137de4cfbe",
@@ -155033,6 +155098,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.CRAB_RAGE_POWER"
         ],
@@ -156485,7 +156551,7 @@
         "tableKey": "Punch Construct"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-7ac9a316d0ba050e2ff58088ca9c65777b8fb9e4f2b78a04737198c0c5cc8790",
@@ -156648,6 +156714,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ARTIFACT_POWER"
         ],
@@ -156719,7 +156786,7 @@
         "tableKey": "Tough Egg"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-ba2403ac0a3f9e25bf3873bfc0cffa506ca5dd622100fb129d313dd40bbd5f01",
@@ -156828,6 +156895,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.HATCH_POWER"
         ],
@@ -160095,7 +160163,7 @@
         "tableKey": "Scroll of Biting"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-bcf9676b197cc218c5652cb5e926f70202918edbf878c8baee169930457640b9",
@@ -160258,6 +160326,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PAPER_CUTS_POWER"
         ],
@@ -167162,7 +167231,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-fcb7d9439bbaa3e3261a178a8522ed844aa25f3a248c52a8ac4683b7dc025ddb",
@@ -167275,6 +167344,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PERSONAL_HIVE_POWER"
         ],
@@ -179046,7 +179116,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-06bdfaac119528553874ea6a0c7028ce2edcbb8d5b1e0b6cadd4ca72bc3d3bbf",
@@ -179159,6 +179229,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ASLEEP_POWER"
         ],
@@ -181114,7 +181185,7 @@
         "tableKey": "Slumbering Beetle"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-87e361ffa28d3a5861a23ed4e70e6d29d4d6911d8b05c43cf271a859df51a3f0",
@@ -181228,6 +181299,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PLATING_POWER"
         ],
@@ -185248,7 +185320,7 @@
         "tableKey": "Sewer Clam"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-8849c845ecaf8f12733dd4c4ece9a9edf94075782b1a2acb39f63774442d8ccc",
@@ -185362,6 +185434,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.PLATING_POWER"
         ],
@@ -185550,7 +185623,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-92008548ff3e8e4b0c8ab51808bbdf147ed2c636902e4a94c8a4cb056dfb5b01",
@@ -185668,6 +185741,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.GALVANIC_POWER"
         ],
@@ -189006,7 +189080,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-09ffcc5daac4f697c1d16b447f0eade3ae5cff4b154916dcbf6a1f19b431c9b9",
@@ -189113,6 +189187,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.MINION_POWER"
         ],
@@ -190836,7 +190911,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-5a9595ea9b4b61a2b70d86e256d4cb79a6f100609863ebb47ee424610a0bfa58",
@@ -191089,6 +191164,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.REATTACH_POWER"
         ],
@@ -195192,7 +195268,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-80437ca43c296d68380556c5e758931ba75388287e804a27fdcc3eeacadc1be4",
@@ -195304,6 +195380,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ILLUSION_POWER"
         ],
@@ -196596,7 +196673,7 @@
         "tableKey": "Cubex Construct"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-96ea1e7eb2da53ed1b4b9152143b2111ba155979c6408e87d50bb2e83add35d0",
@@ -196759,6 +196836,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ARTIFACT_POWER"
         ],
@@ -198257,7 +198335,7 @@
         "tableKey": "Crusher"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-e2f8d6702e3dfb1d07b05d124b25abdaa131dce1865206de3270019edaca590c",
@@ -198360,6 +198438,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.BACK_ATTACK_LEFT_POWER"
         ],
@@ -198587,7 +198666,7 @@
         "tableKey": "Inklet"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-68bb7900bd92bf9c62473d276098c96c08ed986ee12f1821479f6421cf83d481",
@@ -198696,6 +198775,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SLIPPERY_POWER"
         ],
@@ -200959,7 +201039,7 @@
         "tableKey": "Rocket"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-7142b498f6e2f79a5113e025a0c2ce408dde1f4d6a519c36ad16f3cd02bd986a",
@@ -201062,6 +201142,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.BACK_ATTACK_RIGHT_POWER"
         ],
@@ -202944,7 +203025,7 @@
         "tableKey": "Phantasmal Gardener"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-8822c57c5cfa3f373366f968953f36d258f0a806c5c75aa36c92e3643ddfbfc3",
@@ -203058,6 +203139,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SKITTISH_POWER"
         ],
@@ -206587,7 +206669,7 @@
         "tableKey": "Gas Bomb"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-1331c05dfa134ea0776eb9dc565dee993f29bc38d384c45ae41899b6fe258735",
@@ -206690,6 +206772,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.MINION_POWER"
         ],
@@ -207664,7 +207747,7 @@
         "tableKey": "Corpse Slug"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-cfde7a79d1a18a65be39492f94082eec19917d60e37d7845381d914e84756cb5",
@@ -207832,6 +207915,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.RAVENOUS_POWER"
         ],
@@ -211238,7 +211322,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-53792fdb4112d453626ec350b2f2cbafbf568f81747e5fb6efdd66ce7eff44f8",
@@ -211356,6 +211440,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.THIEVERY_POWER"
         ],
@@ -211679,7 +211764,7 @@
         "tableKey": "Mysterious Knight"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-5a92978e489b5e951fb1609fd0a2d0e9edb8a7e0e0641a9f24b762521f7ea1f4",
@@ -211788,6 +211873,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.STRENGTH_POWER"
         ],
@@ -212471,7 +212557,7 @@
         "tableKey": "Thieving Hopper"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-5c5a6d30d97a4483276cf1862752a5e00db0d03b1e45a3812d7653529b78b52e",
@@ -212580,6 +212666,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ESCAPE_ARTIST_POWER"
         ],
@@ -213112,7 +213199,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-f5310c14f9ce686c7a3190968f0f150264c934a96bc1321ed1b52e77bdf3d55d",
@@ -213230,6 +213317,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SKITTISH_POWER"
         ],
@@ -214584,7 +214672,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-357ecf7fcdf8644fb7c925aca4ab56a391a8be885993df8d794a348edb92cc68",
@@ -214702,6 +214790,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.HATCH_POWER"
         ],
@@ -215861,7 +215950,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-2a97af3ecc81e334fa17937f8f015c4e26a8929481a0658d486c9e0c9b629631",
@@ -215979,6 +216068,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SURPRISE_POWER"
         ],
@@ -217841,7 +217931,7 @@
         "tableKey": "Skulking Colony"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-ca1ae68ae2eea1f197b8978202539ad09dbeca8d1889192c836b754b6c78c85b",
@@ -217950,6 +218040,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.HARDENED_SHELL_POWER"
         ],
@@ -219221,7 +219312,7 @@
         "tableKey": "Infested Prism"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-c55422a7f3fb599ab58d9232dd417748c444eae5a7f3da41c6519f6d24c38c4e",
@@ -219335,6 +219426,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.VITAL_SPARK_POWER"
         ],
@@ -219895,7 +219987,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-1a993ef62e1f3357fa8d5a0a9abff520a6d8755ebe20cbff2b3a08c6323081a3",
@@ -220062,6 +220154,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ARTIFACT_POWER"
         ],
@@ -224096,7 +224189,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-d5a463e52062701d2c25cef43572d6bfbda729d55ea6aa7b55e6a87bf2a91b42",
@@ -224209,6 +224302,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.HARDENED_SHELL_POWER"
         ],
@@ -228336,7 +228430,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-503cf99d4bb1c0582b86bab04d6b0458f680d2575c90ae62ce353528159047cc",
@@ -228448,6 +228542,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.BACK_ATTACK_LEFT_POWER"
         ],
@@ -228781,7 +228876,7 @@
         "tableKey": "Aeonglass"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-a37a3db6ce6ee03b429a11ab11fbe7deec7b1e58c38457026cc10139300ec3e2",
@@ -228884,6 +228979,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.WITHERING_PRESENCE_POWER"
         ],
@@ -230076,7 +230172,7 @@
         "tableKey": "Gremlin Merc"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-5fb22f79892f8f96cec30bc3f1a426c53019383a037a23b7aa01e10703accfe1",
@@ -230185,6 +230281,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SURPRISE_POWER"
         ],
@@ -234024,7 +234121,7 @@
         "tableKey": "Slumbering Beetle"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-57aab3e37ed87a92d2b54b93d74ee16ea30ae2d11ef464e126cd3f1e9302bf9a",
@@ -234133,6 +234230,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SLUMBER_POWER"
         ],
@@ -237235,7 +237333,7 @@
         "tableKey": "The Lost"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-32da0d7836e4a59f70ccc4a67db966d64515a038fa34a28f4518c521fd30625f",
@@ -237338,6 +237436,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.POSSESS_STRENGTH_POWER"
         ],
@@ -237437,7 +237536,7 @@
         "tableKey": "Fossil Stalker"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-dfb313d7bb83e4c3e1c9cafb36b943ce63f4012838ab7c4c6cb0bc45a90cec82",
@@ -237546,6 +237645,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SUCK_POWER"
         ],
@@ -242363,7 +242463,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-f0c893ef6c03b0d5afce80779d89006c6e7093357a3d1874d5d24c451e01dca4",
@@ -242530,6 +242630,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.HARD_TO_KILL_POWER"
         ],
@@ -244767,15 +244868,13 @@
         "closure": "closed",
         "compactFactRefs": [
           "SOURCE.INITIAL.MONSTER.TEST_SUBJECT.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.POWER.ADAPTABLE_POWER",
-          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"
+          "SOURCE.POWER.ADAPTABLE_POWER"
         ],
         "resolution": "represented-as-scoped",
         "silentMerge": false,
         "sourceFactRefs": [
           "SOURCE.INITIAL.MONSTER.TEST_SUBJECT.AFTERADDEDTOROOM.000.APPLYPOWER",
-          "SOURCE.POWER.ADAPTABLE_POWER",
-          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"
+          "SOURCE.POWER.ADAPTABLE_POWER"
         ]
       },
       "category": "starting-power-status-stack",
@@ -244813,7 +244912,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-89b5b45044173a046dd77b4572cdb218b327daf5e2cc314f1caf5a9e9421bc7a",
@@ -244931,6 +245030,9 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [
+          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"
+        ],
         "powerIds": [
           "POWER.ADAPTABLE_POWER"
         ],
@@ -247538,7 +247640,7 @@
         "tableKey": "Decimillipede"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-3b9276cdf437bfdcd0a6a064d08b4a5b9ef73531072ad69154fef42c6fbf8063",
@@ -247787,6 +247889,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.REATTACH_POWER"
         ],
@@ -250217,7 +250320,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-2fa5ca973b3b83c303ae4aadb65f71903d3ff3d980e34e928ccfb6540b023640",
@@ -250335,6 +250438,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.VITAL_SPARK_POWER"
         ],
@@ -254026,7 +254130,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-c794c4090a74e849474aef36a55288dd858f4771dffdb05f6cbec00a4209e508",
@@ -254139,6 +254243,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SUCK_POWER"
         ],
@@ -259263,7 +259368,7 @@
         "tableKey": "Zapbot"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-434bf8db663e16cb8b799bd116b6e2e897e66d948928c4acaaecd4a71318c052",
@@ -259372,6 +259477,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.HIGH_VOLTAGE_POWER"
         ],
@@ -260374,7 +260480,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-2e83ab9becefd384e16591c185a43aefbff44d3fbde31db3df42113ad46e6bad",
@@ -260486,6 +260592,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.CRAB_RAGE_POWER"
         ],
@@ -264072,16 +264179,14 @@
     },
     {
       "authorityComparison": {
-        "closure": "closed",
+        "closure": "knownUnknown",
         "compactFactRefs": [
-          "SOURCE.POWER.NEMESIS_POWER",
-          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_3"
+          "SOURCE.POWER.NEMESIS_POWER"
         ],
         "resolution": "represented-as-scoped",
         "silentMerge": false,
         "sourceFactRefs": [
-          "SOURCE.POWER.NEMESIS_POWER",
-          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_3"
+          "SOURCE.POWER.NEMESIS_POWER"
         ]
       },
       "category": "starting-power-status-stack",
@@ -264119,7 +264224,7 @@
         "templateOrdinal": 3
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-536fdb2cd6a8013e2e007c058b51edee841421d085b388a0da062bc30ac37d41",
@@ -264232,6 +264337,9 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [
+          "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_3"
+        ],
         "powerIds": [
           "POWER.NEMESIS_POWER"
         ],
@@ -264453,7 +264561,7 @@
         "templateOrdinal": 2
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-f112fa0cc09a12b02f7c0745694bdfb8ceba2791531305c0f285a17f20fd23fe",
@@ -264571,6 +264679,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.RAMPART_POWER"
         ],
@@ -267534,7 +267643,7 @@
         "templateOrdinal": 1
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-02a42e90e0d7f36b91365e4eeecb4d24a5a2fa1fd6c69a4da5b4c691993e2a51",
@@ -267647,6 +267756,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": true,
         "kind": "starting-power-stack",
         "originFamily": "article-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.SLIPPERY_POWER"
         ],
@@ -267709,7 +267819,7 @@
         "tableKey": "Test Subject"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-c15773c3ea56824cb24875ab8a534cea0d5e9612e3362eaecb93a9c2634182ff",
@@ -267812,6 +267922,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.ADAPTABLE_POWER"
         ],
@@ -269608,7 +269719,7 @@
         "tableKey": "Living Shield"
       },
       "owner": "StS2 Companion P1b1 completeness review",
-      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics.",
+      "rationale": "The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.",
       "representation": [
         {
           "claimId": "wiki-claim-v1-f4f4e6c357d1da7dabc030a78892fe84c68530fddd58f868b47122e115588953",
@@ -269717,6 +269828,7 @@
         "currentReferenceFallbackSuppliesPrimaryAmount": false,
         "kind": "starting-power-stack",
         "originFamily": "module-starting-power",
+        "ownershipFactRefs": [],
         "powerIds": [
           "POWER.RAMPART_POWER"
         ],
@@ -274378,8 +274490,8 @@
         "sha256": "c7f5d9a3ac71846ad6086532224c38a573e32e904e97cc14deda9d2b1a07b91d"
       },
       "tools/retained_wiki.py": {
-        "bytes": 185816,
-        "sha256": "775d36d8b351ac76ae4d0ed49c60efabcf6b0ac434188d3ba22509c25f1b1ade"
+        "bytes": 186353,
+        "sha256": "7e39191efcd36e42388d5aa8ea4275033cfdfbe7d50e6bfd0f4cba1cd155641b"
       },
       "tools/run-python-tests.py": {
         "bytes": 2008,
@@ -274394,7 +274506,7 @@
         "sha256": "d8b603c4bdaa7d2719cde1819f16215893c44b8dd9105cc646306c2b3551721b"
       }
     },
-    "inputsDigestSha256": "41237d447440185b2d8263ad929e1ef2463693224b4c07eeb6bc2228a3992f74",
+    "inputsDigestSha256": "f8a88abc20e94ca1412f27dc8a2392922ba56e602f8cf5b81426a1d2835a0104",
     "modules": {
       "listed": [
         {

@@ -734,6 +734,57 @@ class P1b1SemanticMappingTests(unittest.TestCase):
         test_subject = self.find(owner="Test Subject", family="article-starting-power")
         self.assertEqual({row["normalized"]["power"] for row in test_subject}, {"Adaptable", "Enrage"})
         self.assertEqual(next(row for row in test_subject if row["normalized"]["power"] == "Enrage")["normalized"]["amountAtA9"], 3)
+
+        # A state ID proves which retained form owns the token, not that source
+        # initialState applies the Power. Keep those facts out of source closure.
+        egg_minion = self.find(owner="Tough Egg", family="article-starting-power", value="Minion")[0]
+        hatchling_minion = self.find(owner="Hatchling", family="article-starting-power", value="Minion")[0]
+        self.assertEqual(
+            (egg_minion["disposition"], egg_minion["authorityComparison"]["closure"],
+             egg_minion["authorityComparison"]["sourceFactRefs"],
+             egg_minion["semanticMapping"]["ownershipFactRefs"]),
+            ("primary-present", "knownUnknown", ["SOURCE.POWER.MINION_POWER"], []),
+        )
+        self.assertEqual(
+            (hatchling_minion["disposition"], hatchling_minion["authorityComparison"]["closure"],
+             hatchling_minion["authorityComparison"]["sourceFactRefs"],
+             hatchling_minion["semanticMapping"]["ownershipFactRefs"]),
+            ("primary-present", "knownUnknown", ["SOURCE.POWER.MINION_POWER"],
+             ["SOURCE.STATE.MONSTER.TOUGH_EGG.HATCHED"]),
+        )
+
+        ownership_only_phases = [
+            ("Test Subject (Phase 2)", "Painful Stabs", "POWER.PAINFUL_STABS_POWER",
+             "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"),
+            ("Test Subject (Phase 3)", "Nemesis", "POWER.NEMESIS_POWER",
+             "SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_3"),
+        ]
+        for owner, power, power_id, state_fact_id in ownership_only_phases:
+            rows = [row for family in ("article-starting-power", "module-starting-power")
+                    for row in self.find(owner=owner, family=family, value=power)]
+            self.assertEqual(len(rows), 2)
+            for row in rows:
+                self.assertEqual((row["disposition"], row["authorityComparison"]["closure"]),
+                                 ("primary-present", "knownUnknown"))
+                self.assertEqual(row["authorityComparison"]["sourceFactRefs"],
+                                 [f"SOURCE.{power_id}"])
+                self.assertEqual(row["semanticMapping"]["ownershipFactRefs"], [state_fact_id])
+                self.assertEqual(row["semanticMapping"]["sourceValueExpressions"], [])
+
+        # The same Phase 2 ownership is source-closed for Adaptable because the
+        # actor model has a matching initialState applyPower fact.
+        phase2_adaptable = [row for family in ("article-starting-power", "module-starting-power")
+                            for row in self.find(owner="Test Subject (Phase 2)", family=family,
+                                                 value="Adaptable")]
+        self.assertEqual(len(phase2_adaptable), 2)
+        for row in phase2_adaptable:
+            self.assertEqual(row["authorityComparison"]["closure"], "closed")
+            self.assertEqual(row["authorityComparison"]["sourceFactRefs"], [
+                "SOURCE.INITIAL.MONSTER.TEST_SUBJECT.AFTERADDEDTOROOM.000.APPLYPOWER",
+                "SOURCE.POWER.ADAPTABLE_POWER",
+            ])
+            self.assertEqual(row["semanticMapping"]["ownershipFactRefs"],
+                             ["SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"])
         for row in egg:
             expected_token = {"title": row["normalized"]["power"]}
             if row["normalized"].get("amountAtA9") is not None:
@@ -784,6 +835,29 @@ class P1b1SemanticMappingTests(unittest.TestCase):
                                 if coord["layer"] == "primary-presentation"]
             self.assertTrue(any("/bodies/0/" in pointer for pointer in primary_pointers))
             self.assertTrue(any("/bodies/1/" in pointer for pointer in primary_pointers))
+
+    def test_starting_power_source_evidence_invariant_for_entire_family(self):
+        starting_records = [
+            record for record in self.records
+            if record["family"] in {"article-starting-power", "module-starting-power"}
+            and record.get("finalMappingId", "").startswith("final-map-p1b1-")
+        ]
+        self.assertEqual(len(starting_records), 112)
+        for record in starting_records:
+            source_refs = record["authorityComparison"]["sourceFactRefs"]
+            ownership_refs = record["semanticMapping"]["ownershipFactRefs"]
+            direct_refs = [ref for ref in source_refs
+                           if ref.startswith("SOURCE.INITIAL.") and ref.endswith(".APPLYPOWER")]
+            self.assertFalse(any(ref.startswith("SOURCE.STATE.") for ref in source_refs), record["id"])
+            self.assertTrue(all(ref.startswith("SOURCE.STATE.") for ref in ownership_refs), record["id"])
+            self.assertTrue(set(source_refs).isdisjoint(ownership_refs), record["id"])
+            self.assertEqual(bool(record["semanticMapping"]["sourceValueExpressions"]),
+                             bool(direct_refs), record["id"])
+            if record["authorityComparison"]["closure"] == "closed":
+                self.assertTrue(direct_refs, record["id"])
+            if not direct_refs:
+                self.assertEqual(record["authorityComparison"]["closure"],
+                                 "knownUnknown", record["id"])
 
     def test_hp_exact_value_evidence_invariant_and_state_matrices(self):
         documents = wiki._mapping_documents({}, self.compact, {}, self.surface)
@@ -968,6 +1042,35 @@ class P1b1SemanticMappingTests(unittest.TestCase):
         policy["expectedFamilyCounts"]["article-hp-field"] -= 1
         with self.assertRaisesRegex(wiki.AuditError, "family counts drifted"):
             self.apply_mutation(policy=policy)
+
+    def test_starting_power_source_closure_requires_direct_apply_power(self):
+        surface = json.loads(json.dumps(self.surface))
+        subject = next(row for row in surface["encounters"]
+                       if row["canonicalId"] == "TEST_SUBJECT_BOSS")
+        model = next(row for row in subject["sourceModels"]
+                     if row["canonicalModel"] == "MONSTER.TEST_SUBJECT")
+        model["initialState"] = [
+            fact for fact in model["initialState"]
+            if fact["effect"].get("model") != "POWER.ADAPTABLE_POWER"
+        ]
+
+        records = self._unmapped_p1b1_records()
+        self.apply_mutation(surface=surface, records=records)
+        phase2_adaptable = [
+            row for row in records
+            if row.get("normalized", {}).get("owner") == "Test Subject (Phase 2)"
+            and row.get("normalized", {}).get("power") == "Adaptable"
+        ]
+        self.assertEqual(len(phase2_adaptable), 2)
+        for row in phase2_adaptable:
+            self.assertEqual(row["semanticMapping"]["stateIds"],
+                             ["MONSTER.TEST_SUBJECT#PHASE_2"])
+            self.assertEqual(row["semanticMapping"]["ownershipFactRefs"],
+                             ["SOURCE.STATE.MONSTER.TEST_SUBJECT.PHASE_2"])
+            self.assertEqual(row["authorityComparison"]["closure"], "knownUnknown")
+            self.assertEqual(row["authorityComparison"]["sourceFactRefs"],
+                             ["SOURCE.POWER.ADAPTABLE_POWER"])
+            self.assertEqual(row["semanticMapping"]["sourceValueExpressions"], [])
 
     def test_negative_starting_power_token_and_reviewed_value_mutations(self):
         surface = json.loads(json.dumps(self.surface))

@@ -2439,7 +2439,8 @@ def _mapping_for_starting(record: dict[str, Any], refs: list[dict[str, Any]], co
     direct = []
     for model_ref in model_refs:
         for initial_index, fact in enumerate(model_ref["model"]["initialState"]):
-            if fact["effect"].get("model") in candidate_ids:
+            effect = fact["effect"]
+            if effect.get("kind") == "applyPower" and effect.get("model") in candidate_ids:
                 direct.append((model_ref, initial_index, fact))
     selected_ids = sorted(set(fact[2]["effect"]["model"] for fact in direct))
     selected_matches = [(index, row) for index, row in power_matches if row["canonicalId"] in selected_ids]
@@ -2453,7 +2454,10 @@ def _mapping_for_starting(record: dict[str, Any], refs: list[dict[str, Any]], co
         representations.append({"layer": "technical-audit", "path": "data/encounter-facts-v0.111.0.json",
                                 "jsonPointer": f"/payload/sourceFacts/models/powers/{power_index}/canonicalId",
                                 "expectedValue": power["canonicalId"]})
-    source_fact_ids = [power["factId"] for _, power in represented_matches] + state_fact_ids
+    # Power definitions establish canonical identity, while state facts establish only
+    # ownership. Neither proves that the Power is part of the model's initial state;
+    # only a matching initialState applyPower fact can close that semantic claim.
+    source_fact_ids = [power["factId"] for _, power in represented_matches]
     source_expressions = []
     for model_ref, initial_index, fact in direct:
         pointer = (f"/encounters/{model_ref['encounterIndex']}/sourceModels/{model_ref['modelIndex']}"
@@ -2524,7 +2528,7 @@ def _mapping_for_starting(record: dict[str, Any], refs: list[dict[str, Any]], co
     current_reference_fallback = bool(normalized.get("amountAtA9") is not None and direct and
                                       any(_expression_integer(fact[2]["baseValue"].get("expression") or {}, 9) is None
                                           for fact in direct))
-    closure = "knownUnknown" if current_reference_fallback else "closed" if direct or state_ids else "knownUnknown"
+    closure = "knownUnknown" if current_reference_fallback else "closed" if direct else "knownUnknown"
     fallback = current_reference_fallback and not is_conflict
     configured_tokens = []
     configured_seen = set()
@@ -2551,6 +2555,7 @@ def _mapping_for_starting(record: dict[str, Any], refs: list[dict[str, Any]], co
                 "ascensionAmounts": normalized.get("ascensionAmounts", []),
                 "currentAtA9Token": current_token, "configuredTokensByPlayers": configured_tokens,
                 "sourceValueExpressions": source_expressions,
+                "ownershipFactRefs": sorted(set(state_fact_ids)),
                 "currentReferenceFallbackSuppliesPrimaryAmount": current_reference_fallback,
                 "retainedFallbackSuppliesPrimaryAmount": fallback,
                 "scope": "one exact starting Power identity/stack on its retained body or state"}
@@ -2600,9 +2605,9 @@ def _mapping_for_starting(record: dict[str, Any], refs: list[dict[str, Any]], co
                                     "expectedValue": True,
                                     "players": ref["encounter"]["primaryByPlayers"][player_index]["players"]})
         disposition = "primary-present" if practical_present else "audit-present"
-        rationale = ("The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics."
+        rationale = ("The exact normalized Power title and optional A9 amount match typed body and 1P/2P tokens; generator provenance binds the body/state and compiled-card coordinates prove practical starting-state reachability without claiming full Power-description semantics. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only."
                      if practical_present else
-                     "The exact starting identity/amount and direct source fact remain Technical; the specialized primary lacks a complete typed starting-state coordinate, so this is not optimistically called primary-present.")
+                     "The exact starting identity/amount remains Technical; the specialized primary lacks a complete typed starting-state coordinate, so this is not optimistically called primary-present. Source closure requires a matching initialState applyPower fact; state IDs establish ownership only.")
     return _p1b1_common(
         record, disposition=disposition, kind="starting-power-stack", semantic=semantic,
         representations=representations, closure=closure, source_fact_refs=source_fact_ids,
