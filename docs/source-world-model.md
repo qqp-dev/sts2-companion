@@ -923,7 +923,7 @@ pointed-value hashes instead of repeating CIL proof or the 6,786-invocation
 census. This makes the projection substantially smaller while retaining an
 auditable path to the full checked source artifact.
 
-Projection schema 11 declares the bounded encounter projection complete. The
+Projection schema 12 declares the bounded encounter projection complete. The
 consolidated lifecycle gate retires `UNKNOWN.LIFECYCLE_COVERAGE`,
 `UNKNOWN.EVENT_LIFECYCLE`, and aggregate `UNKNOWN.EVENT_BEHAVIOR`. The encounter
 companion nevertheless remains hard-false/incomplete for the sole scoped reason
@@ -931,3 +931,31 @@ companion nevertheless remains hard-false/incomplete for the sole scoped reason
 Root/global readiness remains false for broader source/provenance/title families.
 Only `src/source-adapter.mjs` imports the projection, for the opt-in shadow;
 `/sts2` continues to use byte-identical `data/encounters.json`.
+
+## P1c Power and intent localization projection
+
+The raw schema-14 source has 69 reachable Power records. Compact schema 12
+projects each record as its own checked fact with canonical ID, exact English
+title and title-localization provenance, smart-description key/classification,
+and authoritative template bytes or explicit `null`. Fixed metadata and
+validators enforce 69 total, 62 localized, and seven missing localization IDs.
+Godot `[gold]`/`[blue]` spans and balanced typed placeholders remain plain text;
+no parser renders HTML or specializes runtime values. The lifecycle closeout's
+71-type fixed point additionally contains `POWER.DOOM_POWER` and
+`POWER.HEIST_POWER`; these remain explicit lifecycle-only references backed by
+the lifecycle fact and never receive fabricated localization model records. A
+pinned canonical catalog digest and exact evidence coordinates reject text, key, provenance, or pointer
+mutation.
+
+The same projection preserves all 32 checked intent key/value entries, their PCK
+provenance, 14 independent title/description pair records, and four exact format
+entries. Registered move intents carry typed pair/format refs next to their
+source arguments. This is localization metadata, not a current intent sample.
+Encounter views select entry records from those registered refs and preserve
+`{Damage}`, `{Repeat}`, `{CardCount}`, and `{IsMultiplayer:...}` unresolved.
+
+Power relevance is an exact canonical-ID fixed point over initial state, move
+operations, production, event linkage, and selected lifecycle mechanics. The
+view includes proof for every selected Power fact and cannot leak sibling records
+through equal titles. These catalogs are Technical-only; primary consequence
+copy and all roster/scaling/lifecycle behavior remain unchanged.

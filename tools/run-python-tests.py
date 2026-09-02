@@ -27,8 +27,8 @@ def run(item: tuple[str, list[str], Path]) -> tuple[str, int, str]:
 
 
 methods = sorted(name for name in dir(EncounterProjectionTests) if name.startswith("test_"))
-if len(methods) != 34:
-    print(f"python test runner failed: expected 34 encounter projection tests, found {len(methods)}", file=sys.stderr)
+if len(methods) != 37:
+    print(f"python test runner failed: expected 37 encounter projection tests, found {len(methods)}", file=sys.stderr)
     raise SystemExit(1)
 shards = [methods[index::4] for index in range(4)]
 commands = [
@@ -54,4 +54,4 @@ for label, returncode, output in results:
         failed = True
 if failed:
     raise SystemExit(1)
-print(f"all Python unittest shards passed ({len(methods) + 47 + 71} tests)")
+print(f"all Python unittest shards passed ({len(methods) + 53 + 71} tests)")

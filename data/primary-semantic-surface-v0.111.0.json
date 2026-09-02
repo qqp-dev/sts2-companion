@@ -12,8 +12,8 @@
   "inputs": [
     {
       "path": "data/encounter-facts-v0.111.0.json",
-      "bytes": 5105671,
-      "sha256": "ab1318f24a2e6e0bbcc839945a6d867d72b78233010f3f675ab01f2ad66c5b3b"
+      "bytes": 5372747,
+      "sha256": "a04d498b0a6bd8cbf159ba6e9e753bcea11b0cdac9a11ddbf8c7cecb79cbbea6"
     },
     {
       "path": "tools/primary-semantic-aliases-v0.111.0.json",

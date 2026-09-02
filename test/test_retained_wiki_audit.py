@@ -190,19 +190,19 @@ class RepositoryInventoryTests(unittest.TestCase):
         self.assertEqual(
             self.artifact["summary"]["reviewStateCounts"],
             {
-                "captured-unreconciled": 2253,
-                "final-mapped": 1320,
+                "captured-unreconciled": 2179,
+                "final-mapped": 1394,
                 "policy-reviewed-exclusion": 865,
             },
         )
-        self.assertEqual(self.artifact["summary"]["remainingCapturedUnreconciled"], 2253)
+        self.assertEqual(self.artifact["summary"]["remainingCapturedUnreconciled"], 2179)
         self.assertEqual(
             self.artifact["summary"]["finalDispositionCounts"],
             {
-                "audit-present": 470,
+                "audit-present": 539,
                 "conflict": 24,
                 "intentionally-excluded": 865,
-                "missing/unparsed": 3,
+                "missing/unparsed": 8,
                 "primary-present": 787,
                 "stale/deprecated/version-ambiguous": 36,
             },
@@ -549,15 +549,14 @@ class P1b1SemanticMappingTests(unittest.TestCase):
         target = [record for record in self.records if record["category"] in wiki.P1B1_TARGET_CATEGORIES]
         self.assertEqual(len(self.policy["expectedOrigins"]), 1271)
         self.assertEqual(self.artifact["finalMappings"]["p1b1"]["mappedOriginCount"], 1271)
-        self.assertEqual(self.artifact["summary"]["remainingCapturedUnreconciled"], 2253)
+        self.assertEqual(self.artifact["summary"]["remainingCapturedUnreconciled"], 2179)
         self.assertNotIn("captured-unreconciled", {record["reviewState"] for record in target})
         unrelated = [record for record in self.records
                      if record["category"] not in wiki.P1B1_TARGET_CATEGORIES
                      and record["reviewState"] == "captured-unreconciled"]
-        self.assertEqual(len(unrelated), 2253)
+        self.assertEqual(len(unrelated), 2179)
         self.assertEqual({record["category"] for record in unrelated}, {
-            "move-name-intent-effect", "pattern-sequence", "power-passive",
-            "objective-note-patch-lifecycle",
+            "move-name-intent-effect", "pattern-sequence", "objective-note-patch-lifecycle",
         })
         self.assertEqual(self.artifact["summary"]["recordCount"], 4438)
         correction = self.artifact["finalMappings"]["p1b1"]["atomizationCorrection"]
@@ -1120,6 +1119,103 @@ class P1b1SemanticMappingTests(unittest.TestCase):
         conflict["disposition"] = "primary-present"
         with self.assertRaisesRegex(wiki.AuditError, "conflict relation/disposition mismatch"):
             self.apply_mutation(policy=policy)
+
+
+class P1cPowerPassiveMappingTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.artifact = wiki.build_artifact(REPO_ROOT)
+        cls.policy = wiki.load_json(REPO_ROOT / wiki.DEFAULT_P1C_POLICY)
+        cls.compact = wiki.load_json(REPO_ROOT / "data/encounter-facts-v0.111.0.json")
+        cls.power_records = [row for row in cls.artifact["records"] if row["category"] == "power-passive"]
+
+    def pre_p1c_records(self):
+        records = json.loads(json.dumps(self.artifact["records"]))
+        attached = {"disposition", "finalMappingId", "semanticMapping", "authorityComparison", "representation",
+                    "rationale", "owner", "severity", "reviewedForVersion"}
+        for record in records:
+            if str(record.get("finalMappingId", "")).startswith("final-map-p1c-"):
+                for key in attached: record.pop(key, None)
+                record["reviewState"] = "captured-unreconciled"
+        return records
+
+    def apply_mutation(self, *, policy=None, compact=None):
+        return wiki.apply_p1c_mappings(
+            self.pre_p1c_records(), policy or json.loads(json.dumps(self.policy)),
+            compact=compact or json.loads(json.dumps(self.compact)),
+        )
+
+    def test_all_74_origins_are_exactly_guarded_and_final_mapped(self):
+        summary = self.artifact["finalMappings"]["p1c"]
+        self.assertEqual(summary["mappedOriginCount"], 74)
+        self.assertEqual(summary["targetFamilyCounts"], {"article-power-inline-field": 6, "article-power-invocation": 68})
+        self.assertEqual(summary["dispositionCounts"], {"audit-present": 69, "missing/unparsed": 5})
+        self.assertEqual(len(self.power_records), 77)
+        self.assertEqual({row["reviewState"] for row in self.power_records}, {"final-mapped"})
+        p1c = [row for row in self.power_records if str(row["finalMappingId"]).startswith("final-map-p1c-")]
+        self.assertEqual(len(p1c), 74)
+        for row in p1c:
+            semantic = row["semanticMapping"]
+            self.assertTrue(semantic["canonicalPower"].startswith("POWER."))
+            self.assertEqual(semantic["identity"], semantic["sourceEnglishTitle"])
+            self.assertFalse(row["authorityComparison"]["silentMerge"])
+            self.assertTrue(any(rep.get("evidenceRole") == "reviewed-canonical-power-identity" for rep in row["representation"]))
+            if row["disposition"] == "audit-present":
+                self.assertTrue(any(rep.get("evidenceRole") == "exact-page-body-actor-applicability" for rep in row["representation"]))
+                self.assertTrue(any(rep.get("evidenceRole") == "exact-typed-actor-Power-reference" for rep in row["representation"]))
+
+    def test_back_attack_is_owner_disambiguated_and_missing_localization_stays_null(self):
+        back = [row for row in self.power_records if row["normalized"].get("identity") == "Back Attack"]
+        self.assertEqual(len(back), 2)
+        by_owner = {row["origin"]["sectionPath"][-1]["title"]: row["semanticMapping"] for row in back}
+        self.assertEqual(by_owner["Crusher"]["canonicalPower"], "POWER.BACK_ATTACK_LEFT_POWER")
+        self.assertEqual(by_owner["Crusher"]["ownerModels"], ["MONSTER.CRUSHER"])
+        self.assertEqual(by_owner["Rocket"]["canonicalPower"], "POWER.BACK_ATTACK_RIGHT_POWER")
+        self.assertEqual(by_owner["Rocket"]["ownerModels"], ["MONSTER.ROCKET"])
+        for row in self.power_records:
+            semantic = row.get("semanticMapping", {})
+            if semantic.get("sourceLocalizationClassification") == "missingLocalization":
+                self.assertIsNone(semantic["sourceTemplate"])
+                self.assertNotEqual(semantic.get("sourceDescriptionAuthority"), "wiki")
+        self.assertEqual(self.artifact["finalMappings"]["p1c"]["knownMissingLocalizationIds"], [
+            "POWER.BACK_ATTACK_LEFT_POWER", "POWER.BACK_ATTACK_RIGHT_POWER", "POWER.DAMPEN_POWER",
+            "POWER.HEX_POWER", "POWER.STOCK_POWER", "POWER.SURROUNDED_POWER", "POWER.SWIPE_POWER",
+        ])
+
+    def test_inline_values_are_mapped_by_field_not_identity_only(self):
+        inline = [row for row in self.power_records if row["family"] == "article-power-inline-field"]
+        self.assertEqual(len(inline), 6)
+        descriptions = [row for row in inline if row["normalized"]["field"] == "Description"]
+        unresolved = [row for row in inline if row["normalized"]["field"] in {"Type", "Stacks"}]
+        self.assertEqual({row["disposition"] for row in descriptions}, {"audit-present"})
+        self.assertEqual({row["semanticMapping"]["relation"] for row in descriptions}, {"reviewed-equivalent-source-template"})
+        self.assertEqual({row["disposition"] for row in unresolved}, {"missing/unparsed"})
+        self.assertEqual({row["semanticMapping"]["relation"] for row in unresolved}, {"unresolved-source-field"})
+        fossil = next(row for row in self.power_records if row["origin"].get("pageKey") == "Fossil Stalker" and row["normalized"].get("identity") == "Strength")
+        self.assertEqual((fossil["disposition"], fossil["authorityComparison"]["closure"]), ("missing/unparsed", "unjoined"))
+
+    def test_claim_identity_owner_and_pointer_mutations_fail(self):
+        policy = json.loads(json.dumps(self.policy)); policy["reviews"][0]["claimId"] = "wiki-claim-v1-stale"
+        with self.assertRaisesRegex(wiki.AuditError, "stale claim"):
+            self.apply_mutation(policy=policy)
+        policy = json.loads(json.dumps(self.policy)); policy["reviews"][0]["canonicalPower"] = "POWER.ARTIFACT_POWER"
+        with self.assertRaisesRegex(wiki.AuditError, "canonical Power identity"):
+            self.apply_mutation(policy=policy)
+        policy = json.loads(json.dumps(self.policy)); row = next(item for item in policy["reviews"] if item["ownership"] is not None)
+        row["ownerModels"] = ["MONSTER.UNRELATED"]
+        with self.assertRaisesRegex(wiki.AuditError, "owner pointer/alias"):
+            self.apply_mutation(policy=policy)
+        policy = json.loads(json.dumps(self.policy)); row = next(item for item in policy["reviews"] if item["ownership"] is not None)
+        row["ownership"]["powerPointer"] = row["ownership"]["ownerPointer"]
+        with self.assertRaisesRegex(wiki.AuditError, "Power ownership pointer"):
+            self.apply_mutation(policy=policy)
+        compact = json.loads(json.dumps(self.compact)); row = next(item for item in self.policy["reviews"] if item["ownership"] is not None)
+        tokens = row["ownership"]["ownerPointer"].split("/")[1:]; value = compact
+        for token in tokens[:-1]: value = value[int(token)] if isinstance(value, list) else value[token]
+        value[int(tokens[-1])] = "MONSTER.UNRELATED" if isinstance(value, list) else None
+        if not isinstance(value, list): value[tokens[-1]] = "MONSTER.UNRELATED"
+        with self.assertRaisesRegex(wiki.AuditError, "owner pointer/alias"):
+            self.apply_mutation(compact=compact)
 
 
 if __name__ == "__main__":

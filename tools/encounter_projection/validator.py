@@ -18,7 +18,8 @@ from source_extractor.lifecycle import validate_lifecycle
 from source_extractor.placement import validate_placement
 from .contract import (
     AUTHORITY, EMBEDDED_SOURCE_INPUTS, GAME, GENERATOR_NAME, GENERATOR_VERSION,
-    INTENT_KINDS, METADATA_KEYS, PAYLOAD_KEYS, PROJECTION_INPUTS, REQUIRED_COVERAGE,
+    INTENT_FORMAT_KEYS, INTENT_KINDS, INTENT_LOCALIZATION_CONTRACT, INTENT_PAIR_STEMS,
+    LOCALIZATION_CATALOG_SHA256, METADATA_KEYS, PAYLOAD_KEYS, POWER_LOCALIZATION_CONTRACT, PROJECTION_INPUTS, REQUIRED_COVERAGE,
     ROOT_KEYS, SCHEMA_VERSION, SOURCE_AUTHORITY, SOURCE_EXTRACTOR_VERSION,
     SOURCE_FACT_KEYS, SOURCE_SCHEMA_VERSION, coverage_rows,
 )
@@ -75,6 +76,92 @@ def _source_coverage(source: dict[str, Any], family: str) -> dict[str, Any]:
     if family.startswith("operationDirectSinksByKind."):
         return source["coverage"]["operationDirectSinksByKind"][family.split(".", 1)[1]]
     return source["coverage"][family]
+
+
+def _validate_localization_template(value: Any, path: str, *, allow_empty: bool = False) -> None:
+    """Validate balanced Godot style spans/braces without rendering or specializing them."""
+    if not isinstance(value, str) or (not value and not allow_empty):
+        _fail(path, "must be an exact string template")
+    styles: list[str] = []
+    braces: list[int] = []
+    index = 0
+    while index < len(value):
+        char = value[index]
+        if char == "[":
+            end = value.find("]", index + 1)
+            if end < 0:
+                _fail(path, "unbalanced Godot style span")
+            token = value[index + 1:end]
+            if not token:
+                _fail(path, "empty Godot style token")
+            if token.startswith("/"):
+                name = token[1:]
+                if not styles or styles.pop() != name:
+                    _fail(path, "mismatched Godot style span")
+            else:
+                name = token.split("=", 1)[0]
+                if not name or any(c.isspace() for c in name):
+                    _fail(path, "malformed Godot style token")
+                styles.append(name)
+            index = end
+        elif char == "]":
+            _fail(path, "unmatched Godot style close")
+        elif char == "{":
+            braces.append(index)
+        elif char == "}":
+            if not braces:
+                _fail(path, "unmatched placeholder close")
+            braces.pop()
+        index += 1
+    if styles:
+        _fail(path, "unclosed Godot style span")
+    if braces:
+        _fail(path, "unclosed placeholder")
+
+
+def _validate_raw_localization_catalogs(source: dict[str, Any]) -> None:
+    powers = _list(source.get("powers"), "source.powers")
+    if len(powers) != POWER_LOCALIZATION_CONTRACT["total"]:
+        _fail("source.powers", "Power localization denominator mismatch")
+    ids: set[str] = set(); title_keys: set[str] = set(); smart_keys: set[str] = set(); missing: set[str] = set()
+    localized = 0
+    for index, row in enumerate(powers):
+        path = f"source.powers[{index}]"
+        obj = _object(row, path, {"canonicalId", "englishTitle", "provenance", "smartDescription"})
+        canonical_id = _string(obj["canonicalId"], path + ".canonicalId", prefix="POWER.")
+        if canonical_id in ids: _fail(path + ".canonicalId", "duplicate Power ID")
+        ids.add(canonical_id); _string(obj["englishTitle"], path + ".englishTitle")
+        provenance = _object(obj["provenance"], path + ".provenance", {"blobSha256", "pckPath", "pckSha256", "titleKey", "titleWitnessSha256"})
+        title_key = _string(provenance["titleKey"], path + ".provenance.titleKey")
+        if title_key in title_keys: _fail(path + ".provenance.titleKey", "duplicate title localization key")
+        title_keys.add(title_key)
+        smart = _object(obj["smartDescription"], path + ".smartDescription", {"classification", "key", "template"}, {"classification", "key"})
+        key = _string(smart["key"], path + ".smartDescription.key")
+        if key in smart_keys: _fail(path + ".smartDescription.key", "duplicate smart-description key")
+        smart_keys.add(key)
+        if smart["classification"] == "localized":
+            if "template" not in smart: _fail(path + ".smartDescription", "localized Power lacks a template")
+            _validate_localization_template(smart["template"], path + ".smartDescription.template")
+            localized += 1
+        elif smart["classification"] == "missingLocalization":
+            if "template" in smart: _fail(path + ".smartDescription", "missing localization must not contain fabricated text")
+            missing.add(canonical_id)
+        else: _fail(path + ".smartDescription.classification", "unsupported localization classification")
+    expected_missing = set(POWER_LOCALIZATION_CONTRACT["missingCanonicalIds"])
+    if localized != POWER_LOCALIZATION_CONTRACT["localized"] or len(missing) != POWER_LOCALIZATION_CONTRACT["missingLocalization"] or missing != expected_missing:
+        _fail("source.powers", "Power 69/62/7 localization contract mismatch")
+
+    catalog = _object(source.get("intentLocalization"), "source.intentLocalization", {"entries", "provenance"})
+    entries = catalog["entries"]
+    if not isinstance(entries, dict) or len(entries) != INTENT_LOCALIZATION_CONTRACT["entries"]:
+        _fail("source.intentLocalization.entries", "expected exactly 32 checked entries")
+    expected_keys = set(INTENT_FORMAT_KEYS)
+    expected_keys |= {stem + suffix for stem in INTENT_PAIR_STEMS for suffix in (".title", ".description")}
+    if set(entries) != expected_keys:
+        _fail("source.intentLocalization.entries", "intent pair/format key set mismatch")
+    for key, value in entries.items():
+        _validate_localization_template(value, "source.intentLocalization.entries." + key, allow_empty=(key == "FORMAT_EMPTY"))
+    _object(catalog["provenance"], "source.intentLocalization.provenance", {"entryFlags", "entryMd5", "entrySha256", "pckDirectoryOffset", "pckFileCount", "pckFormat", "pckGodotVersion", "pckPath", "pckSha256"})
 
 
 def _validate_name(value: Any, path: str) -> None:
@@ -425,6 +512,7 @@ def _validate_source_document(source: dict[str, Any]) -> None:
         _fail("source.authority", "malformed raw-only authority/fallback policy")
     if source.get("runtimeReady") is not False or source.get("status") != "incomplete":
         _fail("source", "source schema must remain incomplete and not runtime-ready")
+    _validate_raw_localization_catalogs(source)
     for family, (status, denominator, numerator, unresolved) in REQUIRED_COVERAGE.items():
         expected = {"denominator": denominator, "numerator": numerator, "status": status, "unresolved": unresolved}
         try:
@@ -916,7 +1004,7 @@ def _validate_projected_operation(value: Any, path: str) -> None:
 
 
 def _validate_intent(value: Any, path: str) -> None:
-    obj = _object(value, path, {"arguments", "constructorSymbolSignature", "intentClass", "kind"})
+    obj = _object(value, path, {"arguments", "constructorSymbolSignature", "intentClass", "kind", "localizationRef"})
     if obj["kind"] not in INTENT_KINDS:
         _fail(path + ".kind", f"unsupported intent kind {obj['kind']!r}")
     _string(obj["constructorSymbolSignature"], path + ".constructorSymbolSignature")
@@ -938,6 +1026,37 @@ def _validate_intent(value: Any, path: str) -> None:
             _string(method["symbolSignature"], apath + ".targetMethod.symbolSignature")
         else:
             validate_expression(argument, path=apath)
+
+    kind = obj["kind"]
+    stem = {
+        "attack": "ATTACK", "block": "DEFEND", "buff": "BUFF", "cardDebuff": "CARD_DEBUFF",
+        "deathBlow": "DEATH_BLOW", "escape": "ESCAPE", "heal": "HEAL", "hidden": "UNKNOWN",
+        "sleep": "SLEEP", "status": "STATUS", "stun": "STUN", "summon": "SUMMON",
+    }.get(kind)
+    selector: dict[str, Any] = {"kind": "intentKind", "value": kind}
+    if kind == "debuff":
+        arguments = obj["arguments"]
+        if len(arguments) != 1 or arguments[0].get("kind") != "constant" or arguments[0].get("valueType") != "boolean" or type(arguments[0].get("value")) is not bool:
+            expected = {"kind": kind, "status": "knownUnsupported", "reason": "unresolvedDebuffStrengthArgument"}
+            if obj["localizationRef"] != expected: _fail(path + ".localizationRef", "unsupported debuff mapping is not explicit")
+            return
+        strong = arguments[0]["value"]
+        stem = "DEBUFF_STRONG" if strong else "DEBUFF"
+        selector = {"argumentIndex": 0, "kind": "booleanArgument", "value": strong}
+    if stem is None:
+        expected = {"kind": kind, "status": "knownUnsupported", "reason": "noCheckedLocalizationPair"}
+    else:
+        if obj["intentClass"] == "MultiAttackIntent": format_key = "FORMAT_DAMAGE_MULTI"
+        elif kind in {"attack", "deathBlow"}: format_key = "FORMAT_DAMAGE_SINGLE"
+        elif kind == "status": format_key = "FORMAT_STATUS_CARD_COUNT"
+        else: format_key = "FORMAT_EMPTY"
+        expected = {
+            "descriptionKey": stem + ".description", "formatKey": format_key, "kind": kind,
+            "pairId": "INTENT_PAIR." + stem, "selector": selector, "status": "supported",
+            "titleKey": stem + ".title",
+        }
+    if obj["localizationRef"] != expected:
+        _fail(path + ".localizationRef", "typed intent localization mapping mismatch")
 
 
 def _validate_title(value: Any, path: str) -> None:
@@ -1315,20 +1434,79 @@ def _validate_source_facts(source_facts: Any, source: dict[str, Any]) -> dict[st
     models = _object(sf["models"], "payload.sourceFacts.models", {"cards", "powers"})
     referenced_model_ids: set[str] = set(model_ids)
     referenced_fact_ids: set[str] = set()
+    projected_title_keys: set[str] = set(); projected_smart_keys: set[str] = set(); projected_missing: set[str] = set()
+    projected_localized = 0
     for family, prefix in (("cards", "CARD."), ("powers", "POWER.")):
-        expected_count = 9 if family == "cards" else 69
+        expected_count = 9 if family == "cards" else POWER_LOCALIZATION_CONTRACT["total"]
         rows = _list(models[family], f"payload.sourceFacts.models.{family}")
         if len(rows) != expected_count:
             _fail(f"payload.sourceFacts.models.{family}", f"expected {expected_count} records")
         for index, row in enumerate(rows):
             path = f"payload.sourceFacts.models.{family}[{index}]"
-            obj = _object(row, path, {"canonicalId", "englishTitle", "factId"})
+            allowed = {"canonicalId", "englishTitle", "factId"}
+            if family == "powers": allowed |= {"smartDescription", "titleLocalization"}
+            obj = _object(row, path, allowed)
             model = _string(obj["canonicalId"], path + ".canonicalId", prefix=prefix)
             if model in referenced_model_ids:
                 _fail(path + ".canonicalId", "duplicate referenced model")
             referenced_model_ids.add(model)
             referenced_fact_ids.add(_string(obj["factId"], path + ".factId", prefix="SOURCE." + prefix))
             _string(obj["englishTitle"], path + ".englishTitle")
+            raw = source[family][index]
+            if model != raw["canonicalId"] or obj["englishTitle"] != raw["englishTitle"]:
+                _fail(path, "projected model identity/title differs from precise raw coordinate")
+            if family == "powers":
+                provenance = _object(obj["titleLocalization"], path + ".titleLocalization", {"blobSha256", "pckPath", "pckSha256", "titleKey", "titleWitnessSha256"})
+                if provenance != raw["provenance"]: _fail(path + ".titleLocalization", "title localization provenance differs from raw source")
+                title_key = provenance["titleKey"]
+                if title_key in projected_title_keys: _fail(path + ".titleLocalization.titleKey", "duplicate Power title key")
+                projected_title_keys.add(title_key)
+                smart = _object(obj["smartDescription"], path + ".smartDescription", {"classification", "key", "template"})
+                expected_smart = {"classification": raw["smartDescription"]["classification"], "key": raw["smartDescription"]["key"], "template": raw["smartDescription"].get("template")}
+                if smart != expected_smart: _fail(path + ".smartDescription", "smart description differs from raw source")
+                key = _string(smart["key"], path + ".smartDescription.key")
+                if key in projected_smart_keys: _fail(path + ".smartDescription.key", "duplicate Power smart-description key")
+                projected_smart_keys.add(key)
+                if smart["classification"] == "localized":
+                    _validate_localization_template(smart["template"], path + ".smartDescription.template")
+                    projected_localized += 1
+                elif smart["classification"] == "missingLocalization" and smart["template"] is None:
+                    projected_missing.add(model)
+                else: _fail(path + ".smartDescription", "localized/missing template contract mismatch")
+    if projected_localized != POWER_LOCALIZATION_CONTRACT["localized"] or projected_missing != set(POWER_LOCALIZATION_CONTRACT["missingCanonicalIds"]):
+        _fail("payload.sourceFacts.models.powers", "projected Power 69/62/7 contract mismatch")
+
+    intent_catalog = _object(sf["intentLocalization"], "payload.sourceFacts.intentLocalization", {"entries", "factId", "formatKeys", "pairs", "provenance"})
+    catalog_fact_id = _string(intent_catalog["factId"], "payload.sourceFacts.intentLocalization.factId", prefix="SOURCE.INTENT_LOCALIZATION.CATALOG")
+    if intent_catalog["provenance"] != source["intentLocalization"]["provenance"]:
+        _fail("payload.sourceFacts.intentLocalization.provenance", "intent provenance differs from raw source")
+    if intent_catalog["formatKeys"] != INTENT_FORMAT_KEYS:
+        _fail("payload.sourceFacts.intentLocalization.formatKeys", "four format keys differ or changed order")
+    expected_pairs = [{"descriptionKey": stem + ".description", "pairId": "INTENT_PAIR." + stem, "titleKey": stem + ".title"} for stem in INTENT_PAIR_STEMS]
+    if intent_catalog["pairs"] != expected_pairs:
+        _fail("payload.sourceFacts.intentLocalization.pairs", "14 exact title/description pairs mismatch")
+    intent_entries = _list(intent_catalog["entries"], "payload.sourceFacts.intentLocalization.entries")
+    if len(intent_entries) != INTENT_LOCALIZATION_CONTRACT["entries"]:
+        _fail("payload.sourceFacts.intentLocalization.entries", "expected exactly 32 entries")
+    intent_entry_keys: set[str] = set(); localization_fact_ids = {catalog_fact_id}
+    source_entry_items = list(source["intentLocalization"]["entries"].items())
+    for index, entry in enumerate(intent_entries):
+        path = f"payload.sourceFacts.intentLocalization.entries[{index}]"
+        obj = _object(entry, path, {"catalogFactRef", "entryKind", "factId", "key", "provenanceFactRef", "value"})
+        key = _string(obj["key"], path + ".key")
+        if key in intent_entry_keys: _fail(path + ".key", "duplicate intent localization key")
+        intent_entry_keys.add(key)
+        if index >= len(source_entry_items) or (key, obj["value"]) != source_entry_items[index]:
+            _fail(path, "intent key/value differs from exact raw coordinate")
+        expected_kind = "format" if key.startswith("FORMAT_") else "description" if key.endswith(".description") else "title"
+        if obj["entryKind"] != expected_kind: _fail(path + ".entryKind", "intent entry kind mismatch")
+        if obj["catalogFactRef"] != catalog_fact_id or obj["provenanceFactRef"] != catalog_fact_id:
+            _fail(path, "intent entry catalog/provenance reference mismatch")
+        localization_fact_ids.add(_string(obj["factId"], path + ".factId", prefix="SOURCE.INTENT_LOCALIZATION."))
+        _validate_localization_template(obj["value"], path + ".value", allow_empty=(key == "FORMAT_EMPTY"))
+    expected_entry_keys = set(INTENT_FORMAT_KEYS) | {stem + suffix for stem in INTENT_PAIR_STEMS for suffix in (".title", ".description")}
+    if intent_entry_keys != expected_entry_keys or len(localization_fact_ids) != 33:
+        _fail("payload.sourceFacts.intentLocalization", "32-entry/14-pair/4-format closure mismatch")
 
     owners = _list(sf["behaviorOwners"], "payload.sourceFacts.behaviorOwners")
     if len(owners) != 105:
@@ -1873,7 +2051,7 @@ def _validate_source_facts(source_facts: Any, source: dict[str, Any]) -> dict[st
     lifecycle_fact_ids=_validate_compact_lifecycle(sf["lifecycle"],source)
 
     all_source_facts = (
-        encounter_fact_ids | monster_fact_ids | state_fact_ids | referenced_fact_ids |
+        encounter_fact_ids | monster_fact_ids | state_fact_ids | referenced_fact_ids | localization_fact_ids |
         owner_fact_ids | move_fact_ids | graph_fact_ids | scaling_fact_ids | placement_fact_ids |
         identity_fact_ids | initial_fact_ids | initial_owner_fact_ids | runtime_fact_ids |
         initial_comparison_fact_ids | event_dependency_fact_ids | event_turn_fact_ids | event_script_fact_ids | lifecycle_fact_ids |
@@ -2360,6 +2538,12 @@ def validate_artifact(artifact: Any, *, source: dict[str, Any], legacy: dict[str
     metadata = _object(root["metadata"], "$.metadata", METADATA_KEYS)
     if metadata["generator"] != {"name": GENERATOR_NAME, "version": GENERATOR_VERSION}:
         _fail("$.metadata.generator", "wrong deterministic generator identity")
+    expected_localization_contract = {"catalogSha256": LOCALIZATION_CATALOG_SHA256, "intent": INTENT_LOCALIZATION_CONTRACT, "power": POWER_LOCALIZATION_CONTRACT}
+    if metadata["localizationProjectionContract"] != expected_localization_contract:
+        _fail("$.metadata.localizationProjectionContract", "Power/intent localization denominators mismatch")
+    projected_catalog = {"intentLocalization": root["payload"]["sourceFacts"]["intentLocalization"], "powers": root["payload"]["sourceFacts"]["models"]["powers"]}
+    if witness_sha256(projected_catalog) != LOCALIZATION_CATALOG_SHA256:
+        _fail("$.metadata.localizationProjectionContract.catalogSha256", "localization catalog digest mismatch")
     if metadata["sourceSchemaVersion"] != SOURCE_SCHEMA_VERSION or metadata["sourceExtractorVersion"] != SOURCE_EXTRACTOR_VERSION:
         _fail("$.metadata", "wrong source schema/extractor identity")
     if metadata["game"] != GAME:

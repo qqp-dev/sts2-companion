@@ -842,3 +842,24 @@ adapter receives the state reader's already-normalized representation. Invalid
 row shape/kind/policy, an unsupported wire prefix, normalization failure,
 duplicate checked identity, or normalized-key collision makes the shadow
 adapter unavailable while stable routes continue serving legacy data.
+
+## P1c Power and intent localization projection
+
+P1c advances the compact projection to schema 12 and generator 12.0.0 without a
+raw-source re-extraction. It projects 69 exact per-Power facts (62 localized,
+seven `missingLocalization`) and a 32-entry intent catalog (14 title/description
+pairs, four formats), with stable catalog/entry facts, exact raw pointers, fixed
+denominators, and a pinned catalog digest. The adapter maps registered intent
+semantics to exact keys and computes encounter Power relevance from canonical
+refs plus lifecycle closure. Templates remain unresolved safe text in collapsed
+Technical audit; no live Power or intent claim and no broad primary rewrite was
+introduced.
+
+The reviewed P1c ledger final-maps all 74 pending Power/passive origins: 69
+`audit-present` and five honest `missing/unparsed`. P1b0's three archive Power
+mappings remain intact. Overall totals move from 1,320/2,253 to 1,394
+final-mapped and 2,179 captured-unreconciled. Readiness remains false pending P2
+objective Notes and later P1b2 move/Pattern work. The generated primary semantic
+surface changes only in its compact-input byte/SHA manifest row; its 89 primary
+semantic records and all phone fixtures remain byte-stable. Build order remains
+retained book → compact projection → primary semantic surface → reconciliation.

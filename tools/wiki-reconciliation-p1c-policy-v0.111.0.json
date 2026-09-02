@@ -1,0 +1,1736 @@
+{
+  "schemaVersion": 1,
+  "targetVersion": "v0.111.0",
+  "targetBranch": "public-beta",
+  "review": {
+    "id": "p1c-power-passive-reviewed-joins-v1",
+    "owner": "StS2 Companion P1c completeness review",
+    "scope": "Exact 74 currently captured Power/passive origins only; no move, Pattern, Note, or tactics classification.",
+    "method": "Origin/claim guards plus reviewed page-section actor aliases, canonical Power IDs, and typed compact actor/Power pointers; no runtime title or substring join."
+  },
+  "expectedTargetCount": 74,
+  "expectedFamilyCounts": {
+    "article-power-inline-field": 6,
+    "article-power-invocation": 68
+  },
+  "expectedDispositionCounts": {
+    "audit-present": 69,
+    "missing/unparsed": 5
+  },
+  "reviews": [
+    {
+      "originId": "wiki-origin-v1-010b770b5e9a8a6e7d75487b460a76d4c7504cef084c1737848d65f4a49bfb7d",
+      "claimId": "wiki-claim-v1-f2be6b919c788e80252635fbe1c31833e6ec9e2d9924538849956a4de33bade9",
+      "pageKey": "Aeonglass",
+      "sectionOwner": "Aeonglass",
+      "family": "article-power-invocation",
+      "identity": "Withering Presence",
+      "canonicalPower": "POWER.WITHERING_PRESENCE_POWER",
+      "powerIndex": 68,
+      "ownerModels": [
+        "MONSTER.AEONGLASS"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.AEONGLASS.AFTERADDEDTOROOM.001.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/1",
+        "ownerModel": "MONSTER.AEONGLASS",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/1/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/1/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-071dba8e431178fb579490938b1f6f7f42ee3291602e0f5909a4ebf6fa3cadb5",
+      "claimId": "wiki-claim-v1-f075c563f8715a106314633ba23a0f21fe53bd56d73450b4022821f9e744c786",
+      "pageKey": "Slithering Strangler",
+      "sectionOwner": "Slithering Strangler",
+      "family": "article-power-invocation",
+      "identity": "Constrict",
+      "canonicalPower": "POWER.CONSTRICT_POWER",
+      "powerIndex": 9,
+      "ownerModels": [
+        "MONSTER.SLITHERING_STRANGLER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.SLITHERING_STRANGLER.CONSTRICT",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/215",
+        "ownerModel": "MONSTER.SLITHERING_STRANGLER",
+        "ownerPointer": "/payload/sourceFacts/moves/215/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/215/operations/0/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-0a1f5059bf2d6479362936aa4fb8d3945ac05f17a112dfbafa44ff86300f5020",
+      "claimId": "wiki-claim-v1-d741a8a9b4fea5814ce0fe1909cfd8be4e8ce8b781da3cf2ab3a42812dbabd96",
+      "pageKey": "Ovicopter",
+      "sectionOwner": "Hatchling",
+      "family": "article-power-invocation",
+      "identity": "Minion",
+      "canonicalPower": "POWER.MINION_POWER",
+      "powerIndex": 28,
+      "ownerModels": [
+        "MONSTER.TOUGH_EGG"
+      ],
+      "ownership": {
+        "factId": "SOURCE.LIFECYCLE.CORE.E2D2A",
+        "kind": "lifecycle-operation",
+        "recordPointer": "/payload/sourceFacts/lifecycle/mechanics/phaseSystems/1/transitions/1/orderedEffects/5",
+        "ownerModel": "MONSTER.TOUGH_EGG",
+        "ownerPointer": "/payload/sourceFacts/lifecycle/mechanics/phaseSystems/1/transitions/1/orderedEffects/5/owner",
+        "powerPointer": "/payload/sourceFacts/lifecycle/mechanics/phaseSystems/1/transitions/1/orderedEffects/5/retainedPower"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-0f837bcaa8fb1fe26337bb8b2cce97bb41a1535ab0f19ad7c82a0bcf22a64911",
+      "claimId": "wiki-claim-v1-695c424f09f0241b5c5fbe40d293730274096adbd6867de90c93499349393f56",
+      "pageKey": "Mecha Knight",
+      "sectionOwner": "Mecha Knight",
+      "family": "article-power-invocation",
+      "identity": "Artifact",
+      "canonicalPower": "POWER.ARTIFACT_POWER",
+      "powerIndex": 1,
+      "ownerModels": [
+        "MONSTER.MECHA_KNIGHT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.MECHA_KNIGHT.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/52",
+        "ownerModel": "MONSTER.MECHA_KNIGHT",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/52/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/52/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-11203419a16fcae30049c892ea862d365c50366861524d9fd2e71b61119e127c",
+      "claimId": "wiki-claim-v1-ad718832989f199b1931f3f23a8b007c12a2906cddb9224668b7133a967dc159",
+      "pageKey": "Lagavulin Matriarch",
+      "sectionOwner": "Lagavulin Matriarch",
+      "family": "article-power-invocation",
+      "identity": "Asleep",
+      "canonicalPower": "POWER.ASLEEP_POWER",
+      "powerIndex": 2,
+      "ownerModels": [
+        "MONSTER.LAGAVULIN_MATRIARCH"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.LAGAVULIN_MATRIARCH.AFTERADDEDTOROOM.502.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/48",
+        "ownerModel": "MONSTER.LAGAVULIN_MATRIARCH",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/48/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/48/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-115d62c534aad742c5b83835454285d117c3b82b9c8def527e081d008ed93ea8",
+      "claimId": "wiki-claim-v1-d588b73a065aa63839fe902c2d45db3ae104d0cf1613b7ea423d929f078f14e7",
+      "pageKey": "Kaiser Crab",
+      "sectionOwner": "Rocket",
+      "family": "article-power-invocation",
+      "identity": "Crab Rage",
+      "canonicalPower": "POWER.CRAB_RAGE_POWER",
+      "powerIndex": 10,
+      "ownerModels": [
+        "MONSTER.ROCKET"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.ROCKET.AFTERADDEDTOROOM.002.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/69",
+        "ownerModel": "MONSTER.ROCKET",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/69/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/69/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-13a9433116ab7abdb64fc333a36925c65eaaddd6de4120e6817e2f9c7e7adcff",
+      "claimId": "wiki-claim-v1-8aceaa378e6ce45d544c2d5507ffc6e61b9240260155ddfc85b4d6e5e20e7055",
+      "pageKey": "Devoted Sculptor",
+      "sectionOwner": "Devoted Sculptor",
+      "family": "article-power-invocation",
+      "identity": "Ritual",
+      "canonicalPower": "POWER.RITUAL_POWER",
+      "powerIndex": 42,
+      "ownerModels": [
+        "MONSTER.DEVOTED_SCULPTOR"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.DEVOTED_SCULPTOR.FORBIDDEN_INCANTATION_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/61",
+        "ownerModel": "MONSTER.DEVOTED_SCULPTOR",
+        "ownerPointer": "/payload/sourceFacts/moves/61/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/61/operations/0/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-160f6009ff880e9c5fe2c2842d3eb79fcd04ea6ec2970074b69ce531c5a788b4",
+      "claimId": "wiki-claim-v1-60aedb5bf0e679b9756ba716405e7ce1cebaa07f58354d0b98072093ebec2eef",
+      "pageKey": "Entomancer",
+      "sectionOwner": "Entomancer",
+      "family": "article-power-invocation",
+      "identity": "Personal Hive",
+      "canonicalPower": "POWER.PERSONAL_HIVE_POWER",
+      "powerIndex": 32,
+      "ownerModels": [
+        "MONSTER.ENTOMANCER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.ENTOMANCER.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/30",
+        "ownerModel": "MONSTER.ENTOMANCER",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/30/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/30/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-17cc0e6aa5bc63c9efbed98cb6513ce765a338bf1953924bdbc3bd5486638110",
+      "claimId": "wiki-claim-v1-b8aa8a0b96ddd240877ad851ae2c8321bd10ef963c18c6eed3a81c368056d8b0",
+      "pageKey": "Haunted Ship",
+      "sectionOwner": "Haunted Ship",
+      "family": "article-power-invocation",
+      "identity": "Weak",
+      "canonicalPower": "POWER.WEAK_POWER",
+      "powerIndex": 67,
+      "ownerModels": [
+        "MONSTER.HAUNTED_SHIP"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.HAUNTED_SHIP.HAUNT_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/109",
+        "ownerModel": "MONSTER.HAUNTED_SHIP",
+        "ownerPointer": "/payload/sourceFacts/moves/109/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/109/operations/0/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-193c11e9cc9c2c458e94126113b871fcecd21109a131d58fd680982a4b0fc81e",
+      "claimId": "wiki-claim-v1-64adbbff9749ee62ad1681177dce8234718622d71fb2950c3092a5db5e4db90b",
+      "pageKey": "Fabricator",
+      "sectionOwner": "Zapbot",
+      "family": "article-power-invocation",
+      "identity": "High Voltage",
+      "canonicalPower": "POWER.HIGH_VOLTAGE_POWER",
+      "powerIndex": 23,
+      "ownerModels": [
+        "MONSTER.ZAPBOT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.ZAPBOT.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/106",
+        "ownerModel": "MONSTER.ZAPBOT",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/106/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/106/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-1aefa31b537a6f0d37ee1dadb23c13f6f53a9191b8d351c3bb509e128b9df99f",
+      "claimId": "wiki-claim-v1-9ab28262b419ca1f2c2f8d53d7d466a5b56b7a453ad70936cd2036ea50e864ee",
+      "pageKey": "Chomper",
+      "sectionOwner": "Chomper",
+      "family": "article-power-invocation",
+      "identity": "Artifact",
+      "canonicalPower": "POWER.ARTIFACT_POWER",
+      "powerIndex": 1,
+      "ownerModels": [
+        "MONSTER.CHOMPER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.CHOMPER.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/10",
+        "ownerModel": "MONSTER.CHOMPER",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/10/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/10/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-1ebb7ba2917d35be024e23c20aefc55afec89946255f15b9a518fc7505d87f6a",
+      "claimId": "wiki-claim-v1-18bc1041d63c90b4a46084ef1b354fc55dcf18fb68778eb2fb1b13d03cb28095",
+      "pageKey": "Owl Magistrate",
+      "sectionOwner": "Owl Magistrate",
+      "family": "article-power-invocation",
+      "identity": "Soar",
+      "canonicalPower": "POWER.SOAR_POWER",
+      "powerIndex": 51,
+      "ownerModels": [
+        "MONSTER.OWL_MAGISTRATE"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.OWL_MAGISTRATE.JUDICIAL_FLIGHT",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/173",
+        "ownerModel": "MONSTER.OWL_MAGISTRATE",
+        "ownerPointer": "/payload/sourceFacts/moves/173/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/173/operations/1/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-25a322eb45d6ddff3d9588d5ec61136cbe559b8b1cb7a680e967f258797ed928",
+      "claimId": "wiki-claim-v1-8b26d8d1ba256fc0b925b3c7a77b7c0ee3accddd99f1a99d77e6ac8319a2d25a",
+      "pageKey": "Globe Head",
+      "sectionOwner": "Globe Head",
+      "family": "article-power-invocation",
+      "identity": "Galvanic",
+      "canonicalPower": "POWER.GALVANIC_POWER",
+      "powerIndex": 18,
+      "ownerModels": [
+        "MONSTER.GLOBE_HEAD"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.GLOBE_HEAD.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/37",
+        "ownerModel": "MONSTER.GLOBE_HEAD",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/37/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/37/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-277721990b653e43c9aa8e47fe458a78ad4f6b79ec26b1542ee91d8555f0ec0f",
+      "claimId": "wiki-claim-v1-de4dc67a26804050702e0f43ddaadcfffe2460d387597d66e608df9b29495778",
+      "pageKey": "Thieving Hopper",
+      "sectionOwner": "Thieving Hopper",
+      "family": "article-power-invocation",
+      "identity": "Swipe",
+      "canonicalPower": "POWER.SWIPE_POWER",
+      "powerIndex": 58,
+      "ownerModels": [
+        "MONSTER.THIEVING_HOPPER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.THIEVING_HOPPER.THIEVERY_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/265",
+        "ownerModel": "MONSTER.THIEVING_HOPPER",
+        "ownerPointer": "/payload/sourceFacts/moves/265/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/265/operations/1/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "missingLocalization"
+    },
+    {
+      "originId": "wiki-origin-v1-2e0161832d18a52775e19a625ff375d4883cd648af2166571db1e935d0cf9a5a",
+      "claimId": "wiki-claim-v1-c0adbffd12be97ede682d2f64c4d2c8eb06995dff9c3be03c4992a0e3dfcf94f",
+      "pageKey": "Tunneler",
+      "sectionOwner": "Tunneler",
+      "family": "article-power-invocation",
+      "identity": "Burrowed",
+      "canonicalPower": "POWER.BURROWED_POWER",
+      "powerIndex": 7,
+      "ownerModels": [
+        "MONSTER.TUNNELER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.TUNNELER.BURROW_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/283",
+        "ownerModel": "MONSTER.TUNNELER",
+        "ownerPointer": "/payload/sourceFacts/moves/283/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/283/operations/1/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-30f8638ec22b258a663e1ab2679fb346ad66af9c11c2760e7cb048fb06963801",
+      "claimId": "wiki-claim-v1-20db693880086823d598f46702d170e0dc0c02117f4b85ca1634b45eef1c9c28",
+      "pageKey": "Aeonglass",
+      "sectionOwner": "Aeonglass",
+      "family": "article-power-inline-field",
+      "identity": "Withering Presence",
+      "field": "Description",
+      "retainedValue": "Every 6 cards you play, add a Wither to your Hand.",
+      "canonicalPower": "POWER.WITHERING_PRESENCE_POWER",
+      "powerIndex": 68,
+      "ownerModels": [
+        "MONSTER.AEONGLASS"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.AEONGLASS.AFTERADDEDTOROOM.001.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/1",
+        "ownerModel": "MONSTER.AEONGLASS",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/1/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/1/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-3ded5f3ee3677dc8dde4a8c9042989dbdb0f46ef9d72c8d892ff31cef166992e",
+      "claimId": "wiki-claim-v1-f489363f69652e4201a130867b339d40c7b996e6f1f4122c047819271b71353f",
+      "pageKey": "Bowlbugs",
+      "sectionOwner": "Bowlbug (Rock)",
+      "family": "article-power-invocation",
+      "identity": "Imbalanced",
+      "canonicalPower": "POWER.IMBALANCED_POWER",
+      "powerIndex": 25,
+      "ownerModels": [
+        "MONSTER.BOWLBUG_ROCK"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.BOWLBUG_ROCK.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/7",
+        "ownerModel": "MONSTER.BOWLBUG_ROCK",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/7/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/7/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-3dff2dfb33c54aed4ee112db30247ad6b7192efeb50abfb207bfa4ae2f70f6d1",
+      "claimId": "wiki-claim-v1-8bcf4ca726a23064b4849259964ccb98411afcdb0b7cffbdab6c9b6bd13f0926",
+      "pageKey": "Phantasmal Gardener",
+      "sectionOwner": "Phantasmal Gardener",
+      "family": "article-power-invocation",
+      "identity": "Skittish",
+      "canonicalPower": "POWER.SKITTISH_POWER",
+      "powerIndex": 46,
+      "ownerModels": [
+        "MONSTER.PHANTASMAL_GARDENER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.PHANTASMAL_GARDENER.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/58",
+        "ownerModel": "MONSTER.PHANTASMAL_GARDENER",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/58/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/58/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-3f24b8d2104c85afeaa3c449250d746b3529a6ab66398d8a4ed3f63eb07e058d",
+      "claimId": "wiki-claim-v1-a80735d4f1db014cb48c4156e3d6e051bfeb874dfed7f91d73e29ef8354d4999",
+      "pageKey": "Living Fog",
+      "sectionOwner": "Gas Bomb",
+      "family": "article-power-invocation",
+      "identity": "Minion",
+      "canonicalPower": "POWER.MINION_POWER",
+      "powerIndex": 28,
+      "ownerModels": [
+        "MONSTER.GAS_BOMB"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.GAS_BOMB.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/36",
+        "ownerModel": "MONSTER.GAS_BOMB",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/36/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/36/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-40d9e09e4903439eb13182964e216110766a53d984fcd61eb878811d3a520fbe",
+      "claimId": "wiki-claim-v1-77eebbaf398b025ec8e669e19728fb902d32e4bab99a60863501e7c4707d0fc4",
+      "pageKey": "Vantom",
+      "sectionOwner": "Vantom",
+      "family": "article-power-invocation",
+      "identity": "Slippery",
+      "canonicalPower": "POWER.SLIPPERY_POWER",
+      "powerIndex": 47,
+      "ownerModels": [
+        "MONSTER.VANTOM"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.VANTOM.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/103",
+        "ownerModel": "MONSTER.VANTOM",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/103/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/103/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-424c637f514341337b52c184316e5f7c2febb5b0fcb1647247d7291eb57fd2a9",
+      "claimId": "wiki-claim-v1-d80913d2593c95e3357631587c90ca716c3fdf2568251c09ad992e4ff65facd7",
+      "pageKey": "The Lost and Forgotten",
+      "sectionOwner": "The Forgotten",
+      "family": "article-power-invocation",
+      "identity": "Possess Speed",
+      "canonicalPower": "POWER.POSSESS_SPEED_POWER",
+      "powerIndex": 35,
+      "ownerModels": [
+        "MONSTER.THE_FORGOTTEN"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.THE_FORGOTTEN.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/89",
+        "ownerModel": "MONSTER.THE_FORGOTTEN",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/89/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/89/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-44c89c1273be364da9d4e658d567252caee6622f34dc72621d113aa0d3adcefd",
+      "claimId": "wiki-claim-v1-23060e5a6104767aa7fedf33a4afed392f75703f976932b7096b60b4eeacd03d",
+      "pageKey": "Cubex Construct",
+      "sectionOwner": "Cubex Construct",
+      "family": "article-power-invocation",
+      "identity": "Artifact",
+      "canonicalPower": "POWER.ARTIFACT_POWER",
+      "powerIndex": 1,
+      "ownerModels": [
+        "MONSTER.CUBEX_CONSTRUCT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.CUBEX_CONSTRUCT.AFTERADDEDTOROOM.001.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/17",
+        "ownerModel": "MONSTER.CUBEX_CONSTRUCT",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/17/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/17/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-47576f4253a4ea3a067e53c009d1b26c6de43451ad5814d8295a375c62d04e81",
+      "claimId": "wiki-claim-v1-bcbe8389ccd6691f1896b4ea5365cba38acee8b054de1cc2a07b931b64a5483f",
+      "pageKey": "Exoskeleton",
+      "sectionOwner": "Exoskeleton",
+      "family": "article-power-invocation",
+      "identity": "Hard to Kill",
+      "canonicalPower": "POWER.HARD_TO_KILL_POWER",
+      "powerIndex": 20,
+      "ownerModels": [
+        "MONSTER.EXOSKELETON"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.EXOSKELETON.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/31",
+        "ownerModel": "MONSTER.EXOSKELETON",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/31/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/31/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-48076a6736d48368adaa979de4edb04e1b7cb720e86c0f9d1023ef2b43da389f",
+      "claimId": "wiki-claim-v1-fa3324630836197f4cddf5f2007c0cddec9f16242792a96ea09e3c7ad9a9a7ec",
+      "pageKey": "Axebot",
+      "sectionOwner": "Axebot",
+      "family": "article-power-invocation",
+      "identity": "Stock",
+      "canonicalPower": "POWER.STOCK_POWER",
+      "powerIndex": 53,
+      "ownerModels": [
+        "MONSTER.AXEBOT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.AXEBOT.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/3",
+        "ownerModel": "MONSTER.AXEBOT",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/3/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/3/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "missingLocalization"
+    },
+    {
+      "originId": "wiki-origin-v1-4b4ae61a8af02363856203d368a819ca18793d54df1d0b19426ca14a25f709ba",
+      "claimId": "wiki-claim-v1-29a9f99b3902bf5dcb1e75552bde87bc6a279dcea403f435722807d28dac7473",
+      "pageKey": "Frog Knight",
+      "sectionOwner": "Frog Knight",
+      "family": "article-power-invocation",
+      "identity": "Plating",
+      "canonicalPower": "POWER.PLATING_POWER",
+      "powerIndex": 33,
+      "ownerModels": [
+        "MONSTER.FROG_KNIGHT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.FROG_KNIGHT.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/34",
+        "ownerModel": "MONSTER.FROG_KNIGHT",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/34/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/34/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-4daad1de9cc394a6438c3e983569ae179d7bc8168ea2d8a5ab8b220f28ec23c8",
+      "claimId": "wiki-claim-v1-7439f7a0464d89acc866f8be637eee3bd7a74c1c33a90a3818e274d5b9108644",
+      "pageKey": "Kaiser Crab",
+      "sectionOwner": "Crusher",
+      "family": "article-power-invocation",
+      "identity": "Back Attack",
+      "canonicalPower": "POWER.BACK_ATTACK_LEFT_POWER",
+      "powerIndex": 3,
+      "ownerModels": [
+        "MONSTER.CRUSHER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.CRUSHER.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/14",
+        "ownerModel": "MONSTER.CRUSHER",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/14/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/14/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "missingLocalization"
+    },
+    {
+      "originId": "wiki-origin-v1-4f4ea1f3babf6c1cb9a2d85d0df404c3426dd79d379a535ffd8028b8920fe50e",
+      "claimId": "wiki-claim-v1-568bf5319bc578088d444654cabf9234f1426a9df3ca62ebdf5b29bf99f98622",
+      "pageKey": "Ovicopter",
+      "sectionOwner": "Tough Egg",
+      "family": "article-power-invocation",
+      "identity": "Hatch",
+      "canonicalPower": "POWER.HATCH_POWER",
+      "powerIndex": 21,
+      "ownerModels": [
+        "MONSTER.TOUGH_EGG"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.TOUGH_EGG.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/95",
+        "ownerModel": "MONSTER.TOUGH_EGG",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/95/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/95/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-4fd5a3f145c8cd4cc36bc3f536ab245fc20ef5468e84a4f1e38ac29302946090",
+      "claimId": "wiki-claim-v1-38a3af61938cd706c44215308bbb75543b2e0586b9ad25dac88e9c8a330e16a5",
+      "pageKey": "Test Subject",
+      "sectionOwner": "Test Subject",
+      "family": "article-power-invocation",
+      "identity": "Adaptable",
+      "canonicalPower": "POWER.ADAPTABLE_POWER",
+      "powerIndex": 0,
+      "ownerModels": [
+        "MONSTER.TEST_SUBJECT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.TEST_SUBJECT.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/85",
+        "ownerModel": "MONSTER.TEST_SUBJECT",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/85/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/85/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-50a80b2c2020b64741fea8be4b171010f3b64daf917d0068c89427197a086afc",
+      "claimId": "wiki-claim-v1-2772d4879ace126f80a286c172cc24c68db3653ef56e79240fd79f5222cdd103",
+      "pageKey": "Louse Progenitor",
+      "sectionOwner": "Louse Progenitor",
+      "family": "article-power-invocation",
+      "identity": "Curl Up",
+      "canonicalPower": "POWER.CURL_UP_POWER",
+      "powerIndex": 11,
+      "ownerModels": [
+        "MONSTER.LOUSE_PROGENITOR"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.LOUSE_PROGENITOR.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/51",
+        "ownerModel": "MONSTER.LOUSE_PROGENITOR",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/51/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/51/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-5ae708a2a14bdbeda2e9b30c0a3cbab7c470a295f017fef5cc44d1e4cc98f0c9",
+      "claimId": "wiki-claim-v1-9463d7146cb3e06908aba871932bb7c66b1f88816ad2c0b872e2d8095a97dc49",
+      "pageKey": "The Insatiable",
+      "sectionOwner": "The Insatiable",
+      "family": "article-power-invocation",
+      "identity": "Sandpit",
+      "canonicalPower": "POWER.SANDPIT_POWER",
+      "powerIndex": 43,
+      "ownerModels": [
+        "MONSTER.THE_INSATIABLE"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.THE_INSATIABLE.LIQUIFY_GROUND_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/254",
+        "ownerModel": "MONSTER.THE_INSATIABLE",
+        "ownerPointer": "/payload/sourceFacts/moves/254/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/254/operations/0/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-5db364f128adccb94587a7d7d2b86da334fab2d58c722a635764dd739ecb2911",
+      "claimId": "wiki-claim-v1-3f7785d559be2baffb09c6a285a362fb1955bc091029c9ba69df2ca8533bb03f",
+      "pageKey": "Infested Prism",
+      "sectionOwner": "Infested Prism",
+      "family": "article-power-invocation",
+      "identity": "Vital Spark",
+      "canonicalPower": "POWER.VITAL_SPARK_POWER",
+      "powerIndex": 65,
+      "ownerModels": [
+        "MONSTER.INFESTED_PRISM"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.INFESTED_PRISM.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/41",
+        "ownerModel": "MONSTER.INFESTED_PRISM",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/41/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/41/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-61830e26d585fa7bb55e6360c66e35bf2b257c34a11920b71058b804e637f5b1",
+      "claimId": "wiki-claim-v1-12de6ff1b3150d3f1a3ec1287448774e8a33e310d083c908f15e9f1a294605bb",
+      "pageKey": "Ceremonial Beast",
+      "sectionOwner": "Ceremonial Beast",
+      "family": "article-power-invocation",
+      "identity": "Plow",
+      "canonicalPower": "POWER.PLOW_POWER",
+      "powerIndex": 34,
+      "ownerModels": [
+        "MONSTER.CEREMONIAL_BEAST"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.CEREMONIAL_BEAST.STAMP_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/32",
+        "ownerModel": "MONSTER.CEREMONIAL_BEAST",
+        "ownerPointer": "/payload/sourceFacts/moves/32/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/32/operations/0/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-6c58117cf4e6f44afbc6b4fd5579438ce1f1b3852d9c6d6d3f4fa8282869a53c",
+      "claimId": "wiki-claim-v1-15a0f14864fd4d75c822a0f715c2db45d639a458d3b492203d76a0245bd3bb36",
+      "pageKey": "Aeonglass",
+      "sectionOwner": "Aeonglass",
+      "family": "article-power-invocation",
+      "identity": "Artifact",
+      "canonicalPower": "POWER.ARTIFACT_POWER",
+      "powerIndex": 1,
+      "ownerModels": [
+        "MONSTER.AEONGLASS"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.AEONGLASS.AFTERADDEDTOROOM.002.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/2",
+        "ownerModel": "MONSTER.AEONGLASS",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/2/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/2/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-72dbb1a910a663e4d215cced5188d5c8947b1669eb67a08f6d956dbc12245a74",
+      "claimId": "wiki-claim-v1-620fc3ff505dcc3c5ec43008a4ed7d7b77172647b328867b363bbeebed14e93d",
+      "pageKey": "Aeonglass",
+      "sectionOwner": "Aeonglass",
+      "family": "article-power-inline-field",
+      "identity": "Withering Presence",
+      "field": "Stacks",
+      "retainedValue": "Does not stack",
+      "canonicalPower": "POWER.WITHERING_PRESENCE_POWER",
+      "powerIndex": 68,
+      "ownerModels": [
+        "MONSTER.AEONGLASS"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.AEONGLASS.AFTERADDEDTOROOM.001.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/1",
+        "ownerModel": "MONSTER.AEONGLASS",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/1/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/1/effect/model"
+      },
+      "disposition": "missing/unparsed",
+      "sourceLocalizationClassification": "localized",
+      "unresolvedReason": "checked source Power catalog does not project this inline wiki field value"
+    },
+    {
+      "originId": "wiki-origin-v1-73e12e83c3d4a8b631acc9204771066ee6aa6801f62dc333188ada7b4f4ef6e3",
+      "claimId": "wiki-claim-v1-524b8cd1e1aa7a33bbf93b5b80d9e427d46b20b2b33d822be2ad75059a08563d",
+      "pageKey": "The Kin",
+      "sectionOwner": "Kin Follower",
+      "family": "article-power-invocation",
+      "identity": "Minion",
+      "canonicalPower": "POWER.MINION_POWER",
+      "powerIndex": 28,
+      "ownerModels": [
+        "MONSTER.KIN_FOLLOWER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.KIN_FOLLOWER.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/44",
+        "ownerModel": "MONSTER.KIN_FOLLOWER",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/44/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/44/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-74447f224e0d4eca6f8c3569a61eea5846bb9a93cd3c1676202b083ada972080",
+      "claimId": "wiki-claim-v1-7ff29c5bc48c67ae1c71c91e3b616b1d7024b4bf45f0d6e0d8a7130f95615afd",
+      "pageKey": "Scroll of Biting",
+      "sectionOwner": "Scroll of Biting",
+      "family": "article-power-invocation",
+      "identity": "Paper Cuts",
+      "canonicalPower": "POWER.PAPER_CUTS_POWER",
+      "powerIndex": 31,
+      "ownerModels": [
+        "MONSTER.SCROLL_OF_BITING"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.SCROLL_OF_BITING.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/70",
+        "ownerModel": "MONSTER.SCROLL_OF_BITING",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/70/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/70/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-79a5f8f708b08c8fce2821a809bfbb8f72cdd340601d21ae2cc7f7a37ed4eac1",
+      "claimId": "wiki-claim-v1-74e04c8fcc98947f77b179bbe051dced8dcddf716ae407ed5505f6da113b713d",
+      "pageKey": "Soul Fysh",
+      "sectionOwner": "Soul Fysh",
+      "family": "article-power-invocation",
+      "identity": "Vulnerable",
+      "canonicalPower": "POWER.VULNERABLE_POWER",
+      "powerIndex": 66,
+      "ownerModels": [
+        "MONSTER.SOUL_FYSH"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.SOUL_FYSH.SCREAM_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/230",
+        "ownerModel": "MONSTER.SOUL_FYSH",
+        "ownerPointer": "/payload/sourceFacts/moves/230/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/230/operations/2/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-7c9af121478d2643fa1f9ef78eae21f3a56e303bcf21f10eb9a53c93a1a4b826",
+      "claimId": "wiki-claim-v1-9d2e0b4445f5772859ca6267022fd8124717da96feed4217e9836268f44bc1b9",
+      "pageKey": "Decimillipede",
+      "sectionOwner": "Decimillipede",
+      "family": "article-power-invocation",
+      "identity": "Reattach",
+      "canonicalPower": "POWER.REATTACH_POWER",
+      "powerIndex": 39,
+      "ownerModels": [
+        "MONSTER.DECIMILLIPEDE_SEGMENT_BACK",
+        "MONSTER.DECIMILLIPEDE_SEGMENT_FRONT",
+        "MONSTER.DECIMILLIPEDE_SEGMENT_MIDDLE"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.DECIMILLIPEDE_SEGMENT_BACK.AFTERADDEDTOROOM.001.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/21",
+        "ownerModel": "MONSTER.DECIMILLIPEDE_SEGMENT_BACK",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/21/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/21/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-82fc9ac10d22d5bac0c305371647f9513253718adb6207a46bb2b067fcaed95c",
+      "claimId": "wiki-claim-v1-7e8e5f8795483b3c09ea6e85ae058bd0d3c67982e7763d804b4090fa71df4a4f",
+      "pageKey": "Waterfall Giant",
+      "sectionOwner": "Waterfall Giant",
+      "family": "article-power-invocation",
+      "identity": "Steam Eruption",
+      "canonicalPower": "POWER.STEAM_ERUPTION_POWER",
+      "powerIndex": 52,
+      "ownerModels": [
+        "MONSTER.WATERFALL_GIANT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.WATERFALL_GIANT.PRESSURIZE_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/303",
+        "ownerModel": "MONSTER.WATERFALL_GIANT",
+        "ownerPointer": "/payload/sourceFacts/moves/303/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/303/operations/0/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-83cfa29f5cf5d786049275deb0c6d9a7c0dc9bdf392a71ac0db86051b247862f",
+      "claimId": "wiki-claim-v1-86bcdc1b47d06493873fc10c19159c0a8abb280fdeedb01e3f5a6b97323659f3",
+      "pageKey": "Byrdonis",
+      "sectionOwner": "Byrdonis",
+      "family": "article-power-invocation",
+      "identity": "Territorial",
+      "canonicalPower": "POWER.TERRITORIAL_POWER",
+      "powerIndex": 61,
+      "ownerModels": [
+        "MONSTER.BYRDONIS"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.BYRDONIS.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/9",
+        "ownerModel": "MONSTER.BYRDONIS",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/9/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/9/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-840781f19be93e976c5d4445490867cc9d13bf663a2c7b351b32465ba07457b0",
+      "claimId": "wiki-claim-v1-9d4db55acfc8024ad386c289049112fc8534c53fcdf078bbd9d4ddc530a835e2",
+      "pageKey": "Test Subject",
+      "sectionOwner": "Pattern",
+      "family": "article-power-invocation",
+      "identity": "Painful Stabs",
+      "canonicalPower": "POWER.PAINFUL_STABS_POWER",
+      "powerIndex": 30,
+      "ownerModels": [
+        "MONSTER.TEST_SUBJECT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.TEST_SUBJECT.RESPAWN_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/245",
+        "ownerModel": "MONSTER.TEST_SUBJECT",
+        "ownerPointer": "/payload/sourceFacts/moves/245/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/245/operations/1/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-8ef520e3f5882c1e7af650e572711e51dd6943e57e087dedb1bcac3c1c4b6503",
+      "claimId": "wiki-claim-v1-619afb2a01545b3528a4a64bde1616f55ffcb9f409246ffaeb6b0d1381339c54",
+      "pageKey": "Test Subject",
+      "sectionOwner": "Pattern",
+      "family": "article-power-invocation",
+      "identity": "Adaptable",
+      "canonicalPower": "POWER.ADAPTABLE_POWER",
+      "powerIndex": 0,
+      "ownerModels": [
+        "MONSTER.TEST_SUBJECT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.TEST_SUBJECT.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/85",
+        "ownerModel": "MONSTER.TEST_SUBJECT",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/85/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/85/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-90ed85e60132e13cbea3af583c87651e9d4e4195b5fc931f2e96612edd0c379d",
+      "claimId": "wiki-claim-v1-c1e556aab96711f530208053ebb703e6f25cd52be6e3a2402d04e8b4abc6b2c3",
+      "pageKey": "Corpse Slug",
+      "sectionOwner": "Corpse Slug",
+      "family": "article-power-invocation",
+      "identity": "Ravenous",
+      "canonicalPower": "POWER.RAVENOUS_POWER",
+      "powerIndex": 38,
+      "ownerModels": [
+        "MONSTER.CORPSE_SLUG"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.CORPSE_SLUG.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/13",
+        "ownerModel": "MONSTER.CORPSE_SLUG",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/13/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/13/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-92206082c7ca562133fc0d3766b52f4750862591480b2588e21d901957b8270b",
+      "claimId": "wiki-claim-v1-7d1d98cf8e586488b2473dad7138b4996edd26fe79740af86ce882682a1dd72a",
+      "pageKey": "Ovicopter",
+      "sectionOwner": "Tough Egg",
+      "family": "article-power-invocation",
+      "identity": "Minion",
+      "canonicalPower": "POWER.MINION_POWER",
+      "powerIndex": 28,
+      "ownerModels": [
+        "MONSTER.TOUGH_EGG"
+      ],
+      "ownership": {
+        "factId": "SOURCE.LIFECYCLE.CORE.E2D2A",
+        "kind": "lifecycle-operation",
+        "recordPointer": "/payload/sourceFacts/lifecycle/mechanics/phaseSystems/1/transitions/1/orderedEffects/5",
+        "ownerModel": "MONSTER.TOUGH_EGG",
+        "ownerPointer": "/payload/sourceFacts/lifecycle/mechanics/phaseSystems/1/transitions/1/orderedEffects/5/owner",
+        "powerPointer": "/payload/sourceFacts/lifecycle/mechanics/phaseSystems/1/transitions/1/orderedEffects/5/retainedPower"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-93d419acd4c13f4fb144f5680a9ba1784608afdf0631f44aa6a5f35afa58a907",
+      "claimId": "wiki-claim-v1-b5a73a08fd6c94bdaea405214c512eddc46f463a5c1313d54bb7ffc6813b5909",
+      "pageKey": "Soul Fysh",
+      "sectionOwner": "Soul Fysh",
+      "family": "article-power-invocation",
+      "identity": "Intangible",
+      "canonicalPower": "POWER.INTANGIBLE_POWER",
+      "powerIndex": 27,
+      "ownerModels": [
+        "MONSTER.SOUL_FYSH"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.SOUL_FYSH.FADE_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/229",
+        "ownerModel": "MONSTER.SOUL_FYSH",
+        "ownerPointer": "/payload/sourceFacts/moves/229/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/229/operations/1/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-9ed38dc97bcc0d0e43ff2c272788ac8b744abeef232300a1e5537eda9d125cb5",
+      "claimId": "wiki-claim-v1-a7fe034bab9e72a23c1959ab2c6ac2c9d3f7077ceb59c528f9463b1ac52f40ac",
+      "pageKey": "Knight Gang",
+      "sectionOwner": "Spectral Knight",
+      "family": "article-power-invocation",
+      "identity": "Hex",
+      "canonicalPower": "POWER.HEX_POWER",
+      "powerIndex": 22,
+      "ownerModels": [
+        "MONSTER.SPECTRAL_KNIGHT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.SPECTRAL_KNIGHT.HEX",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/234",
+        "ownerModel": "MONSTER.SPECTRAL_KNIGHT",
+        "ownerPointer": "/payload/sourceFacts/moves/234/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/234/operations/0/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "missingLocalization"
+    },
+    {
+      "originId": "wiki-origin-v1-a103ee9a9a2880170d5734006c8cc22dc964b15c78e458c8f1f4e472044874ad",
+      "claimId": "wiki-claim-v1-9e6f32ada6557631c2a7a1022e9caace084da4021c40468389c077355ffef1a1",
+      "pageKey": "Aeonglass",
+      "sectionOwner": "Aeonglass",
+      "family": "article-power-inline-field",
+      "identity": "Withering Presence",
+      "field": "Type",
+      "retainedValue": "Buff",
+      "canonicalPower": "POWER.WITHERING_PRESENCE_POWER",
+      "powerIndex": 68,
+      "ownerModels": [
+        "MONSTER.AEONGLASS"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.AEONGLASS.AFTERADDEDTOROOM.001.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/1",
+        "ownerModel": "MONSTER.AEONGLASS",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/1/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/1/effect/model"
+      },
+      "disposition": "missing/unparsed",
+      "sourceLocalizationClassification": "localized",
+      "unresolvedReason": "checked source Power catalog does not project this inline wiki field value"
+    },
+    {
+      "originId": "wiki-origin-v1-a67a410bb91d15805b6eb77fbd4199d8d12a5c437e7ef8b85e0eb38c0b8c69b4",
+      "claimId": "wiki-claim-v1-146f33b346d193c39c2052a5b460365e7ac6de90b4d31d4f155bff812ba2fe4a",
+      "pageKey": "The Obscura",
+      "sectionOwner": "Parafright",
+      "family": "article-power-invocation",
+      "identity": "Illusion",
+      "canonicalPower": "POWER.ILLUSION_POWER",
+      "powerIndex": 24,
+      "ownerModels": [
+        "MONSTER.PARAFRIGHT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.PARAFRIGHT.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/57",
+        "ownerModel": "MONSTER.PARAFRIGHT",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/57/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/57/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-a7a716323bb69b09bae07040ce4a519e027f7791cb78d1cbc2b50dcccd7a3cf2",
+      "claimId": "wiki-claim-v1-84a290ea7177cf598e7158b16ebab375ae2573c97065739d77774145efc53450",
+      "pageKey": "Test Subject",
+      "sectionOwner": "Test Subject",
+      "family": "article-power-invocation",
+      "identity": "Enrage",
+      "canonicalPower": "POWER.ENRAGE_POWER",
+      "powerIndex": 14,
+      "ownerModels": [
+        "MONSTER.TEST_SUBJECT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.TEST_SUBJECT.AFTERADDEDTOROOM.001.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/86",
+        "ownerModel": "MONSTER.TEST_SUBJECT",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/86/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/86/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-a8412e2973d29f04a8e8a1d5fb2db0cfadf4db8a4c6237735e132367d7dbbb9f",
+      "claimId": "wiki-claim-v1-92f4e4c5d71ba787ebbbf07ee59efbcb969c7e68ab663f8053f90ddc777ee7ca",
+      "pageKey": "Kaiser Crab",
+      "sectionOwner": "Rocket",
+      "family": "article-power-invocation",
+      "identity": "Back Attack",
+      "canonicalPower": "POWER.BACK_ATTACK_RIGHT_POWER",
+      "powerIndex": 4,
+      "ownerModels": [
+        "MONSTER.ROCKET"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.ROCKET.AFTERADDEDTOROOM.001.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/68",
+        "ownerModel": "MONSTER.ROCKET",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/68/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/68/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "missingLocalization"
+    },
+    {
+      "originId": "wiki-origin-v1-abf0113831d817c5da12791086f1c0f8ed5322585628c6c68926c34a640af886",
+      "claimId": "wiki-claim-v1-c7668afc38aa89437e7292d37858f75059c3dc814dc8f15b9cc8d71d98537891",
+      "pageKey": "Fogmog",
+      "sectionOwner": "Eye With Teeth",
+      "family": "article-power-invocation",
+      "identity": "Illusion",
+      "canonicalPower": "POWER.ILLUSION_POWER",
+      "powerIndex": 24,
+      "ownerModels": [
+        "MONSTER.EYE_WITH_TEETH"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.EYE_WITH_TEETH.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/32",
+        "ownerModel": "MONSTER.EYE_WITH_TEETH",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/32/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/32/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-bb9ea2442b67c0b66bb09f71a5d5f72080f3c6376600ff7820548c316133facd",
+      "claimId": "wiki-claim-v1-fcfb176702d2758a6a1d490923a323921b01031016827bbdb13777b01f9c7f86",
+      "pageKey": "Phantasmal Gardener",
+      "sectionOwner": "Phantasmal Gardener",
+      "family": "article-power-inline-field",
+      "identity": "Skittish",
+      "field": "Type",
+      "retainedValue": "Buff",
+      "canonicalPower": "POWER.SKITTISH_POWER",
+      "powerIndex": 46,
+      "ownerModels": [
+        "MONSTER.PHANTASMAL_GARDENER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.PHANTASMAL_GARDENER.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/58",
+        "ownerModel": "MONSTER.PHANTASMAL_GARDENER",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/58/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/58/effect/model"
+      },
+      "disposition": "missing/unparsed",
+      "sourceLocalizationClassification": "localized",
+      "unresolvedReason": "checked source Power catalog does not project this inline wiki field value"
+    },
+    {
+      "originId": "wiki-origin-v1-c167c757e4ea8d87e3818d456c8633e06936d7152ae8335118218c1f87154735",
+      "claimId": "wiki-claim-v1-4d25e8adc54a650da9ae7a298a1951adb76b7154c9c5d3a176b5f6006cd9b215",
+      "pageKey": "Bygone Effigy",
+      "sectionOwner": "Bygone Effigy",
+      "family": "article-power-invocation",
+      "identity": "Slow",
+      "canonicalPower": "POWER.SLOW_POWER",
+      "powerIndex": 48,
+      "ownerModels": [
+        "MONSTER.BYGONE_EFFIGY"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.BYGONE_EFFIGY.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/8",
+        "ownerModel": "MONSTER.BYGONE_EFFIGY",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/8/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/8/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-c243628c7e3a176465055b79511a9e50435496850bb9fef4fc7a9785a2a56557",
+      "claimId": "wiki-claim-v1-a2695012c4fac2bf8e4094d2bb9b9a1140324c3983d28f865dbf37434c37a143",
+      "pageKey": "Kaiser Crab",
+      "sectionOwner": "Crusher",
+      "family": "article-power-invocation",
+      "identity": "Crab Rage",
+      "canonicalPower": "POWER.CRAB_RAGE_POWER",
+      "powerIndex": 10,
+      "ownerModels": [
+        "MONSTER.CRUSHER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.CRUSHER.AFTERADDEDTOROOM.001.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/15",
+        "ownerModel": "MONSTER.CRUSHER",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/15/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/15/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-c77ce6c858814a8e1518e1ea81b1ec9051e30c4d4503ad1a1746d3cfaf744071",
+      "claimId": "wiki-claim-v1-91fab289f7d05b1c36ee3d1cd118c971382f0f1f54d44421ab92af3dcdc325d3",
+      "pageKey": "Test Subject",
+      "sectionOwner": "Pattern",
+      "family": "article-power-invocation",
+      "identity": "Nemesis",
+      "canonicalPower": "POWER.NEMESIS_POWER",
+      "powerIndex": 29,
+      "ownerModels": [
+        "MONSTER.TEST_SUBJECT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.TEST_SUBJECT.RESPAWN_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/245",
+        "ownerModel": "MONSTER.TEST_SUBJECT",
+        "ownerPointer": "/payload/sourceFacts/moves/245/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/245/operations/2/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-c7906cbdc2a26a651679c569653a5533b72baad616468b74c0ee60b0836301e1",
+      "claimId": "wiki-claim-v1-01449f784351ccadd682232c7af0d902889eef38273e47fb6599c21458fd0359",
+      "pageKey": "Living Fog",
+      "sectionOwner": "Living Fog",
+      "family": "article-power-invocation",
+      "identity": "Smoggy",
+      "canonicalPower": "POWER.SMOGGY_POWER",
+      "powerIndex": 50,
+      "ownerModels": [
+        "MONSTER.LIVING_FOG"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.LIVING_FOG.ADVANCED_GAS_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/140",
+        "ownerModel": "MONSTER.LIVING_FOG",
+        "ownerPointer": "/payload/sourceFacts/moves/140/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/140/operations/1/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-c9409e6bd330da3438f706523c50d2693d997abb40dcfe2c8d148f4cac840544",
+      "claimId": "wiki-claim-v1-625255f54b6eb886fcc9898ebf4def0f5868c0352d1a491fdde1c3f0c0dd585b",
+      "pageKey": "Shrinker Beetle",
+      "sectionOwner": "Shrinker Beetle",
+      "family": "article-power-invocation",
+      "identity": "Shrink",
+      "canonicalPower": "POWER.SHRINK_POWER",
+      "powerIndex": 45,
+      "ownerModels": [
+        "MONSTER.SHRINKER_BEETLE"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.SHRINKER_BEETLE.SHRINKER_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/204",
+        "ownerModel": "MONSTER.SHRINKER_BEETLE",
+        "ownerPointer": "/payload/sourceFacts/moves/204/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/204/operations/0/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-d24ea8c0fcfa0ce6b1dda9be2affc10f3482f93195cda22f71e0728cfeeb56c4",
+      "claimId": "wiki-claim-v1-1f30ca27f042293a7469fd1b0e430ed4e023e812f4d77831addcf692755396ea",
+      "pageKey": "Phantasmal Gardener",
+      "sectionOwner": "Phantasmal Gardener",
+      "family": "article-power-inline-field",
+      "identity": "Skittish",
+      "field": "Stacks",
+      "retainedValue": "Intensity",
+      "canonicalPower": "POWER.SKITTISH_POWER",
+      "powerIndex": 46,
+      "ownerModels": [
+        "MONSTER.PHANTASMAL_GARDENER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.PHANTASMAL_GARDENER.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/58",
+        "ownerModel": "MONSTER.PHANTASMAL_GARDENER",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/58/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/58/effect/model"
+      },
+      "disposition": "missing/unparsed",
+      "sourceLocalizationClassification": "localized",
+      "unresolvedReason": "checked source Power catalog does not project this inline wiki field value"
+    },
+    {
+      "originId": "wiki-origin-v1-d5fa37fa310d8a1e2f376d2ffbd64f1df62b1cb50fea33f227ef57eb6ee844d4",
+      "claimId": "wiki-claim-v1-14d9c232a33ba3cbd0364ee9931fdd43811cdb535548f5321418f14f19a2efd9",
+      "pageKey": "Ceremonial Beast",
+      "sectionOwner": "Ceremonial Beast",
+      "family": "article-power-invocation",
+      "identity": "Ringing",
+      "canonicalPower": "POWER.RINGING_POWER",
+      "powerIndex": 41,
+      "ownerModels": [
+        "MONSTER.CEREMONIAL_BEAST"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.CEREMONIAL_BEAST.BEAST_CRY_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/35",
+        "ownerModel": "MONSTER.CEREMONIAL_BEAST",
+        "ownerPointer": "/payload/sourceFacts/moves/35/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/35/operations/0/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-d7d09cf174590ba14e3b7d9910aac41538c702b2ba6467243b739ea1680b3926",
+      "claimId": "wiki-claim-v1-f313f312dfa60271ebc7acf3d6793a0547c5321c3c6191174bb5f965e29860ff",
+      "pageKey": "Thieving Hopper",
+      "sectionOwner": "Thieving Hopper",
+      "family": "article-power-invocation",
+      "identity": "Flutter",
+      "canonicalPower": "POWER.FLUTTER_POWER",
+      "powerIndex": 16,
+      "ownerModels": [
+        "MONSTER.THIEVING_HOPPER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.THIEVING_HOPPER.FLUTTER_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/268",
+        "ownerModel": "MONSTER.THIEVING_HOPPER",
+        "ownerPointer": "/payload/sourceFacts/moves/268/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/268/operations/1/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-ddf5189323c28988c4abb4a1c231b455467788753560cf223a9f5a715dfb7731",
+      "claimId": "wiki-claim-v1-f6f2bde60b8562d55dc3a79596b9949c127978471bc21f042ffa7e5eaa9c05e5",
+      "pageKey": "Queen",
+      "sectionOwner": "Queen",
+      "family": "article-power-invocation",
+      "identity": "Chains of Binding",
+      "canonicalPower": "POWER.CHAINS_OF_BINDING_POWER",
+      "powerIndex": 8,
+      "ownerModels": [
+        "MONSTER.QUEEN"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.QUEEN.PUPPET_STRINGS_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/185",
+        "ownerModel": "MONSTER.QUEEN",
+        "ownerPointer": "/payload/sourceFacts/moves/185/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/185/operations/0/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-e2744bb306458f454890e399100d2d12eeac386a417db7d9c6808aab69f0a146",
+      "claimId": "wiki-claim-v1-20b767c8731e3ca23e5d547fbabdf1bc613e4ea8ac9e94b7ba4a99364e28b9e8",
+      "pageKey": "Knight Gang",
+      "sectionOwner": "Magi Knight",
+      "family": "article-power-invocation",
+      "identity": "Dampen",
+      "canonicalPower": "POWER.DAMPEN_POWER",
+      "powerIndex": 12,
+      "ownerModels": [
+        "MONSTER.MAGI_KNIGHT"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.MAGI_KNIGHT.DAMPEN_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/149",
+        "ownerModel": "MONSTER.MAGI_KNIGHT",
+        "ownerPointer": "/payload/sourceFacts/moves/149/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/149/operations/0/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "missingLocalization"
+    },
+    {
+      "originId": "wiki-origin-v1-e38609d83a070efce9f5eb2494744546364e5a11308b93a4c34f4df6d5341982",
+      "claimId": "wiki-claim-v1-2a7597155f961b607ad67d93ef846874673865a225624c81f36de37ad41b47d9",
+      "pageKey": "Slumbering Beetle",
+      "sectionOwner": "Slumbering Beetle",
+      "family": "article-power-invocation",
+      "identity": "Slumber",
+      "canonicalPower": "POWER.SLUMBER_POWER",
+      "powerIndex": 49,
+      "ownerModels": [
+        "MONSTER.SLUMBERING_BEETLE"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.SLUMBERING_BEETLE.AFTERADDEDTOROOM.001.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/81",
+        "ownerModel": "MONSTER.SLUMBERING_BEETLE",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/81/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/81/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-e743fd0761135a96eb7d4e485a15e1dc6d0781635794a083033b6d3a4c93f242",
+      "claimId": "wiki-claim-v1-c69a10922623538ea45b97eda5aa8b5fb7a617c862781eeb70e3ca65227cf4b2",
+      "pageKey": "Toadpole",
+      "sectionOwner": "Toadpole",
+      "family": "article-power-invocation",
+      "identity": "Thorns",
+      "canonicalPower": "POWER.THORNS_POWER",
+      "powerIndex": 63,
+      "ownerModels": [
+        "MONSTER.TOADPOLE"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.TOADPOLE.SPIKE_SPIT_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/270",
+        "ownerModel": "MONSTER.TOADPOLE",
+        "ownerPointer": "/payload/sourceFacts/moves/270/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/270/operations/0/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-e96c99265752364e2dc8c84c3d663e06c8d5643e1e3a132ebc24a4d35c8eebc4",
+      "claimId": "wiki-claim-v1-62d0b6d28a191925c6344915dc2c787c9465be754389c1de7f4cfbb96392aaa4",
+      "pageKey": "Fossil Stalker",
+      "sectionOwner": "Fossil Stalker",
+      "family": "article-power-invocation",
+      "identity": "Suck",
+      "canonicalPower": "POWER.SUCK_POWER",
+      "powerIndex": 55,
+      "ownerModels": [
+        "MONSTER.FOSSIL_STALKER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.FOSSIL_STALKER.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/33",
+        "ownerModel": "MONSTER.FOSSIL_STALKER",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/33/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/33/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-eecd4b9ddbf9b3d077bce659a7d7a02d30bdb3077943d20461a303b603be097e",
+      "claimId": "wiki-claim-v1-5649d1bcd16e3e5562b74686e3fef563081b342c47220fcb7de83432bb7ac09d",
+      "pageKey": "Thieving Hopper",
+      "sectionOwner": "Thieving Hopper",
+      "family": "article-power-invocation",
+      "identity": "Escape Artist",
+      "canonicalPower": "POWER.ESCAPE_ARTIST_POWER",
+      "powerIndex": 15,
+      "ownerModels": [
+        "MONSTER.THIEVING_HOPPER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.THIEVING_HOPPER.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/91",
+        "ownerModel": "MONSTER.THIEVING_HOPPER",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/91/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/91/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-f02626779273303b2fabda228facf853b79b6e50a5aebee6b66add339e759546",
+      "claimId": "wiki-claim-v1-2275f64c594bc088167c67e3f4024695cc64448d06abe0d75e9aee66eba46433",
+      "pageKey": "Phantasmal Gardener",
+      "sectionOwner": "Phantasmal Gardener",
+      "family": "article-power-inline-field",
+      "identity": "Skittish",
+      "field": "Description",
+      "retainedValue": "The first time it is hit each turn, it gains X Block.",
+      "canonicalPower": "POWER.SKITTISH_POWER",
+      "powerIndex": 46,
+      "ownerModels": [
+        "MONSTER.PHANTASMAL_GARDENER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.PHANTASMAL_GARDENER.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/58",
+        "ownerModel": "MONSTER.PHANTASMAL_GARDENER",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/58/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/58/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-f16405b7b6fefa8e7778e41f2b88150aa1f3048c5315ec41280af0cfb352a20d",
+      "claimId": "wiki-claim-v1-8a6e55c0cd5ee5fbc6601a41120ea8591a1588157d063e1b10e2fdae41e270ab",
+      "pageKey": "Slumbering Beetle",
+      "sectionOwner": "Slumbering Beetle",
+      "family": "article-power-invocation",
+      "identity": "Plating",
+      "canonicalPower": "POWER.PLATING_POWER",
+      "powerIndex": 33,
+      "ownerModels": [
+        "MONSTER.SLUMBERING_BEETLE"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.SLUMBERING_BEETLE.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/80",
+        "ownerModel": "MONSTER.SLUMBERING_BEETLE",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/80/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/80/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-f57890f30c53dddc51fbeb580947e9b5e3a8880e8646b91fd0d3df2cd1a86441",
+      "claimId": "wiki-claim-v1-5bbc877c9bbb03603ad5b485b08175049f265339cad2da104a8bb0f67b63609d",
+      "pageKey": "Turret Operator",
+      "sectionOwner": "Living Shield",
+      "family": "article-power-invocation",
+      "identity": "Rampart",
+      "canonicalPower": "POWER.RAMPART_POWER",
+      "powerIndex": 37,
+      "ownerModels": [
+        "MONSTER.LIVING_SHIELD"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.LIVING_SHIELD.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/50",
+        "ownerModel": "MONSTER.LIVING_SHIELD",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/50/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/50/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-f87dfc7526aa18e1ed6cfa2734d0328dfe8bc6bf3300f6c910ff8a919a9f8b5c",
+      "claimId": "wiki-claim-v1-3df9245810c2af25d9b18c54966bce3e3ae1028feb402ba6730c97187d63ca1f",
+      "pageKey": "Fossil Stalker",
+      "sectionOwner": "Fossil Stalker",
+      "family": "article-power-invocation",
+      "identity": "Strength",
+      "canonicalPower": "POWER.STRENGTH_POWER",
+      "powerIndex": 54,
+      "ownerModels": [
+        "MONSTER.FOSSIL_STALKER"
+      ],
+      "ownership": null,
+      "disposition": "missing/unparsed",
+      "sourceLocalizationClassification": "localized",
+      "unresolvedReason": "no exact typed compact row joins this article owner to the reviewed canonical Power"
+    },
+    {
+      "originId": "wiki-origin-v1-f8b1b13b4722b6e27c987e73d236de5d970d6e6e7fbff8bf5e4621c50cc9831d",
+      "claimId": "wiki-claim-v1-366540b67262cdad77c11971eda2b15f55cc966ee0896f798687e91284978b85",
+      "pageKey": "The Lost and Forgotten",
+      "sectionOwner": "The Lost",
+      "family": "article-power-invocation",
+      "identity": "Possess Strength",
+      "canonicalPower": "POWER.POSSESS_STRENGTH_POWER",
+      "powerIndex": 36,
+      "ownerModels": [
+        "MONSTER.THE_LOST"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.THE_LOST.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/90",
+        "ownerModel": "MONSTER.THE_LOST",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/90/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/90/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-f9c5041013646ce7f4646ca4cb980acc6eb59401dda9df6d4ad1653fac3b8b62",
+      "claimId": "wiki-claim-v1-66a06228443261eba13a0bb151adc3823c6f72b64082c568d0ed928a86aa8986",
+      "pageKey": "Skulking Colony",
+      "sectionOwner": "Skulking Colony",
+      "family": "article-power-invocation",
+      "identity": "Hardened Shell",
+      "canonicalPower": "POWER.HARDENED_SHELL_POWER",
+      "powerIndex": 19,
+      "ownerModels": [
+        "MONSTER.SKULKING_COLONY"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.SKULKING_COLONY.AFTERADDEDTOROOM.000.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/79",
+        "ownerModel": "MONSTER.SKULKING_COLONY",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/79/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/79/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-fdfb5b91bbafde695ef2421a14e464e16c1288ce710e65f86ec47a496a176542",
+      "claimId": "wiki-claim-v1-261b1643f4128fa4609e1f51e4a924c5d8a0c63013aabd930f26ae616a28c958",
+      "pageKey": "Lagavulin Matriarch",
+      "sectionOwner": "Lagavulin Matriarch",
+      "family": "article-power-invocation",
+      "identity": "Plating",
+      "canonicalPower": "POWER.PLATING_POWER",
+      "powerIndex": 33,
+      "ownerModels": [
+        "MONSTER.LAGAVULIN_MATRIARCH"
+      ],
+      "ownership": {
+        "factId": "SOURCE.INITIAL.MONSTER.LAGAVULIN_MATRIARCH.AFTERADDEDTOROOM.501.APPLYPOWER",
+        "kind": "initial-state",
+        "recordPointer": "/payload/sourceFacts/initialState/facts/47",
+        "ownerModel": "MONSTER.LAGAVULIN_MATRIARCH",
+        "ownerPointer": "/payload/sourceFacts/initialState/facts/47/applicableModels/0",
+        "powerPointer": "/payload/sourceFacts/initialState/facts/47/effect/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    },
+    {
+      "originId": "wiki-origin-v1-ff51a83d7f2de407502cd4c945202f3a7c487192c90edc8615bc6a15bd994aeb",
+      "claimId": "wiki-claim-v1-0779474cd409ba3cbaf1a7e17b6849e7597c5c03c4731d11c207434fcb6175da",
+      "pageKey": "Hunter Killer",
+      "sectionOwner": "Hunter Killer",
+      "family": "article-power-invocation",
+      "identity": "Tender",
+      "canonicalPower": "POWER.TENDER_POWER",
+      "powerIndex": 60,
+      "ownerModels": [
+        "MONSTER.HUNTER_KILLER"
+      ],
+      "ownership": {
+        "factId": "SOURCE.MOVE.MONSTER.HUNTER_KILLER.TENDERIZING_GOOP_MOVE",
+        "kind": "move-operation",
+        "recordPointer": "/payload/sourceFacts/moves/110",
+        "ownerModel": "MONSTER.HUNTER_KILLER",
+        "ownerPointer": "/payload/sourceFacts/moves/110/applicableConcreteModels/0",
+        "powerPointer": "/payload/sourceFacts/moves/110/operations/0/model"
+      },
+      "disposition": "audit-present",
+      "sourceLocalizationClassification": "localized"
+    }
+  ]
+}

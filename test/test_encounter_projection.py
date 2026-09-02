@@ -146,6 +146,72 @@ class EncounterProjectionTests(unittest.TestCase):
         self.assertEqual(source_below_a8("MONSTER.TEST_SUBJECT"), [100, 100])
         self.assertNotIn("hpBelowA8", source_monsters["MONSTER.TEST_SUBJECT"]["initialHp"])
 
+    def test_p1c_power_and_intent_localization_catalogs_are_exact(self):
+        source = self.artifact["payload"]["sourceFacts"]
+        powers = source["models"]["powers"]
+        contract = self.artifact["metadata"]["localizationProjectionContract"]
+        self.assertEqual(contract["power"]["total"], 69)
+        self.assertEqual(contract["power"]["localized"], 62)
+        self.assertEqual(contract["power"]["missingLocalization"], 7)
+        missing = [row["canonicalId"] for row in powers if row["smartDescription"]["classification"] == "missingLocalization"]
+        self.assertEqual(missing, contract["power"]["missingCanonicalIds"])
+        self.assertTrue(all(row["smartDescription"]["template"] is None for row in powers if row["canonicalId"] in missing))
+        by_title = {row["englishTitle"]: row["smartDescription"]["template"] for row in powers}
+        self.assertEqual(by_title["Illusion"], "When this dies, it revives next turn at full HP.")
+        self.assertEqual(by_title["Adaptable"], "When [gold]{OwnerName}[/gold] would be defeated, it instead revives even stronger.")
+        self.assertEqual(by_title["Artifact"], "[gold]Negates[/gold] [blue]{Amount}[/blue] {Amount:plural:debuff|debuffs}.")
+        self.assertEqual(by_title["Strength"], "{Amount:cond:<0?Decreases|Increases} attack damage by [blue]{Amount:abs()}[/blue].")
+        self.assertEqual(by_title["Skittish"], "The first time [gold]{OwnerName}[/gold] is hit each turn, it gains [blue]{Amount}[/blue] [gold]Block[/gold].")
+        for index, power in enumerate(powers):
+            fact = next(row for row in self.artifact["payload"]["factReferences"] if row["factId"] == power["factId"])
+            evidence = next(row for row in self.artifact["payload"]["evidence"] if row["evidenceId"] == fact["evidenceRefs"][0])
+            self.assertEqual([row["jsonPointer"] for row in evidence["pointers"]], [f"/powers/{index}"])
+
+        catalog = source["intentLocalization"]
+        self.assertEqual((len(catalog["entries"]), len(catalog["pairs"]), len(catalog["formatKeys"])), (32, 14, 4))
+        entries = {row["key"]: row for row in catalog["entries"]}
+        self.assertEqual(entries["DEBUFF.title"]["value"], "Strategic")
+        self.assertEqual(entries["DEBUFF_STRONG.title"]["value"], "Strategic")
+        self.assertNotEqual(entries["DEBUFF.title"]["factId"], entries["DEBUFF_STRONG.title"]["factId"])
+        self.assertEqual(entries["FORMAT_DAMAGE_MULTI"]["value"], "{Damage}[font_size=18]x{Repeat}[/font_size]")
+        intents = [intent for move in source["moves"] for intent in move["intents"]]
+        self.assertTrue(all(intent["localizationRef"]["kind"] == intent["kind"] for intent in intents))
+        strong = next(intent for intent in intents if intent["kind"] == "debuff" and intent["arguments"][0]["value"] is True)
+        self.assertEqual(strong["localizationRef"]["pairId"], "INTENT_PAIR.DEBUFF_STRONG")
+
+    def test_p1c_compact_localization_mutations_fail_closed(self):
+        mutations = [
+            lambda a: a["payload"]["sourceFacts"]["models"]["powers"][0]["smartDescription"].__setitem__("template", "[gold]broken"),
+            lambda a: a["payload"]["sourceFacts"]["models"]["powers"][0]["smartDescription"].__setitem__("classification", "missingLocalization"),
+            lambda a: a["payload"]["sourceFacts"]["models"]["powers"][0]["smartDescription"].__setitem__("key", a["payload"]["sourceFacts"]["models"]["powers"][1]["smartDescription"]["key"]),
+            lambda a: a["payload"]["sourceFacts"]["models"]["powers"][3]["smartDescription"].__setitem__("template", "fabricated wiki prose"),
+            lambda a: a["metadata"]["localizationProjectionContract"]["power"].__setitem__("total", 68),
+            lambda a: a["payload"]["sourceFacts"]["intentLocalization"]["entries"][0].__setitem__("value", "changed"),
+            lambda a: a["payload"]["sourceFacts"]["intentLocalization"]["entries"][0].__setitem__("key", "ATTACK.changed"),
+            lambda a: a["payload"]["sourceFacts"]["intentLocalization"]["pairs"][0].__setitem__("descriptionKey", "BUFF.description"),
+            lambda a: a["payload"]["sourceFacts"]["intentLocalization"]["formatKeys"].reverse(),
+            lambda a: a["payload"]["sourceFacts"]["moves"][0]["intents"][0]["localizationRef"].__setitem__("titleKey", "BUFF.title"),
+            lambda a: next(row for row in a["payload"]["evidence"] if row["evidenceId"] == "EVIDENCE.SOURCE.POWER.ADAPTABLE_POWER")["pointers"][0].__setitem__("jsonPointer", "/powers/1"),
+        ]
+        for mutate in mutations:
+            self.assert_invalid(self.mutated(mutate), r"Power|localization|intent|evidence|payload")
+
+    def test_p1c_raw_localization_mutations_fail_closed(self):
+        def validate(change):
+            source = deepcopy(self.source); change(source)
+            with self.assertRaisesRegex(SourceExtractionError, r"[Pp]ower|localization|template|intent|duplicate"):
+                validate_artifact(self.artifact, source=source, legacy=self.legacy)
+        mutations = [
+            lambda s: s["powers"].pop(),
+            lambda s: s["powers"][0]["smartDescription"].pop("template"),
+            lambda s: s["powers"][3]["smartDescription"].__setitem__("template", "fabricated"),
+            lambda s: s["powers"][1]["smartDescription"].__setitem__("key", s["powers"][0]["smartDescription"]["key"]),
+            lambda s: s["powers"][0]["smartDescription"].__setitem__("template", "[gold]{Amount}"),
+            lambda s: s["intentLocalization"]["entries"].pop("ATTACK.title"),
+            lambda s: s["intentLocalization"]["entries"].__setitem__("FORMAT_DAMAGE_MULTI", "{Damage}[font_size=18]x{Repeat}"),
+        ]
+        for mutate in mutations: validate(mutate)
+
     def test_decimillipede_titles_conflicts_and_unknowns(self):
         payload = self.artifact["payload"]
         owners = [row for row in payload["sourceFacts"]["behaviorOwners"] if row["classification"] == "abstractBehavior"]
