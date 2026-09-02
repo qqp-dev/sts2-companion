@@ -30,31 +30,36 @@ export function semanticSnapshot(node, depth = 0) {
   return [`${indent}${label}`, ...(node.children ?? []).map((child) => semanticSnapshot(child, depth + 1)).filter(Boolean)].join("\n");
 }
 
-export async function renderCeremonialPhone() {
-  class SnapshotNode {
-    constructor(tagName) { this.tagName = tagName; this.children = []; this.dataset = {}; this.className = ""; this._text = ""; }
-    append(...children) { this.children.push(...children); }
-    replaceChildren(...children) { this._text = ""; this.children = children; }
-    set textContent(value) { this._text = String(value); this.children = []; }
-    get textContent() { return this._text + this.children.map((child) => child?.textContent ?? String(child)).join(""); }
-  }
+export class SnapshotNode {
+  constructor(tagName) { this.tagName = tagName; this.children = []; this.dataset = {}; this.className = ""; this._text = ""; }
+  append(...children) { this.children.push(...children); }
+  replaceChildren(...children) { this._text = ""; this.children = children; }
+  set textContent(value) { this._text = String(value); this.children = []; }
+  get textContent() { return this._text + this.children.map((child) => child?.textContent ?? String(child)).join(""); }
+}
+
+export async function renderGuidePhone(encounterId, players = 2) {
   const root = new SnapshotNode("main"); root.dataset.basePath = "/sts2";
-  const adapter = createSourceAdapter({ players: 2 });
+  const adapter = createSourceAdapter({ players });
   assert.equal(adapter.available, true, adapter.error);
-  const payload = adapter.view({ status: "idle", encounterId: null, monsterIds: [], releaseInfo: { version: "v0.111.0", branch: "public-beta" } }, "CEREMONIAL_BEAST_BOSS");
+  const payload = adapter.view({ status: "idle", encounterId: null, monsterIds: [], releaseInfo: { version: "v0.111.0", branch: "public-beta" } }, encounterId);
   const document = {
     getElementById: (id) => id === "guide-encounter" ? root : null,
     createElement: (tagName) => new SnapshotNode(tagName),
   };
   const window = {
     innerWidth: 390,
-    location: { search: "?encounter=CEREMONIAL_BEAST_BOSS" },
+    location: { search: `?encounter=${encounterId}` },
     setInterval: () => 1,
   };
   const fetch = async () => ({ ok: true, json: async () => structuredClone(payload) });
   runInNewContext(CLIENT, { document, window, fetch, Node: SnapshotNode, URLSearchParams, encodeURIComponent });
   await new Promise((resolve) => setImmediate(resolve));
   return { root, payload, snapshot: `# StS2 Companion phone snapshot · 390px\n${semanticSnapshot(root)}\n` };
+}
+
+export function renderCeremonialPhone() {
+  return renderGuidePhone("CEREMONIAL_BEAST_BOSS", 2);
 }
 
 async function main() {

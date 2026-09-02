@@ -113,13 +113,11 @@ export function scaleMechanicsText(text, options = {}) {
     return prefix + mechanics;
   }).join(" ");
 
-  // Reattach/revive, explicit produced HP, and Axebot's pre-scaling Max-HP
-  // increment use HP scaling rather than a named-power formula.
+  // Reattach/revive and explicit produced HP use HP scaling rather than a
+  // named-power formula. State increments such as Axebot's respawn progression
+  // are not free-prose produced-HP values; they stay typed and unscaled.
   rendered = rendered.replace(/\b(Revives? with|Reattaches? with|Hatches? into[^.]*? with)\s+(\d+(?:[-/]\d+)*)\s+HP\b/gi,
     (_, lead, value) => `${lead} ${scaleToken(value, hpFactor)} HP`);
-  rendered = rendered.replace(/\+(\d+(?:[-/]\d+)*)\s+Max HP\b/gi,
-    (_, value) => `+${scaleToken(value, hpFactor)} Max HP`);
-
   // Flutter stores the number of hits in descriptive prose rather than the
   // usual "Power N" form. Limit this to sentences that explicitly name it.
   rendered = rendered.split(/(?<=\.)\s+/).map((sentence) => {

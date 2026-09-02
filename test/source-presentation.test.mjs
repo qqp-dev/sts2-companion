@@ -8,6 +8,7 @@ import { createSourceAdapter, internals as adapterInternals } from "../src/sourc
 import { buildEncounterPresentation, conditionText, presentationInternals } from "../src/source-presentation.mjs";
 
 const artifact = JSON.parse(readFileSync(new URL("../data/encounter-facts-v0.111.0.json", import.meta.url), "utf8"));
+const p0aFixtures = JSON.parse(readFileSync(new URL("./fixtures/p0a-guides.json", import.meta.url), "utf8"));
 const adapter = createSourceAdapter({ projection: artifact });
 const idle = { status: "idle", encounterId: null, monsterIds: [], source: null, releaseInfo: null };
 const encounter = (id) => adapter.view(idle, id).encounter;
@@ -78,8 +79,6 @@ test("practical effect signatures are deterministic and exclude move titles and 
   assert.equal(source.monsters[0].moves[0].title.text, "Boot Up", "exact title remains in audit data");
 });
 
-
-
 test("Ceremonial Beast consequence-first guide keeps exact canonical source audit", () => {
   const beast = encounter("CEREMONIAL_BEAST_BOSS");
   const primary = beast.presentation.primary;
@@ -110,10 +109,12 @@ test("Ceremonial Beast consequence-first guide keeps exact canonical source audi
 
 test("pattern projection preserves actor identities and tracked timers while suppressing action citations", () => {
   const eel = encounter("TERROR_EEL_ELITE");
-  const eelPattern = eel.presentation.primary.bodies[0].sections[0].note;
-  assert.match(eelPattern, /The Terror Eel alternates between step 1 and step 2, starting with step 1/);
-  assert.match(eelPattern, /uses step 4 before resuming the step 1\/step 2 cycle/);
-  assert.doesNotMatch(eelPattern, /step 4 Eel|between Crash and Thrash|uses Terror|• Terror applies/);
+  const eelSection = eel.presentation.primary.bodies[0].sections[0];
+  assert.equal(eel.presentation.primary.bodies[0].name, "Terror Eel");
+  assert.deepEqual(eelSection.rows.map((row) => row.detail), ["18 damage", "4×3 damage · +6 Vigor"]);
+  assert.equal(eelSection.marker.label, "At Terror Eel's Shriek threshold · 165 HP");
+  assert.equal(eelSection.marker.detail, "Immediately Stunned · takes no action → Apply 99 Vulnerable → resume at step 1");
+  assert.doesNotMatch(JSON.stringify(eel.presentation.primary), /between Crash and Thrash|uses Terror|• Terror applies|\(75\)/);
   assert.match(JSON.stringify(eel.reference), /Crash|Thrash|Terror/);
 
   const ovicopter = encounter("OVICOPTER_NORMAL");
@@ -123,6 +124,58 @@ test("pattern projection preserves actor identities and tracked timers while sup
   assert.match(eggPattern, /uses step 1 to transform into a Hatchling/);
   assert.doesNotMatch(eggPattern, /step 1 timer|uses Hatch to transform/);
   assert.match(JSON.stringify(ovicopter.reference), /"name":"Hatch"/);
+});
+
+test("Axebot and Terror Eel one- and two-player practical fixtures remain exact", () => {
+  for (const players of [1, 2]) {
+    const configured = createSourceAdapter({ projection: artifact, players });
+    assert.equal(configured.available, true, configured.error);
+    for (const id of ["AXEBOTS_NORMAL", "TERROR_EEL_ELITE"]) {
+      const selected = configured.view(idle, id).encounter;
+      assert.deepEqual(selected.presentation.primary, p0aFixtures[`${players}P`][id], `${id} ${players}P fixture`);
+      const practical = JSON.stringify(selected.presentation.primary);
+      const audit = JSON.stringify(selected);
+      if (id === "AXEBOTS_NORMAL") {
+        const [, cycle, replacement] = selected.presentation.primary.bodies[0].sections;
+        assert.deepEqual(cycle.rows.map((row) => row.detail), ["11×2 damage", "18 damage · 2 Weak and 2 Frail"]);
+        assert.deepEqual(replacement.rows.slice(0, 2).map((row) => row.detail), [
+          "15 Block · +4 Strength · +10 Max HP cumulative",
+          "15 Block · +8 Strength · +20 Max HP cumulative",
+        ]);
+        assert.doesNotMatch(JSON.stringify(cycle), /Block|Strength|replacement/i);
+        assert.doesNotMatch(practical, /Boot Up|The One-Two|Hammer Uppercut|\+24|30 Block/);
+        assert.match(audit, /Boot Up|The One-Two|Hammer Uppercut|BOOT_UP_MOVE/);
+      } else {
+        const section = selected.presentation.primary.bodies[0].sections[0];
+        const threshold = players === 1 ? 75 : 165;
+        const opposite = players === 1 ? 165 : 75;
+        assert.equal(section.marker.label, `At Terror Eel's Shriek threshold · ${threshold} HP`);
+        assert.equal((JSON.stringify(section).match(/Shriek threshold/g) ?? []).length, 1);
+        assert.doesNotMatch(JSON.stringify(section), new RegExp(`threshold[^.]*\\b${opposite}\\b`, "i"));
+        assert.doesNotMatch(practical, /Crash|Thrash|Terrorize|uses Terror|\(75\)/);
+        assert.match(audit, /\"name\":\"Terror\"/);
+        assert.match(audit, /Terrorize|TERROR_MOVE/);
+      }
+    }
+  }
+});
+
+test("focused sequence compilers fail closed instead of restoring a generic all-move cycle", () => {
+  for (const [id, from, to] of [
+    ["AXEBOTS_NORMAL", "GRAPH.AXEBOT/BOOT_UP_MOVE", "GRAPH.AXEBOT/ONE_TWO_MOVE"],
+    ["TERROR_EEL_ELITE", "GRAPH.TERROR_EEL/STUN_MOVE", "GRAPH.TERROR_EEL/CRASH_MOVE"],
+  ]) {
+    const changed = structuredClone(encounter(id));
+    const edge = changed.monsters[0].graph.edges.find((row) => row.from === from);
+    assert.ok(edge); edge.to = to;
+    const reference = changed.reference.record;
+    const projected = buildEncounterPresentation(changed, {
+      reference,
+      scaling: { players: 2, act: reference.actNumber, kind: reference.kind },
+      referenceMeta: reference.configuration,
+    });
+    assert.deepEqual(projected.primary.bodies[0].sections, [], `${id} must not use generic fallback`);
+  }
 });
 
 test("best-available merge obeys one- and two-player threshold scaling and exact-only fallback boundaries", () => {

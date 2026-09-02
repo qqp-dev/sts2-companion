@@ -106,11 +106,15 @@ export function checkConsequenceFirstGuide() {
   }
 
   const terror = primary(adapter, "TERROR_EEL_ELITE");
-  const terrorPattern = terror.primary.bodies[0].sections[0].note;
-  assert.match(terrorPattern, /The Terror Eel alternates between step 1 and step 2, starting with step 1/);
-  assert.match(terrorPattern, /uses step 4 before resuming the step 1\/step 2 cycle/);
-  assert.doesNotMatch(terrorPattern, /step 4 Eel|between Crash and Thrash|uses Terror|• Terror applies/);
-  assert.match(JSON.stringify(terror.encounter.reference), /Crash|Thrash|Terror/);
+  const terrorSection = terror.primary.bodies[0].sections[0];
+  assert.deepEqual(terrorSection.rows.map((row) => row.detail), ["18 damage", "4×3 damage · +6 Vigor"]);
+  assert.equal(terrorSection.marker.label, "At Terror Eel's Shriek threshold · 165 HP");
+  assert.equal(terrorSection.marker.detail, "Immediately Stunned · takes no action → Apply 99 Vulnerable → resume at step 1");
+  assert.equal(terrorSection.repeat, "↻ repeat 1 → 2");
+  assert.doesNotMatch(practicalText(terror.primary), /Crash|Thrash|Terrorize|uses Terror|• Terror applies|\(75\)/);
+  const terrorAudit = JSON.stringify(terror.encounter);
+  assert.match(terrorAudit, /Crash|Thrash|\"name\":\"Terror\"/);
+  assert.match(terrorAudit, /Terrorize|TERROR_MOVE/);
 
   const egg = primary(adapter, "OVICOPTER_NORMAL");
   const eggPattern = egg.primary.bodies.find((body) => body.name === "Tough Egg").sections[0].note;

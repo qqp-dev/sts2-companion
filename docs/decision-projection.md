@@ -191,6 +191,17 @@ labels the consequence as wiki/reference-backed, and keeps the symbolic
 expression in Technical audit. It MUST NOT label that fallback as source-closed
 or obtain it through fuzzy matching.
 
+Conditions, thresholds, sequence transitions, replacement ordinals, and repeated
+amounts on the practical surface MUST be compiled from one typed presentation
+value or exact fallback coordinate. The renderer MUST NOT scale arbitrary
+numerals embedded in retained prose or use a global text replacement to repair a
+specific guide. Values with different scaling domains (for example, configured
+HP, Block, a Power threshold, and an unscaled state increment) remain separate
+structured fields. When a checked behavior graph distinguishes an initial path,
+replacement-only opener, interruption, or cycle re-entry, the practical sequence
+MUST preserve that topology rather than placing every registered move in one
+cycle. Retained prose and title conflicts remain unchanged in Technical audit.
+
 Information is progressively disclosed:
 
 1. **Primary practical combat guide:** compact practical placement, configured

@@ -80,17 +80,22 @@ test("v0.111.0 Axebot game override and Stock cycle are authoritative", () => {
   assert.ok(axebot.rules.some((rule) => /\+10 Max HP/i.test(rule)));
 });
 
-test("Axebot Boot Up scales block but keeps A9 combat stats", () => {
+test("Axebot Block scales but its typed respawn increment does not", () => {
   const axebot = scaledEncounter(encounterFor("AXEBOTS_NORMAL"));
   const boot = axebot.lineup[0].moves.find((move) => move.name === "Boot Up");
   assert.deepEqual(axebot.lineup[0].hp, [182, 206]);
   assert.equal(boot.sourceA9, "Gains 15 Block and 4/8 Strength.");
   assert.equal(boot.text, "Gains 30 Block and 4/8 Strength.");
-  assert.ok(axebot.rules.some((rule) => /\+24 Max HP/i.test(rule)));
-  assert.ok(axebot.timing.some((line) => /\+24 Max HP/i.test(line)));
+  assert.ok(axebot.rules.some((rule) => /\+10 Max HP/i.test(rule)));
+  assert.ok(axebot.timing.some((line) => /\+10 Max HP/i.test(line)));
+  assert.doesNotMatch(JSON.stringify([axebot.rules, axebot.timing]), /\+24 Max HP/i);
   assert.equal(
     scaleMechanicsText("Gains 15 Block and 4/8 Strength.", { players: 2, act: 3, kind: "hallway" }),
     "Gains 30 Block and 4/8 Strength.",
+  );
+  assert.equal(
+    scaleMechanicsText("A replacement gains +10 Max HP cumulatively.", { players: 2, act: 3, kind: "hallway" }),
+    "A replacement gains +10 Max HP cumulatively.",
   );
 });
 

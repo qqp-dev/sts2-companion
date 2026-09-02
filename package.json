@@ -24,7 +24,8 @@
     "build:encounter-facts": "python3 tools/generate-encounter-facts.py",
     "check:encounter-facts": "python3 tools/generate-encounter-facts.py --check",
     "check:phone-snapshot": "node tools/reproduce-ceremonial-guide.mjs --check",
-    "check:consequence-naming": "node tools/check-consequence-first-guide.mjs"
+    "check:consequence-naming": "node tools/check-consequence-first-guide.mjs",
+    "check:p0a-guides": "node tools/reproduce-p0a-guides.mjs --check"
   },
   "dsh": {
     "bundle": {

@@ -337,11 +337,11 @@ test("phone scan path is context-visible, consequence-first, body-adjacent, and 
   const payload = adapter.view(state("AXEBOTS_NORMAL", "combat", ["MONSTER.AXEBOT"]));
   const { root } = await runShadowClient(payload);
   const collapsed = collapsedText(root);
-  for (const required of ["Combat", "AXEBOT", "182–206 HP", "Starts with · Stock 2", "Opener", "Turn 1", "18 damage", "Cycle", "30 Block", "WATCH", "replacement body", "Technical audit"])
+  for (const required of ["Combat", "AXEBOT", "182–206 HP", "Starts with · Stock 2", "Initial Axebot opener", "Turn 1", "18 damage", "Ordinary repeating cycle", "11×2 damage", "Stock replacement opener", "15 Block", "+4 Strength", "+8 Strength", "+10 Max HP", "+20 Max HP", "WATCH", "replacement body", "Technical audit"])
     assert.match(collapsed, new RegExp(required.replace(/[+]/g, "\\+")));
-  for (const forbidden of ["Hammer Uppercut", "Boot Up", "The One-Two", "Possible roster", "Effects", "Stock amount unresolved", "checked amount", "BOOT_UP_MOVE", "MONSTER.AXEBOT"])
+  for (const forbidden of ["Hammer Uppercut", "Boot Up", "The One-Two", "[+]24", "30 Block", "Possible roster", "Effects", "Stock amount unresolved", "checked amount", "BOOT_UP_MOVE", "MONSTER.AXEBOT"])
     assert.doesNotMatch(collapsed, new RegExp(forbidden, "i"));
-  const positions = ["AXEBOT", "182–206 HP", "Combat", "Starts with", "Opener", "Cycle", "WATCH"].map((text) => collapsed.indexOf(text));
+  const positions = ["AXEBOT", "182–206 HP", "Combat", "Starts with", "Initial Axebot opener", "Ordinary repeating cycle", "Stock replacement opener", "WATCH"].map((text) => collapsed.indexOf(text));
   assert.deepEqual([...positions].sort((a, b) => a - b), positions, `scan order: ${collapsed}`);
   assert.match(root.textContent, /MONSTER\.AXEBOT/);
   assert.match(root.textContent, /BOOT_UP_MOVE/);
@@ -352,6 +352,36 @@ test("phone scan path is context-visible, consequence-first, body-adjacent, and 
   assert.equal(descendants(root).filter((node) => node.className === "technical-audit").length, 1);
 });
 
+test("Terror Eel collapsed DOM uses one configured threshold and ordered interruption", async () => {
+  for (const players of [1, 2]) {
+    const configured = createSourceAdapter({ projection: artifact, players });
+    assert.equal(configured.available, true, configured.error);
+    const payload = configured.view(state("TERROR_EEL_ELITE", "combat", ["MONSTER.TERROR_EEL"]));
+    const { root } = await runShadowClient(payload);
+    const collapsed = collapsedText(root);
+    const expected = players === 1 ? 75 : 165;
+    const opposite = players === 1 ? 165 : 75;
+    const sequence = [
+      "TERROR EEL", "Two-step cycle", "18 damage", "4×3 damage", "+6 Vigor",
+      `Shriek threshold · ${expected} HP`, "Immediately Stunned", "takes no action",
+      "Apply 99 Vulnerable", "resume at step 1", "repeat 1 → 2", "Technical audit",
+    ];
+    let cursor = -1;
+    for (const value of sequence) {
+      const next = collapsed.indexOf(value, cursor + 1);
+      assert.ok(next > cursor, `${players}P ${value}: ${collapsed}`);
+      cursor = next;
+    }
+    assert.equal((collapsed.match(/Shriek threshold/g) ?? []).length, 1);
+    assert.doesNotMatch(collapsed, new RegExp(`threshold[^.]*\\b${opposite}\\b`, "i"));
+    assert.doesNotMatch(collapsed, /Crash|Thrash|Terrorize|uses Terror|\(75\)/);
+    for (const concept of ["Terror Eel", "Shriek", "Stunned", "Vulnerable", "Vigor"])
+      assert.match(collapsed, new RegExp(concept, "i"));
+    assert.match(root.textContent, /Crash|Thrash/);
+    assert.match(root.textContent, /Terrorize|TERROR_MOVE/);
+  }
+});
+
 test("primary capsule distinguishes combat, last, and exact manual selection", async () => {
   const combat = collapsedText((await runShadowClient(adapter.view(state("AXEBOTS_NORMAL", "combat")))).root);
   const last = collapsedText((await runShadowClient(adapter.view(state("AXEBOTS_NORMAL", "last")))).root);
@@ -360,7 +390,6 @@ test("primary capsule distinguishes combat, last, and exact manual selection", a
   assert.match(manual, /Manual · Static reference/);
   assert.doesNotMatch(manual, /AXEBOTS_NORMAL|BOWLBUGS_NORMAL|Combat ·/);
 });
-
 
 test("production remains body-adjacent without turning possibilities into an observed lineup", async () => {
   const payload = adapter.view(state("FABRICATOR_NORMAL", "combat", ["MONSTER.FABRICATOR", "MONSTER.ZAPBOT"]));

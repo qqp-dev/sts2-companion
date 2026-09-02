@@ -1009,6 +1009,127 @@ function ceremonialSections(referenceBody, moves, scaling = {}) {
   };
   return [phaseOne, phaseTwo];
 }
+function exactGraphContract(sourceBody, expected) {
+  const graph = sourceBody?.graph;
+  if (!graph || graph.graphId !== expected.graphId) return false;
+  const nodeStates = new Map((graph.nodes ?? []).map((node) => [node.nodeId, node.stateId]));
+  if (nodeStates.size !== expected.states.length
+      || expected.states.some((stateId) => ![...nodeStates.values()].includes(stateId))) return false;
+  const initialIds = Array.isArray(graph.initial) ? graph.initial : graph.initial == null ? [] : [graph.initial];
+  const initial = initialIds.map((nodeId) => nodeStates.get(nodeId)).sort();
+  if (initial.includes(undefined) || initial.join("\0") !== [...expected.initial].sort().join("\0")) return false;
+  const edges = (graph.edges ?? []).map((edge) => (
+    edge.kind === "followUp" && nodeStates.has(edge.from) && nodeStates.has(edge.to)
+      ? `${nodeStates.get(edge.from)}>${nodeStates.get(edge.to)}` : null
+  )).sort();
+  return !edges.includes(null) && edges.join("\0") === [...expected.edges].sort().join("\0");
+}
+function stateIncrement(expression, stateName) {
+  const increments = [], domains = [];
+  const visit = (node) => {
+    if (!node || typeof node !== "object") return;
+    if (node.kind === "stateVariable" && node.name === stateName) domains.push(node.domain);
+    if (node.kind === "arithmetic" && node.operator === "multiply" && node.operands?.length === 2) {
+      const state = node.operands.find((operand) => operand?.kind === "stateVariable" && operand.name === stateName);
+      const constant = node.operands.find((operand) => operand?.kind === "constant" && Number.isSafeInteger(Number(operand.value)));
+      if (state && constant) increments.push(Number(constant.value));
+    }
+    for (const value of Array.isArray(node) ? node : Object.values(node)) visit(value);
+  };
+  visit(expression);
+  const unique = [...new Set(increments)];
+  const maximums = [...new Set(domains.map((domain) => Number(domain?.maximum)).filter(Number.isSafeInteger))];
+  return unique.length === 1 && unique[0] > 0 && maximums.length === 1
+    ? { amount: unique[0], maximum: maximums[0] } : null;
+}
+function exactReplacementValues(move, sourceBody) {
+  const match = /^(\d+) Block and (\d+)\/(\d+) Strength$/.exec(move?.atoms?.map((atom) => atom.text).join(" · ") ?? "");
+  const hp = stateIncrement(sourceBody?.hp?.expression, "axebotRespawnCount");
+  if (!match || !hp || hp.maximum !== 2) return null;
+  const values = {
+    block: Number(match[1]), strengths: [Number(match[2]), Number(match[3])],
+    maxHp: [hp.amount, hp.amount * 2],
+  };
+  return Object.values(values).flat().every((value) => Number.isSafeInteger(value) && value > 0) ? values : null;
+}
+function axebotSections(referenceBody, sourceBody, moves) {
+  if (referenceBody.monsterId !== "AXEBOT") return undefined;
+  const byName = exactMoveMap(moves);
+  const graphClosed = exactGraphContract(sourceBody, {
+    graphId: "GRAPH.AXEBOT",
+    states: ["BOOT_UP_MOVE", "HAMMER_UPPERCUT_MOVE", "ONE_TWO_MOVE"],
+    initial: ["BOOT_UP_MOVE", "HAMMER_UPPERCUT_MOVE"],
+    edges: ["BOOT_UP_MOVE>HAMMER_UPPERCUT_MOVE", "HAMMER_UPPERCUT_MOVE>ONE_TWO_MOVE", "ONE_TWO_MOVE>HAMMER_UPPERCUT_MOVE"],
+  });
+  if (!byName || !graphClosed || !["Boot Up", "The One-Two", "Hammer Uppercut"].every((name) => byName.has(name))) return [];
+  const replacement = exactReplacementValues(byName.get("Boot Up"), sourceBody);
+  if (!replacement) return [];
+  const replacementAuthorities = [...new Set([
+    ...byName.get("Boot Up").atoms.map((atom) => atom.authority), "checked-source",
+  ])];
+  return [
+    {
+      number: null, title: "Initial Axebot opener", rows: [moveRow(byName.get("Hammer Uppercut"), "Turn 1")],
+      marker: null, transitionAfter: true, repeat: null,
+    },
+    {
+      number: null, title: "Ordinary repeating cycle",
+      rows: [moveRow(byName.get("The One-Two"), "1"), moveRow(byName.get("Hammer Uppercut"), "2")],
+      marker: null, transitionAfter: false, repeat: "↻ repeat 1 → 2",
+    },
+    {
+      number: null, title: "Stock replacement opener", note: "Only when Stock replaces a defeated Axebot.",
+      rows: [
+        {
+          cue: "First replacement",
+          detail: `${replacement.block} Block · +${replacement.strengths[0]} Strength · +${replacement.maxHp[0]} Max HP cumulative`,
+          authorities: replacementAuthorities,
+        },
+        {
+          cue: "Second replacement",
+          detail: `${replacement.block} Block · +${replacement.strengths[1]} Strength · +${replacement.maxHp[1]} Max HP cumulative`,
+          authorities: replacementAuthorities,
+        },
+        { cue: "Then", detail: "enter the ordinary cycle at step 2", authorities: ["checked-source"] },
+      ],
+      marker: null, transitionAfter: false, repeat: null,
+    },
+  ];
+}
+function trackedPowerValue(value, power) {
+  const match = new RegExp(`^${escapedPattern(power)} (\\d+)$`).exec(String(value ?? ""));
+  return match && Number.isSafeInteger(Number(match[1])) ? Number(match[1]) : null;
+}
+function terrorEelSections(referenceBody, sourceBody, moves, thresholdValue) {
+  if (referenceBody.monsterId !== "TERROR_EEL") return undefined;
+  const byName = exactMoveMap(moves);
+  const graphClosed = exactGraphContract(sourceBody, {
+    graphId: "GRAPH.TERROR_EEL",
+    states: ["CRASH_MOVE", "THRASH_MOVE", "STUN_MOVE", "TERROR_MOVE"],
+    initial: ["CRASH_MOVE"],
+    edges: ["CRASH_MOVE>THRASH_MOVE", "THRASH_MOVE>CRASH_MOVE", "STUN_MOVE>TERROR_MOVE", "TERROR_MOVE>CRASH_MOVE"],
+  });
+  if (!byName || !graphClosed || !["Crash", "Thrash", "Stun", "Terror"].every((name) => byName.has(name))) return [];
+  const threshold = trackedPowerValue(thresholdValue, "Shriek");
+  const stun = byName.get("Stun");
+  const stunned = stun.atoms.find((atom) => atom.kind === "state")?.text;
+  const noAction = stun.atoms.find((atom) => atom.kind === "action")?.text;
+  const vulnerable = byName.get("Terror").atoms.find((atom) => atom.subject?.toLowerCase() === "vulnerable")?.text;
+  if (!threshold || !stunned || !noAction || !vulnerable) return [];
+  return [{
+    number: null, title: "Two-step cycle",
+    rows: [moveRow(byName.get("Crash"), "1"), moveRow(byName.get("Thrash"), "2")],
+    marker: {
+      label: `At Terror Eel's Shriek threshold · ${threshold} HP`,
+      detail: `Immediately ${stunned.replace(/^STUNNED$/i, "Stunned")} · ${noAction} → Apply ${vulnerable} → resume at step 1`,
+    },
+    transitionAfter: false, repeat: "↻ repeat 1 → 2",
+  }];
+}
+function focusedSections(referenceBody, sourceBody, moves, thresholdValue) {
+  return axebotSections(referenceBody, sourceBody, moves)
+    ?? terrorEelSections(referenceBody, sourceBody, moves, thresholdValue);
+}
 function namesInExactText(moves, value) {
   const source = String(value ?? "");
   return moves.filter((move) => source.includes(move.name));
@@ -1167,6 +1288,11 @@ function uniqueReferenceNotes(reference, moves) {
   return notes;
 }
 function primaryReferenceMove(referenceBody, referenceMove, scaling) {
+  // Axebot's replacement-only values are one typed A9 reference. They are not an
+  // invitation to scale arbitrary numerals in retained prose.
+  if (referenceBody.monsterId === "AXEBOT" && referenceMove.name === "Boot Up") {
+    return { ...referenceMove, text: referenceMove.sourceA9 };
+  }
   // Plow is an HP threshold rather than a displayed stack amount. In the active
   // fixture its one-player value remains the raw A9 threshold; multiplayer uses
   // the checked opt-in scaling already applied to referenceMove.text.
@@ -1188,14 +1314,20 @@ function primaryPresentation(encounter, options) {
       primaryReferenceMove(referenceBody, move, options.scaling), sourceBody, options.scaling, bodyIndex, provenanceValues,
     ));
     practicalMoves.push(...moves);
-    const sections = ceremonialSections(referenceBody, moves, options.scaling) ?? genericSections(referenceBody, moves);
+    const players = Number(options.scaling?.players ?? 2);
+    const thresholdValue = referenceBody.monsterId === "TERROR_EEL" && players === 1
+      ? referenceBody.startsWithA9 : referenceBody.startsWith;
+    const focused = focusedSections(referenceBody, sourceBody, moves, thresholdValue);
+    const sections = focused !== undefined
+      ? focused : ceremonialSections(referenceBody, moves, options.scaling) ?? genericSections(referenceBody, moves);
     return {
       bodyIndex,
       name: referenceBody.displayName,
       role: practicalRole(encounter, sourceBody, referenceBody, moves),
       initial: isPracticalInitial(encounter, sourceBody, referenceBody),
       hp: practicalHp(sourceBody, referenceBody, options.scaling, bodyIndex, provenanceValues),
-      setup: referenceBody.startsWith ? `Starts with · ${referenceBody.startsWith}` : null,
+      setup: referenceBody.monsterId === "TERROR_EEL"
+        ? null : referenceBody.startsWith ? `Starts with · ${referenceBody.startsWith}` : null,
       sections: roleNumberedSections(referenceBody, sections, maximumPhase),
       watch: referenceBody.monsterId === "CEREMONIAL_BEAST"
         ? ["crossing the phase threshold clears accumulated Strength."] : [],
@@ -1214,7 +1346,10 @@ function primaryPresentation(encounter, options) {
       kind,
     },
     bodies,
-    notes: uniqueReferenceNotes(reference, practicalMoves),
+    notes: encounter.canonicalId === "TERROR_EEL_ELITE" ? []
+      : encounter.canonicalId === "AXEBOTS_NORMAL"
+        ? uniqueReferenceNotes(reference, practicalMoves).filter((note) => /\bFatal\b/.test(note))
+        : uniqueReferenceNotes(reference, practicalMoves),
     provenance: {
       label: `wiki/reference values · A9 / ${players}P presentation`,
       matching: "exact canonical encounter and monster IDs only",
@@ -1308,5 +1443,6 @@ export const presentationInternals = Object.freeze({
   productionPresentation, lifecyclePresentation, lifecyclePresentationRecords, lifecycleEffect,
   retentionPolicyText, lifecycleWriteText, eventPresentation, eventEffect, validatedCollection,
   mechanicAtom, mechanicAtoms, primaryPresentation, genericSections, ceremonialSections, roleNumberedSections,
+  exactGraphContract, stateIncrement, axebotSections, terrorEelSections,
   BOOLEAN_CONDITIONS, EVENT_EFFECT_KINDS, LIFECYCLE_WRITES, TARGETS,
 });
