@@ -27,9 +27,11 @@ menu item linking to its configured `/sts2` base path.
 
 The document and its bounded `/sts2/state` and `/sts2/client.js` implementation
 endpoints read the checked compact projection
-`data/encounter-facts-v0.111.0.json` through one strict adapter. The adapter also
-joins the retained `data/encounters.json` guide by exact canonical encounter and
-monster IDs. The flat default scan path is:
+`data/encounter-facts-v0.111.0.json` through one strict adapter. For encounters
+with a retained `data/encounters.json` record, the adapter joins that guide by
+exact canonical encounter and monster IDs. All eight current event encounters
+instead use a deliberate checked-source-only primary path; no retained record or
+wiki fallback is fabricated. The flat default scan path is:
 
 1. compact encounter title, configured HP/kind, practical placement, and static
    detected/manual context;
@@ -38,15 +40,25 @@ monster IDs. The flat default scan path is:
 4. turn/condition cues and numbered sequence steps with concise consequences,
    transitions, repeat cues, and body-adjacent encounter-distinct rules;
 5. zero or more independently qualified flat `TACTIC`/`WATCH` lines; and
-6. quiet A9/player-count provenance plus collapsed **Technical audit**.
+6. quiet lane/player-count provenance plus collapsed **Technical audit**.
 
-The primary guide uses the best available value per practical coordinate. A
-projected checked value supersedes the retained guide only when it is actually
-closed. If its source expression remains symbolic, the exact retained A9/body/
-move value is rendered as a consequence with configured multiplayer scaling and
-quiet `wiki/reference` provenance—never as source-closed and never as an
-`unresolved` placeholder when that exact fallback exists. Matching is exact only;
-the adapter does not guess aliases, fold case, or fuzzy-match fallback records.
+For a retained-backed primary, the guide uses the best available value per
+practical coordinate. A projected checked value supersedes the retained guide only
+when it is actually closed. If its source expression remains symbolic, the exact
+retained A9/body/move value is rendered as a consequence with configured
+multiplayer scaling and quiet `wiki/reference` provenance—never as source-closed
+and never as an `unresolved` placeholder when that exact fallback exists. The eight
+event-fight primaries do not use this merger: closed HP/setup/operation/graph and
+combat-lifecycle facts render with `checked source values` provenance, while
+symbolic amounts stay concise and honest. Matching is exact only; the adapter does
+not guess aliases, fold case, or fuzzy-match fallback records.
+
+An **event fight** card is the ordinary combat reference for a fight reached from
+a map event. It identifies initial bodies, HP/setup, behavior branches/cycles, and
+combat-specific clocks or termination. It is not an event walkthrough and never
+advises which event option to choose. Option effects, dialogue, rewards, and
+post-event selection remain Technical audit unless an exact combat-transition or
+lifecycle join makes a consequence part of this fight.
 
 Primary copy is consequence-first: it answers **when does it happen, what happens,
 and what must the player track or target?** Ordinary canonical move labels are not
@@ -99,7 +111,10 @@ DLL SHA-256:
 gate. Unknown inputs are never converted to zero or a guessed default. The
 retained A9/2P community book is a presentation fallback, not source authority:
 it is selected only by exact IDs, remains separately labeled/auditable, and is
-superseded coordinate-by-coordinate when the checked source value closes.
+superseded coordinate-by-coordinate when the checked source value closes. Absence
+from that retained book does not imply missing runtime identity, compact-adapter,
+or primary coverage; the eight event-fight cards are the current source-only
+example.
 
 Detailed schema/readiness and implementation authority:
 
@@ -148,6 +163,7 @@ Ceremonial Beast snapshot, with:
 ```sh
 npm test
 npm run check:phone-snapshot
+npm run check:event-primary-guides
 ```
 
 No generated data change is expected for presentation or adapter-consumer work.

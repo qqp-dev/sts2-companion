@@ -63,6 +63,9 @@ The projection is not:
 - a static time-to-kill estimate. Fight-level race output requires an explicit
   player policy and closed production/lifecycle semantics; otherwise expanded
   detail retains clocks, windows, and removal deltas instead; or
+- an event walkthrough, dialogue guide, reward recommendation, or advice about
+  which event option to choose. An event-fight primary is only the static combat
+  reference after an exact encounter transition; or
 - a change to `/sts2`, its state reader, source migration artifacts, or the
   C1/C2/C3 cutover plan.
 
@@ -1465,11 +1468,14 @@ ownership.
 ### Current practical combat guide and offline contract work
 
 - `/sts2`, its bounded state payload, and browser client require the checked
-  compact projection through one fail-closed adapter. The adapter performs an
-  exact-ID best-available presentation merge with the retained guide: checked
-  source wins only when closed; otherwise the exact reference value is visible
-  with provenance. Raw source/reference authority, symbolic expressions, merge
-  reasons, conflicts, and evidence are reachable through Technical audit.
+  compact projection through one fail-closed adapter. Retained-backed encounters
+  use an exact-ID best-available presentation merge: checked source wins only when
+  closed; otherwise the exact reference value is visible with provenance. The
+  eight exact current event encounters use a separate source-only primary compiler
+  over checked roster, HP/scaling, initialization, operations, graphs, and joined
+  combat lifecycle. It creates no retained record or wiki fallback. Raw source and
+  reference authority (where present), symbolic expressions, merge reasons,
+  conflicts, and evidence remain reachable through Technical audit.
 - No alternate HTML product is part of this contract. A projection failure returns
   503 on the guide and its implementation endpoints rather than substituting
   unvalidated community/wiki facts.
@@ -1483,6 +1489,10 @@ ownership.
   editorially neutral.
 - Do not expose a live decision frame, current threshold, current intent, or
   present-tense `FOCUS` without the observation gate.
+- Event coverage is tracked independently at identity, decoded source, compact
+  projection, strict-adapter selector, and primary-presentation layers. All eight
+  current event fights pass all five static layers. This does not observe the
+  selected event option or authorize event-choice advice.
 
 ### E2 source gates
 
@@ -1496,7 +1506,8 @@ make the whole frame ready.
 2. **E2b — HP chain:** close runtime HP/scaling/rounding and current HP semantics
    before authoritative lethal, removal-cost, and HP-race thresholds.
 3. **E2c — event graphs/lifecycle:** enable event encounter traces only for
-   covered graphs and lifecycle edges.
+   covered graphs and lifecycle edges. The current eight static event-fight cards
+   are covered; this does not enable live-state traces or event-option guidance.
 4. **E2d — production and lifecycle:** enable spawn/replacement/survivor/removal
    consequences and cross-enemy `LINK` deltas only when the complete
    operation-through-settled-cut chains close.

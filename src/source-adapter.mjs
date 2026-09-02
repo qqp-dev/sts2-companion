@@ -716,6 +716,10 @@ function makeCompiler(v, options = {}) {
       placement: { classification: placement.classification, factId: placement.factId, memberships: compact(placement.memberships) },
       roster: { cardinality: { ...encounter.initialRoster.cardinality }, grammar: rosterRecord(encounter.initialRoster.selection), possibleInitialBodies: initialModels },
       observedBodies: observation.observedBodies, production, monsters, event,
+      ...(encounter.kind === "event" ? { sourceScaling: {
+        block: compact(source.scaling.block), power: compact(source.scaling.power),
+        ordinaryMonsterAttack: compact(source.scaling.ordinaryMonsterAttack),
+      } } : {}),
       hpContract: {
         lane: "SOURCE", scope: "global checked HP/state contract; rule-to-model applicability is not inferred",
         pipelineFactId: source.hpPipeline.factId, assignment: compact(source.hpPipeline.assignment),
@@ -749,6 +753,7 @@ function makeCompiler(v, options = {}) {
     } : null;
     encounterView.presentation = buildEncounterPresentation(encounterView, {
       reference,
+      players: configuredPlayers,
       scaling: reference ? { players: configuredPlayers, act: reference.actNumber, kind: reference.kind } : null,
       referenceMeta: bookMeta,
     });

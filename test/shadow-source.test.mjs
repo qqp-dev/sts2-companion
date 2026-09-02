@@ -413,7 +413,7 @@ test("representative guides contain no prediction or live-state advice", async (
 
 test("complex collapsed fixtures preserve practical lifecycle semantics without debug leakage", async () => {
   const fixtures = [
-    ["BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER", [/Event fight clock/, /record that the event fight ran out of time/, /escape and leave the fight/]],
+    ["BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER", [/Time Limit 3/, /record that the event fight ran out of time/, /escape and leave the fight/]],
     ["TEST_SUBJECT_BOSS", [/revives into Phase 2/, /three listed bodies are sequential phases/, /on-kill and Fatal effects trigger/i]],
     ["OVICOPTER_NORMAL", [/Tough Egg/, /Hatchling/, /Hatches into a Hatchling with 48–55 HP/]],
     ["WATERFALL_GIANT_BOSS", [/Steam Eruption/, /Becomes invulnerable/, /stored Steam Eruption amount, then dies/]],
