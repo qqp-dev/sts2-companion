@@ -576,9 +576,12 @@ test("all practical rows and structural prose suppress labels while rule prose s
         body.role,
         ...body.sections.flatMap((section) => [section.title, section.note, section.repeat]),
       ].filter(Boolean).join("\n");
-      const bodyMoves = selected.reference
-        ? selected.reference.record.lineup[body.bodyIndex].moves.map((move) => move.name)
-        : selected.monsters[body.bodyIndex].moves.map((move) => move.title.text);
+      const exactReferenceBody = selected.reference?.record.lineup.find((candidate) => candidate.displayName === body.name);
+      const bodyMoves = body.sourceOnlySupplement
+        ? selected.monsters.flatMap((candidate) => candidate.moves.map((move) => move.title.text)).filter((title) => typeof title === "string" && title)
+        : exactReferenceBody
+          ? exactReferenceBody.moves.map((move) => move.name)
+          : selected.monsters[body.bodyIndex].moves.map((move) => move.title.text);
       for (const moveName of bodyMoves) {
         const ordinaryCitations = withoutSemanticMoveUses(structural, body.name, moveName);
         assert.doesNotMatch(ordinaryCitations, boundaryPattern(moveName), `${id}: ${moveName}`);

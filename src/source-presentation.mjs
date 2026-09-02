@@ -1,6 +1,7 @@
 import { checkedCalloutCandidates } from "./checked-callouts.mjs";
 import { compileCalloutCollection } from "./decision-callouts.mjs";
 import { scaleMechanicsText, scaleRange } from "./book.mjs";
+import { analyzeRosterGrammar, PracticalRosterError } from "./primary-roster.mjs";
 const TARGETS = Object.freeze({
   // Move recipients.
   allOpponentsOfSourceMonster: "all opponents",
@@ -1748,28 +1749,67 @@ function eventPrimaryPresentation(encounter, options) {
   };
 }
 
-function primaryPresentation(encounter, options) {
-  const reference = options.reference;
-  if (!reference) return eventPrimaryPresentation(encounter, options);
-  const provenanceValues = [];
-  const maximumPhase = Math.max(0, ...reference.lineup.map((body) => referencePhaseNumber(body) ?? 0));
-  const practicalMoves = [];
-  const bodies = reference.lineup.map((referenceBody, bodyIndex) => {
-    const sourceBody = exactSourceBody(encounter, referenceBody);
-    const moves = referenceBody.moves.map((move) => bestMove(
-      primaryReferenceMove(referenceBody, move, options.scaling), sourceBody, options.scaling, bodyIndex, provenanceValues,
-    ));
-    practicalMoves.push(...moves);
-    const players = Number(options.scaling?.players ?? 2);
-    const thresholdValue = referenceBody.monsterId === "TERROR_EEL" && players === 1
-      ? referenceBody.startsWithA9 : referenceBody.startsWith;
-    const focused = focusedSections(referenceBody, sourceBody, moves, thresholdValue);
-    const sections = focused !== undefined
-      ? focused : ceremonialSections(referenceBody, moves, options.scaling) ?? genericSections(referenceBody, moves);
-    return {
+function completeSourceOperationDetail(move, context = {}) {
+  const rendered = sourceOperationDetail(move, context);
+  const extras = [];
+  for (const operation of move?.operations ?? []) {
+    if (["attack", "attackHitCount", "gainBlock", "applyPower", "addStatusCard", "transition"].includes(operation.kind)) continue;
+    if (operation.kind === "stateWrite") {
+      extras.push("update this body's checked behavior state");
+      continue;
+    }
+    extras.push(`${words(operation.kind)} effect remains source-known but is not compactly rendered`);
+  }
+  const parts = [rendered, ...extras].filter(Boolean);
+  return parts.length ? [...new Set(parts)].join(" · ") : "No checked combat effect is registered for this behavior";
+}
+function supplementalSourceSections(body, encounter, players) {
+  const moves = body.moves ?? [];
+  if (!moves.length) return [sourceSection("Checked behavior effects", [
+    sourceRow("No checked turn behavior is available for this body", "Known unknown"),
+  ])];
+  return [sourceSection("Checked behavior effects", moves.map((move, index) => sourceRow(
+    completeSourceOperationDetail(move, { encounter, players }), moves.length === 1 ? "Each use" : `Effect ${index + 1}`,
+  )), {
+    note: "Consequences are source-backed; exact action names and ordering details remain in Technical audit.",
+  })];
+}
+function supplementalSourceSetup(body) {
+  const effects = (body.initialState ?? []).map(initialEffect).map((row) => row.line).filter(Boolean);
+  return effects.length ? `Starts with · ${effects.join(" · ")}` : null;
+}
+function supplementalSourceBody(encounter, sourceBody, bodyIndex, role, options, provenanceValues) {
+  const players = Number(options.scaling?.players ?? options.players ?? 2);
+  const hp = practicalHp(sourceBody, null, options.scaling, bodyIndex, provenanceValues);
+  if (!hp) throw new PracticalRosterError(`source-only body ${nameOf(sourceBody)} has no closed or honest HP presentation`);
+  provenanceValues.push({
+    path: `body ${bodyIndex + 1} · mechanics`, authority: "checked-source",
+    reason: "source-possible model has no exact retained body join; mechanics use only its checked source model",
+  });
+  return {
+    bodyIndex, name: nameOf(sourceBody), role, initial: true, hp,
+    setup: supplementalSourceSetup(sourceBody),
+    sections: supplementalSourceSections(sourceBody, encounter, players), watch: [],
+    sourceMatchedExactly: false, sourceOnlySupplement: true,
+    mechanicsAuthority: "checked source mechanics",
+  };
+}
+function referencePrimaryBody(encounter, referenceBody, bodyIndex, maximumPhase, role, options, provenanceValues) {
+  const sourceBody = exactSourceBody(encounter, referenceBody);
+  const moves = referenceBody.moves.map((move) => bestMove(
+    primaryReferenceMove(referenceBody, move, options.scaling), sourceBody, options.scaling, bodyIndex, provenanceValues,
+  ));
+  const players = Number(options.scaling?.players ?? 2);
+  const thresholdValue = referenceBody.monsterId === "TERROR_EEL" && players === 1
+    ? referenceBody.startsWithA9 : referenceBody.startsWith;
+  const focused = focusedSections(referenceBody, sourceBody, moves, thresholdValue);
+  const sections = focused !== undefined
+    ? focused : ceremonialSections(referenceBody, moves, options.scaling) ?? genericSections(referenceBody, moves);
+  return {
+    card: {
       bodyIndex,
       name: referenceBody.displayName,
-      role: practicalRole(encounter, sourceBody, referenceBody, moves),
+      role: role ?? practicalRole(encounter, sourceBody, referenceBody, moves),
       initial: isPracticalInitial(encounter, sourceBody, referenceBody),
       hp: practicalHp(sourceBody, referenceBody, options.scaling, bodyIndex, provenanceValues),
       setup: referenceBody.monsterId === "TERROR_EEL"
@@ -1778,10 +1818,60 @@ function primaryPresentation(encounter, options) {
       watch: referenceBody.monsterId === "CEREMONIAL_BEAST"
         ? ["crossing the phase threshold clears accumulated Strength."] : [],
       sourceMatchedExactly: sourceBody !== null,
-    };
-  });
+    },
+    moves,
+  };
+}
+
+function primaryPresentation(encounter, options) {
+  const reference = options.reference;
+  if (!reference) return eventPrimaryPresentation(encounter, options);
+  const rosterAnalysis = options.rosterAnalysis;
+  if (!rosterAnalysis) throw new PracticalRosterError("primary compiler did not receive exact roster analysis");
+  const provenanceValues = [];
+  const maximumPhase = Math.max(0, ...reference.lineup.map((body) => referencePhaseNumber(body) ?? 0));
+  const practicalMoves = [];
+  let bodies;
+  let sourceSupplements = 0;
+  if (rosterAnalysis.presentation.variable) {
+    const exactReferenceByModel = new Map();
+    for (const referenceBody of reference.lineup) {
+      const sourceBody = exactSourceBody(encounter, referenceBody);
+      if (!sourceBody || !rosterAnalysis.bounds.has(sourceBody.canonicalModel)) continue;
+      if (exactReferenceByModel.has(sourceBody.canonicalModel))
+        throw new PracticalRosterError(`retained record repeats exact possible body ${sourceBody.canonicalModel}`);
+      exactReferenceByModel.set(sourceBody.canonicalModel, referenceBody);
+    }
+    const sourceByModel = new Map((encounter.monsters ?? []).map((body) => [body.canonicalModel, body]));
+    bodies = rosterAnalysis.cardModels.map((model, bodyIndex) => {
+      const sourceBody = sourceByModel.get(model);
+      if (!sourceBody) throw new PracticalRosterError(`possible model ${model} has no checked mechanics record`);
+      const role = rosterAnalysis.presentation.bodies.find((body) => body.name === nameOf(sourceBody))?.role;
+      if (!role) throw new PracticalRosterError(`possible model ${model} has no presence bounds`);
+      const referenceBody = exactReferenceByModel.get(model);
+      if (!referenceBody) {
+        sourceSupplements += 1;
+        return supplementalSourceBody(encounter, sourceBody, bodyIndex, role, options, provenanceValues);
+      }
+      const compiled = referencePrimaryBody(encounter, referenceBody, bodyIndex, maximumPhase, role, options, provenanceValues);
+      practicalMoves.push(...compiled.moves);
+      return compiled.card;
+    });
+    // Retained action names are used only to suppress citations in retained rule
+    // prose. They do not create body joins or mechanics cards.
+    for (const referenceBody of reference.lineup) for (const move of referenceBody.moves) {
+      if (practicalMoves.some((candidate) => candidate.name === move.name)) continue;
+      practicalMoves.push({ name: move.name, atoms: mechanicAtoms(move.text) });
+    }
+  } else {
+    bodies = reference.lineup.map((referenceBody, bodyIndex) => {
+      const compiled = referencePrimaryBody(encounter, referenceBody, bodyIndex, maximumPhase, null, options, provenanceValues);
+      practicalMoves.push(...compiled.moves);
+      return compiled.card;
+    });
+  }
   let possibleInitial = bodies.filter((body) => body.initial);
-  if (!possibleInitial.length) possibleInitial = bodies.filter((body) => reference.lineup[body.bodyIndex].role !== "summoned");
+  if (!possibleInitial.length) possibleInitial = bodies.filter((body) => reference.lineup[body.bodyIndex]?.role !== "summoned");
   const single = possibleInitial.length === 1 ? possibleInitial[0] : null;
   const kind = ({ boss: "BOSS", elite: "ELITE", hallway: "ORDINARY" })[reference.kind] ?? String(reference.kind ?? "ENCOUNTER").toUpperCase();
   const players = options.scaling?.players ?? options.referenceMeta?.players ?? 2;
@@ -1797,9 +1887,15 @@ function primaryPresentation(encounter, options) {
         ? uniqueReferenceNotes(reference, practicalMoves).filter((note) => /\bFatal\b/.test(note))
         : uniqueReferenceNotes(reference, practicalMoves),
     provenance: {
-      label: `wiki/reference values · A9 / ${players}P presentation`,
-      matching: "exact canonical encounter and monster IDs only",
-      mergePolicy: "checked source when closed; otherwise retained exact reference",
+      label: sourceSupplements
+        ? `checked source + wiki/reference values · checked A8 / retained A9 · ${players}P presentation`
+        : `wiki/reference values · A9 / ${players}P presentation`,
+      matching: sourceSupplements
+        ? "exact canonical encounter and exact source model IDs; unmatched retained body IDs do not create joins"
+        : "exact canonical encounter and monster IDs only",
+      mergePolicy: sourceSupplements
+        ? "checked source-only supplemental cards; checked source when closed for exact retained joins; otherwise retained exact reference"
+        : "checked source when closed; otherwise retained exact reference",
       values: provenanceValues,
     },
   };
@@ -1852,6 +1948,7 @@ export function buildEncounterPresentation(encounter, options = {}) {
       }
     }
   }
+  const rosterAnalysis = analyzeRosterGrammar(encounter.roster, names);
   const candidates = options.calloutCandidates ?? checkedCalloutCandidates(encounter.canonicalId);
   const callouts = options.calloutCollection
     ? validatedCollection(options.calloutCollection)
@@ -1867,10 +1964,11 @@ export function buildEncounterPresentation(encounter, options = {}) {
     headline: text(row.detail, words(row.unknownId)),
     detail: `${words(row.status)} · ${words(row.scope)} · ${words(row.reasonCode)}`,
   }));
-  const projectedPrimary = primaryPresentation(encounter, options);
+  const projectedPrimary = primaryPresentation(encounter, { ...options, rosterAnalysis });
   const mergeProvenance = projectedPrimary?.provenance?.authority === "checked-source-only" ? null : projectedPrimary?.provenance ?? null;
   const primary = projectedPrimary ? {
     ...projectedPrimary,
+    ...(rosterAnalysis.presentation.variable ? { roster: rosterAnalysis.presentation } : {}),
     provenance: projectedPrimary.provenance.authority
       ? { label: projectedPrimary.provenance.label, authority: projectedPrimary.provenance.authority }
       : { label: projectedPrimary.provenance.label },
@@ -1891,6 +1989,7 @@ export const presentationInternals = Object.freeze({
   productionPresentation, lifecyclePresentation, lifecyclePresentationRecords, lifecycleEffect,
   retentionPolicyText, lifecycleWriteText, eventPresentation, eventEffect, validatedCollection,
   mechanicAtom, mechanicAtoms, primaryPresentation, eventPrimaryPresentation, genericSections, ceremonialSections, roleNumberedSections,
+  completeSourceOperationDetail, supplementalSourceSections,
   exactGraphContract, stateIncrement, axebotSections, terrorEelSections,
   BOOLEAN_CONDITIONS, EVENT_EFFECT_KINDS, LIFECYCLE_WRITES, TARGETS,
 });

@@ -26,7 +26,8 @@
     "check:phone-snapshot": "node tools/reproduce-ceremonial-guide.mjs --check",
     "check:consequence-naming": "node tools/check-consequence-first-guide.mjs",
     "check:p0a-guides": "node tools/reproduce-p0a-guides.mjs --check",
-    "check:event-primary-guides": "node tools/reproduce-event-primary-guides.mjs --check"
+    "check:event-primary-guides": "node tools/reproduce-event-primary-guides.mjs --check",
+    "check:roster-guides": "node tools/reproduce-roster-guides.mjs --check"
   },
   "dsh": {
     "bundle": {

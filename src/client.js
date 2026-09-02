@@ -273,6 +273,16 @@
     hero.append(el("p", "selection-context", selectionLabel(state, encounter)));
     parent.append(hero);
   }
+  function renderPrimaryRoster(parent, primary) {
+    const rosterView = primary.roster;
+    if (!rosterView?.variable) return;
+    const roster = el("aside", "primary-roster roster-capsule");
+    roster.append(el("strong", "capsule-label", rosterView.cardinalityLabel));
+    rosterView.lines.forEach((line) => roster.append(el("p", "roster-line", line)));
+    if (rosterView.caveat) roster.append(el("p", "boundary-note", rosterView.caveat));
+    parent.append(roster);
+  }
+
   function renderPrimarySection(parent, phase) {
     const sectionNode = el("section", "phase-section");
     const head = el("header", "phase-head");
@@ -316,7 +326,8 @@
       if (showBodyHeaders) {
         const head = el("header", "primary-body-head");
         heading(head, 2, body.name, "body-title");
-        head.append(el("p", "body-meta", `${body.hp} HP · ${body.role}`));
+        const authority = body.sourceOnlySupplement ? ` · ${body.mechanicsAuthority}` : "";
+        head.append(el("p", "body-meta", `${body.hp} HP · ${body.role}${authority}`));
         bodyNode.append(head);
       }
       if (body.setup) bodyNode.append(el("p", "setup-line", body.setup));
@@ -365,6 +376,7 @@
     if (!presentation) throw new Error("guide presentation unavailable");
     if (presentation.primary) {
       renderPrimaryHero(root, state, encounter, presentation.primary);
+      renderPrimaryRoster(root, presentation.primary);
       renderVersionBoundary(state, root);
       renderPrimaryBodies(root, presentation.primary, presentation.callouts);
       renderPrimaryNotes(root, presentation.primary);

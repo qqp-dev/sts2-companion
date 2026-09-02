@@ -35,12 +35,14 @@ wiki fallback is fabricated. The flat default scan path is:
 
 1. compact encounter title, configured HP/kind, practical placement, and static
    detected/manual context;
-2. explicit numbered phases when the retained pattern declares phases;
-3. otherwise honest `Opener`, `Cycle`, `Branch`, or `Response` sections;
-4. turn/condition cues and numbered sequence steps with concise consequences,
+2. for variable initial rosters, an exact-cardinality capsule with fixed order,
+   uniform alternatives, independent draws, or distinct N-of-M selection;
+3. explicit numbered phases when the retained pattern declares phases;
+4. otherwise honest `Opener`, `Cycle`, `Branch`, or `Response` sections;
+5. turn/condition cues and numbered sequence steps with concise consequences,
    transitions, repeat cues, and body-adjacent encounter-distinct rules;
-5. zero or more independently qualified flat `TACTIC`/`WATCH` lines; and
-6. quiet lane/player-count provenance plus collapsed **Technical audit**.
+6. zero or more independently qualified flat `TACTIC`/`WATCH` lines; and
+7. quiet lane/player-count provenance plus collapsed **Technical audit**.
 
 For a retained-backed primary, the guide uses the best available value per
 practical coordinate. A projected checked value supersedes the retained guide only
@@ -70,12 +72,24 @@ stack nouns. Exact canonical move/Power labels, source IDs, retained wiki labels
 and per-value provenance remain unchanged as audit/reconciliation metadata inside
 the collapsed **Technical audit**.
 
-Possible initial bodies and produced bodies remain visibly distinct. Random and
-alternative roster branches are possibilities, not a claim that every listed
-body is present. Source expressions (including symbolic getters), raw identifiers,
-behavior graphs, source authority, exact retained records, per-value merge reasons,
-conflicts, callout basis refs, and evidence pointers remain reachable inside
-**Technical audit**.
+The variable-roster capsule and body presence roles are compiled recursively from
+the checked roster grammar, not from the retained flat lineup. `always present`,
+`possible body`, and `possible up to N copies` come from exact per-model count
+bounds across every ordered outcome. Each uniform-choice node is its own draw;
+repeated nested nodes therefore remain independent and can produce duplicates.
+Filtered pools preserve exact N-of-M, model-count-limit, distinct, and
+without-replacement semantics. One mechanics card is shown per possible body type,
+with an explicit warning that alternative cards are not all co-present. A possible
+model without an exact retained body join gets a labeled checked-source mechanics
+card; symbolic values remain runtime-set known-unknowns rather than borrowed wiki
+numbers.
+
+Possible initial bodies, locally observed bodies, and produced/summoned bodies are
+separate lanes. An observed realization never narrows or replaces the static source
+grammar, and a produced body never becomes an initial body. Source expressions
+(including symbolic getters), raw identifiers, behavior graphs, source authority,
+exact retained records, per-value merge reasons, conflicts, callout basis refs, and
+evidence pointers remain reachable inside **Technical audit**.
 
 The editorial registry is deliberately separate from source extraction. It
 currently contains one source-backed conditional callout for Axebot Stock
@@ -164,6 +178,7 @@ Ceremonial Beast snapshot, with:
 npm test
 npm run check:phone-snapshot
 npm run check:event-primary-guides
+npm run check:roster-guides
 ```
 
 No generated data change is expected for presentation or adapter-consumer work.

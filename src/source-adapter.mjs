@@ -211,18 +211,41 @@ function validateReadiness(readiness, metadata) {
     if (requiredFamilies.has(family) && status !== "complete" && !classifiedTitleGap) fail(`required coverage ${family} is incomplete`);
   }
 }
+function rosterRows(value, label) {
+  const rows = array(value, label);
+  if (!rows.length) fail(`${label} must not be empty`);
+  return rows;
+}
 function validateRoster(selection, label, monsters, result = new Set()) {
   object(selection, label); const kind = string(selection.kind, `${label}.kind`);
   if (!ROSTER_KINDS.has(kind)) fail(`${label} has unsupported kind ${kind}`);
   if (kind === "fixed") { const model = string(selection.model, `${label}.model`); expect(monsters, model, "roster monster"); result.add(model); }
   else if (kind === "sequence") {
     if (string(selection.order, `${label}.order`) !== "fixed") fail(`${label} has unsupported order`);
-    array(selection.children, `${label}.children`).forEach((row, index) => validateRoster(row, `${label}.children[${index}]`, monsters, result));
+    rosterRows(selection.children, `${label}.children`).forEach((row, index) => validateRoster(row, `${label}.children[${index}]`, monsters, result));
   } else {
-    array(selection.choices, `${label}.choices`).forEach((row, index) => validateRoster(row, `${label}.choices[${index}]`, monsters, result));
-    if (kind === "filteredChoice") { integer(selection.count, `${label}.count`, 1); string(selection.constraint, `${label}.constraint`); string(selection.draws, `${label}.draws`); }
+    const choices = rosterRows(selection.choices, `${label}.choices`);
+    choices.forEach((row, index) => validateRoster(row, `${label}.choices[${index}]`, monsters, result));
+    if (kind === "filteredChoice") {
+      const count = integer(selection.count, `${label}.count`, 1);
+      if (count > choices.length) fail(`${label}.count exceeds its choice pool`);
+      if (string(selection.constraint, `${label}.constraint`) !== "modelCountLimit") fail(`${label} has unsupported constraint`);
+      if (string(selection.draws, `${label}.draws`) !== "withoutReplacement") fail(`${label} has unsupported draw semantics`);
+      if (choices.some((choice) => choice?.kind !== "fixed")) fail(`${label} has unsupported non-singleton filtered choice`);
+      if (new Set(choices.map((choice) => choice.model)).size !== choices.length) fail(`${label} repeats a model in a distinct pool`);
+    }
   }
   return result;
+}
+function rosterCardinality(selection) {
+  if (selection.kind === "fixed") return { minimum: 1, maximum: 1 };
+  if (selection.kind === "sequence") return selection.children.map(rosterCardinality).reduce(
+    (result, row) => ({ minimum: result.minimum + row.minimum, maximum: result.maximum + row.maximum }),
+    { minimum: 0, maximum: 0 },
+  );
+  if (selection.kind === "filteredChoice") return { minimum: selection.count, maximum: selection.count };
+  const choices = selection.choices.map(rosterCardinality);
+  return { minimum: Math.min(...choices.map((row) => row.minimum)), maximum: Math.max(...choices.map((row) => row.maximum)) };
 }
 
 function validateProjection(root) {
@@ -298,6 +321,9 @@ function validateProjection(root) {
     const minimum = integer(cardinality.minimum, `${encounter.canonicalId}.minimum`); const maximum = integer(cardinality.maximum, `${encounter.canonicalId}.maximum`);
     if (minimum > maximum) fail(`${encounter.canonicalId} has inverted cardinality`);
     const initial = validateRoster(roster.selection, `${encounter.canonicalId}.selection`, monsterIndex);
+    const grammarCardinality = rosterCardinality(roster.selection);
+    if (minimum !== grammarCardinality.minimum || maximum !== grammarCardinality.maximum)
+      fail(`${encounter.canonicalId} declared cardinality does not match roster grammar`);
     const possible = new Set(strings(encounter.possibleMonsters, `${encounter.canonicalId}.possibleMonsters`, true));
     const produced = strings(encounter.producedMonsters, `${encounter.canonicalId}.producedMonsters`, true);
     for (const model of [...initial, ...produced]) { expect(monsterIndex, model, "encounter monster"); if (!possible.has(model)) fail(`${encounter.canonicalId} possibleMonsters omits ${model}`); }
