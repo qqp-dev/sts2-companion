@@ -195,7 +195,9 @@ test("best-available merge obeys one- and two-player threshold scaling and exact
 
   const sourceOnly = encounter("BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER");
   assert.equal(sourceOnly.reference, null);
-  assert.equal(sourceOnly.presentation.primary, null);
+  assert.ok(sourceOnly.presentation.primary);
+  assert.equal(sourceOnly.presentation.primary.provenance.authority, "checked-source-only");
+  assert.equal(sourceOnly.presentation.audit.mergeProvenance, null);
 });
 
 test("a closed checked source disagreement wins visibly while both values remain auditable", () => {
@@ -563,7 +565,9 @@ test("all practical rows and structural prose suppress labels while rule prose s
     const selected = encounter(id);
     const primary = selected.presentation.primary;
     if (!primary) continue;
-    const allMoveNames = selected.reference.record.lineup.flatMap((body) => body.moves.map((move) => move.name));
+    const allMoveNames = selected.reference
+      ? selected.reference.record.lineup.flatMap((body) => body.moves.map((move) => move.name))
+      : selected.monsters.flatMap((body) => body.moves.map((move) => move.title.text));
     const notes = primary.notes.join("\n");
     for (const moveName of allMoveNames) for (const pattern of citationPatterns(moveName))
       assert.doesNotMatch(notes, pattern, `${id}: ${moveName}`);
@@ -572,7 +576,9 @@ test("all practical rows and structural prose suppress labels while rule prose s
         body.role,
         ...body.sections.flatMap((section) => [section.title, section.note, section.repeat]),
       ].filter(Boolean).join("\n");
-      const bodyMoves = selected.reference.record.lineup[body.bodyIndex].moves.map((move) => move.name);
+      const bodyMoves = selected.reference
+        ? selected.reference.record.lineup[body.bodyIndex].moves.map((move) => move.name)
+        : selected.monsters[body.bodyIndex].moves.map((move) => move.title.text);
       for (const moveName of bodyMoves) {
         const ordinaryCitations = withoutSemanticMoveUses(structural, body.name, moveName);
         assert.doesNotMatch(ordinaryCitations, boundaryPattern(moveName), `${id}: ${moveName}`);

@@ -19,11 +19,14 @@ XDG data root, and the alternate Megacrit Flatpak root.
 
 The current default authority is local
 `data/encounter-facts-v0.111.0.json`: source-lane mechanics and A8
-single-player HP values are projected through the strict adapter. The practical
-presentation joins `data/encounters.json` by exact canonical IDs: a closed checked
-source coordinate wins, while a symbolic coordinate retains the exact configured
-A9/2P reference value with separate provenance. The raw expression and both lanes
-remain in Technical audit. Runtime makes no wiki or other network requests. It
+single-player HP values are projected through the strict adapter. For encounters
+with retained records, practical presentation joins `data/encounters.json` by
+exact canonical IDs: a closed checked source coordinate wins, while a symbolic
+coordinate retains the exact configured A9/player-count reference value with
+separate provenance. The eight current event encounters instead compile a
+source-only primary from checked roster, HP/scaling, initialization, operations,
+graphs, and combat lifecycle; no retained record is manufactured. Raw expressions
+and all available lanes remain in Technical audit. Runtime makes no wiki or other network requests. It
 compares checked authority with local `release_info.json`; a mismatch is shown as
 an exceptional warning.
 
@@ -36,10 +39,31 @@ python3 tools/harvest-wiki.py  # refresh wiki.gg snapshots (development only)
 python3 tools/generate-book.py # reads only checked-in local snapshots
 ```
 
-Unknown event fights keep their raw encounter ID visible. Missing HP, an
-unclassified article pattern, an unreadable release file, and a version
-mismatch are likewise rendered as explicit known-unknowns instead of a blank
-page.
+All eight current event fights accept their exact manual selector and render a
+source-only practical primary. Unknown observed/selected identities still fail
+clearly rather than entering a fuzzy fallback. Missing HP, an unreadable release
+file, and a version mismatch likewise remain explicit instead of producing a
+blank or falsely authoritative page.
+
+## Event coverage layers
+
+Event coverage is not one boolean. For all eight current event fights, shipped
+identity, decoded source facts, compact projection membership, strict-adapter
+selection, and phone primary presentation are each covered and tested. Retained
+wiki/book membership remains a distinct reconciliation lane and is not required
+for a source-only card. These cards describe only combat: they do not recommend an
+event option, interpret dialogue, or turn unrelated option/reward effects into
+combat consequences.
+
+## Retained-wiki audit baseline (deferred)
+
+The reviewed offline audit baseline records three corrections for later P1/P2
+work: Kin Follower's bad module type is in `tools/.wiki/Bosses.lua`; Fabricator's
+retained book already lists all four summoned bots; and Waterfall Giant's terminal
+HP is already represented. Therefore the corrected objective missing-Note count is
+**79**, and the corrected grand missing/unparsed count is **103**. These are audit
+classification totals, not source closure and not changes to this P0b primary
+implementation.
 
 ## Three-wave source-first model (development only)
 

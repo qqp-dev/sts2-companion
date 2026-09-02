@@ -310,7 +310,7 @@
   }
   function renderPrimaryBodies(parent, primary, callouts) {
     const list = el("div", "primary-body-list");
-    const showBodyHeaders = primary.bodies.length > 1;
+    const showBodyHeaders = primary.bodies.length > 1 || primary.showBodyHeaders === true;
     primary.bodies.forEach((body) => {
       const bodyNode = el("section", "primary-body");
       if (showBodyHeaders) {

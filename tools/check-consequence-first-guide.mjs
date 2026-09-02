@@ -95,8 +95,10 @@ export function checkConsequenceFirstGuide() {
         body.role,
         ...body.sections.flatMap((section) => [section.title, section.note, section.repeat]),
       ].filter(Boolean).join("\n");
-      const referenceBody = selected.reference.record.lineup[body.bodyIndex];
-      for (const move of referenceBody.moves) {
+      const moves = selected.reference
+        ? selected.reference.record.lineup[body.bodyIndex].moves
+        : selected.monsters[body.bodyIndex].moves.map((move) => ({ name: move.title.text }));
+      for (const move of moves) {
         const ordinaryCitations = withoutSemanticMoveUses(structural, body.name, move.name);
         assert.doesNotMatch(ordinaryCitations, exactMovePattern(move.name), `${id}: ${move.name}`);
         for (const pattern of citationPatterns(move.name))

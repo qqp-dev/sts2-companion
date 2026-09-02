@@ -1302,9 +1302,455 @@ function primaryReferenceMove(referenceBody, referenceMove, scaling) {
   }
   return referenceMove;
 }
+const EVENT_PRIMARY_IDS = new Set([
+  "BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER",
+  "BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER",
+  "BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER",
+  "DENSE_VEGETATION_EVENT_ENCOUNTER",
+  "FAKE_MERCHANT_EVENT_ENCOUNTER",
+  "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER",
+  "PUNCH_OFF_EVENT_ENCOUNTER",
+  "THE_ARCHITECT_EVENT_ENCOUNTER",
+]);
+const ACT_HP_FACTOR = Object.freeze({
+  "ACT.OVERGROWTH": "act1", "ACT.UNDERDOCKS": "act1", "ACT.HIVE": "act2", "ACT.GLORY": "act3NonBoss",
+});
+function exactConstant(expression) {
+  if (expression?.kind === "constant") return expression.value;
+  if (expression?.kind === "convert" && expression.mode === "exact") return exactConstant(expression.expression);
+  return null;
+}
+function sourceRow(detail, cue = null) {
+  return { cue, detail, authorities: ["checked-source"] };
+}
+function sourceSection(title, rows, options = {}) {
+  return {
+    number: null, title, rows, marker: null, transitionAfter: options.transitionAfter ?? false,
+    repeat: options.repeat ?? null, note: options.note ?? null,
+  };
+}
+function sourceMoveMap(body) {
+  return new Map((body?.moves ?? []).map((move) => [move.stateId, move]));
+}
+function typedExpressionValue(expression, state) {
+  if (!expression || typeof expression !== "object") return null;
+  if (expression.kind === "constant") return Number(expression.value);
+  if (expression.kind === "stateVariable") {
+    if (!Object.hasOwn(state, expression.name)) return null;
+    if (expression.valueType === "boolean") return typeof state[expression.name] === "boolean" ? state[expression.name] : null;
+    const value = Number(state[expression.name]);
+    return Number.isFinite(value) ? value : null;
+  }
+  if (expression.kind === "convert") return typedExpressionValue(expression.expression, state);
+  if (expression.kind === "actRoomFactor") {
+    const key = state.actIndex === 0 ? "act1" : state.actIndex === 1 ? "act2"
+      : state.actIndex === 2 ? state.bossRoom ? "act3Boss" : "act3NonBoss" : null;
+    return key ? Number(expression.factors?.[key]) : null;
+  }
+  if (expression.kind === "compare") {
+    const left = typedExpressionValue(expression.left, state), right = typedExpressionValue(expression.right, state);
+    if (left === null || right === null) return null;
+    return ({ lessOrEqual: left <= right, lessThan: left < right, equal: left === right,
+      greaterThan: left > right, greaterThanOrEqual: left >= right, notEqual: left !== right })[expression.operator] ?? null;
+  }
+  if (expression.kind === "conditional") {
+    const condition = typedExpressionValue(expression.condition, state);
+    return condition === null ? null : typedExpressionValue(condition ? expression.whenTrue : expression.whenFalse, state);
+  }
+  if (expression.kind === "arithmetic" && Array.isArray(expression.operands) && expression.operands.length) {
+    const values = expression.operands.map((operand) => typedExpressionValue(operand, state));
+    if (values.some((value) => value === null || !Number.isFinite(value))) return null;
+    if (expression.operator === "add") return values.reduce((left, right) => left + right);
+    if (expression.operator === "subtract") return values.slice(1).reduce((left, right) => left - right, values[0]);
+    if (expression.operator === "multiply") return values.reduce((left, right) => left * right, 1);
+    if (expression.operator === "divide" && values.slice(1).every((value) => value !== 0)) return values.slice(1).reduce((left, right) => left / right, values[0]);
+  }
+  return null;
+}
+function sourceActIndexes(encounter) {
+  const indexes = { "ACT.OVERGROWTH": 0, "ACT.UNDERDOCKS": 0, "ACT.HIVE": 1, "ACT.GLORY": 2 };
+  const memberships = encounter.placement?.memberships ?? [];
+  const values = memberships.length ? memberships.map((row) => indexes[row.actId]) : [0, 1, 2];
+  return values.every(Number.isSafeInteger) ? [...new Set(values)] : [];
+}
+function displayNumbers(values) {
+  const normalized = [...new Set(values.map((value) => Number(value.toFixed(8))))].sort((left, right) => left - right);
+  return formatPracticalRange(normalized);
+}
+function fixtureExpressionMatches(expression, fixtures, resultKey) {
+  return Array.isArray(fixtures) && fixtures.every((fixture) => {
+    const expected = Number(fixture[resultKey]);
+    const actual = typedExpressionValue(expression, fixture.inputs ?? {});
+    return Number.isFinite(expected) && actual !== null && Math.abs(actual - expected) < 1e-8;
+  });
+}
+function powerScalingContractClosed(encounter) {
+  const scaling = encounter?.sourceScaling?.power, rule = scaling?.rule;
+  if (scaling?.factId !== "SOURCE.SCALING.POWER" || rule?.inheritedDefault?.activeByDefault !== false
+      || rule.summary?.optIns !== 12 || rule.summary.activeOverrides !== 4 || rule.summary.formulaOverrides !== 5) return false;
+  const optIns = rule.optIns ?? [], optInIds = new Set(optIns.filter((row) => row.shouldScale === true).map((row) => row.canonicalPower));
+  if (optIns.length !== 12 || optInIds.size !== 12
+      || !optInIds.has("POWER.ARTIFACT_POWER") || !optInIds.has("POWER.PLATING_POWER")
+      || ["POWER.STRENGTH_POWER", "POWER.FRAIL_POWER", "POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER"].some((id) => optInIds.has(id))) return false;
+  const signatures = new Map([
+    ["POWER.ARTIFACT_POWER", ["2", "3", "4"]],
+    ["POWER.PLATING_POWER", ["2", "6", "10"]],
+  ]);
+  for (const [model, expected] of signatures) {
+    const override = rule.overrides?.find((row) => row.canonicalPower === model);
+    if (!override || override.active !== true || override.override !== true
+        || override.fixtures?.map((row) => row.result).join("\0") !== expected.join("\0")
+        || !fixtureExpressionMatches(override.expression, override.fixtures, "result")) return false;
+  }
+  return true;
+}
+function eventScalingContractsClosed(encounter) {
+  const attack = encounter?.sourceScaling?.ordinaryMonsterAttack;
+  const block = encounter?.sourceScaling?.block;
+  return attack?.factId === "SOURCE.SCALING.ORDINARYMONSTERATTACK"
+    && attack.rule?.scalesInMultiplayer === false
+    && block?.factId === "SOURCE.SCALING.BLOCK"
+    && block.rule?.ruleId === "monsterBlockMultiplayerScaling.v0.111.0"
+    && block.rule.rounding === "none"
+    && block.rule.fixtures?.map((row) => row.multiplier).join("\0") === ["1", "2", "3.9", "1"].join("\0")
+    && fixtureExpressionMatches(block.rule.expression, block.rule.fixtures, "multiplier")
+    && powerScalingContractClosed(encounter);
+}
+function scaledSourceBlock(value, encounter, players) {
+  const amount = practicalAmountText(value), number = Number(amount);
+  const scaling = encounter?.sourceScaling?.block;
+  if (amount === null || !Number.isFinite(number) || !eventScalingContractsClosed(encounter)) return null;
+  const multipliers = sourceActIndexes(encounter).map((actIndex) => typedExpressionValue(scaling.rule.expression, {
+    sourceIsPrimaryOrSecondaryEnemy: true, isPoweredCardOrMonsterMoveBlock: true,
+    playerCount: players, actIndex, bossRoom: false,
+  }));
+  return multipliers.length && multipliers.every((result) => result !== null)
+    ? displayNumbers(multipliers.map((multiplier) => number * multiplier)) : amount;
+}
+function scaledInitialPower(body, model, encounter, players) {
+  const base = initialBase(body, model), amount = Number(base);
+  if (base === null || !Number.isFinite(amount)) return base;
+  const scaling = encounter?.sourceScaling?.power;
+  if (!powerScalingContractClosed(encounter)) return null;
+  const optedIn = scaling.rule.optIns.some((row) => row.shouldScale === true && row.canonicalPower === model);
+  if (!optedIn) return base;
+  const override = scaling.rule.overrides?.find((row) => row.active === true && row.canonicalPower === model);
+  if (!override) return null;
+  const result = typedExpressionValue(override.expression, { amount, playerCount: players });
+  return result === null ? base : String(Number(result.toFixed(8)));
+}
+function sourceOperationDetail(move, context = {}) {
+  const operations = move?.operations ?? [];
+  const effects = [];
+  for (let index = 0; index < operations.length; index += 1) {
+    const operation = operations[index];
+    if (operation.kind === "attack") {
+      const hit = operations.slice(index + 1).find((candidate) => candidate.kind === "attackHitCount");
+      const amount = practicalAmountText(operation.value);
+      const hitCount = practicalAmountText(hit?.value);
+      const damage = hit
+        ? `${amount ?? "runtime-set"} damage × ${hitCount ?? "runtime-set hits"}`
+        : amount ? `${amount} damage` : "damage amount set at runtime";
+      effects.push(`${damage} to ${targetText(operation.target)}`);
+    } else if (operation.kind === "attackHitCount") {
+      continue;
+    } else if (operation.kind === "gainBlock") {
+      const amount = scaledSourceBlock(operation.value, context.encounter, context.players ?? 1);
+      effects.push(`${amount ?? "runtime-set"} Block${operation.target === "sourceMonster" ? " to self" : ` to ${targetText(operation.target)}`}`);
+    } else if (operation.kind === "applyPower") {
+      const amount = practicalAmountText(operation.value);
+      const power = words(operation.model);
+      effects.push(operation.target === "sourceMonster"
+        ? `${amount === null ? "runtime-set" : `+${amount}`} ${power} to self`
+        : `Apply ${amount ?? "a runtime-set amount of"} ${power} to ${targetText(operation.target)}`);
+    } else if (operation.kind === "addStatusCard") {
+      const amount = practicalAmountText(operation.value);
+      effects.push(`Add ${amount ?? "a runtime-set number of"} ${words(operation.model)} to ${targetText(operation.target)}`);
+    } else if (operation.kind === "transition" && operation.transition === "noOp") {
+      effects.push("takes no action");
+    }
+  }
+  return effects.join(" · ");
+}
+function graphState(graph, nodeId) {
+  return graph?.nodes?.find((node) => node.nodeId === nodeId)?.stateId ?? null;
+}
+function graphInitialStates(graph) {
+  const initial = Array.isArray(graph?.initial) ? graph.initial : graph?.initial ? [graph.initial] : [];
+  return initial.map((nodeId) => graphState(graph, nodeId));
+}
+function hasEventGraph(body, expected) {
+  const graph = body?.graph;
+  if (!graph || graph.graphId !== expected.graphId) return false;
+  const states = new Set((graph.nodes ?? []).map((node) => node.stateId));
+  if (states.size !== expected.states.length || expected.states.some((state) => !states.has(state))) return false;
+  if (graphInitialStates(graph).sort().join("\0") !== [...expected.initial].sort().join("\0")) return false;
+  const nodes = new Map((graph.nodes ?? []).map((node) => [node.nodeId, node.stateId]));
+  const edges = new Set((graph.edges ?? []).map((edge) => `${nodes.get(edge.from)}>${nodes.get(edge.to)}:${edge.kind}`));
+  return expected.edges.every((edge) => edges.has(edge));
+}
+function checkedEventHp(encounter, body, players) {
+  const hp = body?.hp?.a8SinglePlayer;
+  if (!hp || !Number.isSafeInteger(hp.minimum) || !Number.isSafeInteger(hp.maximum) || hp.minimum > hp.maximum) return null;
+  if (players === 1) return [hp.minimum, hp.maximum];
+  const scaling = encounter.hpContract?.multiplayerScaling;
+  const factors = scaling?.rule?.expression?.whenFalse?.operands?.find((operand) => operand?.kind === "actRoomFactor")?.factors;
+  const assignment = encounter.hpContract?.assignment?.conversion;
+  if (scaling?.factId !== "SOURCE.SCALING.HP" || scaling.rule?.ruleId !== "hpMultiplayerScaling.v0.111.0"
+      || assignment?.mode !== "truncateTowardZero" || !factors
+      || scaling.rule.regressionWitnesses?.map((row) => row.result).join("\0") !== ["100", "220.0", "240.0", "240.0", "260.0"].join("\0")
+      || !fixtureExpressionMatches(scaling.rule.expression, scaling.rule.regressionWitnesses, "result")) return null;
+  const memberships = encounter.placement?.memberships ?? [];
+  const factorKeys = memberships.length
+    ? memberships.map((membership) => ACT_HP_FACTOR[membership.actId])
+    : ["act1", "act2", "act3NonBoss"];
+  if (factorKeys.some((key) => !key || !/^\d+\.\d+$/.test(factors[key]))) return null;
+  const results = [];
+  for (const key of new Set(factorKeys)) {
+    const [whole, fraction] = factors[key].split(".");
+    const denominator = 10 ** fraction.length;
+    const numerator = Number(whole) * denominator + Number(fraction);
+    for (const value of [hp.minimum, hp.maximum]) results.push(Math.trunc(value * players * numerator / denominator));
+  }
+  return [Math.min(...results), Math.max(...results)];
+}
+function eventPlacement(encounter) {
+  const acts = (encounter.placement?.memberships ?? []).map((row) => words(row.actId));
+  if (!acts.length) return "Source-proven non-pool event combat";
+  return `${[...new Set(acts)].join(" / ")} event${new Set(acts).size === 1 ? "" : "s"}`;
+}
+function punchReduction(encounter, body, maximumHp) {
+  const rows = (body.initialState ?? []).filter((fact) => fact.effect?.kind === "setState" && /::set_StartingHpReduction\b/.test(fact.effect.member ?? ""));
+  const hpWrite = (body.initialState ?? []).find((fact) => fact.effect?.kind === "setCurrentHp");
+  if (rows.length !== 2 || !hpWrite || !encounterRngContract(encounter, body)) return null;
+  const bounds = rows.map((row) => row.baseValue?.expression).map((expression) => {
+    if (expression?.kind !== "reference" || !/Random\.Rng::NextInt\b/.test(expression.reference ?? "")) return null;
+    const values = expression.arguments?.map(exactConstant);
+    return values?.length === 2 && values.every(Number.isSafeInteger) ? values : null;
+  });
+  if (bounds.some((value) => value === null) || bounds.some((value) => value[0] !== bounds[0][0] || value[1] !== bounds[0][1])) return null;
+  const [minimum, maximumExclusive] = bounds[0];
+  if (minimum < 0 || maximumExclusive <= minimum) return null;
+  return {
+    minimum, maximumExclusive,
+    startingHp: [Math.max(1, maximumHp - (maximumExclusive - 1)), Math.max(1, maximumHp - minimum)],
+  };
+}
+function encounterRngContract(encounter, body) {
+  // The checked compact HP contract names NextInt's second bound as exclusive.
+  return body?.hp?.assignmentContract === "source HP expression; runtime inputs and multiplayer scaling remain explicit"
+    && encounter.hpContract?.baseSelection?.selection?.includes("NextInt(minInclusive,maxExclusive)");
+}
+function initialBase(body, model) {
+  const rows = (body.initialState ?? []).filter((fact) => fact.effect?.kind === "applyPower" && fact.effect.model === model);
+  return rows.length === 1 ? exactConstant(rows[0].baseValue?.expression) : null;
+}
+function eventBodyBase(encounter, body, players, count) {
+  const values = checkedEventHp(encounter, body, players);
+  if (!values) return null;
+  const hp = formatPracticalRange(values);
+  return {
+    bodyIndex: 0, name: nameOf(body), initial: true, hp,
+    role: count === 1 ? "initial event-combat body" : `${count === 2 ? "two" : count === 4 ? "four" : count} simultaneous initial bodies`,
+    setup: null, sections: [], watch: [], sourceMatchedExactly: true,
+  };
+}
+function battleFriendPrimary(encounter, body, primaryBody) {
+  const match = /^BATTLEWORN_DUMMY_EVENT_V([123])_ENCOUNTER$/.exec(encounter.canonicalId);
+  const expectedState = "NOTHING_MOVE";
+  const graphClosed = match && hasEventGraph(body, {
+    graphId: `GRAPH.BATTLE_FRIEND_V${match[1]}`, states: [expectedState], initial: [expectedState],
+    edges: [`${expectedState}>${expectedState}:followUp`],
+  });
+  const timeLimit = initialBase(body, "POWER.BATTLEWORN_DUMMY_TIME_LIMIT_POWER");
+  const lifecycle = encounter.lifecycle?.mechanics?.eventCombat?.battleTimeLimit;
+  const timeout = lifecycle?.branches?.find((branch) => (branch.orderedEffects ?? []).some((effect) => effect.kind === "escape"));
+  const effects = timeout?.orderedEffects ?? [];
+  const lifecycleClosed = lifecycle?.trigger === "AfterSideTurnEnd" && lifecycle.participantPolicy === "only when participants contains exact Power owner"
+    && effects.some((effect) => effect.kind === "writeState" && effect.field === "RanOutOfTime" && effect.value === true)
+    && effects.some((effect) => effect.kind === "escape" && effect.target === "exactOwnerBody");
+  if (!graphClosed || timeLimit !== 3 || !lifecycleClosed) return null;
+  primaryBody.setup = `${nameOf(body)} · Starts with Time Limit 3 · three-step clock: 3 → 2 → 1 → timeout.`;
+  primaryBody.sections = [
+    sourceSection("Behavior", [sourceRow("takes no combat action", "Each participating side turn")], { repeat: "↻ while Time Limit remains" }),
+    sourceSection("Time Limit", [
+      sourceRow(`After a side turn including ${nameOf(body)} · Time Limit 3 → 2`, "Step 1"),
+      sourceRow(`After the next included side turn · Time Limit 2 → 1`, "Step 2"),
+      sourceRow(`After the third included side turn · record that the event fight ran out of time → ${nameOf(body)}: escape and leave the fight`, "Step 3 · expiry"),
+    ]),
+  ];
+  return primaryBody;
+}
+function densePrimary(body, primaryBody) {
+  const moves = sourceMoveMap(body);
+  const graphClosed = hasEventGraph(body, {
+    graphId: "GRAPH.WRIGGLER", states: ["INIT_MOVE", "NASTY_BITE_MOVE", "WRIGGLE_MOVE", "SPAWNED_MOVE"],
+    initial: ["INIT_MOVE", "SPAWNED_MOVE"],
+    edges: ["NASTY_BITE_MOVE>WRIGGLE_MOVE:followUp", "WRIGGLE_MOVE>NASTY_BITE_MOVE:followUp", "SPAWNED_MOVE>INIT_MOVE:followUp"],
+  });
+  const start = body.initialState?.find((fact) => /::set_StartStunned\b/.test(fact.effect?.member ?? ""));
+  const branches = (body.graph?.edges ?? []).filter((edge) => edge.kind === "conditionalBranch" && graphState(body.graph, edge.from) === "INIT_MOVE");
+  const branchTargets = branches.map((edge) => graphState(body.graph, edge.to));
+  const conditionsClosed = branches.length === 4
+    && branchTargets.filter((state) => state === "NASTY_BITE_MOVE").length === 2
+    && branchTargets.filter((state) => state === "WRIGGLE_MOVE").length === 2
+    && branches.every((edge, index) => edge.order === index && edge.predicate?.kind === "reference");
+  if (!graphClosed || !conditionsClosed || exactConstant(start?.baseValue?.expression) !== false) return null;
+  primaryBody.setup = "4 Wrigglers · four simultaneous initial bodies · not Stunned at encounter start.";
+  primaryBody.sections = [
+    sourceSection("Branch · cycle offset", [
+      sourceRow(sourceOperationDetail(moves.get("NASTY_BITE_MOVE")), "Damage offset"),
+      sourceRow(sourceOperationDetail(moves.get("WRIGGLE_MOVE")), "Status + scaling offset"),
+    ], {
+      note: "Each Wriggler follows one of these two initial offsets; the branches do not occur simultaneously.",
+      repeat: "↻ then alternate the two offsets",
+    }),
+    sourceSection("Alternate entry response", [sourceRow(`${sourceOperationDetail(moves.get("SPAWNED_MOVE"))} → enter one of the two cycle offsets`, "Alternate entry")], {
+      note: "Not used by this encounter's initial four-body setup.",
+    }),
+  ];
+  return primaryBody;
+}
+function fakeMerchantPrimary(body, primaryBody) {
+  const moves = sourceMoveMap(body), graph = body.graph;
+  const graphClosed = hasEventGraph(body, {
+    graphId: "GRAPH.FAKE_MERCHANT_MONSTER",
+    states: ["SWIPE_MOVE", "SPEW_COINS_MOVE", "THROW_RELIC_MOVE", "ENRAGE_MOVE", "RAND_MOVE", "RAND_ATTACK_MOVE"],
+    initial: ["SWIPE_MOVE"],
+    edges: ["SWIPE_MOVE>RAND_MOVE:followUp", "SPEW_COINS_MOVE>RAND_MOVE:followUp", "THROW_RELIC_MOVE>RAND_ATTACK_MOVE:followUp", "ENRAGE_MOVE>RAND_MOVE:followUp"],
+  });
+  const random = (graph?.edges ?? []).filter((edge) => edge.kind === "randomBranch");
+  const full = random.filter((edge) => graphState(graph, edge.from) === "RAND_MOVE");
+  const attackOnly = random.filter((edge) => graphState(graph, edge.from) === "RAND_ATTACK_MOVE");
+  const fullTargets = new Set(full.map((edge) => graphState(graph, edge.to)));
+  const attackTargets = new Set(attackOnly.map((edge) => graphState(graph, edge.to)));
+  const constraintClosed = graphClosed && full.length === 4 && fullTargets.size === 4
+    && ["SWIPE_MOVE", "SPEW_COINS_MOVE", "THROW_RELIC_MOVE", "ENRAGE_MOVE"].every((state) => fullTargets.has(state))
+    && attackOnly.length === 3 && attackTargets.size === 3
+    && ["SWIPE_MOVE", "SPEW_COINS_MOVE", "THROW_RELIC_MOVE"].every((state) => attackTargets.has(state))
+    && random.every((edge) => edge.repeat?.enumName === "CannotRepeat")
+    && full.find((edge) => graphState(graph, edge.to) === "ENRAGE_MOVE")?.cooldown === 3;
+  if (!constraintClosed) return null;
+  primaryBody.sections = [
+    sourceSection("Opener", [sourceRow(sourceOperationDetail(moves.get("SWIPE_MOVE")), "Turn 1")], { transitionAfter: true }),
+    sourceSection("Branch", [
+      sourceRow(sourceOperationDetail(moves.get("SWIPE_MOVE")), "Single hit"),
+      sourceRow(sourceOperationDetail(moves.get("SPEW_COINS_MOVE")), "Eight hits"),
+      sourceRow(sourceOperationDetail(moves.get("THROW_RELIC_MOVE")), "Hit + status"),
+      sourceRow(sourceOperationDetail(moves.get("ENRAGE_MOVE")), "Self-scaling"),
+    ], {
+      note: "Randomly choose one eligible row. A row cannot repeat immediately. The +2 Strength row has a cooldown of 3. After the damage + 1 Frail row, the next branch is attack-only.",
+      repeat: "↻ return to the eligible random branch",
+    }),
+  ];
+  return primaryBody;
+}
+function mysteriousKnightPrimary(encounter, body, primaryBody, players) {
+  const moves = sourceMoveMap(body), graph = body.graph;
+  const graphClosed = hasEventGraph(body, {
+    graphId: "GRAPH.FLAIL_KNIGHT", states: ["WAR_CHANT", "FLAIL_MOVE", "RAM_MOVE", "RAND"], initial: ["RAM_MOVE"],
+    edges: ["WAR_CHANT>RAND:followUp", "FLAIL_MOVE>RAND:followUp", "RAM_MOVE>RAND:followUp"],
+  });
+  const random = (graph?.edges ?? []).filter((edge) => edge.kind === "randomBranch" && graphState(graph, edge.from) === "RAND");
+  const strength = scaledInitialPower(body, "POWER.STRENGTH_POWER", encounter, players);
+  const plating = scaledInitialPower(body, "POWER.PLATING_POWER", encounter, players);
+  const randomTargets = new Set(random.map((edge) => graphState(graph, edge.to)));
+  const constraintClosed = graphClosed && random.length === 3 && randomTargets.size === 3
+    && ["WAR_CHANT", "FLAIL_MOVE", "RAM_MOVE"].every((state) => randomTargets.has(state))
+    && random.every((edge) => exactConstant(edge.weight) === 1)
+    && random.find((edge) => graphState(graph, edge.to) === "WAR_CHANT")?.repeat?.enumName === "CannotRepeat"
+    && random.filter((edge) => ["FLAIL_MOVE", "RAM_MOVE"].includes(graphState(graph, edge.to)))
+      .every((edge) => edge.repeat?.enumName === "CanRepeatXTimes" && edge.repeat.maximumConsecutiveUses === 2);
+  if (!constraintClosed || (strength !== 6 && strength !== "6") || plating === null) return null;
+  primaryBody.setup = `Starts with · Strength base ${strength} · Plating base ${plating} after configured ${players}P scaling.`;
+  primaryBody.sections = [
+    sourceSection("Opener", [sourceRow(sourceOperationDetail(moves.get("RAM_MOVE")), "Turn 1")], { transitionAfter: true }),
+    sourceSection("Branch", [
+      sourceRow(sourceOperationDetail(moves.get("WAR_CHANT")), "Self-scaling"),
+      sourceRow(sourceOperationDetail(moves.get("FLAIL_MOVE")), "Two hits"),
+      sourceRow(sourceOperationDetail(moves.get("RAM_MOVE")), "Single hit"),
+    ], {
+      note: "Then randomly choose one of three equally weighted rows. The Strength row cannot repeat immediately; either attack can occur no more than twice consecutively.",
+      repeat: "↻ return to the weighted random branch",
+    }),
+  ];
+  return primaryBody;
+}
+function punchPrimary(encounter, body, primaryBody, maximumHp, players) {
+  const moves = sourceMoveMap(body);
+  const graphClosed = hasEventGraph(body, {
+    graphId: "GRAPH.PUNCH_CONSTRUCT", states: ["READY_MOVE", "FAST_PUNCH_MOVE", "STRONG_PUNCH_MOVE"],
+    initial: ["READY_MOVE", "FAST_PUNCH_MOVE"],
+    edges: ["READY_MOVE>FAST_PUNCH_MOVE:followUp", "FAST_PUNCH_MOVE>STRONG_PUNCH_MOVE:followUp", "STRONG_PUNCH_MOVE>READY_MOVE:followUp"],
+  });
+  const fast = body.initialState?.find((fact) => /::set_StartsWithFastPunch\b/.test(fact.effect?.member ?? ""));
+  const reduction = punchReduction(encounter, body, maximumHp);
+  const artifact = scaledInitialPower(body, "POWER.ARTIFACT_POWER", encounter, players);
+  if (!graphClosed || exactConstant(fast?.baseValue?.expression) !== true || !reduction || artifact === null) return null;
+  const starting = formatPracticalRange(reduction.startingHp);
+  primaryBody.setup = `2 Punch Constructs · two simultaneous initial bodies · ${maximumHp} max HP each; each starts at ${starting} HP after its own runtime-random starting HP reduction of ${reduction.minimum}–${reduction.maximumExclusive - 1} HP · Artifact base ${artifact} after configured ${players}P scaling · both begin at step 1 below.`;
+  primaryBody.sections = [sourceSection("Cycle", [
+    sourceRow(sourceOperationDetail(moves.get("FAST_PUNCH_MOVE")), "1"),
+    sourceRow(sourceOperationDetail(moves.get("STRONG_PUNCH_MOVE")), "2"),
+    sourceRow(sourceOperationDetail(moves.get("READY_MOVE"), { encounter, players }), "3"),
+  ], { repeat: "↻ repeat 1 → 2 → 3" })];
+  return { body: primaryBody, starting };
+}
+function architectPrimary(body, primaryBody) {
+  const moves = sourceMoveMap(body);
+  const graphClosed = hasEventGraph(body, {
+    graphId: "GRAPH.ARCHITECT", states: ["NOTHING"], initial: ["NOTHING"], edges: ["NOTHING>NOTHING:followUp"],
+  });
+  if (!graphClosed || sourceOperationDetail(moves.get("NOTHING")) !== "takes no action") return null;
+  primaryBody.setup = "Scripted non-turn combat.";
+  primaryBody.sections = [sourceSection("Behavior", [sourceRow("takes no combat action", "Registered behavior")], {
+    note: "No combat effect is registered for this action.",
+  })];
+  return primaryBody;
+}
+function eventPrimaryPresentation(encounter, options) {
+  if (!EVENT_PRIMARY_IDS.has(encounter.canonicalId) || encounter.kind !== "event" || encounter.reference !== null) return null;
+  const players = Number(options.players ?? 2);
+  if (!Number.isSafeInteger(players) || players < 1 || players > 4) return null;
+  const expectedCount = encounter.canonicalId === "DENSE_VEGETATION_EVENT_ENCOUNTER" ? 4
+    : encounter.canonicalId === "PUNCH_OFF_EVENT_ENCOUNTER" ? 2 : 1;
+  const count = encounter.roster?.cardinality;
+  const body = encounter.monsters?.[0];
+  const children = encounter.roster?.grammar?.kind === "sequence" ? encounter.roster.grammar.children : null;
+  if (!body || encounter.monsters.length !== 1 || count?.minimum !== expectedCount || count.maximum !== expectedCount
+      || !children || children.length !== expectedCount || children.some((child) => child.kind !== "fixed" || child.model !== body.canonicalModel)
+      || !eventScalingContractsClosed(encounter)) return null;
+  const primaryBody = eventBodyBase(encounter, body, players, expectedCount);
+  if (!primaryBody) return null;
+  let compiled = null, starting = null;
+  if (encounter.canonicalId.startsWith("BATTLEWORN_DUMMY_EVENT_V")) compiled = battleFriendPrimary(encounter, body, primaryBody);
+  else if (encounter.canonicalId === "DENSE_VEGETATION_EVENT_ENCOUNTER") compiled = densePrimary(body, primaryBody);
+  else if (encounter.canonicalId === "FAKE_MERCHANT_EVENT_ENCOUNTER") compiled = fakeMerchantPrimary(body, primaryBody);
+  else if (encounter.canonicalId === "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER") compiled = mysteriousKnightPrimary(encounter, body, primaryBody, players);
+  else if (encounter.canonicalId === "PUNCH_OFF_EVENT_ENCOUNTER") {
+    const punch = punchPrimary(encounter, body, primaryBody, checkedEventHp(encounter, body, players)?.[1], players);
+    compiled = punch?.body ?? null; starting = punch?.starting ?? null;
+  } else if (encounter.canonicalId === "THE_ARCHITECT_EVENT_ENCOUNTER") compiled = architectPrimary(body, primaryBody);
+  if (!compiled) return null;
+  const hp = compiled.hp;
+  const stats = expectedCount === 4 ? `${hp} HP each · EVENT FIGHT`
+    : expectedCount === 2 ? `${hp} max HP each${starting ? ` · starts at ${starting} HP each` : ""} · EVENT FIGHT`
+      : `${hp} HP · EVENT FIGHT`;
+  return {
+    header: { stats, placement: eventPlacement(encounter), kind: "EVENT FIGHT" },
+    bodies: [compiled], notes: [], showBodyHeaders: true,
+    provenance: {
+      label: `checked source values · A8 / ${players}P presentation`, authority: "checked-source-only",
+      matching: "exact source encounter, roster, model, graph, operation, initialization, and lifecycle joins only",
+      mergePolicy: "source-only event combat card; no retained reference merge",
+      values: [],
+    },
+  };
+}
+
 function primaryPresentation(encounter, options) {
   const reference = options.reference;
-  if (!reference) return null;
+  if (!reference) return eventPrimaryPresentation(encounter, options);
   const provenanceValues = [];
   const maximumPhase = Math.max(0, ...reference.lineup.map((body) => referencePhaseNumber(body) ?? 0));
   const practicalMoves = [];
@@ -1422,10 +1868,12 @@ export function buildEncounterPresentation(encounter, options = {}) {
     detail: `${words(row.status)} · ${words(row.scope)} · ${words(row.reasonCode)}`,
   }));
   const projectedPrimary = primaryPresentation(encounter, options);
-  const mergeProvenance = projectedPrimary?.provenance ?? null;
+  const mergeProvenance = projectedPrimary?.provenance?.authority === "checked-source-only" ? null : projectedPrimary?.provenance ?? null;
   const primary = projectedPrimary ? {
     ...projectedPrimary,
-    provenance: { label: projectedPrimary.provenance.label },
+    provenance: projectedPrimary.provenance.authority
+      ? { label: projectedPrimary.provenance.label, authority: projectedPrimary.provenance.authority }
+      : { label: projectedPrimary.provenance.label },
   } : null;
   return {
     primary,
@@ -1442,7 +1890,7 @@ export const presentationInternals = Object.freeze({
   words, rosterNode, moveEffects, graphPresentation, initialEffect, targetText,
   productionPresentation, lifecyclePresentation, lifecyclePresentationRecords, lifecycleEffect,
   retentionPolicyText, lifecycleWriteText, eventPresentation, eventEffect, validatedCollection,
-  mechanicAtom, mechanicAtoms, primaryPresentation, genericSections, ceremonialSections, roleNumberedSections,
+  mechanicAtom, mechanicAtoms, primaryPresentation, eventPrimaryPresentation, genericSections, ceremonialSections, roleNumberedSections,
   exactGraphContract, stateIncrement, axebotSections, terrorEelSections,
   BOOLEAN_CONDITIONS, EVENT_EFFECT_KINDS, LIFECYCLE_WRITES, TARGETS,
 });

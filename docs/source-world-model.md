@@ -245,8 +245,9 @@ These checks are discrepancy fixtures, never extraction inputs or source proof:
 - after mapping current-book compatibility aliases and display states, all 105
   current non-Doormaker A8 body/state HP facts compare equal to the raw-derived
   values;
-- the raw build has eight event encounters that the current runtime book does
-  not display, while the runtime book retains the removed Doormaker entry;
+- the raw build has eight event encounters absent from the retained runtime book;
+  the strict adapter now renders them through source-only primary cards, while the
+  retained book separately keeps the removed Doormaker entry;
 - the current flat Flyconid lineup fixes Leaf Slime (M), but raw selection is
   uniform Leaf Slime (M)/Twig Slime (M);
 - the current flat Slimes Weak candidates do not express the exact three-body
