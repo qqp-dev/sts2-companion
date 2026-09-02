@@ -13,7 +13,8 @@ from source_extractor.errors import SourceExtractionError
 from .contract import (
     AUTHORITY, EMBEDDED_SOURCE_INPUTS, GAME, GENERATOR_NAME, GENERATOR_VERSION,
     LEGACY_ARTIFACT, PROJECTION_INPUTS, SCHEMA_VERSION, SOURCE_ARTIFACT,
-    SOURCE_EXTRACTOR_VERSION, SOURCE_SCHEMA_VERSION, coverage_rows,
+    SOURCE_EXTRACTOR_VERSION, SOURCE_SCHEMA_VERSION, INTENT_FORMAT_KEYS, INTENT_LOCALIZATION_CONTRACT,
+    INTENT_PAIR_STEMS, LOCALIZATION_CATALOG_SHA256, POWER_LOCALIZATION_CONTRACT, coverage_rows,
 )
 
 
@@ -156,8 +157,76 @@ def _source_models(source: dict[str, Any], facts: _Facts) -> dict[str, list[dict
         for index, row in enumerate(source[family]):
             fact_id = f"SOURCE.{row['canonicalId']}"
             facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE", [f"/{family}/{index}"])
-            result[family].append({"canonicalId": row["canonicalId"], "englishTitle": row["englishTitle"], "factId": fact_id})
+            projected = {"canonicalId": row["canonicalId"], "englishTitle": row["englishTitle"], "factId": fact_id}
+            if family == "powers":
+                smart = row["smartDescription"]
+                projected.update({
+                    "titleLocalization": deepcopy(row["provenance"]),
+                    "smartDescription": {
+                        "classification": smart["classification"], "key": smart["key"],
+                        # Null is authoritative, explicit absence; it is never filled from wiki prose.
+                        "template": smart.get("template"),
+                    },
+                })
+            result[family].append(projected)
     return result
+
+
+def _source_intent_localization(source: dict[str, Any], facts: _Facts) -> dict[str, Any]:
+    raw = source["intentLocalization"]
+    root_fact = "SOURCE.INTENT_LOCALIZATION.CATALOG"
+    facts.add(root_fact, "source", f"EVIDENCE.{root_fact}", "INPUT.SOURCE", ["/intentLocalization"])
+    entries = []
+    for key, value in raw["entries"].items():
+        fact_id = "SOURCE.INTENT_LOCALIZATION." + key.upper()
+        pointer = "/intentLocalization/entries/" + _pointer_token(key)
+        facts.add(fact_id, "source", f"EVIDENCE.{fact_id}", "INPUT.SOURCE", [pointer, "/intentLocalization/provenance"])
+        entry_kind = "format" if key.startswith("FORMAT_") else "description" if key.endswith(".description") else "title"
+        entries.append({
+            "catalogFactRef": root_fact, "entryKind": entry_kind, "factId": fact_id,
+            "key": key, "provenanceFactRef": root_fact, "value": value,
+        })
+    pairs = [{
+        "descriptionKey": stem + ".description", "pairId": "INTENT_PAIR." + stem,
+        "titleKey": stem + ".title",
+    } for stem in INTENT_PAIR_STEMS]
+    return {
+        "entries": entries, "factId": root_fact, "formatKeys": deepcopy(INTENT_FORMAT_KEYS),
+        "pairs": pairs, "provenance": deepcopy(raw["provenance"]),
+    }
+
+
+def _intent_localization_ref(intent: dict[str, Any]) -> dict[str, Any]:
+    kind = intent["kind"]
+    pair_stem = {
+        "attack": "ATTACK", "block": "DEFEND", "buff": "BUFF", "cardDebuff": "CARD_DEBUFF",
+        "deathBlow": "DEATH_BLOW", "escape": "ESCAPE", "heal": "HEAL", "hidden": "UNKNOWN",
+        "sleep": "SLEEP", "status": "STATUS", "stun": "STUN", "summon": "SUMMON",
+    }.get(kind)
+    selector = {"kind": "intentKind", "value": kind}
+    if kind == "debuff":
+        argument = intent["arguments"][0] if len(intent["arguments"]) == 1 else None
+        strong = argument is not None and argument.get("kind") == "constant" and argument.get("valueType") == "boolean" and argument.get("value") is True
+        normal = argument is not None and argument.get("kind") == "constant" and argument.get("valueType") == "boolean" and argument.get("value") is False
+        if not (strong or normal):
+            return {"kind": kind, "status": "knownUnsupported", "reason": "unresolvedDebuffStrengthArgument"}
+        pair_stem = "DEBUFF_STRONG" if strong else "DEBUFF"
+        selector = {"argumentIndex": 0, "kind": "booleanArgument", "value": strong}
+    if pair_stem is None:
+        return {"kind": kind, "status": "knownUnsupported", "reason": "noCheckedLocalizationPair"}
+    if intent["intentClass"] == "MultiAttackIntent":
+        format_key = "FORMAT_DAMAGE_MULTI"
+    elif kind in {"attack", "deathBlow"}:
+        format_key = "FORMAT_DAMAGE_SINGLE"
+    elif kind == "status":
+        format_key = "FORMAT_STATUS_CARD_COUNT"
+    else:
+        format_key = "FORMAT_EMPTY"
+    return {
+        "descriptionKey": pair_stem + ".description", "formatKey": format_key, "kind": kind,
+        "pairId": "INTENT_PAIR." + pair_stem, "selector": selector, "status": "supported",
+        "titleKey": pair_stem + ".title",
+    }
 
 
 def _source_moves(source: dict[str, Any], monster_models: set[str], facts: _Facts) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
@@ -179,7 +248,10 @@ def _source_moves(source: dict[str, Any], monster_models: set[str], facts: _Fact
             "applicableConcreteModels": deepcopy(row["applicableConcreteModels"]),
             "canonicalId": row["canonicalId"], "canonicalMonster": row["canonicalMonster"],
             "factId": fact_id, "graphId": row["graphId"],
-            "intents": _compact_intents(row["intents"]), "operations": _without_provenance(row["operations"]),
+            "intents": [
+                {**compact_intent, "localizationRef": _intent_localization_ref(raw_intent)}
+                for raw_intent, compact_intent in zip(row["intents"], _compact_intents(row["intents"]), strict=True)
+            ], "operations": _without_provenance(row["operations"]),
             "ordinal": row["registration"]["ordinal"],
             "ownerRef": f"SOURCE.BEHAVIOR_OWNER.{row['canonicalMonster']}",
             "sourceType": row["sourceType"], "stateId": row["stateId"], "title": _without_provenance(row["title"]),
@@ -1190,6 +1262,7 @@ def build_payload(source: dict[str, Any], legacy: dict[str, Any]) -> dict[str, A
         "hpPipeline": _source_hp_pipeline(source, facts),
         "stateRules": state_rules, "states": states,
         "initialState": _source_initial_state(source, facts),
+        "intentLocalization": _source_intent_localization(source, facts),
     }
     legacy_annotations = _legacy_annotations(legacy, facts)
     legacy_annotations["moveTitleFallbackCandidates"] = _fallback_candidates(source_facts, legacy_annotations)
@@ -1228,6 +1301,10 @@ def build_artifact(source_bytes: bytes, legacy_bytes: bytes) -> bytes:
             "embeddedSourceInputManifest": deepcopy(EMBEDDED_SOURCE_INPUTS),
             "embeddedSourceInputManifestSha256": witness_sha256(EMBEDDED_SOURCE_INPUTS),
             "game": deepcopy(GAME), "generator": {"name": GENERATOR_NAME, "version": GENERATOR_VERSION},
+            "localizationProjectionContract": {
+                "catalogSha256": LOCALIZATION_CATALOG_SHA256,
+                "intent": deepcopy(INTENT_LOCALIZATION_CONTRACT), "power": deepcopy(POWER_LOCALIZATION_CONTRACT),
+            },
             "payloadSha256": witness_sha256(payload), "projectionInputs": deepcopy(PROJECTION_INPUTS),
             "requiredCoverage": coverage_rows(), "sourceExtractorVersion": SOURCE_EXTRACTOR_VERSION,
             "sourceSchemaVersion": SOURCE_SCHEMA_VERSION,

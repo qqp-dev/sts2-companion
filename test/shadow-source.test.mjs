@@ -71,14 +71,121 @@ async function runShadowClient(payload, { failCreateOnce = null } = {}) {
 let adapter;
 test.before(() => { adapter = createSourceAdapter({ projection: artifact }); assert.equal(adapter.available, true, adapter.error); });
 
-test("checked schema 11 adapter is immutable, deterministic, and joins exact observed identity", () => {
+test("checked schema 12 adapter is immutable, deterministic, and joins exact observed identity", () => {
   const observed = state("BOWLBUGS_NORMAL", "combat", ["MONSTER.BOWLBUG_ROCK", "MONSTER.BOWLBUG_EGG", "MONSTER.BOWLBUG_SILK"]);
   assert.deepEqual(adapter.resolveObserved(observed), { kind: "current-combat", encounterId: "BOWLBUGS_NORMAL" });
   assert.equal(adapter.resolveObserved(state("bowlbugs_normal")).kind, "unresolved-observation");
   const first = adapter.view(observed); const second = adapter.view(observed);
   assert.equal(JSON.stringify(first), JSON.stringify(second)); assert.ok(Object.isFrozen(first.encounter.monsters[0].moves));
   assert.equal(first.mode, "current-combat"); assert.deepEqual(first.encounter.observedBodies.map((row) => row.canonicalModel), observed.monsterIds);
-  assert.equal(first.authority.projectionSchemaVersion, 11); assert.equal(first.authority.dllSha256, "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f");
+  assert.equal(first.authority.projectionSchemaVersion, 12); assert.equal(first.authority.dllSha256, "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f");
+});
+
+test("schema 12 preserves exact Power and intent localization catalogs", () => {
+  const source = artifact.payload.sourceFacts;
+  const powers = source.models.powers;
+  assert.equal(powers.length, 69);
+  assert.equal(powers.filter((row) => row.smartDescription.classification === "localized").length, 62);
+  assert.deepEqual(powers.filter((row) => row.smartDescription.classification === "missingLocalization").map((row) => row.canonicalId), [
+    "POWER.BACK_ATTACK_LEFT_POWER", "POWER.BACK_ATTACK_RIGHT_POWER", "POWER.DAMPEN_POWER", "POWER.HEX_POWER",
+    "POWER.STOCK_POWER", "POWER.SURROUNDED_POWER", "POWER.SWIPE_POWER",
+  ]);
+  const byTitle = new Map(powers.map((row) => [row.englishTitle, row]));
+  assert.equal(byTitle.get("Adaptable").smartDescription.template, "When [gold]{OwnerName}[/gold] would be defeated, it instead revives even stronger.");
+  assert.equal(byTitle.get("Artifact").smartDescription.template, "[gold]Negates[/gold] [blue]{Amount}[/blue] {Amount:plural:debuff|debuffs}.");
+  assert.equal(byTitle.get("Strength").smartDescription.template, "{Amount:cond:<0?Decreases|Increases} attack damage by [blue]{Amount:abs()}[/blue].");
+  assert.equal(byTitle.get("Skittish").smartDescription.template, "The first time [gold]{OwnerName}[/gold] is hit each turn, it gains [blue]{Amount}[/blue] [gold]Block[/gold].");
+  assert.equal(powers.find((row) => row.canonicalId === "POWER.BACK_ATTACK_LEFT_POWER").smartDescription.template, null);
+
+  const catalog = source.intentLocalization;
+  assert.equal(catalog.entries.length, 32); assert.equal(catalog.pairs.length, 14); assert.equal(catalog.formatKeys.length, 4);
+  const entries = new Map(catalog.entries.map((row) => [row.key, row.value]));
+  assert.equal(entries.get("DEBUFF.title"), "Strategic"); assert.equal(entries.get("DEBUFF_STRONG.title"), "Strategic");
+  assert.notEqual(catalog.entries.find((row) => row.key === "DEBUFF.title").factId, catalog.entries.find((row) => row.key === "DEBUFF_STRONG.title").factId);
+  assert.equal(entries.get("FORMAT_DAMAGE_MULTI"), "{Damage}[font_size=18]x{Repeat}[/font_size]");
+  assert.match(entries.get("ATTACK.description"), /\{IsMultiplayer:everyone \|\}.*\{Damage\}.*\{Repeat:plural:/);
+  for (const move of source.moves) for (const intent of move.intents) {
+    assert.ok(new Set(["supported", "knownUnsupported"]).has(intent.localizationRef.status));
+    assert.equal(intent.localizationRef.kind, intent.kind);
+  }
+  const strong = source.moves.flatMap((move) => move.intents).find((intent) => intent.kind === "debuff" && intent.arguments[0]?.value === true);
+  assert.equal(strong.localizationRef.pairId, "INTENT_PAIR.DEBUFF_STRONG");
+});
+
+test("per-encounter Power fixed point is exact, proof-complete, and non-leaking", () => {
+  const cases = [
+    ["TEST_SUBJECT_BOSS", "POWER.ADAPTABLE_POWER"], ["AEONGLASS_BOSS", "POWER.ARTIFACT_POWER"],
+    ["BOWLBUGS_NORMAL", "POWER.IMBALANCED_POWER"], ["BYGONE_EFFIGY_ELITE", "POWER.SLOW_POWER"],
+    ["GLOBE_HEAD_NORMAL", "POWER.GALVANIC_POWER"], ["ENTOMANCER_ELITE", "POWER.PERSONAL_HIVE_POWER"],
+    ["EXOSKELETONS_NORMAL", "POWER.HARD_TO_KILL_POWER"], ["OVICOPTER_NORMAL", "POWER.HATCH_POWER"],
+    ["CEREMONIAL_BEAST_BOSS", "POWER.PLOW_POWER"], ["PHANTASMAL_GARDENERS_ELITE", "POWER.SKITTISH_POWER"],
+    ["HUNTER_KILLER_NORMAL", "POWER.TENDER_POWER"], ["AEONGLASS_BOSS", "POWER.WITHERING_PRESENCE_POWER"],
+    ["SLITHERING_STRANGLER_NORMAL", "POWER.CONSTRICT_POWER"],
+  ];
+  for (const [encounterId, powerId] of cases) {
+    const view = adapter.view(state(), encounterId); const records = view.encounter.powers.records;
+    const power = records.find((row) => row.canonicalId === powerId);
+    assert.ok(power, `${encounterId} closes ${powerId}`);
+    assert.ok(view.encounter.proof.some((row) => row.factId === power.factId), `${encounterId} proves ${powerId}`);
+    assert.equal(view.encounter.powers.liveInstanceClaims, false);
+  }
+  const strangler = adapter.view(state(), "SLITHERING_STRANGLER_NORMAL").encounter;
+  assert.ok(strangler.powers.records.some((row) => row.canonicalId === "POWER.CONSTRICT_POWER"));
+  assert.ok(!strangler.powers.records.some((row) => row.canonicalId === "POWER.PERSONAL_HIVE_POWER"));
+  const aeon = adapter.view(state(), "AEONGLASS_BOSS").encounter;
+  assert.ok(!aeon.powers.records.some((row) => row.canonicalId === "POWER.BACK_ATTACK_LEFT_POWER"));
+  const kaiserBackAttack = adapter.view(state(), "KAISER_CRAB_BOSS").encounter.powers.records
+    .filter((row) => row.englishTitle === "Back Attack").map((row) => row.canonicalId);
+  assert.deepEqual(kaiserBackAttack, ["POWER.BACK_ATTACK_LEFT_POWER", "POWER.BACK_ATTACK_RIGHT_POWER"]);
+  const merc = adapter.view(state(), "GREMLIN_MERC_NORMAL").encounter;
+  assert.deepEqual(merc.powers.lifecycleOnlyReferences, [{
+    canonicalId: "POWER.HEIST_POWER", classification: "lifecycleOnlyNoReachableLocalizationModel",
+    descriptionTemplate: null, factId: "SOURCE.LIFECYCLE.CORE.E2D2A",
+  }]);
+  assert.ok(!merc.powers.records.some((row) => row.canonicalId === "POWER.HEIST_POWER"));
+  assert.ok(merc.proof.some((row) => row.factId === "SOURCE.LIFECYCLE.CORE.E2D2A"));
+});
+
+test("encounter intent localization is registered semantics only and never interpolates placeholders", () => {
+  const encounter = adapter.view(state(), "AXEBOTS_NORMAL").encounter;
+  assert.match(encounter.intentLocalization.scope, /not a live or predicted current intent/);
+  assert.match(encounter.intentLocalization.interpolation, /forbidden/);
+  const entries = new Map(encounter.intentLocalization.entries.map((row) => [row.key, row.value]));
+  assert.match(entries.get("ATTACK.description"), /\{Damage\}/); assert.match(entries.get("ATTACK.description"), /\{Repeat:/);
+  for (const body of encounter.monsters) for (const move of body.moves) for (const intent of move.intents) {
+    assert.ok(intent.localizationRef); assert.ok(Array.isArray(intent.arguments));
+  }
+  assert.ok(encounter.proof.some((row) => row.factId === "SOURCE.INTENT_LOCALIZATION.CATALOG"));
+  for (const entry of encounter.intentLocalization.entries) assert.ok(encounter.proof.some((row) => row.factId === entry.factId));
+});
+
+test("Technical audit safely contains exact localization text while collapsed primary stays clean", async () => {
+  const sourceView = adapter.view(state(), "TEST_SUBJECT_BOSS");
+  const { root } = await runShadowClient(sourceView);
+  const collapsed = collapsedText(root);
+  assert.match(collapsed, /Technical audit/);
+  assert.doesNotMatch(collapsed, /POWER\.|\[gold\]|\{OwnerName\}|Aggressive/);
+  assert.match(root.textContent, /When \[gold\]\{OwnerName\}\[\/gold\] would be defeated, it instead revives even stronger\./);
+  assert.match(root.textContent, /This enemy intends to \[gold\]Attack\[\/gold\].*\{Damage\}/);
+  assert.ok(descendants(root).every((node) => typeof node._text === "string"));
+});
+
+test("Power and intent catalog mutations fail closed even with a recomputed payload digest", () => {
+  const mutations = [
+    (p) => { p.payload.sourceFacts.models.powers[0].smartDescription.template += " guessed"; },
+    (p) => { p.payload.sourceFacts.models.powers[0].smartDescription.classification = "missingLocalization"; },
+    (p) => { p.payload.sourceFacts.models.powers[0].smartDescription.key = p.payload.sourceFacts.models.powers[1].smartDescription.key; },
+    (p) => { p.metadata.localizationProjectionContract.power.total = 68; },
+    (p) => { p.payload.sourceFacts.intentLocalization.entries[0].value += " guessed"; },
+    (p) => { p.payload.sourceFacts.intentLocalization.entries[0].key = "ATTACK.changed"; },
+    (p) => { p.payload.sourceFacts.intentLocalization.pairs[0].descriptionKey = "BUFF.description"; },
+    (p) => { p.payload.sourceFacts.intentLocalization.formatKeys.reverse(); },
+    (p) => { p.payload.sourceFacts.moves[0].intents[0].localizationRef.titleKey = "BUFF.title"; },
+    (p) => { const fact = p.payload.sourceFacts.models.powers[0].factId; const ref = p.payload.factReferences.find((row) => row.factId === fact); ref.evidenceRefs[0] = "EVIDENCE.SOURCE.POWER.ARTIFACT_POWER"; },
+    (p) => { const evidence = p.payload.evidence.find((row) => row.evidenceId === "EVIDENCE.SOURCE.POWER.ADAPTABLE_POWER"); evidence.pointers[0].jsonPointer = "/powers/1"; },
+    (p) => { p.payload.sourceFacts.lifecycle.mechanics.deathProduction[2].orderedEffects[2].power = "POWER.UNKNOWN_POWER"; },
+  ];
+  for (const mutate of mutations) assert.equal(createSourceAdapter({ projection: checkedProject(mutate) }).available, false);
 });
 
 test("real parser output resolves bare AXEBOT through the shared reader normalization", () => {
@@ -175,7 +282,7 @@ test("schema 10 compatibility is explicit while arbitrary and mismatched majors 
   tenProjection.metadata.payloadSha256 = adapterInternals.payloadDigest(tenProjection.payload);
   const ten = createSourceAdapter({ projection: tenProjection });
   assert.equal(ten.available, true, ten.error); assert.equal(ten.schemaVersion, 10);
-  for (const [schema, generator] of [[12, "12.0.0"], [10, "11.0.0"], [11, "10.0.0"]]) {
+  for (const [schema, generator] of [[13, "13.0.0"], [10, "12.0.0"], [12, "10.0.0"]]) {
     const bad = createSourceAdapter({ projection: project((p) => { p.schemaVersion = schema; p.metadata.generator.version = generator; }) });
     assert.equal(bad.available, false); assert.match(bad.error, /schema|generator/);
   }

@@ -1,8 +1,8 @@
 """Pure retained-wiki inventory parser and deterministic artifact builder.
 
 The wiki snapshot is reconciliation input, never runtime or source authority.
-This module captures structural claims and, when the reviewed P1b0/P1b1 policies name
-an exact origin, materializes a typed final mapping. Wiki remains coverage and
+This module captures structural claims and, when the reviewed P1b0/P1b1/P1c policies name
+an exact origin, materializes a typed final mapping through P1c. Wiki remains coverage and
 reconciliation evidence, never source authority.
 """
 from __future__ import annotations
@@ -25,6 +25,7 @@ TARGET_BRANCH = "public-beta"
 DEFAULT_ARTIFACT = "data/wiki-reconciliation-v0.111.0.json"
 DEFAULT_POLICY = "tools/wiki-reconciliation-policy-v0.111.0.json"
 DEFAULT_P1B1_POLICY = "tools/wiki-reconciliation-p1b1-policy-v0.111.0.json"
+DEFAULT_P1C_POLICY = "tools/wiki-reconciliation-p1c-policy-v0.111.0.json"
 PRIMARY_SEMANTIC_SURFACE = "data/primary-semantic-surface-v0.111.0.json"
 MODULE_STEMS = ("Bosses", "Elites", "Glory", "Hive", "Overgrowth", "Underdocks")
 
@@ -2751,6 +2752,167 @@ def apply_p1b1_mappings(records: list[dict[str, Any]], p1_policy: dict[str, Any]
                 "reason": "Four comma-separated Test Subject Power atoms and Tough Egg Minion/Hatch were split into exact per-Power origins.",
             }}
 
+def apply_p1c_mappings(records: list[dict[str, Any]], p1c_policy: dict[str, Any], *, compact: dict[str, Any]) -> dict[str, Any]:
+    """Final-map only the guarded P1c Power/passive origin set."""
+    required = {"schemaVersion", "targetVersion", "targetBranch", "review", "expectedTargetCount",
+                "expectedFamilyCounts", "expectedDispositionCounts", "reviews"}
+    if set(p1c_policy) != required or p1c_policy["schemaVersion"] != 1:
+        raise AuditError("P1c policy root contract mismatch")
+    if p1c_policy["targetVersion"] != TARGET_VERSION or p1c_policy["targetBranch"] != TARGET_BRANCH:
+        raise AuditError("P1c policy target mismatch")
+    review_meta = p1c_policy["review"]
+    if set(review_meta) != {"id", "method", "owner", "scope"} or any(len(str(review_meta[key]).strip()) < 20 for key in ("method", "scope")):
+        raise AuditError("P1c policy lacks concrete reviewed method/scope")
+    targets = [record for record in records if record["category"] == "power-passive" and record["reviewState"] == "captured-unreconciled"]
+    if len(targets) != 74 or len(targets) != p1c_policy["expectedTargetCount"]:
+        raise AuditError("P1c exact 74-origin target denominator drift")
+    family_counts = _counter(targets, "family")
+    if family_counts != p1c_policy["expectedFamilyCounts"]:
+        raise AuditError(f"P1c family denominator drift: {family_counts}")
+    policy_rows = p1c_policy["reviews"]
+    by_origin = {row.get("originId"): row for row in policy_rows if isinstance(row, dict)}
+    if len(by_origin) != len(policy_rows) or None in by_origin or set(by_origin) != {record["id"] for record in targets}:
+        raise AuditError("P1c target origin guards are duplicate, stale, missing, or unreviewed")
+
+    powers = compact["payload"]["sourceFacts"]["models"]["powers"]
+    compact_fact_ids = {row["factId"] for row in compact["payload"]["factReferences"]}
+    documents = _mapping_documents({}, compact, {})
+    disposition_counts: dict[str, int] = {}
+    mapped_ids: list[str] = []
+    for record in targets:
+        row = by_origin[record["id"]]
+        normalized = record["normalized"]
+        section_owner = record["origin"].get("sectionPath", [])
+        section_owner = section_owner[-1]["title"] if section_owner else record["origin"]["pageKey"]
+        guard = {
+            "claimId": record["claimId"], "pageKey": record["origin"]["pageKey"],
+            "sectionOwner": section_owner, "family": record["family"], "identity": normalized["identity"],
+        }
+        if any(row.get(key) != value for key, value in guard.items()):
+            raise AuditError(f"P1c stale claim/page/body/identity guard: {record['id']}")
+        if record["family"] == "article-power-inline-field":
+            if row.get("field") != normalized["field"] or row.get("retainedValue") != normalized["value"]:
+                raise AuditError(f"P1c inline field/value guard mismatch: {record['id']}")
+        elif "field" in row or "retainedValue" in row:
+            raise AuditError(f"P1c invocation cannot carry an inline field: {record['id']}")
+        index = row.get("powerIndex")
+        if type(index) is not int or not (0 <= index < len(powers)):
+            raise AuditError(f"P1c bad reviewed Power index: {record['id']}")
+        power = powers[index]
+        if power["canonicalId"] != row.get("canonicalPower") or power["englishTitle"] != normalized["identity"]:
+            raise AuditError(f"P1c reviewed canonical Power identity mismatch: {record['id']}")
+        smart = power["smartDescription"]
+        if smart["classification"] != row.get("sourceLocalizationClassification"):
+            raise AuditError(f"P1c source localization classification guard mismatch: {record['id']}")
+        if smart["classification"] == "localized":
+            if not isinstance(smart.get("template"), str) or not smart["template"]:
+                raise AuditError(f"P1c localized Power lacks exact template: {record['id']}")
+        elif smart["classification"] == "missingLocalization":
+            if smart.get("template") is not None:
+                raise AuditError(f"P1c missing localization was filled from retained prose: {record['id']}")
+        else:
+            raise AuditError(f"P1c unsupported localization class: {record['id']}")
+        owner_models = row.get("ownerModels")
+        if not isinstance(owner_models, list) or not owner_models or len(owner_models) != len(set(owner_models)) or any(not str(model).startswith("MONSTER.") for model in owner_models):
+            raise AuditError(f"P1c malformed reviewed page/body owner alias: {record['id']}")
+
+        source_fact_refs = [power["factId"]]
+        representations = [
+            _wiki_coordinate(record),
+            {"layer": "technical-audit", "path": "data/encounter-facts-v0.111.0.json",
+             "jsonPointer": f"/payload/sourceFacts/models/powers/{index}/canonicalId",
+             "expectedValue": power["canonicalId"], "evidenceRole": "reviewed-canonical-power-identity"},
+            {"layer": "technical-audit", "path": "data/encounter-facts-v0.111.0.json",
+             "jsonPointer": f"/payload/sourceFacts/models/powers/{index}/englishTitle",
+             "expectedValue": power["englishTitle"], "evidenceRole": "exact-checked-English-title"},
+            {"layer": "technical-audit", "path": "data/encounter-facts-v0.111.0.json",
+             "jsonPointer": f"/payload/sourceFacts/models/powers/{index}/smartDescription",
+             "expectedValue": smart, "evidenceRole": "independent-source-description-or-explicit-missing"},
+        ]
+        ownership = row.get("ownership")
+        if ownership is not None:
+            allowed_ownership = {"factId", "kind", "recordPointer", "ownerModel", "ownerPointer", "powerPointer"}
+            if set(ownership) != allowed_ownership or ownership["kind"] not in {"initial-state", "move-operation", "lifecycle-operation"}:
+                raise AuditError(f"P1c malformed typed ownership row: {record['id']}")
+            if ownership["ownerModel"] not in owner_models or resolve_json_pointer(compact, ownership["ownerPointer"]) != ownership["ownerModel"]:
+                raise AuditError(f"P1c owner pointer/alias mismatch: {record['id']}")
+            if resolve_json_pointer(compact, ownership["powerPointer"]) != power["canonicalId"]:
+                raise AuditError(f"P1c Power ownership pointer mismatch: {record['id']}")
+            if not ownership["ownerPointer"].startswith(ownership["recordPointer"] + "/") or not ownership["powerPointer"].startswith(ownership["recordPointer"] + "/"):
+                raise AuditError(f"P1c ownership pointers do not share an exact typed row: {record['id']}")
+            typed_record = resolve_json_pointer(compact, ownership["recordPointer"])
+            if not isinstance(typed_record, dict) or ownership["factId"] not in compact_fact_ids:
+                raise AuditError(f"P1c ownership record/fact ref is unresolved: {record['id']}")
+            if "factId" in typed_record and typed_record["factId"] != ownership["factId"]:
+                raise AuditError(f"P1c ownership row fact mismatch: {record['id']}")
+            source_fact_refs.append(ownership["factId"])
+            representations.extend([
+                {"layer": "technical-audit", "path": "data/encounter-facts-v0.111.0.json",
+                 "jsonPointer": ownership["ownerPointer"], "expectedValue": ownership["ownerModel"],
+                 "evidenceRole": "exact-page-body-actor-applicability"},
+                {"layer": "technical-audit", "path": "data/encounter-facts-v0.111.0.json",
+                 "jsonPointer": ownership["powerPointer"], "expectedValue": power["canonicalId"],
+                 "evidenceRole": "exact-typed-actor-Power-reference"},
+            ])
+        disposition = row.get("disposition")
+        unresolved = row.get("unresolvedReason")
+        if disposition == "audit-present":
+            if ownership is None or unresolved:
+                raise AuditError(f"P1c audit-present mapping lacks exact ownership closure: {record['id']}")
+            closure = "closed"
+        elif disposition == "missing/unparsed":
+            if not isinstance(unresolved, str) or len(unresolved) < 20:
+                raise AuditError(f"P1c missing mapping lacks an exact limitation: {record['id']}")
+            closure = "unjoined" if ownership is None else "knownUnknown"
+        else:
+            raise AuditError(f"P1c unsupported reviewed disposition: {record['id']}")
+
+        semantic = {
+            "kind": "power-inline-field" if record["family"] == "article-power-inline-field" else "power-infobox-invocation",
+            "originFamily": record["family"], "identity": normalized["identity"],
+            "canonicalPower": power["canonicalId"], "ownerModels": owner_models,
+            "sourceEnglishTitle": power["englishTitle"],
+            "sourceLocalizationClassification": smart["classification"],
+            "sourceLocalizationKey": smart["key"], "sourceTemplate": smart.get("template"),
+            "sourceDescriptionAuthority": "independent-raw-source-localization-not-wiki-template-expansion",
+        }
+        if record["family"] == "article-power-invocation":
+            semantic.update({
+                "positional": normalized["positional"],
+                "retainedTemplateBodyStatus": "absent" if normalized["unexpandedTemplateBody"] else "inline-fields-retained-as-separate-origins",
+                "invocationClaimScope": "Power identity/arguments only; absent template-body semantics are not inferred",
+            })
+        else:
+            semantic.update({"field": normalized["field"], "retainedValue": normalized["value"],
+                             "relation": "reviewed-equivalent-source-template" if normalized["field"] == "Description" else "unresolved-source-field"})
+        if unresolved: semantic["unresolvedReason"] = unresolved
+        mapping = {
+            "id": "final-map-p1c-" + record["id"].removeprefix("wiki-origin-v1-"),
+            "originId": record["id"], "claimId": record["claimId"], "disposition": disposition,
+            "semanticMapping": semantic,
+            "authorityComparison": {
+                "closure": closure, "sourceFactRefs": sorted(set(source_fact_refs)),
+                "compactFactRefs": sorted(set(source_fact_refs)), "resolution": "represented-as-scoped", "silentMerge": False,
+            },
+            "representation": representations,
+            "rationale": ("The exact reviewed page/body owner and canonical Power resolve through one typed compact row; the source smart template is independent authority, while absent Power Infobox body text is not fabricated."
+                          if disposition == "audit-present" else
+                          "The reviewed canonical Power identity remains visible with exact source localization state, but the named inline value or actor/Power ownership join is honestly unclosed and is not inferred from wiki prose."),
+            "owner": "StS2 Companion P1c completeness review", "severity": "low",
+            "reviewedForVersion": TARGET_VERSION,
+        }
+        _validate_wiki_coordinates(mapping, record)
+        _validate_representation({**mapping, "representation": [item for item in representations if item["layer"] != "wiki-origin"]}, documents, require_conflict_lanes=False)
+        _attach_mapping(record, mapping)
+        mapped_ids.append(record["id"]); disposition_counts[disposition] = disposition_counts.get(disposition, 0) + 1
+    disposition_counts = dict(sorted(disposition_counts.items()))
+    if disposition_counts != p1c_policy["expectedDispositionCounts"]:
+        raise AuditError(f"P1c disposition denominator drift: {disposition_counts}")
+    return {"mappedOriginIds": sorted(mapped_ids), "familyCounts": family_counts,
+            "dispositionCounts": disposition_counts,
+            "knownMissingLocalizationIds": sorted({power["canonicalId"] for power in powers if power["smartDescription"]["classification"] == "missingLocalization"})}
+
+
 def _validate_policy(policy: dict[str, Any]) -> None:
     required = {
         "schemaVersion", "targetVersion", "targetBranch", "review",
@@ -2847,7 +3009,7 @@ def _manifest_paths(root: Path) -> list[str]:
         *[f"tools/.wiki/{stem}.lua" for stem in MODULE_STEMS],
         "data/encounters.json", "data/game-v0.111.0-source.json",
         "data/encounter-facts-v0.111.0.json", PRIMARY_SEMANTIC_SURFACE,
-        DEFAULT_POLICY, DEFAULT_P1B1_POLICY, "tools/primary-semantic-aliases-v0.111.0.json",
+        DEFAULT_POLICY, DEFAULT_P1B1_POLICY, DEFAULT_P1C_POLICY, "tools/primary-semantic-aliases-v0.111.0.json",
         "tools/generate-book.py", "tools/generate-primary-semantic-surface.mjs",
         "tools/retained_wiki.py", "tools/audit-retained-wiki.py", "tools/run-python-tests.py",
         "src/book.mjs", "src/source-presentation.mjs", "package.json", "README.md",
@@ -3075,6 +3237,7 @@ def build_artifact(root: Path) -> dict[str, Any]:
     policy = load_json(root / DEFAULT_POLICY)
     _validate_policy(policy)
     p1b1_policy = load_json(root / DEFAULT_P1B1_POLICY)
+    p1c_policy = load_json(root / DEFAULT_P1C_POLICY)
     primary_surface = load_json(root / PRIMARY_SEMANTIC_SURFACE)
     pages_document = load_json(root / "tools/.wiki/pages.json")
     index = load_json(root / "tools/.wiki/index.json")
@@ -3133,11 +3296,12 @@ def build_artifact(root: Path) -> dict[str, Any]:
     p1b1_mapping_summary = apply_p1b1_mappings(
         records, p1b1_policy, compact=compact, primary_surface=primary_surface,
     )
+    p1c_mapping_summary = apply_p1c_mappings(records, p1c_policy, compact=compact)
     review_counts = _counter(records, "reviewState")
     if review_counts != {
-        "captured-unreconciled": 2253,
+        "captured-unreconciled": 2179,
         "policy-reviewed-exclusion": 865,
-        FINAL_REVIEW_STATE: 1320,
+        FINAL_REVIEW_STATE: 1394,
     }:
         raise AuditError(f"review-state denominator drift: {review_counts}")
     for record in records:
@@ -3179,7 +3343,7 @@ def build_artifact(root: Path) -> dict[str, Any]:
 
     final_disposition_counts = _counter([record for record in records if "disposition" in record], "disposition")
     if sum(final_disposition_counts.values()) + review_counts.get("captured-unreconciled", 0) != len(records):
-        raise AuditError("P1b1 final disposition and captured counts do not reconcile to all origins")
+        raise AuditError("P1c final disposition and captured counts do not reconcile to all origins")
 
     origin_lines = "".join(record["id"] + "\n" for record in records).encode("utf-8")
     claim_origin_lines = "".join(record["id"] + "\0" + record["claimId"] + "\n" for record in records).encode("utf-8")
@@ -3226,6 +3390,8 @@ def build_artifact(root: Path) -> dict[str, Any]:
             "normalizedPatternClauses": family_counts["article-pattern-clause"],
             "powerInfoboxCalls": family_counts["article-power-invocation"],
             "powerPassiveAtoms": family_counts["article-power-invocation"] + family_counts["article-power-inline-field"],
+            "powerLocalizationProjection": {"total": 69, "localized": 62, "missingLocalization": 7},
+            "intentLocalizationProjection": {"entries": 32, "titleDescriptionPairs": 14, "formats": 4},
             "startingPowerAtoms": family_counts["article-starting-power"] + family_counts["module-starting-power"] + family_counts["patch-starting-power"],
             "noteUnitsIncludingCommentFragments": family_counts["article-note-claim"] + family_counts["html-comment-fragment"],
             "humanNoteClaims": family_counts["article-note-claim"],
@@ -3267,7 +3433,7 @@ def build_artifact(root: Path) -> dict[str, Any]:
         },
         "reviewCorrections": corrections,
         "finalMappings": {
-            "phase": "P1b1",
+            "phase": "P1c",
             "mappedOriginCount": review_counts[FINAL_REVIEW_STATE],
             "p1b0": {
                 "mappedOriginCount": len(p1b0_mapping_summary["mappedOriginIds"]),
@@ -3279,6 +3445,13 @@ def build_artifact(root: Path) -> dict[str, Any]:
                 "targetFamilyCounts": p1b1_mapping_summary["familyCounts"],
                 "dispositionCounts": p1b1_mapping_summary["dispositionCounts"],
                 "atomizationCorrection": p1b1_mapping_summary["atomizationCorrection"],
+            },
+            "p1c": {
+                "mappedOriginCount": len(p1c_mapping_summary["mappedOriginIds"]),
+                "targetFamilyCounts": p1c_mapping_summary["familyCounts"],
+                "dispositionCounts": p1c_mapping_summary["dispositionCounts"],
+                "knownMissingLocalizationIds": p1c_mapping_summary["knownMissingLocalizationIds"],
+                "technicalOnly": True,
             },
         },
         "researchBaseline": {
@@ -3299,7 +3472,7 @@ def build_artifact(root: Path) -> dict[str, Any]:
                 "stale/deprecated/version-ambiguous": 42,
                 "total": 4438,
             },
-            "warning": "These corrected historical totals include the five-origin atomization adjustment only. Materialized P1b0/P1b1 records, not this baseline estimate, are authoritative for completed families.",
+            "warning": "These corrected historical totals include the five-origin atomization adjustment only. Materialized P1b0/P1b1/P1c records, not this baseline estimate, are authoritative for completed families.",
         },
         "exclusionPolicies": policy["exclusionPolicies"],
         "readiness": {
@@ -3314,7 +3487,7 @@ def build_artifact(root: Path) -> dict[str, Any]:
                 f"{review_counts['captured-unreconciled']} retained-origin atoms remain captured-unreconciled pending later P1b semantic review.",
                 "Unexpanded Power Infobox and Intents template bodies are not present in the retained snapshot.",
                 "Global source extraction readiness remains false even though its declared encounter-projection scope is ready.",
-                "P1b1 maps identity, roster, HP, and starting-state atoms; move, Pattern, Power-description, and objective Note families remain non-final.",
+                "P1c maps the exact 74 pending Power/passive atoms; move, Pattern, and corrected objective Note families remain non-final.",
             ],
         },
         "summary": {
@@ -3335,7 +3508,7 @@ def build_artifact(root: Path) -> dict[str, Any]:
     if artifact["readiness"]["semanticReconciliationComplete"] and review_counts.get("captured-unreconciled", 0):
         raise AuditError("semantic readiness true while captured-unreconciled atoms remain")
     if artifact["readiness"]["overallReconciliationReady"]:
-        raise AuditError("P1b1 cannot report overall reconciliation readiness")
+        raise AuditError("P1c cannot report overall reconciliation readiness")
     return artifact
 
 

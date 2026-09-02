@@ -91,13 +91,12 @@ grammar, and a produced body never becomes an initial body. Source expressions
 exact retained records, per-value merge reasons, conflicts, callout basis refs, and
 evidence pointers remain reachable inside **Technical audit**.
 
-The editorial registry is deliberately separate from source extraction. It
-currently contains one source-backed conditional callout for Axebot Stock
-replacement and one for the Decimillipede shared finish window. Every candidate
-passes the existing seven gates and cites fact, condition, and causal refs.
-Encounters without a qualifying record show no filler. The collection contract
-remains `0..N`; all passing records remain reachable when a collapsed display
-uses an expansion path.
+Schema 12 preserves 69 Power localizations (62 exact, seven missing) and 32
+intent entries (14 pairs, four formats) as unresolved, encounter-closed
+**Technical audit** only—never a live Power instance or intent prediction.
+
+Editorial callouts remain a separately gated, evidence-linked `0..N`
+collection; encounters without a qualifying record show no filler.
 
 The guide states its static boundary once. It does **not** execute/read game
 binaries at runtime, recreate the projection generator, predict the next move,
@@ -165,8 +164,9 @@ npm run check:wiki-reconciliation
 ```
 
 Use book → compact → primary surface → census order. Not runtime input.
-The [audit contract](docs/wiki-reconciliation.md) has 4,438 origins: 1,320
-final-mapped and 2,253 captured, so readiness remains false.
+The [audit contract](docs/wiki-reconciliation.md) has 4,438 origins: 1,394
+final-mapped and 2,179 captured after exact P1c Power/passive reconciliation, so
+readiness remains false.
 
 Raw-source regeneration is a development operation requiring the exact local
 game files and isolated Python dependencies; it is not a runtime requirement:

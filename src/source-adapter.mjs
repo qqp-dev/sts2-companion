@@ -8,7 +8,18 @@ import { buildEncounterPresentation } from "./source-presentation.mjs";
 const DEFAULT_PROJECTION = new URL("../data/encounter-facts-v0.111.0.json", import.meta.url);
 const GAME_VERSION = "v0.111.0";
 const DLL_SHA256 = "2b40d2df538db1ceb5fa48d958c80ab730ada1e07db88a870aff01a661768b9f";
-const SUPPORTED_SCHEMAS = new Set([10, 11]);
+const SUPPORTED_SCHEMAS = new Set([10, 11, 12]);
+const LOCALIZATION_CATALOG_SHA256 = "b483e4df3fb8c88dc14d1d7a67412fc81fc7afaaed30e54320dae602d8f05a18";
+const LIFECYCLE_ONLY_POWER_IDS = Object.freeze(["POWER.DOOM_POWER", "POWER.HEIST_POWER"]);
+const POWER_MISSING_IDS = Object.freeze([
+  "POWER.BACK_ATTACK_LEFT_POWER", "POWER.BACK_ATTACK_RIGHT_POWER", "POWER.DAMPEN_POWER",
+  "POWER.HEX_POWER", "POWER.STOCK_POWER", "POWER.SURROUNDED_POWER", "POWER.SWIPE_POWER",
+]);
+const INTENT_PAIR_STEMS = Object.freeze([
+  "ATTACK", "BUFF", "CARD_DEBUFF", "DEATH_BLOW", "DEBUFF", "DEBUFF_STRONG", "DEFEND",
+  "ESCAPE", "HEAL", "SLEEP", "STATUS", "STUN", "SUMMON", "UNKNOWN",
+]);
+const INTENT_FORMAT_KEYS = Object.freeze(["FORMAT_DAMAGE_MULTI", "FORMAT_DAMAGE_SINGLE", "FORMAT_EMPTY", "FORMAT_STATUS_CARD_COUNT"]);
 const REQUIRED_SOURCE_SECTIONS = [
   "behaviorOwners", "encounters", "eventScripts", "eventTurnBehavior", "graphs", "hpPipeline",
   "initialState", "lifecycle", "models", "monsters", "moves", "observationIdentities",
@@ -63,6 +74,39 @@ function sortedJson(value) {
   return value;
 }
 function payloadDigest(value) { return createHash("sha256").update(JSON.stringify(sortedJson(value))).digest("hex"); }
+function localizationTemplate(value, label, { allowEmpty = false } = {}) {
+  if (typeof value !== "string" || (!value && !allowEmpty) || value.length > 16_384) fail(`${label} must be an exact bounded template`);
+  const styles = []; const braces = [];
+  for (let index = 0; index < value.length; index++) {
+    const char = value[index];
+    if (char === "[") {
+      const end = value.indexOf("]", index + 1); if (end < 0) fail(`${label} has unbalanced Godot markup`);
+      const token = value.slice(index + 1, end); if (!token) fail(`${label} has empty Godot markup`);
+      if (token.startsWith("/")) { const name = token.slice(1); if (!styles.length || styles.pop() !== name) fail(`${label} has mismatched Godot markup`); }
+      else { const name = token.split("=", 1)[0]; if (!name || /\s/.test(name)) fail(`${label} has malformed Godot markup`); styles.push(name); }
+      index = end;
+    } else if (char === "]") fail(`${label} has unmatched Godot markup`);
+    else if (char === "{") braces.push(index);
+    else if (char === "}") { if (!braces.length) fail(`${label} has unmatched placeholder close`); braces.pop(); }
+  }
+  if (styles.length || braces.length) fail(`${label} has an unclosed style span or placeholder`);
+  return value;
+}
+function expectedIntentLocalizationRef(intent, label) {
+  const kind = string(intent.kind, `${label}.kind`);
+  let stem = ({ attack: "ATTACK", block: "DEFEND", buff: "BUFF", cardDebuff: "CARD_DEBUFF", deathBlow: "DEATH_BLOW", escape: "ESCAPE", heal: "HEAL", hidden: "UNKNOWN", sleep: "SLEEP", status: "STATUS", stun: "STUN", summon: "SUMMON" })[kind];
+  let selector = { kind: "intentKind", value: kind };
+  if (kind === "debuff") {
+    const args = array(intent.arguments, `${label}.arguments`); const argument = args.length === 1 ? args[0] : null;
+    if (!argument || argument.kind !== "constant" || argument.valueType !== "boolean" || typeof argument.value !== "boolean") return { kind, status: "knownUnsupported", reason: "unresolvedDebuffStrengthArgument" };
+    stem = argument.value ? "DEBUFF_STRONG" : "DEBUFF"; selector = { argumentIndex: 0, kind: "booleanArgument", value: argument.value };
+  }
+  if (!stem) return { kind, status: "knownUnsupported", reason: "noCheckedLocalizationPair" };
+  const formatKey = intent.intentClass === "MultiAttackIntent" ? "FORMAT_DAMAGE_MULTI"
+    : new Set(["attack", "deathBlow"]).has(kind) ? "FORMAT_DAMAGE_SINGLE"
+    : kind === "status" ? "FORMAT_STATUS_CARD_COUNT" : "FORMAT_EMPTY";
+  return { descriptionKey: `${stem}.description`, formatKey, kind, pairId: `INTENT_PAIR.${stem}`, selector, status: "supported", titleKey: `${stem}.title` };
+}
 function freeze(value) {
   if (value && typeof value === "object" && !Object.isFrozen(value)) {
     Object.freeze(value); for (const child of Object.values(value)) freeze(child);
@@ -257,6 +301,10 @@ function validateProjection(root) {
       || authority.conflictPolicy !== "explicitNoPrecedence") fail("authority lanes do not match the checked contract");
   const metadata = object(root.metadata, "metadata"); const generator = object(metadata.generator, "metadata.generator");
   if (string(generator.name, "generator.name") !== "sts2-encounter-facts" || !new RegExp(`^${schema}\\.[0-9]+\\.[0-9]+$`).test(string(generator.version, "generator.version"))) fail("generator major does not correspond to projection schema");
+  if (schema >= 12) {
+    const expected = { catalogSha256: LOCALIZATION_CATALOG_SHA256, intent: { entries: 32, formats: 4, pairs: 14 }, power: { localized: 62, missingCanonicalIds: [...POWER_MISSING_IDS], missingLocalization: 7, total: 69 } };
+    if (JSON.stringify(sortedJson(metadata.localizationProjectionContract)) !== JSON.stringify(sortedJson(expected))) fail("localization projection denominator contract mismatch");
+  }
   const game = object(metadata.game, "metadata.game");
   if (version(string(game.version, "game.version")) !== GAME_VERSION || version(string(game.branch, "game.branch")) !== GAME_VERSION) fail("wrong game authority version");
   const dll = array(metadata.embeddedSourceInputManifest, "embeddedSourceInputManifest").find((row) => row?.path === "data_sts2_linuxbsd_x86_64/sts2.dll");
@@ -265,6 +313,7 @@ function validateProjection(root) {
   if (string(metadata.payloadSha256, "metadata.payloadSha256") !== payloadDigest(payload)) fail("canonical payload digest mismatch");
   const source = object(payload.sourceFacts, "payload.sourceFacts");
   for (const section of REQUIRED_SOURCE_SECTIONS) if (!(section in source)) fail(`missing source section ${section}`);
+  if (schema >= 12 && !("intentLocalization" in source)) fail("missing source section intentLocalization");
   validateReadiness(object(payload.readiness, "payload.readiness"), metadata);
   const lifecycleStatuses = schema === 10 ? new Set(["sourceCompleteE2d2a"]) : new Set(["sourceCompleteE2d2a", "sourceCompleteE2Lifecycle", "sourceComplete"]);
   if (!lifecycleStatuses.has(string(object(source.lifecycle, "lifecycle").status, "lifecycle.status"))) fail("lifecycle component status is not supported");
@@ -294,6 +343,71 @@ function validateProjection(root) {
   const powerIndex = uniqueIndex(source.models.powers, "canonicalId", "power models");
   const factRows = uniqueIndex(payload.factReferences, "factId", "fact references");
   const evidenceIndex = uniqueIndex(payload.evidence, "evidenceId", "evidence");
+
+  let intentEntryIndex = new Map(); let intentPairIndex = new Map();
+  if (schema >= 12) {
+    const exactFactPointers = (factId, expectedPointers) => {
+      const row = expect(factRows, factId, "localization fact");
+      const expectedEvidenceId = `EVIDENCE.${factId}`;
+      if (row.lane !== "source" || JSON.stringify(row.evidenceRefs) !== JSON.stringify([expectedEvidenceId])) fail(`bad localization fact/evidence ref ${factId}`);
+      const evidence = expect(evidenceIndex, expectedEvidenceId, "localization evidence");
+      if (evidence.artifactInput !== "INPUT.SOURCE" || evidence.lane !== "source") fail(`bad localization evidence lane ${factId}`);
+      const pointers = array(evidence.pointers, `${factId}.pointers`).map((pointer) => pointer.jsonPointer);
+      if (JSON.stringify(pointers) !== JSON.stringify(expectedPointers)) fail(`bad localization evidence pointer ${factId}`);
+    };
+    if (source.models.powers.length !== 69) fail("expected exactly 69 Power models");
+    const titleKeys = new Set(); const smartKeys = new Set(); const missing = new Set(); let localized = 0;
+    source.models.powers.forEach((power, index) => {
+      const label = `power models[${index}]`; object(power, label);
+      const canonicalId = string(power.canonicalId, `${label}.canonicalId`); string(power.englishTitle, `${label}.englishTitle`);
+      if (string(power.factId, `${label}.factId`) !== `SOURCE.${canonicalId}`) fail(`${label} has bad fact ID`);
+      const title = object(power.titleLocalization, `${label}.titleLocalization`);
+      const titleKey = string(title.titleKey, `${label}.titleKey`); if (titleKeys.has(titleKey)) fail(`duplicate Power title key ${titleKey}`); titleKeys.add(titleKey);
+      for (const key of ["blobSha256", "pckSha256", "titleWitnessSha256"]) if (!/^[0-9a-f]{64}$/.test(string(title[key], `${label}.${key}`))) fail(`${label} has bad title provenance`);
+      if (title.pckPath !== "localization/eng/powers.json") fail(`${label} has bad title localization path`);
+      const smart = object(power.smartDescription, `${label}.smartDescription`); const smartKey = string(smart.key, `${label}.smartDescription.key`);
+      if (smartKeys.has(smartKey)) fail(`duplicate Power smart-description key ${smartKey}`); smartKeys.add(smartKey);
+      if (smart.classification === "localized") { localizationTemplate(smart.template, `${label}.smartDescription.template`); localized++; }
+      else if (smart.classification === "missingLocalization" && smart.template === null) missing.add(canonicalId);
+      else fail(`${label} has invalid smart-description classification/template`);
+      exactFactPointers(power.factId, [`/powers/${index}`]);
+    });
+    if (localized !== 62 || JSON.stringify([...missing].sort()) !== JSON.stringify([...POWER_MISSING_IDS].sort())) fail("Power 69/62/7 localization denominator mismatch");
+
+    const catalog = object(source.intentLocalization, "intentLocalization");
+    if (catalog.factId !== "SOURCE.INTENT_LOCALIZATION.CATALOG") fail("bad intent catalog fact ID");
+    exactFactPointers(catalog.factId, ["/intentLocalization"]);
+    if (JSON.stringify(catalog.formatKeys) !== JSON.stringify(INTENT_FORMAT_KEYS)) fail("intent format key set/order mismatch");
+    const expectedPairs = INTENT_PAIR_STEMS.map((stem) => ({ descriptionKey: `${stem}.description`, pairId: `INTENT_PAIR.${stem}`, titleKey: `${stem}.title` }));
+    if (JSON.stringify(catalog.pairs) !== JSON.stringify(expectedPairs)) fail("intent title/description pairs mismatch");
+    intentPairIndex = uniqueIndex(catalog.pairs, "pairId", "intent localization pairs");
+    if (catalog.entries.length !== 32) fail("expected exactly 32 intent localization entries");
+    intentEntryIndex = uniqueIndex(catalog.entries, "key", "intent localization entries");
+    const expectedEntryKeys = new Set([...INTENT_FORMAT_KEYS, ...INTENT_PAIR_STEMS.flatMap((stem) => [`${stem}.title`, `${stem}.description`])]);
+    if (intentEntryIndex.size !== expectedEntryKeys.size || [...intentEntryIndex.keys()].some((key) => !expectedEntryKeys.has(key))) fail("intent entry key set mismatch");
+    catalog.entries.forEach((entry) => {
+      const label = `intent localization ${entry.key}`; object(entry, label);
+      const expectedFactId = `SOURCE.INTENT_LOCALIZATION.${entry.key.toUpperCase()}`;
+      if (entry.factId !== expectedFactId || entry.catalogFactRef !== catalog.factId || entry.provenanceFactRef !== catalog.factId) fail(`${label} has bad fact/provenance ref`);
+      const expectedKind = entry.key.startsWith("FORMAT_") ? "format" : entry.key.endsWith(".description") ? "description" : "title";
+      if (entry.entryKind !== expectedKind) fail(`${label} has bad entry kind`);
+      localizationTemplate(entry.value, `${label}.value`, { allowEmpty: entry.key === "FORMAT_EMPTY" });
+      exactFactPointers(entry.factId, [`/intentLocalization/entries/${entry.key.replaceAll("~", "~0").replaceAll("/", "~1")}`, "/intentLocalization/provenance"]);
+    });
+    jsonValue(object(catalog.provenance, "intent localization provenance"), "intent localization provenance");
+    if (payloadDigest({ intentLocalization: catalog, powers: source.models.powers }) !== LOCALIZATION_CATALOG_SHA256) fail("localization catalog digest mismatch");
+    // All canonical/member Power references in the compact source tree must
+    // resolve before any encounter-specific fixed point is compiled.
+    const knownPowerIds = [...powerIndex.keys(), ...LIFECYCLE_ONLY_POWER_IDS];
+    (function validatePowerReferences(value, label = "sourceFacts") {
+      if (typeof value === "string") {
+        if (value.startsWith("POWER.") && !knownPowerIds.some((id) => value === id || value.startsWith(`${id}.`))) fail(`missing lifecycle Power join ${value} at ${label}`);
+        return;
+      }
+      if (Array.isArray(value)) { value.forEach((item, index) => validatePowerReferences(item, `${label}[${index}]`)); return; }
+      if (value && typeof value === "object") for (const [key, item] of Object.entries(value)) validatePowerReferences(item, `${label}.${key}`);
+    })(source);
+  }
 
   const sourceFactIds = new Set();
   (function collect(value) {
@@ -363,7 +477,19 @@ function validateProjection(root) {
     if (string(move.canonicalMonster, `${move.canonicalId}.monster`) !== owner.canonicalMonster) fail(`move canonical owner mismatch ${move.canonicalId}`);
     strings(move.applicableConcreteModels, `${move.canonicalId}.applicableModels`, true).forEach((model) => expect(monsterIndex, model, "move applicable monster"));
     object(move.title, `${move.canonicalId}.title`); string(move.title.classification, `${move.canonicalId}.title.classification`);
-    array(move.intents, `${move.canonicalId}.intents`).forEach((intent, index) => { object(intent, "intent"); string(intent.kind, `intent[${index}].kind`); jsonValue(intent, "intent"); });
+    array(move.intents, `${move.canonicalId}.intents`).forEach((intent, index) => {
+      const label = `${move.canonicalId}.intents[${index}]`; object(intent, label); string(intent.kind, `${label}.kind`); jsonValue(intent, label);
+      if (schema >= 12) {
+        const expectedRef = expectedIntentLocalizationRef(intent, label);
+        if (JSON.stringify(sortedJson(intent.localizationRef)) !== JSON.stringify(sortedJson(expectedRef))) fail(`${label} has invalid typed localization ref`);
+        const ref = object(intent.localizationRef, `${label}.localizationRef`);
+        if (ref.status === "supported") {
+          const pair = expect(intentPairIndex, string(ref.pairId, `${label}.pairId`), "intent pair");
+          if (pair.titleKey !== ref.titleKey || pair.descriptionKey !== ref.descriptionKey) fail(`${label} pair/key mismatch`);
+          for (const key of [ref.titleKey, ref.descriptionKey, ref.formatKey]) expect(intentEntryIndex, string(key, `${label}.localizationKey`), "intent localization entry");
+        } else if (ref.status !== "knownUnsupported") fail(`${label} is neither supported nor explicit known unsupported`);
+      }
+    });
     for (const operation of array(move.operations, `${move.canonicalId}.operations`)) {
       object(operation, "operation"); const id = string(operation.operationId, "operationId"); if (operationIds.has(id)) fail(`duplicate operation ID ${id}`); operationIds.add(id);
       string(operation.kind, `${id}.kind`);
@@ -537,7 +663,7 @@ function validateProjection(root) {
   for (const key of ["archive", "current"]) for (const [index, row] of array(payload.legacyAnnotations[key], `legacyAnnotations.${key}`).entries()) {
     object(row, `legacyAnnotations.${key}[${index}]`); string(row.factId, `legacyAnnotations.${key}[${index}].factId`); expect(factRows, row.factId, "legacy annotation fact");
   }
-  return { schema, metadata, projectionAuthority: authority, payload, source, encounters, encounterIndex, monsterIndex, moveIndex, graphIndex, stateIndex, factRows, evidenceIndex, observationIndex, stateModelObservationIndex, placementByEncounter, eventTurns };
+  return { schema, metadata, projectionAuthority: authority, payload, source, encounters, encounterIndex, monsterIndex, moveIndex, graphIndex, stateIndex, factRows, evidenceIndex, intentEntryIndex, intentPairIndex, observationIndex, stateModelObservationIndex, placementByEncounter, eventTurns };
 }
 
 function rosterRecord(selection) {
@@ -586,7 +712,7 @@ function observedRecord(state, exactObservations, stateModelObservations, select
 function makeCompiler(v, options = {}) {
   const configuredPlayers = Number(options.players ?? bookMeta.players ?? 2);
   if (!Number.isSafeInteger(configuredPlayers) || configuredPlayers < 1 || configuredPlayers > 4) fail("configured players must be an integer from 1 through 4");
-  const { schema, metadata, projectionAuthority, payload, source, encounterIndex, monsterIndex, factRows, evidenceIndex, observationIndex, stateModelObservationIndex, placementByEncounter, eventTurns } = v;
+  const { schema, metadata, projectionAuthority, payload, source, encounterIndex, monsterIndex, factRows, evidenceIndex, intentEntryIndex, intentPairIndex, observationIndex, stateModelObservationIndex, placementByEncounter, eventTurns } = v;
   const movesByModel = new Map(), statesByModel = new Map(), initialByModel = new Map(), graphByModel = new Map();
   for (const move of source.moves) for (const model of move.applicableConcreteModels) { const rows = movesByModel.get(model) ?? []; rows.push(move); movesByModel.set(model, rows); }
   for (const rows of movesByModel.values()) rows.sort((a, b) => a.ordinal - b.ordinal || a.canonicalId.localeCompare(b.canonicalId));
@@ -635,15 +761,21 @@ function makeCompiler(v, options = {}) {
     }
     return { producedBodies: [...encounter.producedMonsters], pools: compact(encounter.productionPools), rules, status: semantics.status };
   }
-  function lifecycleMechanicsRecord(encounter, models, monsterRows, production) {
+  function lifecycleMechanicsRecord(encounter, models, monsterRows, production, event) {
     const modelIds = new Set(models);
     const knownPowerIds = new Set(source.models.powers.map((row) => row.canonicalId));
-    const powerIds = new Set();
+    const lifecycleOnlyIds = new Set(LIFECYCLE_ONLY_POWER_IDS);
+    const allKnownPowerIds = [...knownPowerIds, ...lifecycleOnlyIds];
+    const powerIds = new Set(); const lifecycleOnlyPowerIds = new Set();
+    const resolvedPowerId = (reference) => {
+      if (typeof reference !== "string") return null;
+      const exact = allKnownPowerIds.find((id) => reference === id || reference.startsWith(`${id}.`));
+      if (!exact && reference.startsWith("POWER.")) fail(`unknown canonical Power reference ${reference}`);
+      return exact ?? null;
+    };
     const addPower = (reference) => {
-      if (typeof reference !== "string") return;
-      if (knownPowerIds.has(reference)) { powerIds.add(reference); return; }
-      // Member refs are accepted only when their exact canonical Power prefix is validated.
-      for (const id of knownPowerIds) if (reference.startsWith(`${id}.`)) { powerIds.add(id); return; }
+      const id = resolvedPowerId(reference); if (!id) return;
+      (knownPowerIds.has(id) ? powerIds : lifecycleOnlyPowerIds).add(id);
     };
     const operationPowers = (operation) => {
       if (!operation || typeof operation !== "object") return;
@@ -652,24 +784,32 @@ function makeCompiler(v, options = {}) {
       for (const key of ["model", "power", "retainedPower", "owner", "amountRef", "source"]) addPower(operation[key]);
     };
 
+    const collectExactPowerRefs = (value) => {
+      if (typeof value === "string") { addPower(value); return; }
+      if (Array.isArray(value)) { value.forEach(collectExactPowerRefs); return; }
+      if (value && typeof value === "object") Object.values(value).forEach(collectExactPowerRefs);
+    };
+
     for (const body of monsterRows) {
       for (const fact of body.initialState) operationPowers(fact.effect);
       for (const move of body.moves) for (const operation of move.operations) operationPowers(operation);
     }
+    collectExactPowerRefs(monsterRows);
     for (const effect of production?.rules?.postAddEffects ?? []) {
       operationPowers(effect);
       if (effect.kind === "applyPower") addPower(effect.targetRef);
     }
 
+    // Selected linked facts are allowed to seed only exact canonical Power refs;
+    // display titles and prose never participate in relevance.
+    collectExactPowerRefs(production);
+    collectExactPowerRefs(event);
+
     const encounterIds = new Set([encounter.canonicalId, `ENCOUNTER.${encounter.canonicalId}`]);
     const eventIds = new Set(encounter.kind === "event" ? [eventTurns.get(encounter.canonicalId)?.canonicalEvent] : []);
     const rowPowerReferences = (row) => {
       const result = new Set();
-      const collect = (reference) => {
-        if (typeof reference !== "string") return;
-        if (knownPowerIds.has(reference)) { result.add(reference); return; }
-        for (const id of knownPowerIds) if (reference.startsWith(`${id}.`)) { result.add(id); return; }
-      };
+      const collect = (reference) => { const id = resolvedPowerId(reference); if (id) result.add(id); };
       for (const key of ["power", "producerPower", "listener"]) collect(row[key]);
       for (const signal of row.sourceSignals ?? []) collect(signal);
       for (const operation of lifecycleOperations(row)) {
@@ -685,11 +825,12 @@ function makeCompiler(v, options = {}) {
           || modelIds.has(row.canonicalModel) || (Array.isArray(row.applicableConcreteModels) && row.applicableConcreteModels.some((id) => modelIds.has(id)))
           || [...lifecycleRelationModels(row)].some((id) => modelIds.has(id))) return true;
       if (eventIds.has(row.canonicalEvent) || eventIds.has(row.eventId)) return true;
-      if ([...rowPowerReferences(row)].some((id) => powerIds.has(id))) return true;
+      if ([...rowPowerReferences(row)].some((id) => powerIds.has(id) || lifecycleOnlyPowerIds.has(id))) return true;
       return Array.isArray(row.sourceSignals) && row.sourceSignals.some((id) => modelIds.has(id));
     };
     const harvestRecordPowers = (row) => {
-      for (const id of rowPowerReferences(row)) powerIds.add(id);
+      for (const id of rowPowerReferences(row)) (knownPowerIds.has(id) ? powerIds : lifecycleOnlyPowerIds).add(id);
+      collectExactPowerRefs(row);
     };
 
     const mechanics = source.lifecycle.mechanics ?? {};
@@ -712,7 +853,42 @@ function makeCompiler(v, options = {}) {
     }
     const policies = (mechanics.powerRetentionPolicies ?? []).filter((row) => powerIds.has(row.power));
     if (policies.length) result.powerRetentionPolicies = compact(policies);
-    return result;
+    return { mechanics: result, powerIds: [...powerIds].sort(), lifecycleOnlyPowerIds: [...lifecycleOnlyPowerIds].sort() };
+  }
+  function powerCatalogRecord(powerIds, lifecycleOnlyPowerIds, closure) {
+    if (schema < 12) return null;
+    const wanted = new Set(powerIds); const records = source.models.powers.filter((row) => wanted.has(row.canonicalId));
+    for (const power of records) closure.add(power.factId);
+    return {
+      authority: "checked descriptive source text; raw template bytes are authoritative",
+      liveInstanceClaims: false,
+      scope: "canonical Power references closed from this encounter; no current owner, amount, target, trigger, or status is observed",
+      records: records.map((row) => jsonValue(row, `Power catalog ${row.canonicalId}`)),
+      lifecycleOnlyReferences: lifecycleOnlyPowerIds.map((canonicalId) => ({
+        canonicalId, classification: "lifecycleOnlyNoReachableLocalizationModel",
+        descriptionTemplate: null, factId: source.lifecycle.factId,
+      })),
+    };
+  }
+  function intentLocalizationRecord(monsterRows, closure) {
+    if (schema < 12) return null;
+    const catalog = source.intentLocalization; const keys = new Set(); const pairIds = new Set();
+    for (const body of monsterRows) for (const move of body.moves) for (const intent of move.intents) {
+      const ref = intent.localizationRef;
+      if (ref?.status !== "supported") continue;
+      keys.add(ref.titleKey); keys.add(ref.descriptionKey); keys.add(ref.formatKey); pairIds.add(ref.pairId);
+    }
+    closure.add(catalog.factId);
+    const entries = catalog.entries.filter((row) => keys.has(row.key));
+    for (const entry of entries) closure.add(entry.factId);
+    return {
+      catalogFactId: catalog.factId,
+      scope: "localization for registered move-intent semantics only; not a live or predicted current intent",
+      interpolation: "forbidden; Damage, Repeat, CardCount, IsMultiplayer, and other placeholders remain unresolved",
+      provenance: jsonValue(catalog.provenance, "intent localization provenance"),
+      pairs: catalog.pairs.filter((row) => pairIds.has(row.pairId)).map((row) => jsonValue(row, `intent pair ${row.pairId}`)),
+      entries: entries.map((row) => jsonValue(row, `intent localization ${row.key}`)),
+    };
   }
   function eventRecord(encounter, closure) {
     if (encounter.kind !== "event") return null; const turn = eventTurns.get(encounter.canonicalId); closure.add(turn.factId); const scripts = {};
@@ -736,7 +912,10 @@ function makeCompiler(v, options = {}) {
     const production = productionRecord(encounter, allModels, closure); const event = eventRecord(encounter, closure);
     const observation = observedRecord(state, observationIndex, stateModelObservationIndex, id, mode === "manual-reference");
     closure.add(source.lifecycle.factId); closure.add(source.hpPipeline.factId); closure.add(source.stateRules.factId);
-    const lifecycle = { componentId: source.lifecycle.componentId, factId: source.lifecycle.factId, status: source.lifecycle.status, dependencies: compact(source.lifecycle.dependencies), core: compact(source.lifecycle.core), dispatch: compact(source.lifecycle.dispatch), listenerRegistry: compact(source.lifecycle.listenerRegistry), removal: compact(source.lifecycle.removal), combatTermination: compact(source.lifecycle.combatTermination), runtimeBoundaries: compact(source.lifecycle.runtimeBoundaries), mechanics: lifecycleMechanicsRecord(encounter, allModels, monsters, production) };
+    const lifecycleSelection = lifecycleMechanicsRecord(encounter, allModels, monsters, production, event);
+    const lifecycle = { componentId: source.lifecycle.componentId, factId: source.lifecycle.factId, status: source.lifecycle.status, dependencies: compact(source.lifecycle.dependencies), core: compact(source.lifecycle.core), dispatch: compact(source.lifecycle.dispatch), listenerRegistry: compact(source.lifecycle.listenerRegistry), removal: compact(source.lifecycle.removal), combatTermination: compact(source.lifecycle.combatTermination), runtimeBoundaries: compact(source.lifecycle.runtimeBoundaries), mechanics: lifecycleSelection.mechanics };
+    const powers = powerCatalogRecord(lifecycleSelection.powerIds, lifecycleSelection.lifecycleOnlyPowerIds, closure);
+    const intentLocalization = intentLocalizationRecord(monsters, closure);
     const encounterView = {
       canonicalId: id, sourceIdentity: encounter.sourceType, factId: encounter.factId, title: encounter.title, kind: encounter.kind,
       placement: { classification: placement.classification, factId: placement.factId, memberships: compact(placement.memberships) },
@@ -753,7 +932,7 @@ function makeCompiler(v, options = {}) {
         multiplayerScaling: compact(source.scaling.hp),
         stateRuleRegistry: { factId: source.stateRules.factId, rules: compact(source.stateRules.rules) },
       },
-      lifecycle, callouts: [],
+      lifecycle, powers, intentLocalization, callouts: [],
       conflicts: payload.conflicts.filter((row) => closure.has(row.left?.factId) || closure.has(row.right?.factId)).map((row) => compact(row)),
       comparisons: payload.laneComparisons.filter((row) => closure.has(row.left?.factId) || closure.has(row.right?.factId)).map((row) => compact(row)),
       knownUnknowns: payload.knownUnknowns.filter((row) => row.affectedFactIds.some((factId) => closure.has(factId))).map((row) => ({ unknownId: row.unknownId, status: row.status, scope: row.scope, reasonCode: row.reasonCode, detail: row.detail, affectedFactIds: [...new Set(row.affectedFactIds.filter((factId) => closure.has(factId)))] })),

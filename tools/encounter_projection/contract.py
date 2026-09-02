@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-SCHEMA_VERSION = 11
+SCHEMA_VERSION = 12
 GENERATOR_NAME = "sts2-encounter-facts"
-GENERATOR_VERSION = "11.1.0"
+GENERATOR_VERSION = "12.0.0"
 SOURCE_SCHEMA_VERSION = 14
 SOURCE_EXTRACTOR_VERSION = "14.0.0"
 
@@ -195,13 +195,27 @@ for _kind, _count in {
     REQUIRED_COVERAGE[f"operationDirectSinksByKind.{_kind}"] = ("complete", _count, _count, 0)
 
 INTENT_KINDS = {"attack", "block", "buff", "cardDebuff", "deathBlow", "debuff", "escape", "heal", "hidden", "sleep", "status", "stun", "summon"}
+POWER_LOCALIZATION_CONTRACT = {
+    "total": 69, "localized": 62, "missingLocalization": 7,
+    "missingCanonicalIds": [
+        "POWER.BACK_ATTACK_LEFT_POWER", "POWER.BACK_ATTACK_RIGHT_POWER", "POWER.DAMPEN_POWER",
+        "POWER.HEX_POWER", "POWER.STOCK_POWER", "POWER.SURROUNDED_POWER", "POWER.SWIPE_POWER",
+    ],
+}
+INTENT_PAIR_STEMS = [
+    "ATTACK", "BUFF", "CARD_DEBUFF", "DEATH_BLOW", "DEBUFF", "DEBUFF_STRONG", "DEFEND",
+    "ESCAPE", "HEAL", "SLEEP", "STATUS", "STUN", "SUMMON", "UNKNOWN",
+]
+INTENT_FORMAT_KEYS = ["FORMAT_DAMAGE_MULTI", "FORMAT_DAMAGE_SINGLE", "FORMAT_EMPTY", "FORMAT_STATUS_CARD_COUNT"]
+INTENT_LOCALIZATION_CONTRACT = {"entries": 32, "pairs": 14, "formats": 4}
+LOCALIZATION_CATALOG_SHA256 = "b483e4df3fb8c88dc14d1d7a67412fc81fc7afaaed30e54320dae602d8f05a18"
 ROOT_KEYS = {"authority", "metadata", "payload", "schemaVersion"}
 METADATA_KEYS = {
     "embeddedSourceInputManifest", "embeddedSourceInputManifestSha256", "game", "generator",
-    "payloadSha256", "projectionInputs", "requiredCoverage", "sourceExtractorVersion", "sourceSchemaVersion",
+    "localizationProjectionContract", "payloadSha256", "projectionInputs", "requiredCoverage", "sourceExtractorVersion", "sourceSchemaVersion",
 }
 PAYLOAD_KEYS = {"conflicts", "evidence", "factReferences", "knownUnknowns", "laneComparisons", "legacyAnnotations", "readiness", "resolvedAudits", "sourceFacts"}
-SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states", "initialState", "hpPipeline", "eventTurnBehavior", "eventScripts", "randomSelection", "production", "lifecycle"}
+SOURCE_FACT_KEYS = {"behaviorOwners", "encounters", "graphs", "models", "monsters", "moves", "observationIdentities", "placement", "scaling", "stateRules", "states", "initialState", "hpPipeline", "eventTurnBehavior", "eventScripts", "randomSelection", "production", "lifecycle", "intentLocalization"}
 
 
 def coverage_rows() -> list[dict[str, Any]]:

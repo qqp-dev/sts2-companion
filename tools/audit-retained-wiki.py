@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Build/check the deterministic v0.111.0 retained-wiki origin inventory and P1b0/P1b1 final mappings; no network or game access."
+        description="Build/check the deterministic v0.111.0 retained-wiki origin inventory and P1b0/P1b1/P1c final mappings; no network or game access."
     )
     parser.add_argument("--root", type=Path, default=ROOT, help=argparse.SUPPRESS)
     parser.add_argument("--output", type=Path, default=Path(DEFAULT_ARTIFACT))

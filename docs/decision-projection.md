@@ -1534,6 +1534,35 @@ ownership.
   current event fights pass all five static layers. This does not observe the
   selected event option or authorize event-choice advice.
 
+### P1c Technical-only localization projection
+
+Projection schema 12 adds two strict audit catalogs without changing primary
+semantics. `sourceFacts.models.powers` contains 69 per-record facts and exact
+`/powers/<index>` evidence: 62 preserve authoritative smart-description bytes
+and seven preserve `missingLocalization` with `template: null`. Duplicate IDs or
+keys, malformed style/placeholder balance, classification/template
+contradictions, evidence drift, catalog digest drift, or 69/62/7 denominator
+drift makes the projection unavailable.
+
+`sourceFacts.intentLocalization` contains one catalog fact and 32 entry facts:
+14 exact title/description pairs plus `FORMAT_DAMAGE_MULTI`,
+`FORMAT_DAMAGE_SINGLE`, `FORMAT_EMPTY`, and `FORMAT_STATUS_CARD_COUNT`. Each
+move intent retains a typed localization reference beside its arguments.
+`DebuffIntent(false/true)` selects the independent `DEBUFF`/`DEBUFF_STRONG`
+keys; attack class selects single/multi format; hidden explicitly maps to
+`UNKNOWN`. Values are never interpolated because no live intent is observed.
+
+The strict adapter seeds canonical Powers from exact initial-state operations,
+registered move operations, production, selected event facts, and the existing
+lifecycle fixed point. It exposes only the resulting encounter closure and adds
+every Power/entry fact to proof. Display-title matching is forbidden. The
+catalog states explicitly that Power text is descriptive rather than a live
+instance and intent text is registered semantics rather than prediction. Safe
+DOM tree construction keeps all raw IDs, localization markup, unresolved
+placeholders, and ordinary intent names under collapsed Technical audit. The
+primary semantic-surface content is unchanged; only its compact-input
+size/SHA manifest row changed when schema 12 was generated.
+
 ### E2 source gates
 
 Enable reducer features family by family; an unrelated completed family does not

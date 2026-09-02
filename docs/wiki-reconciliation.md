@@ -9,16 +9,17 @@ and it cannot override closed reverse-engineered facts in
 `data/game-v0.111.0-source.json` or their checked compact projection.
 
 P1a captured origins and P1b0 added the membership/typed-conflict control
-plane. P1b1 now final-maps identity/placement/lead/roster, HP/scaling, and exact
-starting-Power identity/stack origins. Move/intent/effect, Pattern,
-Power-description/Power-Infobox, and objective Note records remain outside this
-slice unless P1b0 already mapped them. An unmapped record's
+plane. P1b1 final-maps identity/placement/lead/roster, HP/scaling, and exact
+starting-Power identity/stack origins. P1c now final-maps the exact 74 pending
+Power/passive origins through guarded canonical ownership and localization
+coordinates. Move/intent/effect, Pattern, and corrected objective Note records
+remain outside this slice unless P1b0 already mapped them. An unmapped record's
 `captured-unreconciled` state means only that its structural origin cannot
 silently disappear; it is not a final disposition or a presentation claim.
 
 The artifact targets `v0.111.0` on `public-beta`. Its manifest hashes
 `pages.json`, `index.json`, all six retained Lua files, the retained book, raw
-source, compact projection, both reviewed policies, the explicit state/model
+source, compact projection, all three reviewed policies, the explicit state/model
 alias ledger, the generated primary semantic surface, parser/generator tools,
 and current repository documentation/contracts. Paths are repository-relative. No
 generation timestamp, absolute path, file-order observation, inode, or temporary
@@ -44,8 +45,8 @@ These terms must not be collapsed:
    reports the bounded encounter-projection scope as complete.
 4. **Semantic reconciliation completeness** asks whether every mechanical atom
    has a reviewed final disposition and exact representation/provenance path.
-   This remains false because 2,253 out-of-slice records are still
-   `captured-unreconciled` after P1b1. Overall reconciliation readiness is
+   This remains false because 2,179 out-of-slice records are still
+   `captured-unreconciled` after P1c. Overall reconciliation readiness is
    consequently false.
 
 The checked Events waiver and 69 shorthand `Power Infobox` plus two `Intents`
@@ -173,8 +174,8 @@ representation; book `typedConflicts` and reconciliation mappings are.
 **1,271** P1b1 origins by exact origin ID, claim ID, and family. This is five
 higher than the work-order's 1,266 because per-Power atomization is now correct:
 article and module Test Subject phases 1/2 split comma-separated Powers (+4), and
-Tough Egg splits adjacent `Minion` and `Hatch 2` (+1). The unrelated remainder
-is still exactly **2,253**.
+Tough Egg splits adjacent `Minion` and `Hatch 2` (+1). The post-P1b1 unrelated remainder was **2,253**; P1c maps 74 of those,
+leaving exactly **2,179**.
 
 Canonical ownership comes from generated `retainedProvenance` on each book body:
 article page/revision/template/body ordinal and module path/table key/record
@@ -231,8 +232,46 @@ possibilities; a possible alternative card is never credited as always present.
 Starting-state mappings uniquely segment exact canonical Power titles before assigning a
 trailing amount, so Tough Egg is typed as `Minion` plus `Hatch 2` rather than a
 synthetic `Minion Hatch 2` identity. They preserve one Power per atom, owner/state, base/A9
-amount, 1P/2P scaling, and canonical Power IDs. Full Power descriptions remain
-P1c scope.
+amount, 1P/2P scaling, and canonical Power IDs.
+
+## P1c Power/passive and localization mappings
+
+`tools/wiki-reconciliation-p1c-policy-v0.111.0.json` guards exactly 74 origins:
+68 `article-power-invocation` and six `article-power-inline-field` records. The
+policy pins origin ID, claim ID, page and section owner, canonical Power ID,
+compact Power index, and a typed initial-state, move-operation, or lifecycle
+actor/Power coordinate. Runtime reconciliation never chooses by title,
+substring, or same-name inference. The two `Back Attack` invocations are
+explicitly disambiguated as Crusher/left and Rocket/right; mutation of the
+owner alias, canonical ID, fact, or either pointer fails closed.
+
+The compact schema-12 authority is 69 reachable Powers: 62 exact localized smart
+description templates and seven explicit missing records
+(`POWER.BACK_ATTACK_LEFT_POWER`, `POWER.BACK_ATTACK_RIGHT_POWER`,
+`POWER.DAMPEN_POWER`, `POWER.HEX_POWER`, `POWER.STOCK_POWER`,
+`POWER.SURROUNDED_POWER`, and `POWER.SWIPE_POWER`). It also contains 32 exact
+checked intent entries: 14 independent title/description key pairs and four format entries.
+Equal display values such as `Strategic` do not merge keys. Templates preserve
+Godot markup and unresolved owner, amount, damage, repeat, card-count,
+multiplayer, plural, and conditional tokens. Wiki prose never fills a missing
+source localization.
+
+P1c materializes 69 `audit-present` and five `missing/unparsed` mappings. The
+four inline `Type`/`Stacks` values remain missing because the checked source
+catalog does not project those fields; Fossil Stalker's `Strength` invocation
+remains unjoined because no typed compact actor/Power row proves ownership. The
+two inline `Description` origins point independently to exact retained values
+and source templates. An unexpanded `Power Infobox` invocation proves only its
+identity/arguments; absent template-body semantics remain a snapshot
+limitation. Including a raw source template does not claim a current owner,
+amount, target, status, or trigger.
+
+Together with the three preserved P1b0 archive Power mappings, all 77
+Power/passive origins are final-mapped. Totals are now 1,394 final-mapped, 865
+policy-excluded, and 2,179 captured-unreconciled. Semantic/overall readiness
+remain false because move/Pattern and objective Note work is not part of P1c;
+snapshot completeness remains false because `Events.lua` and both shorthand
+`Intents` transclusion bodies are absent.
 
 ### Build order
 
@@ -245,7 +284,8 @@ Avoid digest cycles:
 
 `npm run build:wiki-reconciliation` runs those stages in that order; the check
 command verifies each stage without rewriting. Runtime never imports either
-reconciliation artifact. Later slices are P1b2 move/pattern atoms, P1c
-Power/intent localization, P2 the 79 objective Note gaps, and optional P3
-tactics. Semantic and overall readiness remain false.
+reconciliation artifact. P1c is complete in this build; the mandated later
+slices are P2 for the corrected 79 objective Note gaps, then P1b2 move/Pattern
+semantics, with P3 tactics optional. Semantic and overall readiness remain
+false.
 
