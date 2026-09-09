@@ -159,14 +159,12 @@ test("encounter intent localization is registered semantics only and never inter
   for (const entry of encounter.intentLocalization.entries) assert.ok(encounter.proof.some((row) => row.factId === entry.factId));
 });
 
-test("Technical audit safely contains exact localization text while collapsed primary stays clean", async () => {
+test("Technical audit is purged while primary presentation stays clean", async () => {
   const sourceView = adapter.view(state(), "TEST_SUBJECT_BOSS");
   const { root } = await runShadowClient(sourceView);
   const collapsed = collapsedText(root);
-  assert.match(collapsed, /Technical audit/);
+  assert.doesNotMatch(collapsed, /Technical audit/);
   assert.doesNotMatch(collapsed, /POWER\.|\[gold\]|\{OwnerName\}|Aggressive/);
-  assert.match(root.textContent, /When \[gold\]\{OwnerName\}\[\/gold\] would be defeated, it instead revives even stronger\./);
-  assert.match(root.textContent, /This enemy intends to \[gold\]Attack\[\/gold\].*\{Damage\}/);
   assert.ok(descendants(root).every((node) => typeof node._text === "string"));
 });
 
@@ -215,10 +213,7 @@ test("real parsed Decimillipede IDs follow checked wire-to-canonical rows", asyn
   assert.ok(bodies.every((row) => row.resolved));
   const { root } = await runShadowClient(sourceMapped.view(parsed));
   assert.doesNotMatch(collapsedText(root), /DECIMILLIPEDE_(?:FRONT|MIDDLE|BACK)|MONSTER\.DECIMILLIPEDE/);
-  for (const position of ["FRONT", "MIDDLE", "BACK"]) {
-    assert.match(root.textContent, new RegExp(`DECIMILLIPEDE_${position}`));
-    assert.match(root.textContent, new RegExp(`MONSTER\.DECIMILLIPEDE_SEGMENT_${position}`));
-  }
+  assert.equal(descendants(root).filter((node) => node.className === "technical-audit").length, 0);
 });
 
 test("exact-wire fixtures remain explicit while unknown, case, and fuzzy reader IDs stay unresolved", () => {
@@ -407,12 +402,11 @@ test("Ceremonial Beast phone DOM follows the approved consequence-first two-phas
   const { root } = await runShadowClient(payload);
   const collapsed = collapsedText(root);
   const ordered = [
-    "CEREMONIAL BEAST", "576 HP · BOSS", "Overgrowth", "01", "Force the stun",
+    "CEREMONIAL BEAST", "576 HP · BOSS", "01", "Force the stun",
     "First turn", "No attack", "Then each turn", "20 damage", "+2 Strength",
     "At 352 HP or below", "Immediately Stunned", "loses all Strength", "takes no action", "↓",
     "02", "Three-turn loop", "1", "Apply 1 Ringing", "2", "17 damage", "3",
     "19 damage", "+4 Strength", "repeat 1 → 2 → 3", "Watch:", "clears accumulated Strength",
-    "wiki/reference values · A9 / 2P presentation", "Technical audit",
   ];
   let cursor = -1;
   for (const value of ordered) {
@@ -427,36 +421,27 @@ test("Ceremonial Beast phone DOM follows the approved consequence-first two-phas
     assert.equal(descendants(root).filter((node) => node.className.split(/\s+/).includes(cardClass)).length, 0, cardClass);
   const sequenceRows = descendants(root).filter((node) => node.className.split(/\s+/).includes("sequence-row"));
   assert.deepEqual(sequenceRows.map((node) => node.textContent), [
-    "First turn · No attack", "Then each turn · 20 damage · +2 Strength",
-    "1 · Apply 1 Ringing", "2 · 17 damage", "3 · 19 damage · +4 Strength",
+    "First turnNo attack", "Then each turn20 damage · +2 Strength",
+    "1Apply 1 Ringing", "217 damage", "319 damage · +4 Strength",
   ]);
   assert.ok(sequenceRows.every((node) => node.children.some((child) => child.className === "sequence-cue")));
   assert.equal(descendants(root).filter((node) => node.className === "move-name").length, 0);
-  assert.equal(descendants(root).filter((node) => node.className === "technical-audit").length, 1);
-  for (const retained of ["Stamp", "Plow", "Beast Cry", "Stomp", "Crush", "PlowPower", "get_PlowAmount"])
-    assert.match(root.textContent, new RegExp(retained), retained);
-  assert.match(root.textContent, /rawSource/);
-  assert.match(root.textContent, /Exact retained wiki\/reference record/);
+  assert.equal(descendants(root).filter((node) => node.className === "technical-audit").length, 0);
   assert.equal(`# StS2 Companion phone snapshot · 390px\n${semanticSnapshot(root)}\n`, fixture("ceremonial-beast-phone.snap"));
 });
 
-test("phone scan path is context-visible, consequence-first, body-adjacent, and audit-complete", async () => {
+test("phone scan path is consequence-first and body-adjacent without auditor clutter", async () => {
   const payload = adapter.view(state("AXEBOTS_NORMAL", "combat", ["MONSTER.AXEBOT"]));
   const { root } = await runShadowClient(payload);
   const collapsed = collapsedText(root);
-  for (const required of ["Combat", "AXEBOT", "182–206 HP", "Starts with · Stock 2", "Initial Axebot opener", "Turn 1", "18 damage", "Ordinary repeating cycle", "11×2 damage", "Stock replacement opener", "15 Block", "+4 Strength", "+8 Strength", "+10 Max HP", "+20 Max HP", "WATCH", "replacement body", "Technical audit"])
+  for (const required of ["AXEBOT", "182–206 HP", "Starts with · Stock 2", "Initial Axebot opener", "Turn 1", "18 damage", "Ordinary repeating cycle", "11×2 damage", "Stock replacement opener", "15 Block", "+4 Strength", "+8 Strength", "+10 Max HP", "+20 Max HP", "WATCH", "replacement body"])
     assert.match(collapsed, new RegExp(required.replace(/[+]/g, "\\+")));
-  for (const forbidden of ["Hammer Uppercut", "Boot Up", "The One-Two", "[+]24", "30 Block", "Possible roster", "Effects", "Stock amount unresolved", "checked amount", "BOOT_UP_MOVE", "MONSTER.AXEBOT"])
+  for (const forbidden of ["Hammer Uppercut", "Boot Up", "The One-Two", "[+]24", "30 Block", "Possible roster", "Effects", "Stock amount unresolved", "checked amount", "BOOT_UP_MOVE", "MONSTER.AXEBOT", "Technical audit"])
     assert.doesNotMatch(collapsed, new RegExp(forbidden, "i"));
-  const positions = ["AXEBOT", "182–206 HP", "Combat", "Starts with", "Initial Axebot opener", "Ordinary repeating cycle", "Stock replacement opener", "WATCH"].map((text) => collapsed.indexOf(text));
+  const positions = ["AXEBOT", "182–206 HP", "Starts with", "Initial Axebot opener", "Ordinary repeating cycle", "Stock replacement opener", "WATCH"].map((text) => collapsed.indexOf(text));
   assert.deepEqual([...positions].sort((a, b) => a - b), positions, `scan order: ${collapsed}`);
-  assert.match(root.textContent, /MONSTER\.AXEBOT/);
-  assert.match(root.textContent, /BOOT_UP_MOVE/);
-  assert.match(root.textContent, /Hammer Uppercut/);
-  assert.match(root.textContent, /CALLOUT.AXEBOT.STOCK_REPLACEMENT/);
-  assert.match(root.textContent, /Editorial callout records/);
   assert.doesNotMatch(collapsed, /CALLOUT\.|SOURCE\.|LIFECYCLE\.DEATH_PRODUCTION/);
-  assert.equal(descendants(root).filter((node) => node.className === "technical-audit").length, 1);
+  assert.equal(descendants(root).filter((node) => node.className === "technical-audit").length, 0);
 });
 
 test("Terror Eel collapsed DOM uses one configured threshold and ordered interruption", async () => {
@@ -471,7 +456,7 @@ test("Terror Eel collapsed DOM uses one configured threshold and ordered interru
     const sequence = [
       "TERROR EEL", "Two-step cycle", "18 damage", "4×3 damage", "+6 Vigor",
       `Shriek threshold · ${expected} HP`, "Immediately Stunned", "takes no action",
-      "Apply 99 Vulnerable", "resume at step 1", "repeat 1 → 2", "Technical audit",
+      "Apply 99 Vulnerable", "resume at step 1", "repeat 1 → 2",
     ];
     let cursor = -1;
     for (const value of sequence) {
@@ -484,18 +469,19 @@ test("Terror Eel collapsed DOM uses one configured threshold and ordered interru
     assert.doesNotMatch(collapsed, /Crash|Thrash|Terrorize|uses Terror|\(75\)/);
     for (const concept of ["Terror Eel", "Shriek", "Stunned", "Vulnerable", "Vigor"])
       assert.match(collapsed, new RegExp(concept, "i"));
-    assert.match(root.textContent, /Crash|Thrash/);
-    assert.match(root.textContent, /Terrorize|TERROR_MOVE/);
+    assert.equal(descendants(root).filter((node) => node.className === "technical-audit").length, 0);
   }
 });
 
-test("primary capsule distinguishes combat, last, and exact manual selection", async () => {
+test("primary capsule keeps clean hero without provenance clutter", async () => {
   const combat = collapsedText((await runShadowClient(adapter.view(state("AXEBOTS_NORMAL", "combat")))).root);
   const last = collapsedText((await runShadowClient(adapter.view(state("AXEBOTS_NORMAL", "last")))).root);
   const manual = collapsedText((await runShadowClient(adapter.view(state("BOWLBUGS_NORMAL", "combat"), "AXEBOTS_NORMAL"))).root);
-  assert.match(combat, /Combat · Static reference/); assert.match(last, /Last fight · Static reference/);
-  assert.match(manual, /Manual · Static reference/);
-  assert.doesNotMatch(manual, /AXEBOTS_NORMAL|BOWLBUGS_NORMAL|Combat ·/);
+  assert.doesNotMatch(combat, /Combat · Static reference/);
+  assert.doesNotMatch(last, /Last fight · Static reference/);
+  assert.doesNotMatch(manual, /Manual · Static reference/);
+  assert.match(combat, /AXEBOT 182–206 HP · ORDINARY/);
+  assert.match(manual, /AXEBOT 182–206 HP · ORDINARY/);
 });
 
 test("production remains body-adjacent without turning possibilities into an observed lineup", async () => {
@@ -514,7 +500,7 @@ test("representative guides contain no prediction or live-state advice", async (
   for (const id of ["AXEBOTS_NORMAL", "BOWLBUGS_NORMAL", "FABRICATOR_NORMAL", "DECIMILLIPEDE_ELITE", "TEST_SUBJECT_BOSS"]) {
     const collapsed = collapsedText((await runShadowClient(adapter.view(state(id, "last")))).root);
     assert.doesNotMatch(collapsed, /\b(?:do this now|next move|incoming|currently has|current phase|current target|observed lineup|survivors are)\b/i, id);
-    assert.equal((collapsed.match(/Static reference/g) ?? []).length, 1, id);
+    assert.equal((collapsed.match(/Static reference/g) ?? []).length, 0, id);
   }
 });
 
@@ -536,10 +522,10 @@ test("complex collapsed fixtures preserve practical lifecycle semantics without 
 
 test("unchanged payload is retried after a transient render failure", async () => {
   const payload = adapter.view(state(), "AXEBOTS_NORMAL");
-  const client = await runShadowClient(payload, { failCreateOnce: "article" });
-  assert.doesNotMatch(collapsedText(client.root), /Technical audit/);
+  const client = await runShadowClient(payload, { failCreateOnce: "header" });
+  assert.doesNotMatch(collapsedText(client.root), /AXEBOT/);
   await client.pollAgain();
-  assert.match(collapsedText(client.root), /Technical audit/);
+  assert.match(collapsedText(client.root), /AXEBOT/);
 });
 
 const qualifications = Object.freeze({ playerControllable: true, nonObvious: true, materiallyUseful: true, ordinaryStateRobust: true, sourceSupported: true, causallyExplainable: true, distinct: true });
@@ -567,8 +553,7 @@ test("version mismatch and unsupported observation boundaries stay honest", asyn
   const mismatch = structuredClone(adapter.view(state(), "AXEBOTS_NORMAL"));
   mismatch.observation.installedVersion.version = "v9.9.9"; mismatch.observation.versionMatches = false;
   const rendered = await runShadowClient(mismatch);
-  assert.match(collapsedText(rendered.root), /Version mismatch/);
-  assert.match(collapsedText(rendered.root), /Installed v9\.9\.9 differs from checked v0\.111\.0/);
+  assert.doesNotMatch(collapsedText(rendered.root), /Version mismatch/);
   const unresolved = await runShadowClient(adapter.view(state("NOT_A_CHECKED_ENCOUNTER", "combat")));
   const unresolvedText = collapsedText(unresolved.root);
   assert.match(unresolvedText, /Unsupported encounter identity/);

@@ -3,8 +3,6 @@ main.guide-state.guide-state-selected
   header.encounter-hero.primary-hero
     h1.encounter-title "CEREMONIAL BEAST"
     p.encounter-stats "576 HP · BOSS"
-    p.encounter-placement "Overgrowth"
-    p.selection-context "Manual · Static reference"
   div.primary-body-list
     section.primary-body
       section.phase-section
@@ -13,13 +11,13 @@ main.guide-state.guide-state-selected
           h2.phase-title "Force the stun"
         p.sequence-row
           strong.sequence-cue "First turn"
-          span.sequence-detail " · No attack"
+          span.sequence-detail "No attack"
         p.sequence-row
           strong.sequence-cue "Then each turn"
-          span.sequence-detail " · 20 damage · +2 Strength"
+          span.sequence-detail "20 damage · +2 Strength"
         p.threshold-line
           strong.threshold-label "At 352 HP or below"
-          span.threshold-detail " · Immediately Stunned · loses all Strength · takes no action"
+          span.threshold-detail "Immediately Stunned · loses all Strength · takes no action"
       div.phase-transition "↓"
       section.phase-section
         header.phase-head
@@ -27,19 +25,14 @@ main.guide-state.guide-state-selected
           h2.phase-title "Three-turn loop"
         p.sequence-row
           strong.sequence-cue "1"
-          span.sequence-detail " · Apply 1 Ringing"
+          span.sequence-detail "Apply 1 Ringing"
         p.sequence-row
           strong.sequence-cue "2"
-          span.sequence-detail " · 17 damage"
+          span.sequence-detail "17 damage"
         p.sequence-row
           strong.sequence-cue "3"
-          span.sequence-detail " · 19 damage · +4 Strength"
+          span.sequence-detail "19 damage · +4 Strength"
         p.repeat-line "↻ repeat 1 → 2 → 3"
       p.watch-line
         strong.watch-label "Watch:"
         span.watch-detail " crossing the phase threshold clears accumulated Strength."
-  footer.guide-footer
-    p.provenance-line "wiki/reference values · A9 / 2P presentation"
-  details.technical-audit
-    summary.detail-title "Technical audit"
-    [collapsed]

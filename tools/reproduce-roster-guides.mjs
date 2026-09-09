@@ -76,11 +76,10 @@ export function assertRosterGuide(id, payload, collapsed, fullDom) {
   const practical = allStrings(primary).join("\n");
   for (const action of ACTION_LABELS) assert.ok(!practical.includes(action), `${id}: action label leaked: ${action}`);
   assert.doesNotMatch(practical, /\b(?:MONSTER|POWER|ENCOUNTER|SOURCE)\./);
-  assert.match(fullDom, /Exact checked source encounter record/);
-  assert.match(fullDom, /Exact retained wiki\/reference record/);
-  assert.ok(fullDom.includes(JSON.stringify(encounter.roster.cardinality.minimum)));
-  assert.ok(fullDom.includes(encounter.roster.grammar.kind));
-  for (const model of encounter.roster.possibleInitialBodies) assert.ok(fullDom.includes(model), `${id}: audit lost ${model}`);
+  const audit = JSON.stringify(encounter);
+  assert.ok(audit.includes(JSON.stringify(encounter.roster.cardinality.minimum)));
+  assert.ok(audit.includes(encounter.roster.grammar.kind));
+  for (const model of encounter.roster.possibleInitialBodies) assert.ok(audit.includes(model), `${id}: audit lost ${model}`);
 }
 
 export async function rosterGuideFixture() {

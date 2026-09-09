@@ -10,9 +10,7 @@
 
   function guideText(value) {
     const rendered = String(value ?? "");
-    return COLLAPSED_IMPLEMENTATION_WORDS.test(rendered)
-      ? "Checked detail is available in Technical audit."
-      : rendered;
+    return COLLAPSED_IMPLEMENTATION_WORDS.test(rendered) ? "" : rendered;
   }
   function el(tag, className, text) {
     const node = document.createElement(tag);
@@ -61,22 +59,7 @@
     return node;
   }
 
-  function selectionLabel(state, encounter) {
-    if (state.mode === "manual-reference") return "Manual · Static reference";
-    if (state.mode === "current-combat" || state.observation?.status === "combat") return "Combat · Static reference";
-    if (state.mode === "last-completed-room" || state.observation?.status === "last") return "Last fight · Static reference";
-    return "Static reference";
-  }
-  function renderVersionBoundary(state, parent) {
-    const installed = state.observation?.installedVersion?.version;
-    if (installed && state.observation.versionMatches) return;
-    const warning = el("aside", "version-warning");
-    warning.append(el("strong", "", installed ? "Version mismatch" : "Version unknown"));
-    warning.append(el("span", "", installed
-      ? `Installed ${installed} differs from checked ${state.authority.gameVersion}; mechanics are not mixed.`
-      : `Installed version is unavailable; mechanics are checked for ${state.authority.gameVersion}.`));
-    parent.append(warning);
-  }
+
   function renderRosterCapsule(hero, presentation) {
     const initialBodies = presentation.bodies.filter((body) => body.role.includes("possible initial body"));
     const simple = presentation.roster.cardinality === "1"
@@ -253,24 +236,10 @@
       node.append(details(`Show all ${all.length} callouts`, expanded, "detail callout-expander"));
     }
   }
-  function renderAudit(parent, state, encounter) {
-    const content = el("div", "audit-content");
-    content.append(el("p", "quiet", "Exact checked source records, symbolic expressions, retained reference records, merge provenance, behavior data, callout basis, conflicts, and evidence pointers."));
-    content.append(details("Authority & observed identity", { authority: state.authority, sourceAuthority: encounter.sourceAuthority, observation: state.observation }));
-    if (encounter.reference) content.append(details("Exact retained wiki/reference record", encounter.reference));
-    if (encounter.presentation?.audit?.mergeProvenance) content.append(details("Best-available merge provenance", encounter.presentation.audit.mergeProvenance));
-    if (encounter.presentation?.callouts?.all?.length) content.append(details("Editorial callout records", encounter.presentation.callouts));
-    const checked = { ...encounter }; delete checked.presentation; delete checked.reference;
-    content.append(details("Exact checked source encounter record", checked));
-    parent.append(details("Technical audit", content, "technical-audit"));
-  }
-
   function renderPrimaryHero(parent, state, encounter, primary) {
     const hero = el("header", "encounter-hero primary-hero");
     heading(hero, 1, String(encounter.title).toUpperCase(), "encounter-title");
     hero.append(el("p", "encounter-stats", primary.header.stats));
-    hero.append(el("p", "encounter-placement", primary.header.placement));
-    hero.append(el("p", "selection-context", selectionLabel(state, encounter)));
     parent.append(hero);
   }
   function renderPrimaryRoster(parent, primary) {
@@ -295,7 +264,7 @@
       const line = el("p", row.cue ? "sequence-row" : "sequence-row sequence-row-uncued");
       if (row.cue) {
         line.append(el("strong", "sequence-cue", row.cue));
-        line.append(el("span", "sequence-detail", ` · ${row.detail}`));
+        line.append(el("span", "sequence-detail", row.detail));
       } else {
         line.append(el("span", "sequence-detail", row.detail));
       }
@@ -304,7 +273,7 @@
     if (phase.marker) {
       const marker = el("p", "threshold-line");
       marker.append(el("strong", "threshold-label", phase.marker.label));
-      marker.append(el("span", "threshold-detail", ` · ${phase.marker.detail}`));
+      marker.append(el("span", "threshold-detail", phase.marker.detail));
       sectionNode.append(marker);
     }
     if (phase.repeat) sectionNode.append(el("p", "repeat-line", phase.repeat));
@@ -354,12 +323,6 @@
     });
     parent.append(notes);
   }
-  function renderPrimaryFooter(parent, primary) {
-    const footer = el("footer", "guide-footer");
-    footer.append(el("p", "provenance-line", primary.provenance.label));
-    parent.append(footer);
-  }
-
   function render(state, nextSignature, targetRoot = null) {
     if (targetRoot) root = targetRoot;
     else if (!root) root = getRoot();
@@ -380,33 +343,23 @@
     if (presentation.primary) {
       renderPrimaryHero(root, state, encounter, presentation.primary);
       renderPrimaryRoster(root, presentation.primary);
-      renderVersionBoundary(state, root);
       renderPrimaryBodies(root, presentation.primary, presentation.callouts);
       renderPrimaryNotes(root, presentation.primary);
       renderGlobalCallouts(root, presentation.callouts);
-      renderPrimaryFooter(root, presentation.primary);
-      renderAudit(root, state, encounter);
       signature = nextSignature;
       return;
     }
     const hero = el("header", "encounter-hero");
-    const selection = selectionLabel(state, encounter);
-    hero.append(state.mode === "manual-reference"
-      ? rawEl("p", "selection-context", selection)
-      : el("p", "selection-context", selection));
     heading(hero, 1, encounter.title, "encounter-title");
     hero.append(el("p", "eyebrow", `${presentation.context.summary} · ${presentation.context.kind}`));
     renderRosterCapsule(hero, presentation);
-    hero.append(el("p", "static-contract", "Static reference · no live turn state, HP/Block/Powers, intent/target, phase/counter, lineup, or timer."));
     root.append(hero);
-    renderVersionBoundary(state, root);
     renderBodies(root, presentation);
     renderUnroutedProduction(root, presentation);
     renderEvent(root, presentation);
     renderEncounterRules(root, presentation);
     renderGlobalCallouts(root, presentation.callouts);
     renderUnknowns(root, presentation);
-    renderAudit(root, state, encounter);
     signature = nextSignature;
   }
   async function poll() {

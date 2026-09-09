@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { encounterIndex, loadEncounterView } from "./data/views.js";
 import { GuideView } from "./components/GuideView.jsx";
-import { EncounterSelector } from "./components/EncounterSelector.jsx";
 
 const DEFAULT_ENCOUNTER_ID = "CEREMONIAL_BEAST_BOSS";
 
@@ -29,11 +28,11 @@ export function App() {
   const [selectedId, setSelectedId] = useState(getInitialId);
   const [liveState, setLiveState] = useState(null);
   const [isOffline, setIsOffline] = useState(false);
-  const [isSelectorOpen, setIsSelectorOpen] = useState(false);
   const [payload, setPayload] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isOfflineReady, setIsOfflineReady] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   // Sync with URL popstate (browser back/forward)
   useEffect(() => {
@@ -49,13 +48,6 @@ export function App() {
     }
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  // Check service worker offline ready
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.ready.then(() => setIsOfflineReady(true));
-    }
   }, []);
 
   // Poll /api/state in live mode every 1.5s (1500ms)
@@ -145,35 +137,18 @@ export function App() {
     }
   }, [liveState]);
 
-  const switchToManual = useCallback(() => {
-    setIsLiveMode(false);
-    if (typeof window !== "undefined" && selectedId) {
-      const url = new URL(window.location.href);
-      url.searchParams.set("encounter", selectedId);
-      window.history.pushState({}, "", url.toString());
-    }
-  }, [selectedId]);
-
-  // Quick navigation helpers
-  const currentIndex = encounterIndex.findIndex((e) => e.id === selectedId);
-
-  const prevEncounter = () => {
-    const prevIdx = (currentIndex - 1 + encounterIndex.length) % encounterIndex.length;
-    selectEncounter(encounterIndex[prevIdx].id);
-  };
-
-  const nextEncounter = () => {
-    const nextIdx = (currentIndex + 1) % encounterIndex.length;
-    selectEncounter(encounterIndex[nextIdx].id);
-  };
-
-  const randomEncounter = () => {
-    let randIdx = Math.floor(Math.random() * encounterIndex.length);
-    if (randIdx === currentIndex && encounterIndex.length > 1) {
-      randIdx = (randIdx + 1) % encounterIndex.length;
-    }
-    selectEncounter(encounterIndex[randIdx].id);
-  };
+  // Filtered encounters for discreet manual search lookup
+  const filteredEncounters = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return encounterIndex.filter(
+      (enc) =>
+        enc.title.toLowerCase().includes(q) ||
+        enc.id.toLowerCase().includes(q) ||
+        enc.act?.toLowerCase().includes(q) ||
+        enc.tier?.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
 
   // Determine status indicator text, class, and description
   let statusKey = "idle";
@@ -183,7 +158,7 @@ export function App() {
   if (!isLiveMode) {
     statusKey = "manual";
     statusLabel = "[Manual]";
-    statusTitle = "Manual static reference mode";
+    statusTitle = "Manual static reference mode · click to resume LIVE";
   } else if (isOffline) {
     statusKey = "offline";
     statusLabel = "[Offline Reference]";
@@ -201,50 +176,82 @@ export function App() {
   return (
     <div className="app-shell">
       <header className="site-header">
-        <a href="./" onClick={(e) => { e.preventDefault(); resumeLive(); }}>
-          <img src="icons/icon.svg" alt="StS2" width="20" height="20" style={{ verticalAlign: "middle" }} />
-          <span>StS2 Companion</span>
-        </a>
-
-        <div className="header-controls">
-          <div className="mode-pill" role="group" aria-label="Tracking mode">
-            <button
-              type="button"
-              className={`mode-btn ${isLiveMode ? "active" : ""}`}
-              onClick={resumeLive}
-              aria-pressed={isLiveMode}
-            >
-              Live
-            </button>
-            <button
-              type="button"
-              className={`mode-btn ${!isLiveMode ? "active" : ""}`}
-              onClick={switchToManual}
-              aria-pressed={!isLiveMode}
-            >
-              Manual
-            </button>
-          </div>
-
-          <span
-            className={`status-indicator status-${statusKey}`}
-            title={statusTitle}
-            onClick={!isLiveMode ? resumeLive : switchToManual}
-            role="button"
-            tabIndex={0}
-            style={{ cursor: "pointer" }}
+        <div className="header-brand">
+          <a
+            href="./"
+            className="site-title-link"
+            onClick={(e) => {
+              e.preventDefault();
+              resumeLive();
+            }}
           >
-            <span className="status-dot"></span>
-            {statusLabel}
-          </span>
+            <span className="site-title">StS2 Companion</span>
+          </a>
 
           <button
-            className="search-trigger-btn"
-            onClick={() => setIsSelectorOpen(true)}
-            aria-label="Search Encounters"
+            type="button"
+            className={`live-pill status-${statusKey} ${isLiveMode ? "active" : "manual"}`}
+            onClick={resumeLive}
+            title={statusTitle}
+            aria-label={statusTitle}
           >
-            🔍 Encounters ({encounterIndex.length})
+            <span className="status-dot" />
+            <span className="live-label">LIVE</span>
           </button>
+        </div>
+
+        <div className="header-search-wrap">
+          <input
+            type="search"
+            className="header-search"
+            placeholder="Search encounters…"
+            value={searchQuery}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSearchQuery(val);
+              const match = encounterIndex.find(
+                (enc) =>
+                  enc.title.toLowerCase() === val.trim().toLowerCase() ||
+                  enc.id.toLowerCase() === val.trim().toLowerCase()
+              );
+              if (match) {
+                selectEncounter(match.id);
+                setSearchQuery("");
+              }
+            }}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && filteredEncounters.length > 0) {
+                selectEncounter(filteredEncounters[0].id);
+                setSearchQuery("");
+                e.target.blur();
+              } else if (e.key === "Escape") {
+                setSearchQuery("");
+                e.target.blur();
+              }
+            }}
+            aria-label="Search Encounters"
+          />
+
+          {isSearchFocused && searchQuery.trim().length > 0 && filteredEncounters.length > 0 && (
+            <div className="search-dropdown" role="listbox">
+              {filteredEncounters.slice(0, 8).map((enc) => (
+                <button
+                  key={enc.id}
+                  type="button"
+                  className="search-dropdown-item"
+                  onMouseDown={() => {
+                    selectEncounter(enc.id);
+                    setSearchQuery("");
+                  }}
+                >
+                  <span className="dropdown-title">{enc.title}</span>
+                  <span className="dropdown-stats">{enc.stats}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </header>
 
@@ -256,30 +263,6 @@ export function App() {
           error={error}
         />
       </div>
-
-      <nav className="bottom-nav" aria-label="Quick Encounter Navigation">
-        <button className="nav-btn" onClick={prevEncounter} aria-label="Previous Encounter">
-          ‹ Prev
-        </button>
-        <div className="nav-center">
-          <span style={{ color: "var(--qq-accent)", fontWeight: 700 }}>{currentIndex + 1}</span>
-          <span style={{ color: "var(--qq-muted)" }}> / {encounterIndex.length}</span>
-        </div>
-        <button className="nav-btn" onClick={randomEncounter} aria-label="Random Encounter">
-          🎲 Random
-        </button>
-        <button className="nav-btn" onClick={nextEncounter} aria-label="Next Encounter">
-          Next ›
-        </button>
-      </nav>
-
-      <EncounterSelector
-        isOpen={isSelectorOpen}
-        onClose={() => setIsSelectorOpen(false)}
-        onSelect={selectEncounter}
-        currentId={selectedId}
-        encounters={encounterIndex}
-      />
     </div>
   );
 }

@@ -70,7 +70,6 @@ async function main() {
     "20 damage", "+2 Strength", "At 352 HP or below", "Immediately Stunned", "loses all Strength",
     "takes no action", "02", "Three-turn loop", "1", "Apply 1 Ringing", "2", "17 damage", "3",
     "19 damage", "+4 Strength", "repeat 1 → 2 → 3", "Watch:",
-    "wiki/reference values · A9 / 2P presentation",
   ];
   let cursor = -1;
   for (const value of approved) { const next = collapsed.indexOf(value, cursor + 1); assert.ok(next > cursor, `${value} is missing or out of order`); cursor = next; }

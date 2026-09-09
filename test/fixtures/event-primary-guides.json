@@ -76,7 +76,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "BATTLEWORN DUMMY 75 HP · EVENT FIGHT Glory event Manual · Static reference Battle Friend V1.0 75 HP · initial event-combat body Battle Friend V1.0 · Starts with Time Limit 3 · three-step clock: 3 → 2 → 1 → timeout. Behavior Each participating side turn · takes no combat action ↻ while Time Limit remains Time Limit Step 1 · After a side turn including Battle Friend V1.0 · Time Limit 3 → 2 Step 2 · After the next included side turn · Time Limit 2 → 1 Step 3 · expiry · After the third included side turn · record that the event fight ran out of time → Battle Friend V1.0: escape and leave the fight checked source values · A8 / 1P presentation Technical audit"
+      "collapsed": "BATTLEWORN DUMMY 75 HP · EVENT FIGHT Battle Friend V1.0 75 HP · initial event-combat body Battle Friend V1.0 · Starts with Time Limit 3 · three-step clock: 3 → 2 → 1 → timeout. Behavior Each participating side turn takes no combat action ↻ while Time Limit remains Time Limit Step 1 After a side turn including Battle Friend V1.0 · Time Limit 3 → 2 Step 2 After the next included side turn · Time Limit 2 → 1 Step 3 · expiry After the third included side turn · record that the event fight ran out of time → Battle Friend V1.0: escape and leave the fight"
     },
     "BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER": {
       "primary": {
@@ -154,7 +154,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "BATTLEWORN DUMMY 150 HP · EVENT FIGHT Glory event Manual · Static reference Battle Friend V2.0 150 HP · initial event-combat body Battle Friend V2.0 · Starts with Time Limit 3 · three-step clock: 3 → 2 → 1 → timeout. Behavior Each participating side turn · takes no combat action ↻ while Time Limit remains Time Limit Step 1 · After a side turn including Battle Friend V2.0 · Time Limit 3 → 2 Step 2 · After the next included side turn · Time Limit 2 → 1 Step 3 · expiry · After the third included side turn · record that the event fight ran out of time → Battle Friend V2.0: escape and leave the fight checked source values · A8 / 1P presentation Technical audit"
+      "collapsed": "BATTLEWORN DUMMY 150 HP · EVENT FIGHT Battle Friend V2.0 150 HP · initial event-combat body Battle Friend V2.0 · Starts with Time Limit 3 · three-step clock: 3 → 2 → 1 → timeout. Behavior Each participating side turn takes no combat action ↻ while Time Limit remains Time Limit Step 1 After a side turn including Battle Friend V2.0 · Time Limit 3 → 2 Step 2 After the next included side turn · Time Limit 2 → 1 Step 3 · expiry After the third included side turn · record that the event fight ran out of time → Battle Friend V2.0: escape and leave the fight"
     },
     "BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER": {
       "primary": {
@@ -232,7 +232,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "BATTLEWORN DUMMY 300 HP · EVENT FIGHT Glory event Manual · Static reference Battle Friend V3.0 300 HP · initial event-combat body Battle Friend V3.0 · Starts with Time Limit 3 · three-step clock: 3 → 2 → 1 → timeout. Behavior Each participating side turn · takes no combat action ↻ while Time Limit remains Time Limit Step 1 · After a side turn including Battle Friend V3.0 · Time Limit 3 → 2 Step 2 · After the next included side turn · Time Limit 2 → 1 Step 3 · expiry · After the third included side turn · record that the event fight ran out of time → Battle Friend V3.0: escape and leave the fight checked source values · A8 / 1P presentation Technical audit"
+      "collapsed": "BATTLEWORN DUMMY 300 HP · EVENT FIGHT Battle Friend V3.0 300 HP · initial event-combat body Battle Friend V3.0 · Starts with Time Limit 3 · three-step clock: 3 → 2 → 1 → timeout. Behavior Each participating side turn takes no combat action ↻ while Time Limit remains Time Limit Step 1 After a side turn including Battle Friend V3.0 · Time Limit 3 → 2 Step 2 After the next included side turn · Time Limit 2 → 1 Step 3 · expiry After the third included side turn · record that the event fight ran out of time → Battle Friend V3.0: escape and leave the fight"
     },
     "DENSE_VEGETATION_EVENT_ENCOUNTER": {
       "primary": {
@@ -303,7 +303,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "WRIGGLERS 18–22 HP each · EVENT FIGHT Overgrowth event Manual · Static reference Wriggler 18–22 HP · four simultaneous initial bodies 4 Wrigglers · four simultaneous initial bodies · not Stunned at encounter start. Branch · cycle offset Each Wriggler follows one of these two initial offsets; the branches do not occur simultaneously. Damage offset · damage amount set at runtime to all opponents Status + scaling offset · Add 1 Infection to the affected targets · +2 Strength to self ↻ then alternate the two offsets Alternate entry response Not used by this encounter's initial four-body setup. Alternate entry · takes no action → enter one of the two cycle offsets checked source values · A8 / 1P presentation Technical audit"
+      "collapsed": "WRIGGLERS 18–22 HP each · EVENT FIGHT Wriggler 18–22 HP · four simultaneous initial bodies 4 Wrigglers · four simultaneous initial bodies · not Stunned at encounter start. Branch · cycle offset Each Wriggler follows one of these two initial offsets; the branches do not occur simultaneously. Damage offset damage amount set at runtime to all opponents Status + scaling offset Add 1 Infection to the affected targets · +2 Strength to self ↻ then alternate the two offsets Alternate entry response Not used by this encounter's initial four-body setup. Alternate entry takes no action → enter one of the two cycle offsets"
     },
     "FAKE_MERCHANT_EVENT_ENCOUNTER": {
       "primary": {
@@ -388,7 +388,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "THE MERCHANT??? 175 HP · EVENT FIGHT Glory / Hive / Overgrowth / Underdocks events Manual · Static reference The Merchant??? 175 HP · initial event-combat body Opener Turn 1 · damage amount set at runtime to all opponents ↓ Branch Randomly choose one eligible row. A row cannot repeat immediately. The +2 Strength row has a cooldown of 3. After the damage + 1 Frail row, the next branch is attack-only. Single hit · damage amount set at runtime to all opponents Eight hits · 2 damage × 8 to all opponents Hit + status · damage amount set at runtime to all opponents · Apply 1 Frail to the affected targets Self-scaling · +2 Strength to self ↻ return to the eligible random branch checked source values · A8 / 1P presentation Technical audit"
+      "collapsed": "THE MERCHANT??? 175 HP · EVENT FIGHT The Merchant??? 175 HP · initial event-combat body Opener Turn 1 damage amount set at runtime to all opponents ↓ Branch Randomly choose one eligible row. A row cannot repeat immediately. The +2 Strength row has a cooldown of 3. After the damage + 1 Frail row, the next branch is attack-only. Single hit damage amount set at runtime to all opponents Eight hits 2 damage × 8 to all opponents Hit + status damage amount set at runtime to all opponents · Apply 1 Frail to the affected targets Self-scaling +2 Strength to self ↻ return to the eligible random branch"
     },
     "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER": {
       "primary": {
@@ -466,7 +466,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "MYSTERIOUS KNIGHT 108 HP · EVENT FIGHT Hive event Manual · Static reference Mysterious Knight 108 HP · initial event-combat body Starts with · Strength base 6 · Plating base 6 after configured 1P scaling. Opener Turn 1 · damage amount set at runtime to all opponents ↓ Branch Then randomly choose one of three equally weighted rows. The Strength row cannot repeat immediately; either attack can occur no more than twice consecutively. Self-scaling · +3 Strength to self Two hits · runtime-set damage × 2 to all opponents Single hit · damage amount set at runtime to all opponents ↻ return to the weighted random branch checked source values · A8 / 1P presentation Technical audit"
+      "collapsed": "MYSTERIOUS KNIGHT 108 HP · EVENT FIGHT Mysterious Knight 108 HP · initial event-combat body Starts with · Strength base 6 · Plating base 6 after configured 1P scaling. Opener Turn 1 damage amount set at runtime to all opponents ↓ Branch Then randomly choose one of three equally weighted rows. The Strength row cannot repeat immediately; either attack can occur no more than twice consecutively. Self-scaling +3 Strength to self Two hits runtime-set damage × 2 to all opponents Single hit damage amount set at runtime to all opponents ↻ return to the weighted random branch"
     },
     "PUNCH_OFF_EVENT_ENCOUNTER": {
       "primary": {
@@ -527,7 +527,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "PUNCH CONSTRUCTS 60 max HP each · starts at 51–58 HP each · EVENT FIGHT Underdocks event Manual · Static reference Punch Construct 60 HP · two simultaneous initial bodies 2 Punch Constructs · two simultaneous initial bodies · 60 max HP each; each starts at 51–58 HP after its own runtime-random starting HP reduction of 2–9 HP · Artifact base 1 after configured 1P scaling · both begin at step 1 below. Cycle 1 · runtime-set damage × runtime-set hits to all opponents · Apply 1 Frail to the affected targets 2 · damage amount set at runtime to all opponents 3 · 10 Block to self ↻ repeat 1 → 2 → 3 checked source values · A8 / 1P presentation Technical audit"
+      "collapsed": "PUNCH CONSTRUCTS 60 max HP each · starts at 51–58 HP each · EVENT FIGHT Punch Construct 60 HP · two simultaneous initial bodies 2 Punch Constructs · two simultaneous initial bodies · 60 max HP each; each starts at 51–58 HP after its own runtime-random starting HP reduction of 2–9 HP · Artifact base 1 after configured 1P scaling · both begin at step 1 below. Cycle 1 runtime-set damage × runtime-set hits to all opponents · Apply 1 Frail to the affected targets 2 damage amount set at runtime to all opponents 3 10 Block to self ↻ repeat 1 → 2 → 3"
     },
     "THE_ARCHITECT_EVENT_ENCOUNTER": {
       "primary": {
@@ -574,7 +574,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "THE ARCHITECT 9999 HP · EVENT FIGHT Source-proven non-pool event combat Manual · Static reference The Architect 9999 HP · initial event-combat body Scripted non-turn combat. Behavior No combat effect is registered for this action. Registered behavior · takes no combat action checked source values · A8 / 1P presentation Technical audit"
+      "collapsed": "THE ARCHITECT 9999 HP · EVENT FIGHT The Architect 9999 HP · initial event-combat body Scripted non-turn combat. Behavior No combat effect is registered for this action. Registered behavior takes no combat action"
     }
   },
   "2P": {
@@ -654,7 +654,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "BATTLEWORN DUMMY 180 HP · EVENT FIGHT Glory event Manual · Static reference Battle Friend V1.0 180 HP · initial event-combat body Battle Friend V1.0 · Starts with Time Limit 3 · three-step clock: 3 → 2 → 1 → timeout. Behavior Each participating side turn · takes no combat action ↻ while Time Limit remains Time Limit Step 1 · After a side turn including Battle Friend V1.0 · Time Limit 3 → 2 Step 2 · After the next included side turn · Time Limit 2 → 1 Step 3 · expiry · After the third included side turn · record that the event fight ran out of time → Battle Friend V1.0: escape and leave the fight checked source values · A8 / 2P presentation Technical audit"
+      "collapsed": "BATTLEWORN DUMMY 180 HP · EVENT FIGHT Battle Friend V1.0 180 HP · initial event-combat body Battle Friend V1.0 · Starts with Time Limit 3 · three-step clock: 3 → 2 → 1 → timeout. Behavior Each participating side turn takes no combat action ↻ while Time Limit remains Time Limit Step 1 After a side turn including Battle Friend V1.0 · Time Limit 3 → 2 Step 2 After the next included side turn · Time Limit 2 → 1 Step 3 · expiry After the third included side turn · record that the event fight ran out of time → Battle Friend V1.0: escape and leave the fight"
     },
     "BATTLEWORN_DUMMY_EVENT_V2_ENCOUNTER": {
       "primary": {
@@ -732,7 +732,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "BATTLEWORN DUMMY 360 HP · EVENT FIGHT Glory event Manual · Static reference Battle Friend V2.0 360 HP · initial event-combat body Battle Friend V2.0 · Starts with Time Limit 3 · three-step clock: 3 → 2 → 1 → timeout. Behavior Each participating side turn · takes no combat action ↻ while Time Limit remains Time Limit Step 1 · After a side turn including Battle Friend V2.0 · Time Limit 3 → 2 Step 2 · After the next included side turn · Time Limit 2 → 1 Step 3 · expiry · After the third included side turn · record that the event fight ran out of time → Battle Friend V2.0: escape and leave the fight checked source values · A8 / 2P presentation Technical audit"
+      "collapsed": "BATTLEWORN DUMMY 360 HP · EVENT FIGHT Battle Friend V2.0 360 HP · initial event-combat body Battle Friend V2.0 · Starts with Time Limit 3 · three-step clock: 3 → 2 → 1 → timeout. Behavior Each participating side turn takes no combat action ↻ while Time Limit remains Time Limit Step 1 After a side turn including Battle Friend V2.0 · Time Limit 3 → 2 Step 2 After the next included side turn · Time Limit 2 → 1 Step 3 · expiry After the third included side turn · record that the event fight ran out of time → Battle Friend V2.0: escape and leave the fight"
     },
     "BATTLEWORN_DUMMY_EVENT_V3_ENCOUNTER": {
       "primary": {
@@ -810,7 +810,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "BATTLEWORN DUMMY 720 HP · EVENT FIGHT Glory event Manual · Static reference Battle Friend V3.0 720 HP · initial event-combat body Battle Friend V3.0 · Starts with Time Limit 3 · three-step clock: 3 → 2 → 1 → timeout. Behavior Each participating side turn · takes no combat action ↻ while Time Limit remains Time Limit Step 1 · After a side turn including Battle Friend V3.0 · Time Limit 3 → 2 Step 2 · After the next included side turn · Time Limit 2 → 1 Step 3 · expiry · After the third included side turn · record that the event fight ran out of time → Battle Friend V3.0: escape and leave the fight checked source values · A8 / 2P presentation Technical audit"
+      "collapsed": "BATTLEWORN DUMMY 720 HP · EVENT FIGHT Battle Friend V3.0 720 HP · initial event-combat body Battle Friend V3.0 · Starts with Time Limit 3 · three-step clock: 3 → 2 → 1 → timeout. Behavior Each participating side turn takes no combat action ↻ while Time Limit remains Time Limit Step 1 After a side turn including Battle Friend V3.0 · Time Limit 3 → 2 Step 2 After the next included side turn · Time Limit 2 → 1 Step 3 · expiry After the third included side turn · record that the event fight ran out of time → Battle Friend V3.0: escape and leave the fight"
     },
     "DENSE_VEGETATION_EVENT_ENCOUNTER": {
       "primary": {
@@ -881,7 +881,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "WRIGGLERS 39–48 HP each · EVENT FIGHT Overgrowth event Manual · Static reference Wriggler 39–48 HP · four simultaneous initial bodies 4 Wrigglers · four simultaneous initial bodies · not Stunned at encounter start. Branch · cycle offset Each Wriggler follows one of these two initial offsets; the branches do not occur simultaneously. Damage offset · damage amount set at runtime to all opponents Status + scaling offset · Add 1 Infection to the affected targets · +2 Strength to self ↻ then alternate the two offsets Alternate entry response Not used by this encounter's initial four-body setup. Alternate entry · takes no action → enter one of the two cycle offsets checked source values · A8 / 2P presentation Technical audit"
+      "collapsed": "WRIGGLERS 39–48 HP each · EVENT FIGHT Wriggler 39–48 HP · four simultaneous initial bodies 4 Wrigglers · four simultaneous initial bodies · not Stunned at encounter start. Branch · cycle offset Each Wriggler follows one of these two initial offsets; the branches do not occur simultaneously. Damage offset damage amount set at runtime to all opponents Status + scaling offset Add 1 Infection to the affected targets · +2 Strength to self ↻ then alternate the two offsets Alternate entry response Not used by this encounter's initial four-body setup. Alternate entry takes no action → enter one of the two cycle offsets"
     },
     "FAKE_MERCHANT_EVENT_ENCOUNTER": {
       "primary": {
@@ -966,7 +966,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "THE MERCHANT??? 385–420 HP · EVENT FIGHT Glory / Hive / Overgrowth / Underdocks events Manual · Static reference The Merchant??? 385–420 HP · initial event-combat body Opener Turn 1 · damage amount set at runtime to all opponents ↓ Branch Randomly choose one eligible row. A row cannot repeat immediately. The +2 Strength row has a cooldown of 3. After the damage + 1 Frail row, the next branch is attack-only. Single hit · damage amount set at runtime to all opponents Eight hits · 2 damage × 8 to all opponents Hit + status · damage amount set at runtime to all opponents · Apply 1 Frail to the affected targets Self-scaling · +2 Strength to self ↻ return to the eligible random branch checked source values · A8 / 2P presentation Technical audit"
+      "collapsed": "THE MERCHANT??? 385–420 HP · EVENT FIGHT The Merchant??? 385–420 HP · initial event-combat body Opener Turn 1 damage amount set at runtime to all opponents ↓ Branch Randomly choose one eligible row. A row cannot repeat immediately. The +2 Strength row has a cooldown of 3. After the damage + 1 Frail row, the next branch is attack-only. Single hit damage amount set at runtime to all opponents Eight hits 2 damage × 8 to all opponents Hit + status damage amount set at runtime to all opponents · Apply 1 Frail to the affected targets Self-scaling +2 Strength to self ↻ return to the eligible random branch"
     },
     "MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER": {
       "primary": {
@@ -1044,7 +1044,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "MYSTERIOUS KNIGHT 259 HP · EVENT FIGHT Hive event Manual · Static reference Mysterious Knight 259 HP · initial event-combat body Starts with · Strength base 6 · Plating base 18 after configured 2P scaling. Opener Turn 1 · damage amount set at runtime to all opponents ↓ Branch Then randomly choose one of three equally weighted rows. The Strength row cannot repeat immediately; either attack can occur no more than twice consecutively. Self-scaling · +3 Strength to self Two hits · runtime-set damage × 2 to all opponents Single hit · damage amount set at runtime to all opponents ↻ return to the weighted random branch checked source values · A8 / 2P presentation Technical audit"
+      "collapsed": "MYSTERIOUS KNIGHT 259 HP · EVENT FIGHT Mysterious Knight 259 HP · initial event-combat body Starts with · Strength base 6 · Plating base 18 after configured 2P scaling. Opener Turn 1 damage amount set at runtime to all opponents ↓ Branch Then randomly choose one of three equally weighted rows. The Strength row cannot repeat immediately; either attack can occur no more than twice consecutively. Self-scaling +3 Strength to self Two hits runtime-set damage × 2 to all opponents Single hit damage amount set at runtime to all opponents ↻ return to the weighted random branch"
     },
     "PUNCH_OFF_EVENT_ENCOUNTER": {
       "primary": {
@@ -1105,7 +1105,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "PUNCH CONSTRUCTS 132 max HP each · starts at 123–130 HP each · EVENT FIGHT Underdocks event Manual · Static reference Punch Construct 132 HP · two simultaneous initial bodies 2 Punch Constructs · two simultaneous initial bodies · 132 max HP each; each starts at 123–130 HP after its own runtime-random starting HP reduction of 2–9 HP · Artifact base 2 after configured 2P scaling · both begin at step 1 below. Cycle 1 · runtime-set damage × runtime-set hits to all opponents · Apply 1 Frail to the affected targets 2 · damage amount set at runtime to all opponents 3 · 20 Block to self ↻ repeat 1 → 2 → 3 checked source values · A8 / 2P presentation Technical audit"
+      "collapsed": "PUNCH CONSTRUCTS 132 max HP each · starts at 123–130 HP each · EVENT FIGHT Punch Construct 132 HP · two simultaneous initial bodies 2 Punch Constructs · two simultaneous initial bodies · 132 max HP each; each starts at 123–130 HP after its own runtime-random starting HP reduction of 2–9 HP · Artifact base 2 after configured 2P scaling · both begin at step 1 below. Cycle 1 runtime-set damage × runtime-set hits to all opponents · Apply 1 Frail to the affected targets 2 damage amount set at runtime to all opponents 3 20 Block to self ↻ repeat 1 → 2 → 3"
     },
     "THE_ARCHITECT_EVENT_ENCOUNTER": {
       "primary": {
@@ -1152,7 +1152,7 @@
           "authority": "checked-source-only"
         }
       },
-      "collapsed": "THE ARCHITECT 21997–23997 HP · EVENT FIGHT Source-proven non-pool event combat Manual · Static reference The Architect 21997–23997 HP · initial event-combat body Scripted non-turn combat. Behavior No combat effect is registered for this action. Registered behavior · takes no combat action checked source values · A8 / 2P presentation Technical audit"
+      "collapsed": "THE ARCHITECT 21997–23997 HP · EVENT FIGHT The Architect 21997–23997 HP · initial event-combat body Scripted non-turn combat. Behavior No combat effect is registered for this action. Registered behavior takes no combat action"
     }
   }
 }

@@ -24,10 +24,10 @@ test("Invariant 1: Zero dsh / cordis / qq / paseo dependencies", () => {
   }
 });
 
-test("Invariant 2: PWA distribution files exist and build cleanly", () => {
+test("Invariant 2: PWA distribution files exist and build cleanly without service worker", () => {
   assert.ok(existsSync(join(DIST, "index.html")), "dist/index.html must exist");
   assert.ok(existsSync(MANIFEST_PATH), "dist/manifest.webmanifest must exist");
-  assert.ok(existsSync(SW_PATH), "dist/sw.js must exist");
+  assert.equal(existsSync(SW_PATH), false, "dist/sw.js must not exist (stripped service worker per ticket)");
   assert.ok(existsSync(join(DIST, "icons", "icon-192.png")), "192px icon must exist");
   assert.ok(existsSync(join(DIST, "icons", "icon-512.png")), "512px icon must exist");
   assert.ok(existsSync(join(DIST, "icons", "icon.svg")), "SVG icon must exist");
@@ -52,13 +52,12 @@ test("Invariant 3: Web App Manifest meets standalone PWA contract", () => {
   assert.ok(icon512, "512x512 icon must be declared in manifest");
 });
 
-test("Invariant 4: Service Worker precaches 100% of offline application data", () => {
-  const swContent = readFileSync(SW_PATH, "utf8");
-  assert.match(swContent, /precacheAndRoute/);
-  assert.match(swContent, /data\/index\.json/);
-  assert.match(swContent, /data\/views\/CEREMONIAL_BEAST_BOSS\.json/);
-  assert.match(swContent, /data\/views\/AXEBOTS_NORMAL\.json/);
-  assert.match(swContent, /manifest\.webmanifest/);
+test("Invariant 4: Service worker precaching layers are stripped per minimalist shell contract", () => {
+  assert.equal(existsSync(SW_PATH), false, "sw.js must not exist");
+  const viteConfig = readFileSync(join(ROOT, "vite.config.js"), "utf8");
+  assert.doesNotMatch(viteConfig, /VitePWA/, "VitePWA plugin must not be used");
+  const mainSrc = readFileSync(join(ROOT, "src", "main.jsx"), "utf8");
+  assert.doesNotMatch(mainSrc, /virtual:pwa-register/, "virtual:pwa-register must not be imported");
 });
 
 test("Invariant 5: Encounter index covers all 89 checked encounters with valid fields", () => {
@@ -187,7 +186,7 @@ test("Invariant 6: Live State API endpoint (/api/state) returns current combat s
   }
 });
 
-test("Invariant 7: Live Auto-Tracking in PWA Client respects 1.5s interval and status indicators", () => {
+test("Invariant 7: Live Auto-Tracking in Minimalist Client respects 1.5s interval and status indicators", () => {
   // Verify compiled bundle includes live polling, 1500ms interval, and status indicators
   const jsFiles = readdirSync(join(DIST, "assets")).filter((f) => f.startsWith("index-") && f.endsWith(".js"));
   assert.ok(jsFiles.length > 0, "dist/assets/index-*.js must exist");
@@ -198,23 +197,20 @@ test("Invariant 7: Live Auto-Tracking in PWA Client respects 1.5s interval and s
   assert.match(jsContent, /1500/, "Client must poll at 1500ms (1.5s) interval");
 
   // 2. Status indicators
-  assert.match(jsContent, /\[LIVE · Combat\]/, "Indicator must support [LIVE · Combat]");
-  assert.match(jsContent, /\[LIVE · Last Fight\]/, "Indicator must support [LIVE · Last Fight]");
-  assert.match(jsContent, /\[LIVE · Idle\]/, "Indicator must support [LIVE · Idle]");
-  assert.match(jsContent, /\[Manual\]/, "Indicator must support [Manual]");
-  assert.match(jsContent, /\[Offline Reference\]/, "Indicator must support [Offline Reference]");
+  assert.match(jsContent, /live-pill/, "Client must render live-pill");
+  assert.match(jsContent, /status-dot/, "Client must render status-dot");
+  assert.match(jsContent, /LIVE/, "Client must render LIVE indicator");
 
-  // 3. Mode toggle controls
-  assert.match(jsContent, /mode-pill/, "Client must render mode-pill group");
-  assert.match(jsContent, /children:[`"]Live[`"]/, "Client must render Live button");
-  assert.match(jsContent, /children:[`"]Manual[`"]/, "Client must render Manual button");
+  // 3. Discreet search input for manual lookup
+  assert.match(jsContent, /header-search/, "Client must render discreet search input");
 
-  // 4. CSS rules for indicators and toggle
+  // 4. CSS rules for indicators and search
   const cssFiles = readdirSync(join(DIST, "assets")).filter((f) => f.startsWith("index-") && f.endsWith(".css"));
   assert.ok(cssFiles.length > 0, "dist/assets/index-*.css must exist");
   const cssContent = readFileSync(join(DIST, "assets", cssFiles[0]), "utf8");
-  assert.match(cssContent, /\.mode-pill/, "CSS must define .mode-pill");
-  assert.match(cssContent, /\.status-indicator/, "CSS must define .status-indicator");
+  assert.match(cssContent, /\.live-pill/, "CSS must define .live-pill");
+  assert.match(cssContent, /\.status-dot/, "CSS must define .status-dot");
+  assert.match(cssContent, /\.header-search/, "CSS must define .header-search");
   assert.match(cssContent, /\.status-combat/, "CSS must define .status-combat");
   assert.match(cssContent, /\.status-last/, "CSS must define .status-last");
 });
