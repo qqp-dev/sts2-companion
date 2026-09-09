@@ -281618,8 +281618,8 @@
   "snapshotManifest": {
     "inputs": {
       "README.md": {
-        "bytes": 9916,
-        "sha256": "c86fe75e25e62ab69f33e07a245eba7d52f101a4369b2764910dab0bcf92995b"
+        "bytes": 9655,
+        "sha256": "75af85f92e14b84e5c4255cf732026688d9626898c788a5ee0616d7b35af2a0c"
       },
       "data/encounter-facts-v0.111.0.json": {
         "bytes": 5372747,
@@ -281654,8 +281654,8 @@
         "sha256": "a6dbfe6ecdc12672f912c8a1860880310f33044ee90e983952515348510ff528"
       },
       "package.json": {
-        "bytes": 2134,
-        "sha256": "8e82880c631a20abd59f2ad28e41758249db7a3153f9a20ef275a57f398a12f0"
+        "bytes": 2314,
+        "sha256": "04f0527da618e278feb848553b7d2c58b99e3be45bd26266f8a9cc07f27a4c3b"
       },
       "src/book.mjs": {
         "bytes": 9250,
@@ -281734,7 +281734,7 @@
         "sha256": "d8b603c4bdaa7d2719cde1819f16215893c44b8dd9105cc646306c2b3551721b"
       }
     },
-    "inputsDigestSha256": "e8a51909da4ca8829374933c6bd0dbbdd841f801272454999e823d5e489d81e7",
+    "inputsDigestSha256": "5f301fd21ab6dd1212793d67ff837171c7a531a786a7e6f9ca2aaa4ac72fbc58",
     "modules": {
       "listed": [
         {

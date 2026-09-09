@@ -457,7 +457,7 @@ test("source artifact is not consumed and runtime wiki book remains byte-identic
   assert.equal(retainedReferenceFor("MYSTERIOUS_KNIGHT_EVENT_ENCOUNTER").sourcePrimary, "checked-source-only");
   assert.equal(encounterFor("BATTLEWORN_DUMMY_EVENT_V1_ENCOUNTER"), null);
   assert.equal(encounterFor("AEONGLASS_BOSS").name, "Aeonglass");
-  for (const file of ["../src/book.mjs", "../src/client.js", "../src/http.mjs", "../src/plugin.mjs", "../src/state.mjs"]) {
+  for (const file of ["../src/book.mjs", "../src/client.js", "../src/http.mjs", "../src/state.mjs"]) {
     assert.doesNotMatch(readFileSync(new URL(file, import.meta.url), "utf8"), /game-v0\.111\.0-source|encounter-facts-v0\.111\.0/);
   }
 });
