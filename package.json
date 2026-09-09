@@ -3,23 +3,25 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Phone-first checked static Slay the Spire 2 encounter companion for qq.",
-  "main": "src/plugin.mjs",
+  "description": "Phone-first offline checked static Slay the Spire 2 encounter companion PWA.",
+  "main": "src/book.mjs",
   "exports": {
-    ".": "./src/plugin.mjs",
+    ".": "./src/book.mjs",
     "./book": "./src/book.mjs",
     "./state": "./src/state.mjs",
-    "./http": "./src/http.mjs",
-    "./cordis.patch.yml": "./cordis.patch.yml"
+    "./http": "./src/http.mjs"
   },
   "files": [
     "src/",
     "data/",
     "docs/",
-    "cordis.patch.yml",
     "README.md"
   ],
   "scripts": {
+    "dev": "vite",
+    "build": "node tools/build-views.mjs && vite build",
+    "build:views": "node tools/build-views.mjs",
+    "preview": "vite preview",
     "test": "node --test && python3 tools/run-python-tests.py && python3 tools/check-retained-book.py && node tools/generate-primary-semantic-surface.mjs --check && python3 tools/audit-retained-wiki.py --check",
     "build:retained-book": "python3 tools/generate-book.py",
     "check:retained-book": "python3 tools/check-retained-book.py",
@@ -35,9 +37,11 @@
     "build:wiki-reconciliation": "python3 tools/generate-book.py && python3 tools/generate-encounter-facts.py && node tools/generate-primary-semantic-surface.mjs && python3 tools/audit-retained-wiki.py",
     "check:wiki-reconciliation": "python3 tools/check-retained-book.py && python3 tools/generate-encounter-facts.py --check && node tools/generate-primary-semantic-surface.mjs --check && python3 tools/audit-retained-wiki.py --check"
   },
-  "dsh": {
-    "bundle": {
-      "patch": "./cordis.patch.yml"
-    }
+  "dependencies": {
+    "@vitejs/plugin-react": "^6.1.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "vite": "^8.2.2",
+    "vite-plugin-pwa": "^1.3.0"
   }
 }

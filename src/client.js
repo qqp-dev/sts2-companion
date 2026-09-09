@@ -1,8 +1,8 @@
 (() => {
   "use strict";
-  const root = document.getElementById("guide-encounter");
-  if (!root) return;
-  const basePath = root.dataset.basePath || "/sts2";
+  const getRoot = () => (typeof document !== "undefined" ? document.getElementById("guide-encounter") : null);
+  let root = getRoot();
+  const basePath = root?.dataset?.basePath || (typeof window !== "undefined" && window.__STS2_BASE_PATH__) || "/sts2";
   const manualQuery = new URLSearchParams(window.location.search).getAll("encounter");
   const stateUrl = `${basePath}/state${manualQuery.length ? `?encounter=${encodeURIComponent(manualQuery[0])}` : ""}`;
   const COLLAPSED_IMPLEMENTATION_WORDS = /\b(?:formula|AST)\b|\b(?:MONSTER|POWER|CARD|ENCOUNTER|SOURCE|RUNTIME)\.|\b[A-Z][A-Z0-9]+(?:_[A-Z0-9]+)+\b/;
@@ -360,7 +360,10 @@
     parent.append(footer);
   }
 
-  function render(state, nextSignature) {
+  function render(state, nextSignature, targetRoot = null) {
+    if (targetRoot) root = targetRoot;
+    else if (!root) root = getRoot();
+    if (!root) return;
     root.replaceChildren();
     root.className = `guide-state guide-state-${state.status}`;
     if (state.status !== "selected") {
@@ -415,6 +418,11 @@
       if (next !== signature) render(state, next);
     } catch { /* Preserve the last honest guide across transient local read failures. */ }
   }
-  poll();
-  window.setInterval(poll, 1500);
+  if (typeof window !== "undefined") {
+    window.__STS2_RENDER__ = (state, nextSig, target) => render(state, nextSig, target);
+  }
+  if (root) {
+    poll();
+    window.setInterval(poll, 1500);
+  }
 })();

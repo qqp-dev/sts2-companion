@@ -1,27 +1,23 @@
 # sts2-companion
 
-Phone-first, read-only **Slay the Spire 2** encounter reference for the optional
-qq Cordis sibling. It reads checked local encounter facts and local
-log/save/release metadata, never sends game input, and makes no runtime external
-network requests.
+Phone-first, 100% offline standalone **Slay the Spire 2** Progressive Web App (PWA)
+encounter companion. It reads checked local encounter facts and presents static reference data
+with zero dependencies on external host frameworks or runtimes.
 
 ## Open it
 
-StS2 Companion has one user-facing document:
+StS2 Companion runs as an installable standalone PWA in mobile and desktop browsers:
 
 - local: <http://127.0.0.1:3082/sts2>
 - Tailscale: <https://qq-box.tail580136.ts.net/sts2>
+- Development server: `npm run dev`
+- Static production build: `npm run build` -> `dist/`
 
-For static reference browsing, append one exact, case-sensitive checked
-encounter selector:
+The PWA can be installed to your phone home screen and used completely offline.
+You can search and filter across all 89 checked encounters by name, act, or kind, or deep-link
+directly to any exact canonical encounter:
 
 <http://127.0.0.1:3082/sts2?encounter=AXEBOTS_NORMAL>
-
-Unknown or repeated selectors fail clearly; there is no fuzzy matching. Manual
-selection remains manual during polling. Without a selector, the page polls every
-1.5 seconds and visibly labels the detected encounter as `combat` or `last`.
-When qq-ui is available, the plugin contributes one ordinary **StS2 Companion**
-menu item linking to its configured `/sts2` base path.
 
 ## What the guide means
 
@@ -138,17 +134,19 @@ Detailed schema/readiness and implementation authority:
 Schema numbers are not duplicated here because coordinated source closeouts may
 advance them. The adapter itself is the runtime allowlist.
 
-## Install and run
+## Build and run
 
-This package is an optional sibling; qq-core must still start when it is absent.
-The sibling profile layer is `cordis.patch.yml`. The web server must remain bound
-to `127.0.0.1`; the plugin refuses any non-loopback host. On this machine,
-Tailscale Serve terminates HTTPS and proxies to that loopback service.
+Build and test the standalone PWA with:
 
-The browser uses exact routes, no-store responses, restrictive CSP, frame denial,
-MIME-sniffing denial, referrer suppression, and DOM text rendering. The page is a
-native full-document qq sibling with local qq-like design tokens and no external
-runtime dependency.
+```sh
+npm run build      # Pre-generates all 89 encounter views and bundles the PWA into dist/
+npm run preview    # Serves the production PWA bundle locally
+npm run dev        # Starts the Vite development server
+```
+
+The compiled application in `dist/` is 100% static, includes a Web App Manifest (`manifest.webmanifest`),
+and registers a Workbox Service Worker that precaches all application code, styles, and encounter data
+for complete offline capability without requiring any server or background daemon.
 
 ## Generate and check
 
@@ -195,5 +193,3 @@ npm run check:roster-guides
 ```
 
 No generated data change is expected for presentation or adapter-consumer work.
-To remove the optional runtime, disable or remove the sibling from the qq
-profile; qq-core remains independent.

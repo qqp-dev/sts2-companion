@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#000000"/>
+  <!-- Outer accent ring -->
+  <circle cx="256" cy="256" r="236" fill="none" stroke="#1a1a1a" stroke-width="8"/>
+  <circle cx="256" cy="256" r="216" fill="none" stroke="#f0d27a" stroke-width="4" opacity="0.4"/>
+  
+  <!-- Spire Monolith -->
+  <polygon points="256,60 320,380 256,430 192,380" fill="#121212" stroke="#f0d27a" stroke-width="6"/>
+  
+  <!-- Spire Core Gem (Danger Red) -->
+  <polygon points="256,180 285,250 256,320 227,250" fill="#ff8a82" stroke="#f0d27a" stroke-width="4"/>
+  
+  <!-- Lateral blades -->
+  <polygon points="192,380 140,330 180,270" fill="#0a0a0a" stroke="#f0d27a" stroke-width="4"/>
+  <polygon points="320,380 372,330 332,270" fill="#0a0a0a" stroke="#f0d27a" stroke-width="4"/>
+  
+  <!-- Central line -->
+  <line x1="256" y1="60" x2="256" y2="430" stroke="#f0d27a" stroke-width="3" opacity="0.7"/>
+  
+  <!-- Label -->
+  <text x="256" y="475" text-anchor="middle" font-family="'Geist UI', system-ui, sans-serif" font-size="34" font-weight="800" fill="#f0d27a" letter-spacing="4">STS2</text>
+</svg>
