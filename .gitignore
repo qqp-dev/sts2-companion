@@ -4,7 +4,7 @@
 .DS_Store
 .qq/
 .pi/
-node_modules/
+node_modules
 .vscode/
 .idea/
 .venv-source/
