@@ -24,10 +24,10 @@ test("Invariant 1: Zero dsh / cordis / qq / paseo dependencies", () => {
   }
 });
 
-test("Invariant 2: PWA distribution files exist and build cleanly without service worker", () => {
+test("Invariant 2: PWA distribution files exist and build cleanly with self-terminating service worker", () => {
   assert.ok(existsSync(join(DIST, "index.html")), "dist/index.html must exist");
   assert.ok(existsSync(MANIFEST_PATH), "dist/manifest.webmanifest must exist");
-  assert.equal(existsSync(SW_PATH), false, "dist/sw.js must not exist (stripped service worker per ticket)");
+  assert.ok(existsSync(SW_PATH), "dist/sw.js must exist as self-terminating worker");
   assert.ok(existsSync(join(DIST, "icons", "icon-192.png")), "192px icon must exist");
   assert.ok(existsSync(join(DIST, "icons", "icon-512.png")), "512px icon must exist");
   assert.ok(existsSync(join(DIST, "icons", "icon.svg")), "SVG icon must exist");
@@ -52,12 +52,24 @@ test("Invariant 3: Web App Manifest meets standalone PWA contract", () => {
   assert.ok(icon512, "512x512 icon must be declared in manifest");
 });
 
-test("Invariant 4: Service worker precaching layers are stripped per minimalist shell contract", () => {
-  assert.equal(existsSync(SW_PATH), false, "sw.js must not exist");
+test("Invariant 4: Service worker precaching layers are stripped and self-terminating worker purges stale caches", () => {
+  assert.ok(existsSync(SW_PATH), "sw.js must exist to terminate stale service workers");
+  const swContent = readFileSync(SW_PATH, "utf8");
+  assert.doesNotMatch(swContent, /precacheAndRoute/, "sw.js must not contain Workbox precaching");
+  assert.match(swContent, /skipWaiting/, "sw.js must skip waiting on install");
+  assert.match(swContent, /caches\.delete/, "sw.js must delete caches on activate");
+  assert.match(swContent, /registration\.unregister/, "sw.js must unregister itself");
+
   const viteConfig = readFileSync(join(ROOT, "vite.config.js"), "utf8");
   assert.doesNotMatch(viteConfig, /VitePWA/, "VitePWA plugin must not be used");
   const mainSrc = readFileSync(join(ROOT, "src", "main.jsx"), "utf8");
   assert.doesNotMatch(mainSrc, /virtual:pwa-register/, "virtual:pwa-register must not be imported");
+  assert.match(mainSrc, /purgeServiceWorkersAndCaches/, "main.jsx must purge service workers and caches");
+
+  const indexHtml = readFileSync(join(ROOT, "index.html"), "utf8");
+  assert.match(indexHtml, /serviceWorker/, "index.html must check serviceWorker");
+  assert.match(indexHtml, /getRegistrations/, "index.html must unregister service workers inline");
+  assert.match(indexHtml, /caches\.delete/, "index.html must delete caches inline");
 });
 
 test("Invariant 5: Encounter index covers all 89 checked encounters with valid fields", () => {
@@ -339,6 +351,127 @@ test("Invariant 10: Client polling state machine handles combat transitions, man
   assert.equal(isOffline, false);
   assert.equal(selectedId, "CEREMONIAL_BEAST_BOSS");
   assert.equal(getStatus(), "[LIVE · Combat]");
+});
+
+test("Invariant 11: Active Cache & Service Worker Purge contract", async () => {
+  // 1. Verify index.html contains inline unregister and cache purge before module scripts
+  const indexHtml = readFileSync(join(ROOT, "index.html"), "utf8");
+  const inlineScriptIdx = indexHtml.indexOf("navigator.serviceWorker.getRegistrations");
+  const moduleScriptIdx = indexHtml.indexOf('src="/src/main.jsx"');
+  assert.ok(inlineScriptIdx !== -1, "index.html must contain serviceWorker unregistration script");
+  assert.ok(moduleScriptIdx !== -1, "index.html must load main.jsx module script");
+  assert.ok(inlineScriptIdx < moduleScriptIdx, "Purge script must appear before application module script");
+  assert.match(indexHtml, /caches\.delete/, "index.html must delete caches inline");
+
+  // 2. Verify main.jsx source defines and immediately executes purge
+  const mainSrc = readFileSync(join(ROOT, "src", "main.jsx"), "utf8");
+  assert.match(mainSrc, /purgeServiceWorkersAndCaches/, "main.jsx must define purge function");
+  assert.match(mainSrc, /purgeServiceWorkersAndCaches\(\);/, "main.jsx must invoke purge on load");
+  assert.match(mainSrc, /targetNavigator\.serviceWorker\.getRegistrations/, "main.jsx must query registrations");
+  assert.match(mainSrc, /reg\.unregister/, "main.jsx must unregister all registrations");
+  assert.match(mainSrc, /targetCaches\.delete/, "main.jsx must delete all caches");
+
+  // 3. Test purge state execution against mock browser primitives
+  let unregisteredCount = 0;
+  let deletedCaches = [];
+  const fakeRegistration = {
+    unregister: async () => {
+      unregisteredCount++;
+      return true;
+    },
+  };
+  const mockNavigator = {
+    serviceWorker: {
+      getRegistrations: async () => [fakeRegistration, fakeRegistration],
+    },
+  };
+  const mockCaches = {
+    keys: async () => ["workbox-precache-v1", "runtime-cache"],
+    delete: async (name) => {
+      deletedCaches.push(name);
+      return true;
+    },
+  };
+
+  const purge = async (nav, c) => {
+    if (nav?.serviceWorker) {
+      const regs = await nav.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister()));
+    }
+    if (c) {
+      const keys = await c.keys();
+      await Promise.all(keys.map((k) => c.delete(k)));
+    }
+  };
+
+  await purge(mockNavigator, mockCaches);
+  assert.equal(unregisteredCount, 2, "All active service worker registrations must be unregistered");
+  assert.deepEqual(deletedCaches, ["workbox-precache-v1", "runtime-cache"], "All CacheStorage entries must be deleted");
+
+  // 4. Verify public/sw.js self-terminating behavior
+  const swCode = readFileSync(join(ROOT, "public", "sw.js"), "utf8");
+  assert.match(swCode, /addEventListener\(\s*["']install["']/, "sw.js must have install handler");
+  assert.match(swCode, /skipWaiting\(\)/, "sw.js must call skipWaiting in install");
+  assert.match(swCode, /addEventListener\(\s*["']activate["']/, "sw.js must have activate handler");
+  assert.match(swCode, /caches\.delete/, "sw.js must delete caches in activate");
+  assert.match(swCode, /registration\.unregister\(\)/, "sw.js must unregister itself");
+  assert.match(swCode, /clients\.claim\(\)/, "sw.js must claim clients immediately");
+  assert.match(swCode, /client\.navigate\(client\.url\)/, "sw.js must reload active clients");
+  assert.match(swCode, /addEventListener\(\s*["']fetch["']/, "sw.js must have fetch handler");
+});
+
+test("Invariant 12: Entry files (index.html, /sw.js) enforce no-store headers", async () => {
+  const { entryCacheControlPlugin } = await import("../vite.config.js");
+  const { createServer } = await import("node:http");
+
+  assert.equal(typeof entryCacheControlPlugin, "function");
+  const plugin = entryCacheControlPlugin();
+  assert.equal(plugin.name, "sts2-entry-cache-control");
+
+  let middleware = null;
+  plugin.configurePreviewServer({ middlewares: { use: (fn) => { middleware = fn; } } });
+  assert.equal(typeof middleware, "function");
+
+  const server = createServer((req, res) => {
+    middleware(req, res, () => {
+      // Simulate static file response with default cache header
+      res.setHeader("Cache-Control", "public, max-age=3600");
+      res.statusCode = 200;
+      res.end("file content");
+    });
+  });
+
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const port = server.address().port;
+  const baseUrl = `http://127.0.0.1:${port}`;
+
+  try {
+    const entryPaths = ["/", "/index.html", "/sw.js"];
+    for (const path of entryPaths) {
+      const res = await fetch(`${baseUrl}${path}`);
+      assert.equal(res.status, 200);
+      assert.equal(
+        res.headers.get("cache-control"),
+        "no-store, no-cache, must-revalidate, max-age=0",
+        `Path ${path} must have no-store cache-control`
+      );
+      assert.equal(res.headers.get("pragma"), "no-cache", `Path ${path} must have pragma no-cache`);
+    }
+
+    const nonEntryPaths = ["/data/index.json", "/manifest.webmanifest"];
+    for (const path of nonEntryPaths) {
+      const res = await fetch(`${baseUrl}${path}`);
+      assert.equal(res.status, 200);
+      assert.equal(
+        res.headers.get("cache-control"),
+        "public, max-age=3600",
+        `Non-entry path ${path} must not be forced to no-store`
+      );
+    }
+  } finally {
+    server.closeAllConnections?.();
+    await new Promise((resolve) => server.close(resolve));
+  }
 });
 
 
