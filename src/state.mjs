@@ -200,4 +200,69 @@ export function createStateReader(options = {}) {
   };
 }
 
+export function createLiveStateMiddleware(options = {}) {
+  const reader = options.reader ?? createStateReader(options);
+  return function liveStateMiddleware(req, res, next) {
+    let url;
+    try {
+      url = new URL(req.url, "http://127.0.0.1");
+    } catch {
+      url = { pathname: req.url };
+    }
+    if (url.pathname === "/api/state") {
+      if (req.method !== "GET" && req.method !== "HEAD") {
+        res.statusCode = 405;
+        res.setHeader("Allow", "GET, HEAD");
+        res.setHeader("Content-Type", "text/plain; charset=utf-8");
+        res.end("Method Not Allowed\n");
+        return;
+      }
+      let state;
+      try {
+        state = reader.read();
+        if (!state || typeof state !== "object") {
+          throw new Error("Invalid state");
+        }
+      } catch {
+        state = {
+          status: "idle",
+          encounterId: null,
+          monsterIds: [],
+          actId: null,
+          roomType: null,
+          source: null,
+          releaseInfo: null,
+        };
+      }
+      const body = `${JSON.stringify(state)}\n`;
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      res.setHeader("Cache-Control", "no-store");
+      res.setHeader("Content-Length", String(Buffer.byteLength(body)));
+      if (req.method === "HEAD") {
+        res.end();
+      } else {
+        res.end(body);
+      }
+      return;
+    }
+    if (typeof next === "function") {
+      next();
+    }
+  };
+}
+
+export function liveStatePlugin(options = {}) {
+  const middleware = createLiveStateMiddleware(options);
+  return {
+    name: "sts2-live-state",
+    configureServer(server) {
+      server.middlewares.use(middleware);
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(middleware);
+    },
+  };
+}
+
 export const internals = Object.freeze({ defaultRoots, defaultReleaseInfoPaths, logFiles, saveFiles, newest, unprefix });

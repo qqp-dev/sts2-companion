@@ -1,6 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
+import { liveStatePlugin } from "./src/state.mjs";
+
+export { liveStatePlugin };
 
 export default defineConfig({
   base: "./",
@@ -14,6 +17,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    liveStatePlugin(),
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "icons/*.png", "icons/*.svg", "data/**/*.json"],
