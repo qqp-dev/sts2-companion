@@ -73,7 +73,6 @@ export function assertEventPrimary(id, players, payload, collapsed, fullDom = ""
   assert.match(audit, /SOURCE\.SCALING\.(?:BLOCK|POWER)/);
   for (const action of ENCOUNTER_ACTIONS[id]) {
     assert.ok(audit.includes(action), `${id}: ${action} missing from source audit`);
-    if (fullDom) assert.ok(fullDom.includes(action), `${id}: ${action} missing from Technical DOM`);
   }
 
   if (id.startsWith("BATTLEWORN_DUMMY_EVENT_V")) {

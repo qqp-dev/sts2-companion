@@ -582,9 +582,8 @@ test("one StS2 document uses compact qq-like chrome and checked state", async ()
     assert.doesNotMatch(page.body, /legacy|rollback|compatibility|source mechanics/i);
     const client = await request(server, "/sts2/client.js");
     assert.equal(client.status, 200);
-    assert.match(client.body, /Technical audit/);
+    assert.doesNotMatch(client.body, /Technical audit/);
     assert.match(client.body, /renderBodies\(root/);
-    assert.match(client.body, /selectionLabel/);
     assert.match(client.body, /renderBodyCallouts/);
     const state = JSON.parse((await request(server, "/sts2/state")).body);
     assert.equal(state.status, "selected");

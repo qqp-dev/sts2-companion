@@ -671,7 +671,8 @@ test("one guide page has flat phone and desktop width contracts plus accessibili
   const client = readFileSync(new URL("../src/client.js", import.meta.url), "utf8");
   assert.doesNotMatch(client, /\x08/, "regexes contain no literal backspace characters");
   assert.match(client, /\/\\b\(\?:formula\|AST\)\\b/);
-  const order = ["renderPrimaryHero(root", "renderVersionBoundary(state, root", "renderPrimaryBodies(root", "renderPrimaryNotes(root", "renderGlobalCallouts(root", "renderPrimaryFooter(root", "renderAudit(root"];
+  const order = ["renderPrimaryHero(root", "renderPrimaryRoster(root", "renderPrimaryBodies(root", "renderPrimaryNotes(root", "renderGlobalCallouts(root"];
   let cursor = -1;
   for (const marker of order) { const next = client.indexOf(marker); assert.ok(next > cursor, marker); cursor = next; }
+  assert.doesNotMatch(client, /renderAudit/);
 });
